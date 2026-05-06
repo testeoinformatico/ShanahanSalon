@@ -1549,6 +1549,18 @@
             pointer-events: none !important;
         }
 
+
+        .disp-mini-cal .cal-day.excluido-admin {
+            background: rgba(122,18,31,.1);
+            color: #c9a0a7;
+            text-decoration: line-through;
+            border-color: rgba(122,18,31,.2);
+        }
+        .disp-mini-cal .cal-day.excluido-admin:hover {
+            background: rgba(122,18,31,.18);
+            border-color: var(--burgundy);
+        }
+
         /* ---------- EDIT CITA MODAL ---------- */
         .modal-x.wide { max-width: 480px; }
         .edit-modal-header {
@@ -2013,6 +2025,39 @@
         </div>
     </nav>
 
+
+    <!-- ADMIN NAV MENU -->
+    <nav class="admin-menu" id="adminMenu">
+        <button class="admin-menu-item active" data-section="agenda" onclick="switchAdminSection('agenda')">
+            <i class="fa-regular fa-calendar"></i>Agenda
+        </button>
+        <button class="admin-menu-item" data-section="solicitudes" onclick="switchAdminSection('solicitudes')">
+            <i class="fa-regular fa-calendar-check"></i>Solicitudes
+            <span id="menuBadgePendientes" style="background:var(--accent);color:#2C0A11;border-radius:100px;padding:1px 7px;font-size:9px;margin-left:2px;display:none;"></span>
+        </button>
+        <button class="admin-menu-item" data-section="fidelizacion" onclick="switchAdminSection('fidelizacion')">
+            <i class="fa-solid fa-gem"></i>Fidelización
+        </button>
+        <button class="admin-menu-item" data-section="disponibilidad" onclick="switchAdminSection('disponibilidad')">
+            <i class="fa-solid fa-calendar-days"></i>Disponibilidad
+        </button>
+        <div class="admin-menu-sep"></div>
+        <button class="admin-menu-item admin-menu-end" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.35);">
+            <i class="fa-solid fa-right-from-bracket"></i>Salir
+        </button>
+    </nav>
+
+    <!-- WELCOME MODAL -->
+    <div class="welcome-modal" id="welcomeModal">
+        <div class="welcome-box">
+            <span class="welcome-crown">👑</span>
+            <div class="welcome-title">Bienvenida de vuelta</div>
+            <div class="welcome-name">mi culona</div>
+            <div class="welcome-msg">El salón te espera. Tienes <strong id="welcomePendientes">0</strong> solicitudes pendientes y <strong id="welcomeHoy">0</strong> citas hoy.</div>
+            <button class="welcome-close" onclick="closeWelcome()">Entrar al panel ✨</button>
+        </div>
+    </div>
+
     <main class="container py-5">
 
         <!-- LOGIN CLIENTE -->
@@ -2209,6 +2254,7 @@
             </div>
 
             <!-- AGENDA VISUAL -->
+            <div class="admin-section active" id="asecAgenda" style="display:contents;">
             <div class="col-12">
                 <div class="luxury-card view-anim" style="padding:30px;">
                     <div class="admin-header">
@@ -2253,6 +2299,10 @@
                 </div>
             </div>
 
+            </div><!-- /asecAgenda -->
+
+            <!-- SOLICITUDES + NUEVA CLIENTA -->
+            <div class="admin-section" id="asecSolicitudes" style="display:none;">
             <div class="col-12 col-lg-5">
                 <div class="luxury-card view-anim">
                     <div class="admin-header" style="margin-bottom:16px;">
@@ -2279,6 +2329,10 @@
                 </div>
             </div>
 
+            </div><!-- /asecSolicitudes -->
+
+            <!-- FIDELIZACIÓN -->
+            <div class="admin-section" id="asecFidelizacion" style="display:none;">
             <div class="col-12 col-lg-7">
                 <div class="luxury-card view-anim">
                     <div class="admin-header">
@@ -2303,6 +2357,10 @@
                 </div>
             </div>
 
+            </div><!-- /asecFidelizacion -->
+
+            <!-- DISPONIBILIDAD -->
+            <div class="admin-section" id="asecDisponibilidad" style="display:none;">
             <!-- GESTIÓN DÍAS DISPONIBLES -->
             <div class="col-12">
                 <div class="luxury-card view-anim" style="padding:30px;">
@@ -2352,6 +2410,7 @@
                     </div>
                 </div>
             </div>
+            </div><!-- /asecDisponibilidad -->
         </section>
 
     </main>
@@ -2492,9 +2551,39 @@
                     el.offsetHeight;
                     el.style.animation = '';
                 });
-                if (idVista === 'vistaAdmin') cargarDatosAdmin();
+                if (idVista === 'vistaAdmin') {
+                    cargarDatosAdmin().then(() => showWelcome());
+                }
+                document.getElementById('adminMenu').classList.toggle('visible', idVista === 'vistaAdmin');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+        }
+
+
+        /* ---------- ADMIN NAV SECTIONS ---------- */
+        const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
+
+        function switchAdminSection(name) {
+            ADMIN_SECTIONS.forEach(s => {
+                const el = document.getElementById('asec' + s.charAt(0).toUpperCase() + s.slice(1));
+                if (el) el.style.display = s === name ? 'contents' : 'none';
+            });
+            document.querySelectorAll('.admin-menu-item[data-section]').forEach(b => {
+                b.classList.toggle('active', b.dataset.section === name);
+            });
+        }
+
+        /* ---------- WELCOME MODAL ---------- */
+        function showWelcome() {
+            const pend = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
+            const todayIso = fmtIso(today);
+            const hoy = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
+            document.getElementById('welcomePendientes').textContent = pend;
+            document.getElementById('welcomeHoy').textContent = hoy;
+            document.getElementById('welcomeModal').classList.add('show');
+        }
+        function closeWelcome() {
+            document.getElementById('welcomeModal').classList.remove('show');
         }
 
         /* ---------- ADMIN DATA ---------- */
@@ -2842,6 +2931,8 @@
 
             document.getElementById('statClientas').textContent = clientas.length;
             document.getElementById('statPendientes').textContent = pendCount;
+            const badge = document.getElementById('menuBadgePendientes');
+            if (badge) { badge.textContent = pendCount; badge.style.display = pendCount > 0 ? 'inline' : 'none'; }
             document.getElementById('statHoy').textContent = todayCount;
             document.getElementById('statSemana').textContent = weekCount;
 
@@ -3115,6 +3206,8 @@
         function isDiaDisponible(iso){
             if(diasDisponibles.length === 0) return false;
             const mes = iso.substring(0,7);
+            // if explicitly excluded, never available
+            if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
             return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
         }
 
@@ -3146,18 +3239,22 @@
             for(let d=1;d<=daysInMonth;d++){
                 const dt = new Date(year,month,d);
                 const iso = `${year}-${pad2(month+1)}-${pad2(d)}`;
-                const disp = isDiaDisponible(iso);
+                const mes = `${year}-${pad2(month+1)}`;
+                const mesDisp = diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===mes);
+                const excluido = diasDisponibles.some(b=>b.tipo==='excluido'&&b.valor===iso);
+                const diaDisp = diasDisponibles.some(b=>b.tipo==='dia'&&b.valor===iso);
                 const isToday = dt.getTime()===today.getTime();
                 let cls='cal-day';
                 if(isToday) cls+=' today';
-                if(disp) cls+=' disponible';
-                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
+                if((mesDisp || diaDisp) && !excluido) cls+=' disponible';
+                if(excluido) cls+=' excluido-admin';
+                grid.innerHTML += `<div class="${cls}" data-iso="${iso}" data-mes-disp="${mesDisp}">${d}</div>`;
             }
             const totalCells = startOffset+daysInMonth;
             const trail = (7-(totalCells%7))%7;
             for(let i=1;i<=trail;i++) grid.innerHTML+=`<div class="cal-day muted">${i}</div>`;
             grid.querySelectorAll('.cal-day:not(.muted)').forEach(el=>{
-                el.addEventListener('click', ()=>toggleDisponible('dia', el.dataset.iso));
+                el.addEventListener('click', ()=>toggleDisponible('dia', el.dataset.iso, el.dataset.mesDisp));
             });
         }
 
@@ -3194,14 +3291,26 @@
             }
         }
 
-        async function toggleDisponible(tipo, valor){
-            const existing = diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
-            if(existing){
-                await sb.from('dias_disponibles').delete().eq('id',existing.id);
-                toast(tipo==='mes' ? 'Mes deshabilitado' : 'Día deshabilitado', 'info');
+        async function toggleDisponible(tipo, valor, mesDisp){
+            if(tipo === 'dia' && mesDisp === 'true') {
+                // month is enabled — toggle exclusion for this specific day
+                const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
+                if(excl){
+                    await sb.from('dias_disponibles').delete().eq('id',excl.id);
+                    toast('Día reactivado dentro del mes','success');
+                } else {
+                    await sb.from('dias_disponibles').insert([{tipo:'excluido', valor}]);
+                    toast('Día excluido del mes','info');
+                }
             } else {
-                await sb.from('dias_disponibles').insert([{tipo, valor}]);
-                toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
+                const existing = diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
+                if(existing){
+                    await sb.from('dias_disponibles').delete().eq('id',existing.id);
+                    toast(tipo==='mes' ? 'Mes deshabilitado' : 'Día deshabilitado', 'info');
+                } else {
+                    await sb.from('dias_disponibles').insert([{tipo, valor}]);
+                    toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
+                }
             }
             cargarDisponibles();
         }
