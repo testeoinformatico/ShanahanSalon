@@ -195,7 +195,7 @@
             letter-spacing: 0.6px;
         }
         .welcome-close {
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            background: linear-gradient(135deg, var(--accent), var(--accent-light);
             color: #2C0A11;
             border: none;
             padding: 14px 28px;
@@ -335,6 +335,11 @@
             color: var(--burgundy);
             letter-spacing: 2px;
             text-transform: uppercase;
+        }
+        .field input[type="date"],
+        .field input[type="time"] {
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
         }
         .field-icon {
             position: absolute;
@@ -853,6 +858,14 @@
             font-size: 14px;
             color: var(--muted);
         }
+        
+        /* Responsive tweaks */
+        @media (max-width: 768px) {
+            .admin-menu { gap: 12px; }
+            .admin-menu-item { font-size: 10px; gap: 6px; }
+            .welcome-box { padding: 32px 24px; }
+            .welcome-name { font-size: 30px; }
+        }
     </style>
 </head>
 <body>
@@ -879,7 +892,7 @@
         <button class="admin-menu-item" data-section="disponibilidad" onclick="switchAdminSection('disponibilidad')">
             <i class="fa-solid fa-calendar-days"></i> Disponibilidad
         </button>
-        <button class="admin-menu-item" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.5);">
+        <button class="admin-menu-item" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.6);">
             <i class="fa-solid fa-right-from-bracket"></i> Salir
         </button>
     </nav>
@@ -1288,7 +1301,7 @@
     <script>
         const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANONKEY);
 
         const SALON_WHATSAPP = '34621303635';
         const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
@@ -1324,10 +1337,12 @@
             modal.classList.add('show');
             return new Promise(resolve => { confirmResolver = resolve; });
         }
+
         function closeConfirm(result) {
             document.getElementById('confirmModal').classList.remove('show');
             if (confirmResolver) confirmResolver(result);
         }
+
         document.getElementById('confirmModal').addEventListener('click', e => {
             if (e.target.id === 'confirmModal') closeConfirm(false);
         });
@@ -1364,6 +1379,7 @@
         }
 
         const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
+
         function switchAdminSection(name) {
             ADMIN_SECTIONS.forEach(s => {
                 const el = document.getElementById('asec' + s.charAt(0).toUpperCase() + s.slice(1));
@@ -1529,9 +1545,7 @@
 
         function whatsappCambioCita(nombre, fecha, hora) {
             const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
-            const fechaTexto = dt
-                ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`
-                : 'mi cita';
+            const fechaTexto = dt ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}` : 'mi cita';
             const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
             return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
         }
@@ -1566,433 +1580,11 @@
             }
         }
 
-        let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-        let agendaSelected = new Date(today);
-        let agendaFilter = 'all';
-
-        function citasOfDay(iso) {
-            return citas.filter(c => c.fecha === iso && (agendaFilter === 'all' || (c.estado || 'pendiente') === agendaFilter));
-        }
-        function fmtIso(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
-        function fmtDayLong(d){
-            const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-            return `${days[d.getDay()]}, ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
-        }
-
-        function renderAgenda() {
-            const monthEl = document.getElementById('agendaMonth');
-            const grid = document.getElementById('agendaGrid');
-            if (!monthEl || !grid) return;
-
-            monthEl.textContent = `${MONTHS_ES[agendaCursor.getMonth()]} ${agendaCursor.getFullYear()}`;
-
-            grid.innerHTML = '';
-            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
-
-            const year = agendaCursor.getFullYear();
-            const month = agendaCursor.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const startOffset = (firstDay.getDay() + 6) % 7;
-            const daysInMonth = new Date(year, month+1, 0).getDate();
-            const prevDays = new Date(year, month, 0).getDate();
-
-            for (let i = startOffset - 1; i >= 0; i--) {
-                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
-            }
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dt = new Date(year, month, d);
-                const iso = fmtIso(dt);
-                const dayCitas = citasOfDay(iso);
-                const total = dayCitas.length;
-                const pendCount = dayCitas.filter(c => (c.estado||'pendiente') === 'pendiente').length;
-                const isToday = dt.getTime() === today.getTime();
-                const isSelected = fmtIso(agendaSelected) === iso;
-                let cls = 'cal-day';
-                if (isToday) cls += ' today';
-                if (isSelected) cls += ' selected';
-                if (total > 0) cls += ' has-citas';
-                const badge = total > 0
-                    ? `<span class="cnt ${pendCount > 0 ? 'pendiente' : ''}">${total}</span>` : '';
-                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}${badge}</div>`;
-            }
-            const totalCells = startOffset + daysInMonth;
-            const trail = (7 - (totalCells % 7)) % 7;
-            for (let i = 1; i <= trail; i++) grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
-
-            grid.querySelectorAll('.cal-day:not(.muted)').forEach(el => {
-                el.addEventListener('click', () => {
-                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
-                    agendaSelected = new Date(y, m-1, d);
-                    renderAgenda();
-                    renderAgendaDay();
-                });
-            });
-        }
-
-        function renderAgendaDay() {
-            const iso = fmtIso(agendaSelected);
-            const dayCitas = citasOfDay(iso).slice().sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
-
-            document.getElementById('dayTitle').textContent = fmtDayLong(agendaSelected);
-            const isToday = fmtIso(agendaSelected) === fmtIso(today);
-            document.getElementById('daySub').textContent = isToday ? 'Hoy' : '';
-
-            const counts = {
-                pendiente: dayCitas.filter(c => (c.estado||'pendiente')==='pendiente').length,
-                confirmada: dayCitas.filter(c => c.estado==='confirmada').length,
-                completada: dayCitas.filter(c => c.estado==='completada').length,
-                cancelada: dayCitas.filter(c => c.estado==='cancelada').length
-            };
-            const cntEl = document.getElementById('dayCount');
-            cntEl.innerHTML = '';
-            ['pendiente','confirmada','completada','cancelada'].forEach(k => {
-                if (counts[k] > 0) cntEl.innerHTML += `<span class="estado-pill ${k}">${counts[k]} ${k}</span>`;
-            });
-
-            const list = document.getElementById('dayList');
-            if (dayCitas.length === 0) {
-                list.innerHTML = `<div class="agenda-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="label">Sin citas para este día</div></div>`;
-                return;
-            }
-
-            list.innerHTML = dayCitas.map(c => {
-                const estado = c.estado || 'pendiente';
-                const [hh, mm] = (c.hora || '00:00').split(':');
-                const period = parseInt(hh,10) < 14 ? 'mañana' : 'tarde';
-                return `<div class="appt-row">
-                    <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
-                    <div class="appt-info">
-                        <div class="appt-name">${c.nombre_cliente || '—'}</div>
-                        <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono || '—'}</div>
-                        <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
-                    </div>
-                    <div class="appt-actions">
-                        ${estado === 'pendiente' ? `<button class="action-icon success" title="Aprobar" onclick="aprobarCita(${c.id})"><i class="fa-solid fa-check"></i></button>` : ''}
-                        ${estado === 'confirmada' ? `<button class="action-icon success" title="Marcar completada" onclick="completarCita(${c.id})"><i class="fa-solid fa-circle-check"></i></button>` : ''}
-                        <button class="action-icon" title="Editar" onclick="abrirEditarCita(${c.id})"><i class="fa-solid fa-pen"></i></button>
-                        <button class="action-icon danger" title="Eliminar" onclick="eliminarCita(${c.id})"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function initAgenda() {
-            document.getElementById('agendaPrev').addEventListener('click', () => {
-                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()-1, 1);
-                renderAgenda();
-            });
-            document.getElementById('agendaNext').addEventListener('click', () => {
-                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()+1, 1);
-                renderAgenda();
-            });
-            document.getElementById('agendaToday').addEventListener('click', () => {
-                agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-                agendaSelected = new Date(today);
-                renderAgenda();
-                renderAgendaDay();
-            });
-            document.querySelectorAll('.agenda-filters .filter-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    document.querySelectorAll('.agenda-filters .filter-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    agendaFilter = chip.dataset.filter;
-                    renderAgenda();
-                    renderAgendaDay();
-                });
-            });
-        }
-
-        function renderAdmin() {
-            const search = (document.getElementById('adminSearch')?.value || '').trim().toLowerCase();
-            const filtered = search
-                ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search))
-                : clientas;
-
-            // stats
-            const todayIso = fmtIso(today);
-            const startWeek = new Date(today); startWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
-            const endWeek = new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
-            const pendCount = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
-            const todayCount = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
-            const weekCount = citas.filter(c => {
-                if (!c.fecha) return false;
-                const d = new Date(c.fecha + 'T00:00:00');
-                return d >= startWeek && d <= endWeek && (c.estado||'pendiente') !== 'cancelada';
-            }).length;
-
-            document.getElementById('statClientas').textContent = clientas.length;
-            document.getElementById('statPendientes').textContent = pendCount;
-            const badge = document.getElementById('menuBadgePendientes');
-            if (badge) { badge.textContent = pendCount; badge.style.display = pendCount > 0 ? 'inline' : 'none'; }
-            document.getElementById('statHoy').textContent = todayCount;
-            document.getElementById('statSemana').textContent = weekCount;
-
-            // refresh agenda views
-            renderAgenda();
-            renderAgendaDay();
-
-            // table
-            const tb = document.querySelector('#tablaClientes tbody');
-            tb.innerHTML = "";
-            if (filtered.length === 0) {
-                tb.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search ? 'Sin resultados' : 'Todavía no hay clientas registradas'}</div></div></td></tr>`;
-            } else {
-                filtered.forEach(c => {
-                    const v = c.visitas || 0;
-                    const pct = Math.min(v, 10) * 10;
-                    const fullClass = v >= 10 ? 'full' : '';
-                    tb.innerHTML += `<tr>
-                        <td>
-                            <div class="client-name">${c.nombre}</div>
-                            <div class="client-phone">${c.telefono || '—'}</div>
-                        </td>
-                        <td>
-                            <span class="stamps-pill ${fullClass}">
-                                <span>${v}/10</span>
-                                <span class="bar" style="--p:${pct}%"></span>
-                            </span>
-                        </td>
-                        <td style="text-align:right;">
-                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id}, ${v})"><i class="fa-solid fa-plus"></i></button>
-                            <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${c.id})"><i class="fa-solid fa-rotate-left"></i></button>
-                            <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${c.id})"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                });
-            }
-
-            // appointments — only pending
-            const pendientes = citas.filter(c => (c.estado||'pendiente') === 'pendiente');
-            const lista = document.getElementById('listaCitasPendientes');
-            lista.innerHTML = "";
-            if (pendientes.length === 0) {
-                lista.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar"></i><div class="label">Sin solicitudes pendientes</div></div>`;
-            } else {
-                pendientes.forEach(cita => {
-                    const fecha = cita.fecha ? new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'long' }) : '—';
-                    lista.innerHTML += `<div class="cita-card">
-                        <div class="cita-name">${cita.nombre_cliente}</div>
-                        <div class="cita-meta">
-                            <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
-                            <span><i class="fa-regular fa-clock"></i>${cita.hora || '—'}</span>
-                            <span><i class="fa-solid fa-phone"></i>${cita.telefono || '—'}</span>
-                        </div>
-                        <div class="cita-actions">
-                            <button class="cita-btn approve" onclick="aprobarCita(${cita.id})"><i class="fa-solid fa-check" style="margin-right:5px;"></i>Aprobar</button>
-                            <button class="cita-btn reject" onclick="abrirEditarCita(${cita.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                            <button class="cita-btn reject" onclick="rechazarCita(${cita.id})" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                    </div>`;
-                });
-            }
-        }
-
-        /* ---------- ADMIN ACTIONS ---------- */
-        async function aprobarCita(idCita) {
-            const cita = citas.find(c => c.id === idCita);
-            if (!cita) return;
-            try {
-                // create client only if not already registered (match by phone)
-                const yaExiste = clientas.some(cl => (cl.telefono || '').trim() === (cita.telefono || '').trim());
-                if (!yaExiste) {
-                    await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
-                }
-                await sb.from('citas').update({ estado: 'confirmada' }).eq('id', idCita);
-                toast(yaExiste ? 'Cita confirmada' : 'Cita confirmada y clienta registrada', 'success');
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('No se pudo aprobar la cita', 'error');
-            }
-        }
-
-        async function completarCita(idCita) {
-            const cita = citas.find(c => c.id === idCita);
-            if (!cita) return;
-            try {
-                await sb.from('citas').update({ estado: 'completada' }).eq('id', idCita);
-                // auto-add stamp to matching client
-                const cl = clientas.find(c => (c.telefono || '').trim() === (cita.telefono || '').trim());
-                if (cl && (cl.visitas || 0) < 10) {
-                    await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
-                    if ((cl.visitas || 0) + 1 === 10) {
-                        toast('¡Tarjeta completa! Servicio gratis disponible.', 'success', 'Recompensa');
-                    } else {
-                        toast('Cita completada · sello sumado', 'success');
-                    }
-                } else {
-                    toast('Cita marcada como completada', 'success');
-                }
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('No se pudo completar la cita', 'error');
-            }
-        }
-
-        async function eliminarCita(idCita) {
-            const ok = await askConfirm('Eliminar cita', 'Esta acción no se puede deshacer.');
-            if (!ok) return;
-            try {
-                await sb.from('citas').delete().eq('id', idCita);
-                toast('Cita eliminada', 'success');
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo eliminar', 'error'); }
-        }
-
-        function setEditEstado(estado) {
-            document.getElementById('editCitaEstado').value = estado;
-            document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
-                b.classList.toggle('active', b.dataset.estado === estado);
-            });
-        }
-
-        function abrirEditarCita(idCita) {
-            const cita = citas.find(c => c.id === idCita);
-            if (!cita) return;
-            document.getElementById('editCitaId').value = cita.id;
-            document.getElementById('editCitaNombre').value = cita.nombre_cliente || '';
-            document.getElementById('editCitaTelefono').value = cita.telefono || '';
-            document.getElementById('editCitaFecha').value = cita.fecha || '';
-            document.getElementById('editCitaHora').value = cita.hora || '';
-            setEditEstado(cita.estado || 'pendiente');
-            document.getElementById('editCitaModal').classList.add('show');
-        }
-
-        function closeEditCita() {
-            document.getElementById('editCitaModal').classList.remove('show');
-        }
-
-        document.getElementById('editCitaModal').addEventListener('click', e => {
-            if (e.target.id === 'editCitaModal') closeEditCita();
-        });
-
-        document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
-            b.addEventListener('click', () => setEditEstado(b.dataset.estado));
-        });
-
-        async function confirmarEliminarCita() {
-            const id = parseInt(document.getElementById('editCitaId').value, 10);
-            const ok = await askConfirm('Eliminar cita', 'Esta cita se eliminará definitivamente.');
-            if (!ok) return;
-            try {
-                await sb.from('citas').delete().eq('id', id);
-                toast('Cita eliminada', 'success');
-                closeEditCita();
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo eliminar', 'error'); }
-        }
-
-        async function guardarEdicionCita() {
-            const id = parseInt(document.getElementById('editCitaId').value, 10);
-            const nuevoEstado = document.getElementById('editCitaEstado').value || 'pendiente';
-            const previa = citas.find(c => c.id === id);
-            const estadoAnterior = previa ? (previa.estado || 'pendiente') : 'pendiente';
-
-            const payload = {
-                nombre_cliente: document.getElementById('editCitaNombre').value.trim(),
-                telefono: document.getElementById('editCitaTelefono').value.trim(),
-                fecha: document.getElementById('editCitaFecha').value,
-                hora: document.getElementById('editCitaHora').value,
-                estado: nuevoEstado
-            };
-            if (!payload.nombre_cliente || !payload.telefono || !payload.fecha || !payload.hora) {
-                return toast('Completa todos los campos', 'error');
-            }
-            setBtnLoading('btnGuardarEdicion', true);
-            try {
-                const { error } = await sb.from('citas').update(payload).eq('id', id);
-                if (error) { toast('No se pudo actualizar', 'error'); return; }
-
-                // pasar de pendiente a confirmada → registrar clienta si no existe
-                if (estadoAnterior === 'pendiente' && nuevoEstado === 'confirmada') {
-                    const ya = clientas.some(c => (c.telefono||'').trim() === payload.telefono);
-                    if (!ya) await sb.from('clientas').insert([{ nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
-                }
-                // pasar a completada → sumar sello
-                if (estadoAnterior !== 'completada' && nuevoEstado === 'completada') {
-                    const cl = clientas.find(c => (c.telefono||'').trim() === payload.telefono);
-                    if (cl && (cl.visitas||0) < 10) {
-                        await sb.from('clientas').update({ visitas: (cl.visitas||0) + 1 }).eq('id', cl.id);
-                    }
-                }
-
-                toast('Cita actualizada', 'success');
-                closeEditCita();
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('Error al guardar', 'error');
-            } finally {
-                setBtnLoading('btnGuardarEdicion', false);
-            }
-        }
-
-        async function rechazarCita(idCita) {
-            const ok = await askConfirm('Rechazar solicitud', '¿Quieres descartar esta solicitud de cita?');
-            if (!ok) return;
-            try {
-                await sb.from('citas').delete().eq('id', idCita);
-                toast('Solicitud descartada', 'success');
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('No se pudo descartar', 'error');
-            }
-        }
-
-        async function sumarVisita(id, actual) {
-            if (actual < 10) {
-                try {
-                    await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
-                    if (actual + 1 === 10) toast('¡Tarjeta completada! Servicio gratis desbloqueado.', 'success', 'Recompensa');
-                    cargarDatosAdmin();
-                } catch (e) { toast('No se pudo añadir el sello', 'error'); }
-            } else {
-                toast('Esta tarjeta ya está completa', 'info');
-            }
-        }
-
-        async function reiniciarVisitas(id) {
-            const ok = await askConfirm('Reiniciar tarjeta', 'Se pondrán los sellos a 0 (tras canjear la recompensa).');
-            if (!ok) return;
-            try {
-                await sb.from('clientas').update({ visitas: 0 }).eq('id', id);
-                toast('Tarjeta reiniciada', 'success');
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo reiniciar', 'error'); }
-        }
-
-        async function borrarCliente(id) {
-            const ok = await askConfirm('Eliminar clienta', 'Esta acción no se puede deshacer.');
-            if (!ok) return;
-            try {
-                await sb.from('clientas').delete().eq('id', id);
-                toast('Clienta eliminada', 'success');
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo eliminar', 'error'); }
-        }
-
-        async function registrarNuevoCliente() {
-            const n = document.getElementById('regNombre').value.trim();
-            const t = document.getElementById('regTelef').value.trim();
-            if (!n || !t) return toast('Introduce nombre y teléfono', 'error');
-
-            setBtnLoading('btnRegistrar', true);
-            try {
-                const { error } = await sb.from('clientas').insert([{ nombre: n, telefono: t, visitas: 0 }]);
-                if (!error) {
-                    toast('Clienta registrada', 'success');
-                    document.getElementById('regNombre').value = '';
-                    document.getElementById('regTelef').value = '';
-                    cargarDatosAdmin();
-                } else { toast('No se pudo registrar', 'error'); }
-            } catch (e) { toast('Error de conexión', 'error'); }
-            finally { setBtnLoading('btnRegistrar', false); }
-        }
-
-
-        /* ---------- DÍAS DISPONIBLES ---------- */
-        let diasDisponibles = []; // [{id, tipo:'dia'|'mes', valor:'2025-06-15'|'2025-06'}]
+        let diasDisponibles = [];
         let dCalCursor = new Date(today.getFullYear(), today.getMonth(), 1);
 
         function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
+        function pad2(n){ return String(n).padStart(2,'0'); }
 
         function isDiaDisponible(iso){
             if(diasDisponibles.length === 0) return false;
@@ -2008,7 +1600,7 @@
                 renderDCalendar();
                 renderMesesGrid();
                 renderDispDiaItems();
-                renderCalendar(); // refresh client picker
+                renderCalendar();
             } catch(e) { console.warn('dias_disponibles tabla no existe aún', e); }
         }
 
@@ -2077,7 +1669,6 @@
 
         async function toggleDisponible(tipo, valor, mesDisp){
             if(tipo === 'dia' && mesDisp === 'true') {
-                // month is enabled — toggle exclusion for this specific day
                 const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
                 if(excl){
                     await sb.from('dias_disponibles').delete().eq('id',excl.id);
@@ -2118,14 +1709,11 @@
             });
         }
 
-        /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
         let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let selectedDate = null;
         let selectedTime = null;
         let activePeriod = 'morning';
 
-        function pad2(n){ return String(n).padStart(2,'0'); }
-        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
         function fmtPretty(d){
             const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
             return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
@@ -2138,7 +1726,6 @@
 
             monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
 
-            // limit prev nav: cannot go before current month
             const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('calPrev').disabled = calCursor <= minMonth;
 
@@ -2148,16 +1735,14 @@
             const year = calCursor.getFullYear();
             const month = calCursor.getMonth();
             const firstDay = new Date(year, month, 1);
-            // mon=0 .. sun=6
             let startOffset = (firstDay.getDay() + 6) % 7;
             const daysInMonth = new Date(year, month+1, 0).getDate();
             const prevDays = new Date(year, month, 0).getDate();
 
-            // leading days from prev month
             for (let i = startOffset - 1; i >= 0; i--) {
                 grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
             }
-            // current month
+
             for (let d = 1; d <= daysInMonth; d++) {
                 const dt = new Date(year, month, d);
                 const iso = fmtISO(dt);
@@ -2165,14 +1750,16 @@
                 const isToday = dt.getTime() === today.getTime();
                 const isSelected = selectedDate && fmtISO(selectedDate) === iso;
                 const noDisp = diasDisponibles.length > 0 && !isDiaDisponible(iso);
+
                 let cls = 'cal-day';
                 if (past || noDisp) cls += ' disabled';
                 if (noDisp && !past) cls += ' no-disponible';
                 if (isToday) cls += ' today';
                 if (isSelected) cls += ' selected';
+
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
             }
-            // trailing fill to multiple of 7
+
             const totalCells = startOffset + daysInMonth;
             const trail = (7 - (totalCells % 7)) % 7;
             for (let i = 1; i <= trail; i++) {
@@ -2257,9 +1844,8 @@
             renderTimeSlots();
         }
 
-        /* ---------- INIT ---------- */
         let agendaInitialized = false;
-
+        
         initPicker();
         mostrarVista('login');
     </script>
