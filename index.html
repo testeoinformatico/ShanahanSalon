@@ -115,6 +115,7 @@
             z-index: 999;
             overflow-x: auto;
             box-shadow: var(--shadow-sm);
+            animation: viewIn 0.5s ease-in-out;
         }
         .admin-menu-item {
             background: transparent;
@@ -195,7 +196,7 @@
             letter-spacing: 0.6px;
         }
         .welcome-close {
-            background: linear-gradient(135deg, var(--accent), var(--accent-light);
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
             color: #2C0A11;
             border: none;
             padding: 14px 28px;
@@ -858,14 +859,6 @@
             font-size: 14px;
             color: var(--muted);
         }
-        
-        /* Responsive tweaks */
-        @media (max-width: 768px) {
-            .admin-menu { gap: 12px; }
-            .admin-menu-item { font-size: 10px; gap: 6px; }
-            .welcome-box { padding: 32px 24px; }
-            .welcome-name { font-size: 30px; }
-        }
     </style>
 </head>
 <body>
@@ -892,7 +885,7 @@
         <button class="admin-menu-item" data-section="disponibilidad" onclick="switchAdminSection('disponibilidad')">
             <i class="fa-solid fa-calendar-days"></i> Disponibilidad
         </button>
-        <button class="admin-menu-item" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.6);">
+        <button class="admin-menu-item" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.5); margin-left: auto;">
             <i class="fa-solid fa-right-from-bracket"></i> Salir
         </button>
     </nav>
@@ -908,6 +901,7 @@
     </div>
 
     <main class="container py-5">
+
         <section id="login" class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="brand-container view-anim">
@@ -1301,7 +1295,7 @@
     <script>
         const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANONKEY);
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const SALON_WHATSAPP = '34621303635';
         const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
@@ -1337,12 +1331,10 @@
             modal.classList.add('show');
             return new Promise(resolve => { confirmResolver = resolve; });
         }
-
         function closeConfirm(result) {
             document.getElementById('confirmModal').classList.remove('show');
             if (confirmResolver) confirmResolver(result);
         }
-
         document.getElementById('confirmModal').addEventListener('click', e => {
             if (e.target.id === 'confirmModal') closeConfirm(false);
         });
@@ -1377,8 +1369,6 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
-
-        const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
 
         function switchAdminSection(name) {
             ADMIN_SECTIONS.forEach(s => {
@@ -1545,7 +1535,9 @@
 
         function whatsappCambioCita(nombre, fecha, hora) {
             const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
-            const fechaTexto = dt ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}` : 'mi cita';
+            const fechaTexto = dt
+                ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`
+                : 'mi cita';
             const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
             return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
         }
@@ -1589,7 +1581,11 @@
         function isDiaDisponible(iso){
             if(diasDisponibles.length === 0) return false;
             const mes = iso.substring(0,7);
+            
+            // Si el día está explícitamente excluido, no está disponible
             if(diasDisponibles.some(b => b.tipo === 'excluido' && b.valor === iso)) return false;
+            
+            // Si el mes está habilitado o el día está explícitamente habilitado
             return diasDisponibles.some(b => (b.tipo === 'dia' && b.valor === iso) || (b.tipo === 'mes' && b.valor === mes));
         }
 
@@ -1600,7 +1596,7 @@
                 renderDCalendar();
                 renderMesesGrid();
                 renderDispDiaItems();
-                renderCalendar();
+                renderCalendar(); 
             } catch(e) { console.warn('dias_disponibles tabla no existe aún', e); }
         }
 
@@ -1667,48 +1663,7 @@
             }
         }
 
-        async function toggleDisponible(tipo, valor, mesDisp){
-            if(tipo === 'dia' && mesDisp === 'true') {
-                const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
-                if(excl){
-                    await sb.from('dias_disponibles').delete().eq('id',excl.id);
-                    toast('Día reactivado dentro del mes','success');
-                } else {
-                    await sb.from('dias_disponibles').insert([{tipo:'excluido', valor}]);
-                    toast('Día excluido del mes','info');
-                }
-            } else {
-                const existing = diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
-                if(existing){
-                    await sb.from('dias_disponibles').delete().eq('id',existing.id);
-                    toast(tipo==='mes' ? 'Mes deshabilitado' : 'Día deshabilitado', 'info');
-                } else {
-                    await sb.from('dias_disponibles').insert([{tipo, valor}]);
-                    toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
-                }
-            }
-            cargarDisponibles();
-        }
-
-        function initDispPanel(){
-            document.getElementById('dCalPrev').addEventListener('click',()=>{
-                dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()-1,1);
-                renderDCalendar();
-            });
-            document.getElementById('dCalNext').addEventListener('click',()=>{
-                dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()+1,1);
-                renderDCalendar();
-            });
-            document.querySelectorAll('.disp-tab').forEach(tab=>{
-                tab.addEventListener('click',()=>{
-                    document.querySelectorAll('.disp-tab').forEach(t=>t.classList.remove('active'));
-                    document.querySelectorAll('.disp-panel').forEach(p=>p.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById('dpanel'+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1)).classList.add('active');
-                });
-            });
-        }
-
+        /* ---------- CALENDAR AND TIME SLOTS ---------- */
         let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let selectedDate = null;
         let selectedTime = null;
@@ -1725,13 +1680,12 @@
             if (!monthEl || !grid) return;
 
             monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
-
             const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('calPrev').disabled = calCursor <= minMonth;
 
             grid.innerHTML = '';
             DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
-
+            
             const year = calCursor.getFullYear();
             const month = calCursor.getMonth();
             const firstDay = new Date(year, month, 1);
@@ -1742,7 +1696,7 @@
             for (let i = startOffset - 1; i >= 0; i--) {
                 grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
             }
-
+            
             for (let d = 1; d <= daysInMonth; d++) {
                 const dt = new Date(year, month, d);
                 const iso = fmtISO(dt);
@@ -1750,16 +1704,16 @@
                 const isToday = dt.getTime() === today.getTime();
                 const isSelected = selectedDate && fmtISO(selectedDate) === iso;
                 const noDisp = diasDisponibles.length > 0 && !isDiaDisponible(iso);
-
+                
                 let cls = 'cal-day';
                 if (past || noDisp) cls += ' disabled';
                 if (noDisp && !past) cls += ' no-disponible';
                 if (isToday) cls += ' today';
                 if (isSelected) cls += ' selected';
-
+                
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
             }
-
+            
             const totalCells = startOffset + daysInMonth;
             const trail = (7 - (totalCells % 7)) % 7;
             for (let i = 1; i <= trail; i++) {
@@ -1844,8 +1798,6 @@
             renderTimeSlots();
         }
 
-        let agendaInitialized = false;
-        
         initPicker();
         mostrarVista('login');
     </script>
