@@ -46,7 +46,6 @@
             background-image:
                 radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.06), transparent 55%),
                 radial-gradient(ellipse at bottom right, rgba(146, 31, 35, 0.05), transparent 55%);
-            transition: padding 0.4s var(--ease);
         }
 
         ::selection { background: var(--burgundy); color: #fff; }
@@ -78,9 +77,19 @@
             transition: opacity .25s var(--ease);
         }
         .nav-logo:hover { opacity: .82; }
-        .nav-logo img { height: 44px; width: auto; display: block; -webkit-user-drag: none; user-select: none; }
-        @media (max-width: 768px) { .nav-logo img { height: 36px; } }
-        @media (max-width: 360px) { .nav-logo img { height: 32px; } }
+        .nav-logo img {
+            height: 44px;
+            width: auto;
+            display: block;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+        @media (max-width: 768px) {
+            .nav-logo img { height: 36px; }
+        }
+        @media (max-width: 360px) {
+            .nav-logo img { height: 32px; }
+        }
 
         .nav-actions { display: flex; gap: 10px; }
 
@@ -103,53 +112,528 @@
         .nav-btn.solid:hover { background: var(--burgundy-dark); }
 
         /* ---------- BRAND ---------- */
-        .brand-container { text-align: center; margin-bottom: 36px; position: relative; }
-        .brand-ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 18px; color: var(--accent); font-size: 11px; letter-spacing: 6px; text-transform: uppercase; font-weight: 500; }
-        .brand-ornament::before, .brand-ornament::after { content: ''; height: 1px; width: 50px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
-        .brand-main { font-family: 'Playfair Display', serif; font-size: clamp(38px, 6vw, 52px); color: var(--burgundy); text-transform: uppercase; font-weight: 700; line-height: .95; letter-spacing: 2px; }
-        .brand-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(46px, 7vw, 64px); color: var(--burgundy); margin-top: -12px; display: block; font-weight: 400; }
+        .brand-container {
+            text-align: center;
+            margin-bottom: 36px;
+            position: relative;
+        }
+        .brand-ornament {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            color: var(--accent);
+            font-size: 11px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .brand-ornament::before,
+        .brand-ornament::after {
+            content: '';
+            height: 1px;
+            width: 50px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .brand-main {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(38px, 6vw, 52px);
+            color: var(--burgundy);
+            text-transform: uppercase;
+            font-weight: 700;
+            line-height: .95;
+            letter-spacing: 2px;
+        }
+        .brand-sub {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(46px, 7vw, 64px);
+            color: var(--burgundy);
+            margin-top: -12px;
+            display: block;
+            font-weight: 400;
+        }
 
         /* ---------- CARD ---------- */
-        .luxury-card { background: #fff; padding: 44px 40px; box-shadow: var(--shadow-md); position: relative; border: 1px solid rgba(229, 218, 206, 0.6); }
-        .luxury-card::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(201, 167, 77, 0.18); pointer-events: none; }
+        .luxury-card {
+            background: #fff;
+            padding: 44px 40px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            border: 1px solid rgba(229, 218, 206, 0.6);
+        }
+        .luxury-card::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 1px solid rgba(201, 167, 77, 0.18);
+            pointer-events: none;
+        }
         .luxury-card > * { position: relative; z-index: 1; }
-        .card-title { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 13px; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 6px; font-weight: 600; }
-        .card-subtitle { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 32px; font-weight: 300; letter-spacing: .5px; }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-align: center;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .card-subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 32px;
+            font-weight: 300;
+            letter-spacing: .5px;
+        }
 
         /* ---------- FORMS ---------- */
         .field { position: relative; margin-bottom: 22px; }
-        .field input, .field select { width: 100%; border: none; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; padding: 14px 0 8px; font-size: 14px; color: var(--dark-text); font-family: 'Poppins', sans-serif; outline: none; transition: border-color .3s var(--ease); }
+        .field input,
+        .field select {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--line);
+            border-radius: 0;
+            background: transparent;
+            padding: 14px 0 8px;
+            font-size: 14px;
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color .3s var(--ease);
+        }
         .field input::placeholder { color: transparent; }
-        .field label { position: absolute; top: 16px; left: 0; color: var(--muted); font-size: 13px; pointer-events: none; transition: all .3s var(--ease); letter-spacing: .3px; }
-        .field input:focus, .field select:focus { border-bottom-color: var(--burgundy); }
-        .field input:focus + label, .field input:not(:placeholder-shown) + label, .field select:focus + label, .field select.has-value + label { top: -6px; font-size: 10px; color: var(--burgundy); letter-spacing: 2px; text-transform: uppercase; }
-        .field input[type="date"], .field input[type="time"] { color: var(--dark-text); font-family: 'Poppins', sans-serif; }
-        .field-icon { position: absolute; right: 0; top: 16px; color: var(--line); font-size: 13px; pointer-events: none; }
+        .field label {
+            position: absolute;
+            top: 16px;
+            left: 0;
+            color: var(--muted);
+            font-size: 13px;
+            pointer-events: none;
+            transition: all .3s var(--ease);
+            letter-spacing: .3px;
+        }
+        .field input:focus,
+        .field select:focus { border-bottom-color: var(--burgundy); }
+        .field input:focus + label,
+        .field input:not(:placeholder-shown) + label,
+        .field select:focus + label,
+        .field select.has-value + label {
+            top: -6px;
+            font-size: 10px;
+            color: var(--burgundy);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .field input[type="date"],
+        .field input[type="time"] {
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
+        }
+        .field-icon {
+            position: absolute;
+            right: 0;
+            top: 16px;
+            color: var(--line);
+            font-size: 13px;
+            pointer-events: none;
+        }
 
         /* ---------- BUTTONS ---------- */
-        .btn-luxury { background: var(--burgundy); color: #fff; border: none; padding: 16px 22px; font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase; width: 100%; margin-top: 12px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; position: relative; overflow: hidden; transition: all .35s var(--ease); }
-        .btn-luxury::after { content: ''; position: absolute; inset: 0; background: var(--burgundy-dark); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); z-index: 0; }
+        .btn-luxury {
+            background: var(--burgundy);
+            color: #fff;
+            border: none;
+            padding: 16px 22px;
+            font-size: 11px;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 12px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all .35s var(--ease);
+        }
+        .btn-luxury::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--burgundy-dark);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .4s var(--ease);
+            z-index: 0;
+        }
         .btn-luxury > * { position: relative; z-index: 1; }
         .btn-luxury span { position: relative; z-index: 1; }
         .btn-luxury:hover::after { transform: scaleX(1); }
         .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(146, 31, 35, .25); }
         .btn-luxury:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
-        .btn-luxury .spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; margin-left: 8px; vertical-align: -2px; }
+        .btn-luxury .spinner {
+            display: none;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin-left: 8px;
+            vertical-align: -2px;
+        }
         .btn-luxury.loading .spinner { display: inline-block; }
+
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 12px 18px; font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all .3s var(--ease); font-family: 'Poppins', sans-serif; }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--line);
+            color: var(--muted);
+            padding: 12px 18px;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .3s var(--ease);
+            font-family: 'Poppins', sans-serif;
+        }
         .btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
-        .link-soft { background: none; border: none; color: var(--muted); font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; cursor: pointer; padding: 14px 0 0; display: block; width: 100%; text-align: center; transition: color .3s var(--ease); }
+
+        .link-soft {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 10.5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 14px 0 0;
+            display: block;
+            width: 100%;
+            text-align: center;
+            transition: color .3s var(--ease);
+        }
         .link-soft:hover { color: var(--burgundy); }
-        .divider-soft { display: flex; align-items: center; gap: 12px; margin: 24px 0 18px; color: var(--line); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
-        .divider-soft::before, .divider-soft::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+        .divider-soft {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0 18px;
+            color: var(--line);
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .divider-soft::before,
+        .divider-soft::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        /* ---------- STAMPS ---------- */
+        .stamps-wrap {
+            background: linear-gradient(180deg, #fff, var(--cream));
+            border: 1px solid rgba(201, 167, 77, 0.25);
+            padding: 30px 26px;
+            margin: 28px 0 24px;
+        }
+        .stamps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 18px;
+        }
+        .stamps-header .label {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-style: italic;
+            font-size: 14px;
+        }
+        .stamps-header .count {
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .stamps-header .count strong { color: var(--burgundy); font-weight: 600; }
+
+        .stamps-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        .stamp-circle {
+            aspect-ratio: 1;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            color: #C9BCB0;
+            background: #fff;
+            font-size: 16px;
+            position: relative;
+            transition: all .4s var(--ease);
+        }
+        .stamp-circle.active {
+            background: var(--burgundy);
+            color: #fff;
+            border-color: var(--burgundy);
+            box-shadow: 0 6px 16px rgba(146, 31, 35, .25);
+        }
+        .stamp-circle.active::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 50%;
+        }
+        .stamp-circle.reward {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 8px 22px rgba(201, 167, 77, .35);
+        }
+
+        .reward-info {
+            text-align: center;
+            padding: 20px 18px;
+            background: var(--burgundy-soft);
+            border-left: 2px solid var(--burgundy);
+            color: var(--burgundy);
+            font-size: 12.5px;
+            letter-spacing: .8px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .reward-info.gold {
+            background: rgba(201, 167, 77, 0.10);
+            border-left-color: var(--accent);
+            color: #8a6f25;
+        }
+        .reward-info i { margin-right: 8px; }
+
+        /* ---------- ADMIN ---------- */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .admin-header h5 {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-header h5 i { color: var(--accent); font-size: 16px; }
+
+        .admin-search { position: relative; flex: 0 1 240px; }
+        .admin-search input {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: var(--cream);
+            padding: 9px 12px 9px 34px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+            outline: none;
+            transition: all .3s var(--ease);
+        }
+        .admin-search input:focus { border-color: var(--burgundy); background: #fff; }
+        .admin-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .admin-table th {
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--burgundy);
+            border-bottom: 1px solid var(--burgundy);
+            padding: 10px 14px;
+            font-weight: 600;
+            text-align: left;
+        }
+        .admin-table tbody tr {
+            background: var(--cream);
+            transition: all .3s var(--ease);
+        }
+        .admin-table tbody tr:hover {
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            transform: translateX(2px);
+        }
+        .admin-table td {
+            padding: 14px;
+            font-size: 13px;
+            border: none;
+            vertical-align: middle;
+        }
+        .admin-table td:first-child { padding-left: 18px; }
+        .admin-table td:last-child { padding-right: 18px; }
+        .client-name { font-weight: 600; color: var(--dark-text); }
+        .client-phone { color: var(--muted); font-size: 11px; letter-spacing: .5px; }
+
+        .stamps-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .stamps-pill .bar {
+            width: 60px;
+            height: 4px;
+            background: var(--line);
+            position: relative;
+            overflow: hidden;
+        }
+        .stamps-pill .bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            width: var(--p, 0%);
+            background: linear-gradient(90deg, var(--burgundy), var(--accent));
+            transition: width .6s var(--ease);
+        }
+        .stamps-pill.full { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+
+        .action-icon {
+            cursor: pointer;
+            margin: 0 4px;
+            color: var(--muted);
+            width: 32px; height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            background: #fff;
+            transition: all .25s var(--ease);
+            font-size: 12px;
+        }
+        .action-icon:hover { color: var(--burgundy); border-color: var(--burgundy); transform: translateY(-1px); }
+        .action-icon.danger:hover { color: #fff; background: var(--burgundy); border-color: var(--burgundy); }
+        .action-icon.success:hover { color: #fff; background: #2C2C2C; border-color: #2C2C2C; }
+
+        .cita-card {
+            border: 1px solid var(--line);
+            background: var(--cream);
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            transition: all .3s var(--ease);
+            position: relative;
+        }
+        .cita-card:hover { background: #fff; box-shadow: var(--shadow-sm); }
+        .cita-card .cita-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--burgundy);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .cita-card .cita-meta {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        .cita-card .cita-meta i { color: var(--accent); margin-right: 5px; }
+        .cita-actions { display: flex; gap: 8px; }
+        .cita-btn {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all .25s var(--ease);
+        }
+        .cita-btn.approve { background: var(--burgundy); color: #fff; }
+        .cita-btn.approve:hover { background: var(--burgundy-dark); }
+        .cita-btn.reject { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+        .cita-btn.reject:hover { color: var(--burgundy); border-color: var(--burgundy); }
 
         /* ---------- BIG CTA ---------- */
-        .btn-cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: #fff; border: none; padding: 18px 22px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 3.5px; text-transform: uppercase; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 14px 32px rgba(201, 167, 77, 0.32); transition: all .4s var(--ease); margin-top: 4px; }
-        .btn-cta::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #B89238 0%, var(--accent) 100%); opacity: 0; transition: opacity .4s var(--ease); }
-        .btn-cta::after { content: ''; position: absolute; top: 0; left: -75%; width: 50%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg); animation: shine 3.5s ease-in-out infinite; }
-        @keyframes shine { 0%, 60% { left: -75%; } 100% { left: 130%; } }
+        .btn-cta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: #fff;
+            border: none;
+            padding: 18px 22px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 14px 32px rgba(201, 167, 77, 0.32);
+            transition: all .4s var(--ease);
+            margin-top: 4px;
+        }
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #B89238 0%, var(--accent) 100%);
+            opacity: 0;
+            transition: opacity .4s var(--ease);
+        }
+        .btn-cta::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -75%;
+            width: 50%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
+            transform: skewX(-20deg);
+            animation: shine 3.5s ease-in-out infinite;
+        }
+        @keyframes shine {
+            0%, 60% { left: -75%; }
+            100% { left: 130%; }
+        }
         .btn-cta > * { position: relative; z-index: 1; }
         .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(201, 167, 77, 0.45); }
         .btn-cta:hover::before { opacity: 1; }
@@ -158,220 +642,6 @@
         .btn-cta .cta-main { font-family: 'Playfair Display', serif; font-style: italic; font-size: 19px; font-weight: 600; letter-spacing: 1px; text-transform: none; }
         .btn-cta .cta-arrow { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform .35s var(--ease); }
         .btn-cta:hover .cta-arrow { transform: translateX(4px); background: rgba(255,255,255,.3); }
-
-        /* ---------- ADMIN MENU Y BIENVENIDA ESTÉTICA ---------- */
-        .admin-menu {
-            position: fixed;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 240px;
-            background: rgba(45, 16, 17, 0.95);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(201, 167, 77, 0.3);
-            padding: 30px 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 1100;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.3);
-            border-radius: 0;
-            transition: all 0.4s var(--ease);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .admin-menu.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .admin-menu-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(201, 167, 77, 0.2);
-        }
-
-        .admin-menu-header .mini-logo {
-            font-family: 'Playfair Display', serif;
-            color: var(--accent-light);
-            font-size: 18px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .admin-menu-item {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.4s var(--ease);
-            position: relative;
-            text-align: left;
-        }
-
-        .admin-menu-item i {
-            font-size: 16px;
-            color: var(--accent);
-            transition: all 0.4s var(--ease);
-        }
-
-        .admin-menu-item:hover {
-            color: #fff;
-            background: rgba(201, 167, 77, 0.1);
-        }
-
-        .admin-menu-item.active {
-            color: #fff;
-            background: rgba(146, 31, 35, 0.5);
-        }
-
-        .admin-menu-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background: var(--accent);
-        }
-
-        .admin-menu-item.active i {
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        .admin-menu-sep {
-            margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 10px;
-        }
-
-        .admin-menu-end { color: #ff9e9e !important; }
-        .admin-menu-end i { color: #ff9e9e !important; }
-
-        @media (min-width: 769px) {
-            #vistaAdmin.active-layout {
-                margin-left: 280px;
-                transition: margin 0.5s var(--ease);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .admin-menu {
-                left: 0; bottom: 0; top: auto; transform: none; width: 100%; height: auto;
-                flex-direction: row; justify-content: space-around; padding: 10px 5px;
-                border-radius: 20px 20px 0 0; border-left: none; border-top: 1px solid rgba(201, 167, 77, 0.4);
-            }
-            .admin-menu-header, .admin-menu-sep { display: none; }
-            .admin-menu-item {
-                flex-direction: column; gap: 5px; padding: 10px 5px; font-size: 8px;
-                letter-spacing: 1px; flex: 1; align-items: center; text-align: center;
-            }
-            .admin-menu-item i { font-size: 18px; }
-            .admin-menu-item.active::before { height: 3px; width: 20px; top: 0; left: 50%; transform: translateX(-50%); }
-            body.admin-mode { padding-bottom: 80px; }
-        }
-
-        /* WELCOME MODAL Lujoso */
-        .welcome-modal {
-            position: fixed; inset: 0;
-            background: rgba(18, 5, 6, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.5s var(--ease);
-        }
-        .welcome-modal.show { display: flex; opacity: 1; }
-        .welcome-box {
-            background: #fff;
-            padding: 50px 40px;
-            max-width: 400px; width: 90%;
-            text-align: center;
-            border: 1px solid var(--accent);
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.5s var(--ease);
-        }
-        .welcome-modal.show .welcome-box { transform: translateY(0); }
-        .welcome-box::after {
-            content: ''; position: absolute; inset: 10px;
-            border: 1px solid rgba(146, 31, 35, 0.1); pointer-events: none;
-        }
-        .welcome-crown { font-size: 40px; display: block; margin-bottom: 15px; color: var(--accent); }
-        .welcome-title { font-family: 'Poppins', sans-serif; text-transform: uppercase; letter-spacing: 3px; font-size: 11px; color: var(--muted); }
-        .welcome-name { font-family: 'Playfair Display', serif; font-size: 32px; font-style: italic; color: var(--burgundy); margin-bottom: 15px; text-transform: capitalize;}
-        .welcome-msg { color: var(--muted); font-size: 13px; line-height: 1.6; }
-        .welcome-close {
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            color: #fff; border: none; padding: 15px 30px; font-size: 10px;
-            text-transform: uppercase; letter-spacing: 2.5px; font-weight: 600; cursor: pointer;
-            margin-top: 25px; transition: all 0.3s; box-shadow: 0 10px 20px rgba(201, 167, 77, 0.3);
-        }
-        .welcome-close:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(201, 167, 77, 0.4); }
-
-        /* ---------- STAMPS (Cliente) ---------- */
-        .stamps-wrap { background: linear-gradient(180deg, #fff, var(--cream)); border: 1px solid rgba(201, 167, 77, 0.25); padding: 30px 26px; margin: 28px 0 24px; }
-        .stamps-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; }
-        .stamps-header .label { font-family: 'Playfair Display', serif; color: var(--burgundy); font-style: italic; font-size: 14px; }
-        .stamps-header .count { color: var(--muted); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
-        .stamps-header .count strong { color: var(--burgundy); font-weight: 600; }
-        .stamps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .stamp-circle { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: #C9BCB0; background: #fff; font-size: 16px; position: relative; transition: all .4s var(--ease); }
-        .stamp-circle.active { background: var(--burgundy); color: #fff; border-color: var(--burgundy); box-shadow: 0 6px 16px rgba(146, 31, 35, .25); }
-        .stamp-circle.active::after { content: ''; position: absolute; inset: 3px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; }
-        .stamp-circle.reward { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; border-color: var(--accent); box-shadow: 0 8px 22px rgba(201, 167, 77, .35); }
-        .reward-info { text-align: center; padding: 20px 18px; background: var(--burgundy-soft); border-left: 2px solid var(--burgundy); color: var(--burgundy); font-size: 12.5px; letter-spacing: .8px; font-weight: 500; margin-top: 10px; }
-        .reward-info.gold { background: rgba(201, 167, 77, 0.10); border-left-color: var(--accent); color: #8a6f25; }
-
-        /* ---------- ADMIN STATS & TABLES ---------- */
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-        .admin-header h5 { font-family: 'Playfair Display', serif; color: var(--burgundy); margin: 0; font-size: 22px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
-        .admin-search { position: relative; flex: 0 1 240px; }
-        .admin-search input { width: 100%; border: 1px solid var(--line); background: var(--cream); padding: 9px 12px 9px 34px; font-size: 12px; font-family: 'Poppins', sans-serif; color: var(--dark-text); outline: none; transition: all .3s var(--ease); }
-        .admin-search input:focus { border-color: var(--burgundy); background: #fff; }
-        .admin-search i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 11px; }
-
-        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .admin-table th { font-size: 9.5px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--burgundy); border-bottom: 1px solid var(--burgundy); padding: 10px 14px; font-weight: 600; text-align: left; }
-        .admin-table tbody tr { background: var(--cream); transition: all .3s var(--ease); }
-        .admin-table tbody tr:hover { background: #fff; box-shadow: var(--shadow-sm); transform: translateX(2px); }
-        .admin-table td { padding: 14px; font-size: 13px; border: none; vertical-align: middle; }
-        .admin-table td:first-child { padding-left: 18px; }
-        .admin-table td:last-child { padding-right: 18px; }
-        .client-name { font-weight: 600; color: var(--dark-text); }
-        .client-phone { color: var(--muted); font-size: 11px; letter-spacing: .5px; }
-        .stamps-pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); padding: 5px 12px; font-size: 11px; font-weight: 600; letter-spacing: 1px; }
-        .stamps-pill .bar { width: 60px; height: 4px; background: var(--line); position: relative; overflow: hidden; }
-        .stamps-pill .bar::after { content: ''; position: absolute; inset: 0; width: var(--p, 0%); background: linear-gradient(90deg, var(--burgundy), var(--accent)); transition: width .6s var(--ease); }
-        .stamps-pill.full { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
-
-        .action-icon { cursor: pointer; margin: 0 4px; color: var(--muted); width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); background: #fff; transition: all .25s var(--ease); font-size: 12px; }
-        .action-icon:hover { color: var(--burgundy); border-color: var(--burgundy); transform: translateY(-1px); }
-        .action-icon.danger:hover { color: #fff; background: var(--burgundy); border-color: var(--burgundy); }
-        .action-icon.success:hover { color: #fff; background: #2C2C2C; border-color: #2C2C2C; }
-
-        .cita-card { border: 1px solid var(--line); background: var(--cream); padding: 16px 18px; margin-bottom: 12px; transition: all .3s var(--ease); position: relative; }
-        .cita-card:hover { background: #fff; box-shadow: var(--shadow-sm); }
-        .cita-card .cita-name { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--burgundy); font-weight: 600; margin-bottom: 4px; }
-        .cita-card .cita-meta { font-size: 12px; color: var(--muted); display: flex; gap: 14px; margin-bottom: 12px; }
-        .cita-actions { display: flex; gap: 8px; }
-        .cita-btn { flex: 1; padding: 8px 10px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .25s var(--ease); }
-        .cita-btn.approve { background: var(--burgundy); color: #fff; }
-        .cita-btn.approve:hover { background: var(--burgundy-dark); }
-        .cita-btn.reject { background: transparent; color: var(--muted); border: 1px solid var(--line); }
-        .cita-btn.reject:hover { color: var(--burgundy); border-color: var(--burgundy); }
 
         /* ---------- SOCIAL BAR ---------- */
         .social-section { margin-top: 28px; text-align: center; }
@@ -408,7 +678,13 @@
         .toast { background: #fff; border-left: 3px solid var(--burgundy); padding: 14px 18px; box-shadow: var(--shadow-lg); font-size: 13px; color: var(--dark-text); display: flex; align-items: flex-start; gap: 12px; animation: toastIn .4s var(--ease) forwards; transform: translateX(120%); opacity: 0; }
         .toast.success { border-left-color: var(--accent); }
         .toast.error { border-left-color: #b03030; }
+        .toast i { color: var(--burgundy); margin-top: 2px; }
+        .toast.success i { color: var(--accent); }
+        .toast.error i { color: #b03030; }
         .toast .msg-title { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 600; color: var(--burgundy); margin-bottom: 2px; }
+        .toast.success .msg-title { color: #8a6f25; }
+        .toast.error .msg-title { color: #b03030; }
+        .toast .msg-body { font-size: 12px; color: var(--muted); line-height: 1.4; }
         .toast.out { animation: toastOut .35s var(--ease) forwards; }
         @keyframes toastIn { to { transform: translateX(0); opacity: 1; } }
         @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
@@ -447,6 +723,7 @@
         .access-form .field label { color: rgba(255,255,255,.55); }
         .access-form .field input:focus { border-bottom-color: var(--accent); }
         .access-form .field input:focus + label, .access-form .field input:not(:placeholder-shown) + label { color: var(--accent); }
+        .access-form .field-icon { color: rgba(255,255,255,.3); }
         .access-form .btn-luxury { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: #2D1011; box-shadow: 0 12px 28px rgba(201, 167, 77, .35); }
         .access-form .btn-luxury::after { background: linear-gradient(135deg, #B89238, var(--accent)); }
         .access-form .btn-luxury:hover { box-shadow: 0 18px 36px rgba(201, 167, 77, .5); }
@@ -456,7 +733,7 @@
         .access-feature { text-align: center; color: rgba(255,255,255,.7); font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; }
         .access-feature i { display: block; font-size: 16px; color: var(--accent-light); margin-bottom: 6px; }
 
-        /* ---------- MIS CITAS (vista cliente) ---------- */
+        /* ---------- MIS CITAS ---------- */
         .mis-citas-section { margin-top: 28px; text-align: left; }
         .mis-citas-title { display: flex; align-items: center; justify-content: center; gap: 12px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: var(--muted); margin-bottom: 18px; }
         .mis-citas-title::before, .mis-citas-title::after { content: ''; flex: 1; max-width: 50px; height: 1px; background: var(--line); }
@@ -487,7 +764,7 @@
         .mis-citas-empty i { display: block; font-size: 22px; color: var(--line); margin-bottom: 10px; }
         .mis-citas-empty .label { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: var(--muted); }
 
-        /* ---------- AGENDA VISUAL (admin) ---------- */
+        /* ---------- AGENDA VISUAL ---------- */
         .agenda-wrap { display: grid; grid-template-columns: 360px 1fr; gap: 0; border: 1px solid rgba(229, 218, 206, 0.6); background: #fff; }
         .agenda-cal { padding: 22px; border-right: 1px solid var(--line); background: linear-gradient(180deg, #fff, var(--cream)); }
         .agenda-day-panel { padding: 22px 26px; min-height: 460px; display: flex; flex-direction: column; background: #fff; }
@@ -616,7 +893,6 @@
             .agenda-cal { border-right: none; border-bottom: 1px solid var(--line); }
             .agenda-day-panel { min-height: auto; padding: 22px; }
         }
-
         @media (max-width: 768px) {
             body { background-image: radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.05), transparent 60%), radial-gradient(ellipse at bottom right, rgba(146, 31, 35, 0.04), transparent 60%); }
             main.container { padding-left: 14px !important; padding-right: 14px !important; padding-top: 24px !important; padding-bottom: 24px !important; }
@@ -627,7 +903,6 @@
             .btn-luxury { padding: 16px 18px; font-size: 11px; letter-spacing: 3px; }
             .btn-ghost { padding: 12px 16px; font-size: 10px; letter-spacing: 2px; }
             .stamps-wrap { padding: 22px 18px; }
-            .stamps-container { gap: 8px; }
             .calendar { padding: 14px 12px; }
             .time-slots { grid-template-columns: repeat(3, 1fr); gap: 6px; }
             .stat-row { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
@@ -668,14 +943,12 @@
             .appt-actions { grid-column: 1 / -1; justify-content: flex-end; padding-top: 6px; border-top: 1px dashed var(--line); }
             .estado-select-group { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 360px) {
             .brand-main { font-size: 28px; }
             .brand-sub { font-size: 36px; }
             .cal-day { font-size: 11px; }
             .time-slot { font-size: 11.5px; padding: 11px 2px; }
         }
-
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
             .btn-cta::after { animation: none; }
@@ -695,7 +968,7 @@
         </div>
     </nav>
 
-    <nav class="admin-menu" id="adminMenu" style="display:none;">
+    <nav class="admin-menu" id="adminMenu">
         <div class="admin-menu-header">
             <div class="mini-logo">Shanahan</div>
             <div style="font-size: 8px; letter-spacing: 2px; color: var(--accent); margin-top: 5px;">ADMIN PANEL</div>
@@ -734,7 +1007,7 @@
         <div class="welcome-box">
             <span class="welcome-crown"><i class="fa-solid fa-crown"></i></span>
             <div class="welcome-title">Bienvenida de vuelta</div>
-            <div class="welcome-name">Mi Culona</div>
+            <div class="welcome-name">Shanahan</div>
             <div class="welcome-msg">El salón te espera. Tienes <strong id="welcomePendientes" style="color:var(--burgundy);">0</strong> solicitudes pendientes y <strong id="welcomeHoy" style="color:var(--burgundy);">0</strong> citas para hoy.</div>
             <button class="welcome-close" onclick="closeWelcome()">Entrar al panel</button>
         </div>
@@ -1136,8 +1409,6 @@
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const SALON_WHATSAPP = '34621303635';
-        const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
-        const SALON_TIKTOK = 'https://www.tiktok.com/@shanahanails';
 
         let clientas = [];
         let citas = [];
@@ -1231,7 +1502,6 @@
             }
         }
 
-
         /* ---------- ADMIN NAV SECTIONS ---------- */
         const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
 
@@ -1310,7 +1580,7 @@
         async function iniciarSesionCliente() {
             const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
             const telef = document.getElementById('loginPass').value.trim();
-            if (!nombre || !telef) return toast('Introduce tu nombre y teléfono', 'error');
+            if (!nombre || !telef) return alert('Introduce tu nombre y teléfono'); // Se cambia toast por alert para que sea visible
 
             setBtnLoading('btnLoginCliente', true);
             try {
@@ -1344,10 +1614,10 @@
                     await renderMisCitas(cliente);
                     mostrarVista('vistaCliente');
                 } else {
-                    toast('No se encontró el registro. Solicita una cita para registrarte.', 'error');
+                    alert('No se encontró el registro. Solicita una cita para registrarte.');
                 }
             } catch (e) {
-                toast('Error al consultar tus datos', 'error');
+                alert('Error al consultar tus datos');
             } finally {
                 setBtnLoading('btnLoginCliente', false);
             }
@@ -1422,6 +1692,7 @@
         /* ---------- APPOINTMENT REQUEST ---------- */
         async function enviarSolicitudCita() {
             const cita = {
+                id: Date.now(), // <-- Añadido el identificador para que no se rechace
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
                 telefono: document.getElementById('citaTelefono').value.trim(),
                 fecha: document.getElementById('citaFecha').value,
@@ -1429,22 +1700,22 @@
                 estado: 'pendiente'
             };
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
-                return toast('Completa todos los campos', 'error');
+                return alert('Por favor, completa todos los campos (Nombre, Teléfono, Fecha y Hora).');
             }
 
             setBtnLoading('btnEnviarCita', true);
             try {
                 const { error } = await sb.from('citas').insert([cita]);
                 if (!error) {
-                    toast('Solicitud enviada. Te contactaremos para confirmar.', 'success', 'Reserva enviada');
+                    alert('✅ ¡Cita solicitada con éxito! Hemos recibido tu petición y te contactaremos para confirmar.');
                     document.querySelectorAll('#vistaPedirCita input[type="text"], #vistaPedirCita input[type="tel"]').forEach(i => i.value = '');
                     resetPicker();
-                    setTimeout(() => mostrarVista('login'), 800);
+                    mostrarVista('login');
                 } else {
-                    toast('No se pudo enviar la solicitud', 'error');
+                    alert('Hubo un error al enviar la solicitud: ' + error.message);
                 }
             } catch (e) {
-                toast('Error de conexión', 'error');
+                alert('Error de conexión al solicitar la cita.');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
@@ -1597,7 +1868,6 @@
                 ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search))
                 : clientas;
 
-            // stats
             const todayIso = fmtIso(today);
             const startWeek = new Date(today); startWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
             const endWeek = new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
@@ -1616,11 +1886,9 @@
             document.getElementById('statHoy').textContent = todayCount;
             document.getElementById('statSemana').textContent = weekCount;
 
-            // refresh agenda views
             renderAgenda();
             renderAgendaDay();
 
-            // table
             const tb = document.querySelector('#tablaClientes tbody');
             tb.innerHTML = "";
             if (filtered.length === 0) {
@@ -1650,7 +1918,6 @@
                 });
             }
 
-            // appointments — only pending
             const pendientes = citas.filter(c => (c.estado||'pendiente') === 'pendiente');
             const lista = document.getElementById('listaCitasPendientes');
             lista.innerHTML = "";
@@ -1681,7 +1948,6 @@
             const cita = citas.find(c => c.id === idCita);
             if (!cita) return;
             try {
-                // create client only if not already registered (match by phone)
                 const yaExiste = clientas.some(cl => (cl.telefono || '').trim() === (cita.telefono || '').trim());
                 if (!yaExiste) {
                     await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
@@ -1699,7 +1965,6 @@
             if (!cita) return;
             try {
                 await sb.from('citas').update({ estado: 'completada' }).eq('id', idCita);
-                // auto-add stamp to matching client
                 const cl = clientas.find(c => (c.telefono || '').trim() === (cita.telefono || '').trim());
                 if (cl && (cl.visitas || 0) < 10) {
                     await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
@@ -1791,12 +2056,10 @@
                 const { error } = await sb.from('citas').update(payload).eq('id', id);
                 if (error) { toast('No se pudo actualizar', 'error'); return; }
 
-                // pasar de pendiente a confirmada → registrar clienta si no existe
                 if (estadoAnterior === 'pendiente' && nuevoEstado === 'confirmada') {
                     const ya = clientas.some(c => (c.telefono||'').trim() === payload.telefono);
-                    if (!ya) await sb.from('clientas').insert([{ nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
+                    if (!ya) await sb.from('clientas').insert([{ id: Date.now(), nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
                 }
-                // pasar a completada → sumar sello
                 if (estadoAnterior !== 'completada' && nuevoEstado === 'completada') {
                     const cl = clientas.find(c => (c.telefono||'').trim() === payload.telefono);
                     if (cl && (cl.visitas||0) < 10) {
@@ -1865,7 +2128,7 @@
 
             setBtnLoading('btnRegistrar', true);
             try {
-                const { error } = await sb.from('clientas').insert([{ nombre: n, telefono: t, visitas: 0 }]);
+                const { error } = await sb.from('clientas').insert([{ id: Date.now(), nombre: n, telefono: t, visitas: 0 }]);
                 if (!error) {
                     toast('Clienta registrada', 'success');
                     document.getElementById('regNombre').value = '';
@@ -1876,9 +2139,7 @@
             finally { setBtnLoading('btnRegistrar', false); }
         }
 
-
-        /* ---------- DÍAS DISPONIBLES ---------- */
-        let diasDisponibles = []; // [{id, tipo:'dia'|'mes', valor:'2025-06-15'|'2025-06'}]
+        let diasDisponibles = []; 
         let dCalCursor = new Date(today.getFullYear(), today.getMonth(), 1);
 
         function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
@@ -1886,7 +2147,6 @@
         function isDiaDisponible(iso){
             if(diasDisponibles.length === 0) return false;
             const mes = iso.substring(0,7);
-            // if explicitly excluded, never available
             if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
             return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
         }
@@ -1974,13 +2234,12 @@
 
         async function toggleDisponible(tipo, valor, mesDisp){
             if(tipo === 'dia' && mesDisp === 'true') {
-                // month is enabled — toggle exclusion for this specific day
                 const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
                 if(excl){
                     await sb.from('dias_disponibles').delete().eq('id',excl.id);
                     toast('Día reactivado dentro del mes','success');
                 } else {
-                    await sb.from('dias_disponibles').insert([{tipo:'excluido', valor}]);
+                    await sb.from('dias_disponibles').insert([{ id: Date.now(), tipo:'excluido', valor }]);
                     toast('Día excluido del mes','info');
                 }
             } else {
@@ -1989,7 +2248,7 @@
                     await sb.from('dias_disponibles').delete().eq('id',existing.id);
                     toast(tipo==='mes' ? 'Mes deshabilitado' : 'Día deshabilitado', 'info');
                 } else {
-                    await sb.from('dias_disponibles').insert([{tipo, valor}]);
+                    await sb.from('dias_disponibles').insert([{ id: Date.now(), tipo, valor }]);
                     toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
                 }
             }
@@ -2038,7 +2297,6 @@
 
             monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
 
-            // limit prev nav: cannot go before current month
             const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('calPrev').disabled = calCursor <= minMonth;
 
@@ -2048,16 +2306,14 @@
             const year = calCursor.getFullYear();
             const month = calCursor.getMonth();
             const firstDay = new Date(year, month, 1);
-            // mon=0 .. sun=6
             let startOffset = (firstDay.getDay() + 6) % 7;
             const daysInMonth = new Date(year, month+1, 0).getDate();
             const prevDays = new Date(year, month, 0).getDate();
 
-            // leading days from prev month
             for (let i = startOffset - 1; i >= 0; i--) {
                 grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
             }
-            // current month
+            
             for (let d = 1; d <= daysInMonth; d++) {
                 const dt = new Date(year, month, d);
                 const iso = fmtISO(dt);
@@ -2065,7 +2321,7 @@
                 const isToday = dt.getTime() === today.getTime();
                 const isSelected = selectedDate && fmtISO(selectedDate) === iso;
                 const disponible = isDiaDisponible(iso);
-
+                
                 let cls = 'cal-day';
                 if (past) cls += ' disabled';
                 else if (!disponible) cls += ' no-disponible';
@@ -2073,7 +2329,7 @@
                 if (isSelected) cls += ' selected';
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
             }
-            // trailing fill to multiple of 7
+
             const totalCells = startOffset + daysInMonth;
             const trail = (7 - (totalCells % 7)) % 7;
             for (let i = 1; i <= trail; i++) {
