@@ -2309,6 +2309,15 @@
         let clientas = [];
         let citas = [];
 
+        /* ---------- SHARED DATE CONSTANTS ---------- */
+        const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        const DOW_ES = ['L','M','X','J','V','S','D'];
+        const SLOTS = {
+            morning:   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30'],
+            afternoon: ['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30']
+        };
+        const today = new Date(); today.setHours(0,0,0,0);
+
         /* ---------- TOASTS ---------- */
         function toast(message, type = 'info', title = '') {
             const stack = document.getElementById('toastStack');
@@ -2973,13 +2982,6 @@
         }
 
         /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
-        const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-        const DOW_ES = ['L','M','X','J','V','S','D'];
-        const SLOTS = {
-            morning:   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30'],
-            afternoon: ['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30']
-        };
-        const today = new Date(); today.setHours(0,0,0,0);
         let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let selectedDate = null;
         let selectedTime = null;
