@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shanahan Nails | Luxury Loyalty</title>
+    <title>Shanahan Nails | Luxury Loyalty & Citas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -28,7 +28,6 @@
             color: var(--dark-text);
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            overflow-x: hidden;
             min-height: 100vh;
         }
 
@@ -38,24 +37,13 @@
             margin-bottom: 30px;
         }
 
-        .brand-year {
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: var(--burgundy);
-            font-weight: 700;
-            margin-bottom: 4px;
-            display: block;
-            text-transform: uppercase;
-        }
-
         .brand-main {
             font-family: 'Playfair Display', serif;
             font-size: 44px;
             color: var(--burgundy);
             text-transform: uppercase;
-            letter-spacing: -0.5px;
-            line-height: 0.9;
             font-weight: 700;
+            line-height: 0.9;
         }
 
         .brand-sub {
@@ -64,10 +52,7 @@
             font-size: 56px;
             color: var(--burgundy);
             margin-top: -15px;
-            margin-left: 55px;
             display: block;
-            font-weight: 400;
-            line-height: 1;
         }
 
         nav {
@@ -91,10 +76,9 @@
             letter-spacing: 2px;
             padding: 8px 16px;
             border: 1px solid var(--burgundy);
-            border-radius: 0;
-            background: transparent;
             cursor: pointer;
             font-weight: 600;
+            background: transparent;
         }
 
         .nav-btn:hover {
@@ -104,22 +88,9 @@
 
         .luxury-card {
             background: white;
-            border: none;
-            border-radius: 0;
             padding: 40px;
             box-shadow: 10px 10px 40px rgba(122, 18, 31, 0.03);
             position: relative;
-        }
-
-        .luxury-card::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 1px solid rgba(122, 18, 31, 0.05);
-            pointer-events: none;
         }
 
         .form-control {
@@ -129,20 +100,12 @@
             background: transparent;
             padding: 12px 5px;
             font-size: 13px;
-            color: var(--dark-text);
-        }
-
-        .form-control:focus {
-            box-shadow: none;
-            border-color: var(--burgundy);
-            background: transparent;
         }
 
         .btn-luxury {
             background: var(--burgundy);
             color: white;
             border: none;
-            border-radius: 0;
             padding: 14px 20px;
             font-size: 11px;
             letter-spacing: 3px;
@@ -150,12 +113,6 @@
             width: 100%;
             margin-top: 20px;
             font-weight: 600;
-        }
-
-        .btn-luxury:hover {
-            opacity: 0.95;
-            color: white;
-            letter-spacing: 4px;
         }
 
         .stamps-container {
@@ -173,31 +130,13 @@
             align-items: center;
             justify-content: center;
             font-family: 'Playfair Display', serif;
-            font-size: 16px;
             color: #D1C7BD;
-            position: relative;
         }
 
         .stamp-circle.active {
-            border-color: var(--burgundy);
             background: var(--burgundy);
             color: white;
-        }
-
-        .stamp-circle.active::after {
-            content: '♥';
-            font-size: 10px;
-            position: absolute;
-            bottom: 6px;
-        }
-
-        .reward-info {
-            font-style: italic;
-            color: var(--burgundy);
-            font-size: 13px;
-            margin-top: 25px;
-            border-top: 1px solid rgba(122, 18, 31, 0.08);
-            padding-top: 20px;
+            border-color: var(--burgundy);
         }
 
         .admin-table {
@@ -209,126 +148,111 @@
         .admin-table th {
             font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 2px;
             color: var(--burgundy);
-            padding: 8px 10px;
             border-bottom: 2px solid var(--burgundy);
-        }
-
-        .admin-table td {
-            background: white;
-            padding: 14px 10px;
-            font-size: 12px;
+            padding: 8px 10px;
         }
 
         .action-icon {
             cursor: pointer;
             margin: 0 6px;
-            color: var(--dark-text);
             opacity: 0.6;
-        }
-
-        .action-icon:hover {
-            color: var(--burgundy);
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .brand-main { font-size: 34px; }
-            .brand-sub { font-size: 42px; margin-left: 30px; }
-            .luxury-card { padding: 25px 15px; }
-            nav { padding: 15px 20px; }
-            .stamps-container { gap: 8px; }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div style="font-family: 'Playfair Display', serif; font-size: 18px; color: var(--burgundy); letter-spacing: 1px;">
-            S.N
-        </div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 18px; color: var(--burgundy);">S.N</div>
         <div class="d-flex gap-2">
-            <button class="nav-btn" onclick="verificarAccesoAdmin()">Acceso Salón</button>
-            <button class="nav-btn" onclick="mostrarVista('login')" style="background: var(--burgundy); color: white;">Mis Puntos</button>
+            <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
+            <button class="nav-btn" onclick="mostrarVista('login')" style="background: var(--burgundy); color: white;">Inicio</button>
         </div>
     </nav>
 
     <div class="container py-5">
         
-        <div id="vistaLogin" class="row justify-content-center">
+        <div id="login" class="row justify-content-center">
             <div class="col-12 col-md-5">
                 <div class="brand-container">
-                    <span class="brand-year">2021</span>
                     <span class="brand-main">SHANAHAN</span>
                     <span class="brand-sub">Nails</span>
                 </div>
                 <div class="luxury-card">
-                    <h5 class="text-center mb-4" style="font-family: 'Playfair Display', serif; letter-spacing: 1.5px; color: var(--burgundy);">CONSULTAR ESTADO</h5>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="loginUsuario" placeholder="Nombre completo">
-                    </div>
-                    <div class="mb-4">
-                        <input type="password" class="form-control" id="loginPass" placeholder="Teléfono">
-                    </div>
-                    <button class="btn btn-luxury" onclick="iniciarSesion()">ENTRAR</button>
+                    <h5 class="text-center mb-4" style="color: var(--burgundy);">CONSULTAR PUNTOS</h5>
+                    <input type="text" class="form-control mb-3" id="loginUsuario" placeholder="Nombre completo">
+                    <input type="password" class="form-control mb-4" id="loginPass" placeholder="Teléfono">
+                    <button class="btn btn-luxury" onclick="iniciarSesionCliente()">ENTRAR</button>
+                    <button class="btn btn-link w-100 mt-3 text-dark text-decoration-none" style="font-size: 11px;" onclick="mostrarVista('vistaPedirCita')">¿NUEVA CLIENTA? PIDE TU CITA AQUÍ</button>
                 </div>
             </div>
         </div>
 
         <div id="vistaCliente" class="row justify-content-center" style="display: none;">
-            <div class="col-12 col-md-6">
-                <div class="brand-container">
-                    <span class="brand-year" style="font-size: 8px;">2021</span>
-                    <span class="brand-main" style="font-size: 30px;">SHANAHAN</span>
-                    <span class="brand-sub" style="font-size: 38px; margin-top: -15px;">Nails</span>
-                </div>
-                <div class="luxury-card text-center">
-                    <p class="mb-1" style="text-transform: uppercase; font-size: 9px; letter-spacing: 3px; color: var(--burgundy);">Bienvenida de nuevo</p>
-                    <h2 id="clienteNombre" style="font-family: 'Playfair Display', serif; margin-bottom: 30px;">Cliente</h2>
-                    
+            <div class="col-12 col-md-6 text-center">
+                <div class="luxury-card">
+                    <h2 id="clienteNombre" style="font-family: 'Playfair Display', serif;">Cliente</h2>
                     <div class="stamps-container" id="stampsGrid"></div>
-
-                    <div id="clienteEstado" class="reward-info">Cargando...</div>
-
-                    <button class="btn btn-link mt-5" onclick="cerrarSesion()" style="color: #888; font-size: 10px; text-transform: uppercase; text-decoration: none; letter-spacing: 1.5px;">Cerrar Sesión</button>
+                    <div id="clienteEstado" class="reward-info mt-3"></div>
+                    <button class="btn btn-link mt-4 text-secondary" onclick="mostrarVista('login')">Cerrar Sesión</button>
                 </div>
             </div>
         </div>
 
-        <div id="vistaAdmin" class="row g-5" style="display: none;">
-            <div class="col-12 col-lg-4">
+        <div id="vistaPedirCita" class="row justify-content-center" style="display: none;">
+            <div class="col-12 col-md-5">
                 <div class="luxury-card">
-                    <h5 class="mb-4" style="font-family: 'Playfair Display', serif; color: var(--burgundy);">Alta de Clienta</h5>
-                    <input type="text" class="form-control mb-3" id="nombreCliente" placeholder="Nombre y Apellido">
-                    <input type="text" class="form-control mb-4" id="telefonoCliente" placeholder="Teléfono (Contraseña)">
-                    <button class="btn btn-luxury" onclick="registrarCliente()">REGISTRAR</button>
-                    
-                    <hr class="my-5" style="opacity: 0.1;">
-                    
-                    <h6 class="mb-3" style="font-size: 9px; letter-spacing: 1.5px; color: var(--burgundy);">ADMINISTRACIÓN</h6>
-                    <button class="btn btn-outline-dark w-100 mb-2 rounded-0" style="font-size: 9px; letter-spacing: 1px;" onclick="descargarRespaldo()">RESPALDO DATOS</button>
-                    <label class="btn btn-outline-dark w-100 rounded-0" style="font-size: 9px; letter-spacing: 1px;" for="archivoRespaldo">CARGAR DATOS</label>
-                    <input type="file" id="archivoRespaldo" class="d-none" onchange="cargarRespaldo(event)">
-                    <button class="btn btn-link btn-sm text-danger mt-3" onclick="mostrarVista('login')">Cerrar Sesión Admin</button>
+                    <h5 class="mb-4 text-center" style="color: var(--burgundy);">SOLICITAR CITA</h5>
+                    <input type="text" class="form-control mb-3" id="citaNombre" placeholder="Nombre completo">
+                    <input type="text" class="form-control mb-3" id="citaTelefono" placeholder="Teléfono">
+                    <label class="small text-muted">Fecha deseada</label>
+                    <input type="date" class="form-control mb-3" id="citaFecha">
+                    <label class="small text-muted">Hora deseada</label>
+                    <input type="time" class="form-control mb-4" id="citaHora">
+                    <button class="btn btn-luxury" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
+                    <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
                 </div>
             </div>
+        </div>
 
+        <div id="vistaAccesoAdmin" class="row justify-content-center" style="display: none;">
+            <div class="col-12 col-md-4">
+                <div class="luxury-card">
+                    <h5 class="text-center mb-4">ACCESO ADMINISTRADOR</h5>
+                    <input type="text" class="form-control mb-3" id="adminUser" placeholder="Usuario">
+                    <input type="password" class="form-control mb-4" id="adminPass" placeholder="Contraseña">
+                    <button class="btn btn-luxury" onclick="loginAdmin()">ENTRAR AL SALÓN</button>
+                    <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="vistaAdmin" class="row g-4" style="display: none;">
+            <div class="col-12 col-lg-4">
+                <div class="luxury-card">
+                    <h5 class="mb-4">Nueva Clienta</h5>
+                    <input type="text" class="form-control mb-3" id="regNombre" placeholder="Nombre">
+                    <input type="text" class="form-control mb-4" id="regTelef" placeholder="Teléfono">
+                    <button class="btn-luxury" onclick="registrarNuevoCliente()">REGISTRAR</button>
+                    
+                    <hr class="my-5">
+                    
+                    <h5>Solicitudes de Citas</h5>
+                    <div id="listaCitasPendientes" class="mt-3"></div>
+
+                    <button class="btn btn-link btn-sm text-danger mt-5" onclick="mostrarVista('login')">Cerrar Sesión Admin</button>
+                </div>
+            </div>
             <div class="col-12 col-lg-8">
                 <div class="luxury-card">
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                        <h5 style="font-family: 'Playfair Display', serif; margin: 0; color: var(--burgundy);">Fidelización</h5>
-                        <input type="text" class="form-control" style="width: 220px; font-size: 11px;" id="buscarNombre" onkeyup="filtrarClientes()" placeholder="Buscar por nombre...">
-                    </div>
-                    
+                    <h5>Gestión de Fidelización</h5>
                     <div class="table-responsive">
                         <table class="admin-table" id="tablaClientes">
                             <thead>
                                 <tr>
                                     <th>CLIENTA</th>
                                     <th>SELLOS</th>
-                                    <th>PREMIO</th>
-                                    <th class="text-end">ACCIÓN</th>
+                                    <th class="text-end">ACCIONES</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -343,7 +267,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content luxury-card">
                 <div class="modal-body p-4">
-                    <h5 class="text-center mb-4" style="font-family: 'Playfair Display', serif; color: var(--burgundy);">Editar Perfil</h5>
+                    <h5 class="text-center mb-4" style="color: var(--burgundy);">Editar Perfil</h5>
                     <input type="hidden" id="editId">
                     <input type="text" class="form-control mb-3" id="editNombre" placeholder="Nombre">
                     <input type="text" class="form-control mb-4" id="editTelefono" placeholder="Teléfono">
@@ -359,180 +283,193 @@
     <script>
         const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
-
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
+
         let clientas = [];
-        const PIN_ADMIN = "1510";
+        let citas = [];
 
-        /* ===================== SUPABASE ===================== */
-
-        async function cargarDatosNube() {
-            try {
-                const { data, error } = await sb
-                    .from('clientas')
-                    .select('*');
-
-                if (error) throw error;
-
-                clientas = data || [];
-                render();
-
-            } catch (err) {
-                console.error("Error Supabase:", err.message);
-                clientas = JSON.parse(localStorage.getItem('shanahan_db')) || [];
-                render();
-            }
-        }
-
-        async function guardarDatosNube() {
-            try {
-                const { error } = await sb
-                    .from('clientas')
-                    .upsert(clientas, { onConflict: 'id' });
-
-                if (error) throw error;
-
-            } catch (err) {
-                console.error("Error guardando en Supabase:", err.message);
-            }
-        }
-
-        function guardar() {
-            localStorage.setItem('shanahan_db', JSON.stringify(clientas));
-            guardarDatosNube();
-            render();
-        }
-
-        /* ===================== VISTAS ===================== */
-
-        function mostrarVista(v) {
-            ['vistaAdmin', 'vistaLogin', 'vistaCliente']
-                .forEach(id => document.getElementById(id).style.display = 'none');
-
-            const el = document.getElementById(v);
-            el.style.display = (v === 'vistaCliente') ? 'block' : 'flex';
-        }
-
-        function verificarAccesoAdmin() {
-            let pass = prompt("Introduce PIN de seguridad:");
-            if (pass === null) return;
-
-            if (pass === PIN_ADMIN) {
-                mostrarVista('vistaAdmin');
-                render();
-            } else {
-                alert("Acceso denegado. PIN incorrecto");
-            }
-        }
-
-        /* ===================== CLIENTES ===================== */
-
-        function registrarCliente() {
-            const n = document.getElementById('nombreCliente').value.trim();
-            const t = document.getElementById('telefonoCliente').value.trim();
-
-            if (!n || !t) return alert("Completa los datos");
-
-            clientas.push({
-                id: Date.now(),
-                nombre: n,
-                telefono: t,
-                visitas: 0
+        // GESTIÓN DE VISTAS
+        function mostrarVista(idVista) {
+            ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
+                const el = document.getElementById(v);
+                if (el) el.style.display = 'none';
             });
-
-            guardar();
-
-            document.getElementById('nombreCliente').value = "";
-            document.getElementById('telefonoCliente').value = "";
+            const vistaActiva = document.getElementById(idVista);
+            if (vistaActiva) {
+                vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login' || idVista === 'vistaAccesoAdmin' || idVista === 'vistaPedirCita') ? 'flex' : 'block';
+                if (idVista === 'vistaAdmin') cargarDatosAdmin();
+            }
         }
 
-        function render() {
+        // CARGA DE DATOS DESDE SUPABASE
+        async function cargarDatosAdmin() {
+            const { data: dC } = await sb.from('clientas').select('*');
+            clientas = dC || [];
+            const { data: dCi } = await sb.from('citas').select('*');
+            citas = dCi || [];
+            renderAdmin();
+        }
+
+        // LOGIN ADMINISTRADOR
+        async function loginAdmin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+            const { data, error } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
+            
+            if (data) {
+                document.getElementById('adminUser').value = '';
+                document.getElementById('adminPass').value = '';
+                mostrarVista('vistaAdmin');
+            } else {
+                alert("Credenciales incorrectas");
+            }
+        }
+
+        // LOGIN CLIENTE
+        async function iniciarSesionCliente() {
+            const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
+            const telef = document.getElementById('loginPass').value.trim();
+            const { data } = await sb.from('clientas').select('*').eq('telefono', telef);
+            
+            const cliente = (data || []).find(c => c.nombre.toLowerCase() === nombre);
+            
+            if (cliente) {
+                document.getElementById('clienteNombre').innerText = cliente.nombre;
+                const grid = document.getElementById('stampsGrid');
+                grid.innerHTML = "";
+                for(let i=1; i<=10; i++) {
+                    grid.innerHTML += `<div class="stamp-circle ${i <= cliente.visitas ? 'active' : ''}">${i}</div>`;
+                }
+                
+                document.getElementById('clienteEstado').innerText = 
+                    cliente.visitas >= 10 ? "✨ ¡SERVICIO GRATIS DISPONIBLE!" : 
+                    cliente.visitas === 5 ? "🎁 Tienes un 20% de descuento hoy" : 
+                    "Sigue acumulando sellos para tus premios.";
+                
+                mostrarVista('vistaCliente');
+            } else {
+                alert("No se encontró el registro. Solicita una cita para registrarte.");
+            }
+        }
+
+        // SOLICITUD DE CITAS
+        async function enviarSolicitudCita() {
+            const cita = {
+                id: Date.now(),
+                nombre_cliente: document.getElementById('citaNombre').value.trim(),
+                telefono: document.getElementById('citaTelefono').value.trim(),
+                fecha: document.getElementById('citaFecha').value,
+                hora: document.getElementById('citaHora').value
+            };
+
+            if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
+                return alert("Por favor completa todos los campos.");
+            }
+
+            const { error } = await sb.from('citas').insert([cita]);
+            if (!error) {
+                alert("Solicitud enviada con éxito. Queda a la espera de aprobación del salón.");
+                document.getElementById('citaNombre').value = "";
+                document.getElementById('citaTelefono').value = "";
+                document.getElementById('citaFecha').value = "";
+                document.getElementById('citaHora').value = "";
+                mostrarVista('login');
+            } else {
+                alert("Error al enviar la solicitud: " + error.message);
+            }
+        }
+
+        // RENDERIZADO PANEL ADMIN
+        function renderAdmin() {
             const tb = document.querySelector("#tablaClientes tbody");
             tb.innerHTML = "";
-
             clientas.forEach(c => {
-                let p =
-                    c.visitas < 5 ? "A las 5: 20% descuento" :
-                    c.visitas < 10 ? "A las 10: Gratis" :
-                    "¡Premio Listo!";
-
-                tb.innerHTML += `
-                <tr>
-                    <td><strong>${c.nombre}</strong><br><small style="color:#999">${c.telefono}</small></td>
-                    <td>${c.visitas} / 10</td>
-                    <td><span style="color:var(--burgundy)">${p}</span></td>
+                tb.innerHTML += `<tr>
+                    <td><b>${c.nombre}</b><br><small>${c.telefono}</small></td>
+                    <td>${c.visitas}/10</td>
                     <td class="text-end">
-                        <i class="fa-solid fa-plus action-icon" onclick="sello(${c.id})"></i>
+                        <i class="fa-solid fa-plus action-icon" onclick="sumarVisita(${c.id}, ${c.visitas})"></i>
                         <i class="fa-solid fa-pen-to-square action-icon" onclick="abrirEdit(${c.id})"></i>
-                        <i class="fa-solid fa-rotate-right action-icon" onclick="reset(${c.id})"></i>
-                        <i class="fa-solid fa-trash-can action-icon" onclick="borrar(${c.id})"></i>
+                        <i class="fa-solid fa-rotate-right action-icon" onclick="resetVistas(${c.id})"></i>
+                        <i class="fa-solid fa-trash-can action-icon" onclick="borrarCliente(${c.id})"></i>
                     </td>
                 </tr>`;
             });
-        }
 
-        /* ===================== LOGIN CLIENTE ===================== */
-
-        function iniciarSesion() {
-            const u = document.getElementById('loginUsuario').value.trim();
-            const p = document.getElementById('loginPass').value.trim();
-
-            const c = clientas.find(
-                x =>
-                    x.nombre.toLowerCase() === u.toLowerCase() &&
-                    x.telefono === p
-            );
-
-            if (!c) {
-                alert("Datos no encontrados");
-                return;
-            }
-
-            document.getElementById('clienteNombre').innerText = c.nombre;
-
-            const grid = document.getElementById('stampsGrid');
-            grid.innerHTML = "";
-
-            for (let i = 1; i <= 10; i++) {
-                grid.innerHTML += `
-                <div class="stamp-circle ${i <= c.visitas ? 'active' : ''}">
-                    ${i}
-                </div>`;
-            }
-
-            document.getElementById('clienteEstado').innerText =
-                c.visitas >= 10 ? "✨ Servicio GRATIS" :
-                c.visitas === 5 ? "🎁 20% descuento activo" :
-                "Sigue acumulando sellos";
-
-            mostrarVista('vistaCliente');
-        }
-
-        /* ===================== ACCIONES ===================== */
-
-        function sello(id) {
-            let c = clientas.find(x => x.id === id);
-
-            if (c.visitas < 10) c.visitas++;
-
-            guardar();
-        }
-
-        function reset(id) {
-            if (confirm("¿Reiniciar puntos?")) {
-                clientas.find(x => x.id === id).visitas = 0;
-                guardar();
+            const lista = document.getElementById('listaCitasPendientes');
+            lista.innerHTML = "";
+            if (citas.length === 0) {
+                lista.innerHTML = "<p class='text-muted'>No hay solicitudes en este momento.</p>";
+            } else {
+                citas.forEach(cita => {
+                    lista.innerHTML += `<div class="p-3 border mb-2 bg-light small">
+                        <b>${cita.nombre_cliente}</b><br>
+                        Tel: ${cita.telefono}<br>
+                        Fecha: ${cita.fecha} a las ${cita.hora}<br>
+                        <button class="btn btn-sm btn-success mt-2" onclick="aprobarCita(${cita.id})">APROBAR Y DAR DE ALTA</button>
+                        <button class="btn btn-sm btn-danger mt-2" onclick="rechazarCita(${cita.id})">RECHAZAR</button>
+                    </div>`;
+                });
             }
         }
 
-        function borrar(id) {
-            if (confirm("¿Eliminar clienta?")) {
-                clientas = clientas.filter(x => x.id !== id);
-                guardar();
+        async function aprobarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (cita) {
+                await sb.from('clientas').insert([{ id: Date.now(), nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
+                await sb.from('citas').delete().eq('id', idCita);
+                alert("Clienta aprobada y registrada en el sistema.");
+                cargarDatosAdmin();
             }
         }
-        
+
+        async function rechazarCita(idCita) {
+            await sb.from('citas').delete().eq('id', idCita);
+            alert("Solicitud rechazada.");
+            cargarDatosAdmin();
+        }
+
+        async function sumarVisita(id, actual) {
+            if (actual < 10) {
+                await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
+                cargarDatosAdmin();
+            } else {
+                alert("¡El cliente ya ha completado los 10 sellos!");
+            }
+        }
+
+        async function borrarCliente(id) {
+            if(confirm("¿Eliminar cliente definitivamente?")) {
+                await sb.from('clientas').delete().eq('id', id);
+                cargarDatosAdmin();
+            }
+        }
+
+        async function registrarNuevoCliente() {
+            const n = document.getElementById('regNombre').value.trim();
+            const t = document.getElementById('regTelef').value.trim();
+            if(n && t) {
+                await sb.from('clientas').insert([{ id: Date.now(), nombre: n, telefono: t, visitas: 0 }]);
+                document.getElementById('regNombre').value = '';
+                document.getElementById('regTelef').value = '';
+                cargarDatosAdmin();
+            } else {
+                alert("Por favor completa nombre y teléfono.");
+            }
+        }
+
+        function resetVistas(id) { 
+            if (confirm("¿Reiniciar puntos?")) { 
+                let c = clientas.find(x => x.id === id);
+                if (c) {
+                    c.visitas = 0;
+                    sb.from('clientas').update({ visitas: 0 }).eq('id', id).then(() => {
+                        cargarDatosAdmin();
+                    });
+                }
+            } 
+        }
+
         function abrirEdit(id) {
             let c = clientas.find(x => x.id === id);
             document.getElementById('editId').value = c.id;
@@ -541,46 +478,20 @@
             new bootstrap.Modal(document.getElementById('modalModificar')).show();
         }
 
-        function guardarEdicion() {
-            let c = clientas.find(x => x.id == document.getElementById('editId').value);
-            c.nombre = document.getElementById('editNombre').value;
-            c.telefono = document.getElementById('editTelefono').value;
-            guardar();
+        async function guardarEdicion() {
+            let id = document.getElementById('editId').value;
+            let n = document.getElementById('editNombre').value.trim();
+            let t = document.getElementById('editTelefono').value.trim();
+            
+            if (!n || !t) return alert("Completa los datos");
+
+            await sb.from('clientas').update({ nombre: n, telefono: t }).eq('id', id);
+            cargarDatosAdmin();
             bootstrap.Modal.getInstance(document.getElementById('modalModificar')).hide();
         }
 
-        function cerrarSesion() {
-            mostrarVista('vistaLogin');
-        }
-
-        function filtrarClientes() {
-            let v = document.getElementById("buscarNombre").value.toLowerCase();
-            document.querySelectorAll("#tablaClientes tbody tr").forEach(tr => {
-                tr.style.display = tr.innerText.toLowerCase().includes(v) ? "" : "none";
-            });
-        }
-
-        function descargarRespaldo() {
-            const blob = new Blob([JSON.stringify(clientas)], {type: 'application/json'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob); a.download = 'backup_shanahan.json'; a.click();
-        }
-
-        function cargarRespaldo(e) {
-            const reader = new FileReader();
-            reader.onload = (ev) => { 
-                clientas = JSON.parse(ev.target.result); 
-                guardar(); 
-            };
-            reader.readAsText(e.target.files[0]);
-        }
-
-        /* ===================== INICIO ===================== */
-
-        cargarDatosNube();
-        mostrarVista('vistaLogin');
-        render();
-
+        // INICIALIZACIÓN
+        mostrarVista('login');
     </script>
 </body>
 </html>
