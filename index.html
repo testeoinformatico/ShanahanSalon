@@ -3,148 +3,1812 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shanahan Nails | Luxury Loyalty & Citas</title>
+    <meta name="description" content="Shanahan Nails — Salón de manicura de lujo. Reserva tu cita y consulta tus puntos de fidelización.">
+    <title>Shanahan Nails · Luxury Loyalty & Citas</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <style>
-        :root { --burgundy: #7A121F; --cream: #F9F4F0; --dark-text: #2C2C2C; }
-        * { box-sizing: border-box; transition: all 0.3s ease; }
-        body { background-color: var(--cream); color: var(--dark-text); font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; }
-        
-        .brand-container { text-align: center; margin-bottom: 30px; }
-        .brand-main { font-family: 'Playfair Display', serif; font-size: 44px; color: var(--burgundy); text-transform: uppercase; font-weight: 700; line-height: 0.9; }
-        .brand-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 56px; color: var(--burgundy); margin-top: -15px; display: block; }
-        
-        nav { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(249, 244, 240, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(122, 18, 31, 0.08); }
-        .nav-btn { text-decoration: none; color: var(--burgundy); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; padding: 8px 16px; border: 1px solid var(--burgundy); cursor: pointer; font-weight: 600; background: transparent; }
-        .nav-btn:hover { background: var(--burgundy); color: white; }
+        :root {
+            --burgundy: #7A121F;
+            --burgundy-dark: #5C0E18;
+            --burgundy-soft: rgba(122, 18, 31, 0.08);
+            --cream: #F9F4F0;
+            --cream-deep: #F2EAE2;
+            --dark-text: #2C2C2C;
+            --muted: #8A7E76;
+            --line: #E5DACE;
+            --accent: #C9A74D;
+            --accent-light: #E2C879;
+            --shadow-sm: 0 4px 18px rgba(122, 18, 31, 0.05);
+            --shadow-md: 0 18px 50px rgba(122, 18, 31, 0.08);
+            --shadow-lg: 0 30px 80px rgba(122, 18, 31, 0.10);
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        .luxury-card { background: white; padding: 40px; box-shadow: 10px 10px 40px rgba(122, 18, 31, 0.03); position: relative; }
-        .form-control { border: none; border-bottom: 1px solid #D1C7BD; border-radius: 0; padding: 12px 5px; font-size: 14px; background: transparent; }
-        .btn-luxury { background: var(--burgundy); color: white; border: none; padding: 16px 20px; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; width: 100%; margin-top: 20px; font-weight: 600; }
-        
-        .stamps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 35px 0; }
-        .stamp-circle { aspect-ratio: 1; border: 1px solid #D1C7BD; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: #D1C7BD; }
-        .stamp-circle.active { background: var(--burgundy); color: white; border-color: var(--burgundy); }
+        * { box-sizing: border-box; }
 
-        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .admin-table th { font-size: 9px; text-transform: uppercase; color: var(--burgundy); border-bottom: 2px solid var(--burgundy); padding: 8px 10px; }
+        html, body { margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--cream);
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.06), transparent 55%),
+                radial-gradient(ellipse at bottom right, rgba(122, 18, 31, 0.05), transparent 55%);
+        }
+
+        ::selection { background: var(--burgundy); color: #fff; }
+
+        /* ---------- NAV ---------- */
+        nav.topbar {
+            padding: 18px 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--burgundy-soft);
+            background: rgba(249, 244, 240, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--burgundy);
+            letter-spacing: 4px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-logo .dot {
+            width: 5px; height: 5px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .nav-actions { display: flex; gap: 10px; }
+
+        .nav-btn {
+            text-decoration: none;
+            color: var(--burgundy);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2.4px;
+            padding: 10px 18px;
+            border: 1px solid var(--burgundy);
+            cursor: pointer;
+            font-weight: 600;
+            background: transparent;
+            transition: all .35s var(--ease);
+            font-family: 'Poppins', sans-serif;
+        }
+        .nav-btn:hover { background: var(--burgundy); color: #fff; transform: translateY(-1px); }
+        .nav-btn.solid { background: var(--burgundy); color: #fff; }
+        .nav-btn.solid:hover { background: var(--burgundy-dark); }
+
+        /* ---------- BRAND ---------- */
+        .brand-container {
+            text-align: center;
+            margin-bottom: 36px;
+            position: relative;
+        }
+        .brand-ornament {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            color: var(--accent);
+            font-size: 11px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .brand-ornament::before,
+        .brand-ornament::after {
+            content: '';
+            height: 1px;
+            width: 50px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .brand-main {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(38px, 6vw, 52px);
+            color: var(--burgundy);
+            text-transform: uppercase;
+            font-weight: 700;
+            line-height: .95;
+            letter-spacing: 2px;
+        }
+        .brand-sub {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(46px, 7vw, 64px);
+            color: var(--burgundy);
+            margin-top: -12px;
+            display: block;
+            font-weight: 400;
+        }
+
+        /* ---------- CARD ---------- */
+        .luxury-card {
+            background: #fff;
+            padding: 44px 40px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            border: 1px solid rgba(229, 218, 206, 0.6);
+        }
+        .luxury-card::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 1px solid rgba(201, 167, 77, 0.18);
+            pointer-events: none;
+        }
+        .luxury-card > * { position: relative; z-index: 1; }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-align: center;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .card-subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 32px;
+            font-weight: 300;
+            letter-spacing: .5px;
+        }
+
+        /* ---------- FORMS ---------- */
+        .field { position: relative; margin-bottom: 22px; }
+        .field input,
+        .field select {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--line);
+            border-radius: 0;
+            background: transparent;
+            padding: 14px 0 8px;
+            font-size: 14px;
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color .3s var(--ease);
+        }
+        .field input::placeholder { color: transparent; }
+        .field label {
+            position: absolute;
+            top: 16px;
+            left: 0;
+            color: var(--muted);
+            font-size: 13px;
+            pointer-events: none;
+            transition: all .3s var(--ease);
+            letter-spacing: .3px;
+        }
+        .field input:focus,
+        .field select:focus { border-bottom-color: var(--burgundy); }
+        .field input:focus + label,
+        .field input:not(:placeholder-shown) + label,
+        .field select:focus + label,
+        .field select.has-value + label {
+            top: -6px;
+            font-size: 10px;
+            color: var(--burgundy);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .field input[type="date"],
+        .field input[type="time"] {
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
+        }
+        .field-icon {
+            position: absolute;
+            right: 0;
+            top: 16px;
+            color: var(--line);
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        /* ---------- BUTTONS ---------- */
+        .btn-luxury {
+            background: var(--burgundy);
+            color: #fff;
+            border: none;
+            padding: 16px 22px;
+            font-size: 11px;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 12px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all .35s var(--ease);
+        }
+        .btn-luxury::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--burgundy-dark);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .4s var(--ease);
+            z-index: 0;
+        }
+        .btn-luxury > * { position: relative; z-index: 1; }
+        .btn-luxury span { position: relative; z-index: 1; }
+        .btn-luxury:hover::after { transform: scaleX(1); }
+        .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(122, 18, 31, .25); }
+        .btn-luxury:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
+        .btn-luxury .spinner {
+            display: none;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin-left: 8px;
+            vertical-align: -2px;
+        }
+        .btn-luxury.loading .spinner { display: inline-block; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--line);
+            color: var(--muted);
+            padding: 12px 18px;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .3s var(--ease);
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
+
+        .link-soft {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 10.5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 14px 0 0;
+            display: block;
+            width: 100%;
+            text-align: center;
+            transition: color .3s var(--ease);
+        }
+        .link-soft:hover { color: var(--burgundy); }
+        .link-soft .accent { color: var(--accent); }
+
+        .divider-soft {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0 18px;
+            color: var(--line);
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .divider-soft::before,
+        .divider-soft::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        /* ---------- STAMPS ---------- */
+        .stamps-wrap {
+            background: linear-gradient(180deg, #fff, var(--cream));
+            border: 1px solid rgba(201, 167, 77, 0.25);
+            padding: 30px 26px;
+            margin: 28px 0 24px;
+        }
+        .stamps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 18px;
+        }
+        .stamps-header .label {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-style: italic;
+            font-size: 14px;
+        }
+        .stamps-header .count {
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .stamps-header .count strong { color: var(--burgundy); font-weight: 600; }
+
+        .stamps-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        .stamp-circle {
+            aspect-ratio: 1;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            color: #C9BCB0;
+            background: #fff;
+            font-size: 16px;
+            position: relative;
+            transition: all .4s var(--ease);
+        }
+        .stamp-circle.active {
+            background: var(--burgundy);
+            color: #fff;
+            border-color: var(--burgundy);
+            box-shadow: 0 6px 16px rgba(122, 18, 31, .25);
+        }
+        .stamp-circle.active::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 50%;
+        }
+        .stamp-circle.reward {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 8px 22px rgba(201, 167, 77, .35);
+        }
+
+        .reward-info {
+            text-align: center;
+            padding: 20px 18px;
+            background: var(--burgundy-soft);
+            border-left: 2px solid var(--burgundy);
+            color: var(--burgundy);
+            font-size: 12.5px;
+            letter-spacing: .8px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .reward-info.gold {
+            background: rgba(201, 167, 77, 0.10);
+            border-left-color: var(--accent);
+            color: #8a6f25;
+        }
+        .reward-info i { margin-right: 8px; }
+
+        /* ---------- ADMIN ---------- */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .admin-header h5 {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-header h5 i { color: var(--accent); font-size: 16px; }
+
+        .admin-search {
+            position: relative;
+            flex: 0 1 240px;
+        }
+        .admin-search input {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: var(--cream);
+            padding: 9px 12px 9px 34px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+            outline: none;
+            transition: all .3s var(--ease);
+        }
+        .admin-search input:focus { border-color: var(--burgundy); background: #fff; }
+        .admin-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .admin-table th {
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--burgundy);
+            border-bottom: 1px solid var(--burgundy);
+            padding: 10px 14px;
+            font-weight: 600;
+            text-align: left;
+        }
+        .admin-table tbody tr {
+            background: var(--cream);
+            transition: all .3s var(--ease);
+        }
+        .admin-table tbody tr:hover {
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            transform: translateX(2px);
+        }
+        .admin-table td {
+            padding: 14px;
+            font-size: 13px;
+            border: none;
+            vertical-align: middle;
+        }
+        .admin-table td:first-child { padding-left: 18px; }
+        .admin-table td:last-child { padding-right: 18px; }
+        .client-name { font-weight: 600; color: var(--dark-text); }
+        .client-phone { color: var(--muted); font-size: 11px; letter-spacing: .5px; }
+
+        .stamps-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .stamps-pill .bar {
+            width: 60px;
+            height: 4px;
+            background: var(--line);
+            position: relative;
+            overflow: hidden;
+        }
+        .stamps-pill .bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            width: var(--p, 0%);
+            background: linear-gradient(90deg, var(--burgundy), var(--accent));
+            transition: width .6s var(--ease);
+        }
+        .stamps-pill.full { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+
+        .action-icon {
+            cursor: pointer;
+            margin: 0 4px;
+            color: var(--muted);
+            width: 32px; height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            background: #fff;
+            transition: all .25s var(--ease);
+            font-size: 12px;
+        }
+        .action-icon:hover { color: var(--burgundy); border-color: var(--burgundy); transform: translateY(-1px); }
+        .action-icon.danger:hover { color: #fff; background: var(--burgundy); border-color: var(--burgundy); }
+        .action-icon.success:hover { color: #fff; background: #2C2C2C; border-color: #2C2C2C; }
+
+        /* citas pendientes */
+        .cita-card {
+            border: 1px solid var(--line);
+            background: var(--cream);
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            transition: all .3s var(--ease);
+            position: relative;
+        }
+        .cita-card:hover { background: #fff; box-shadow: var(--shadow-sm); }
+        .cita-card .cita-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--burgundy);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .cita-card .cita-meta {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        .cita-card .cita-meta i { color: var(--accent); margin-right: 5px; }
+        .cita-actions { display: flex; gap: 8px; }
+        .cita-btn {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all .25s var(--ease);
+        }
+        .cita-btn.approve { background: var(--burgundy); color: #fff; }
+        .cita-btn.approve:hover { background: var(--burgundy-dark); }
+        .cita-btn.reject { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+        .cita-btn.reject:hover { color: var(--burgundy); border-color: var(--burgundy); }
+
+        /* ---------- BIG CTA "PEDIR CITA" ---------- */
+        .btn-cta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: #fff;
+            border: none;
+            padding: 18px 22px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 14px 32px rgba(201, 167, 77, 0.32);
+            transition: all .4s var(--ease);
+            margin-top: 4px;
+        }
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #B89238 0%, var(--accent) 100%);
+            opacity: 0;
+            transition: opacity .4s var(--ease);
+        }
+        .btn-cta::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -75%;
+            width: 50%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
+            transform: skewX(-20deg);
+            animation: shine 3.5s ease-in-out infinite;
+        }
+        @keyframes shine {
+            0%, 60% { left: -75%; }
+            100% { left: 130%; }
+        }
+        .btn-cta > * { position: relative; z-index: 1; }
+        .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(201, 167, 77, 0.45); }
+        .btn-cta:hover::before { opacity: 1; }
+        .btn-cta .cta-text { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+        .btn-cta .cta-sub {
+            font-size: 9px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            opacity: .8;
+            text-transform: uppercase;
+        }
+        .btn-cta .cta-main {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: none;
+        }
+        .btn-cta .cta-arrow {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: transform .35s var(--ease);
+        }
+        .btn-cta:hover .cta-arrow { transform: translateX(4px); background: rgba(255,255,255,.3); }
+
+        /* ---------- SOCIAL BAR ---------- */
+        .social-section {
+            margin-top: 28px;
+            text-align: center;
+        }
+        .social-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .social-title::before,
+        .social-title::after {
+            content: '';
+            height: 1px;
+            width: 30px;
+            background: var(--line);
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .social-link {
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--burgundy);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all .35s var(--ease);
+            position: relative;
+            overflow: hidden;
+        }
+        .social-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--burgundy);
+            transform: translateY(100%);
+            transition: transform .35s var(--ease);
+        }
+        .social-link i { position: relative; z-index: 1; transition: color .35s var(--ease); }
+        .social-link:hover { transform: translateY(-3px); border-color: var(--burgundy); box-shadow: 0 10px 22px rgba(122, 18, 31, .18); }
+        .social-link:hover::before { transform: translateY(0); }
+        .social-link:hover i { color: #fff; }
+        .social-link.whatsapp:hover { border-color: #25D366; }
+        .social-link.whatsapp:hover::before { background: #25D366; }
+        .social-link.instagram:hover { border-color: #E1306C; }
+        .social-link.instagram:hover::before { background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF); }
+        .social-link.tiktok:hover { border-color: #000; }
+        .social-link.tiktok:hover::before { background: #000; }
+
+        /* empty state */
+        .empty-state {
+            text-align: center;
+            padding: 30px 18px;
+            color: var(--muted);
+            font-size: 12.5px;
+        }
+        .empty-state i {
+            font-size: 26px;
+            color: var(--line);
+            margin-bottom: 12px;
+            display: block;
+        }
+        .empty-state .label {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        /* stat cards */
+        .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+        .stat {
+            background: #fff;
+            border: 1px solid rgba(229, 218, 206, 0.6);
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: var(--burgundy);
+        }
+        .stat .num {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--burgundy);
+            font-weight: 700;
+            line-height: 1;
+        }
+        .stat .lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+        .stat:nth-child(2)::before { background: var(--accent); }
+        .stat:nth-child(2) .num { color: var(--accent); }
+
+        /* toasts */
+        .toast-stack {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+        }
+        .toast {
+            background: #fff;
+            border-left: 3px solid var(--burgundy);
+            padding: 14px 18px;
+            box-shadow: var(--shadow-lg);
+            font-size: 13px;
+            color: var(--dark-text);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: toastIn .4s var(--ease) forwards;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        .toast.success { border-left-color: var(--accent); }
+        .toast.error { border-left-color: #b03030; }
+        .toast i { color: var(--burgundy); margin-top: 2px; }
+        .toast.success i { color: var(--accent); }
+        .toast.error i { color: #b03030; }
+        .toast .msg-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--burgundy);
+            margin-bottom: 2px;
+        }
+        .toast.success .msg-title { color: #8a6f25; }
+        .toast.error .msg-title { color: #b03030; }
+        .toast .msg-body { font-size: 12px; color: var(--muted); line-height: 1.4; }
+        .toast.out { animation: toastOut .35s var(--ease) forwards; }
+        @keyframes toastIn { to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
+
+        /* modal */
+        .modal-backdrop-x {
+            position: fixed; inset: 0;
+            background: rgba(44, 44, 44, .55);
+            backdrop-filter: blur(4px);
+            z-index: 9000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity .3s var(--ease);
+        }
+        .modal-backdrop-x.show { display: flex; opacity: 1; }
+        .modal-x {
+            background: #fff;
+            max-width: 420px;
+            width: 100%;
+            padding: 36px 32px;
+            position: relative;
+            border: 1px solid rgba(201, 167, 77, .25);
+            box-shadow: var(--shadow-lg);
+            transform: scale(.96);
+            transition: transform .35s var(--ease);
+        }
+        .modal-backdrop-x.show .modal-x { transform: scale(1); }
+        .modal-x::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 1px solid rgba(201, 167, 77, .15);
+            pointer-events: none;
+        }
+        .modal-x h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-size: 22px;
+            margin: 0 0 8px;
+            text-align: center;
+        }
+        .modal-x p {
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions button { flex: 1; }
+
+        /* page enter animation */
+        .view-anim {
+            animation: viewIn .55s var(--ease);
+        }
+        @keyframes viewIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- ACCESO SALON (rediseño gráfico) ---------- */
+        .access-card {
+            background: linear-gradient(160deg, #2C0A11 0%, var(--burgundy) 55%, #4A0C16 100%);
+            color: #fff;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(122, 18, 31, 0.35);
+            border: none;
+        }
+        .access-card::before {
+            content: '';
+            position: absolute;
+            inset: 14px;
+            border: 1px solid rgba(201, 167, 77, 0.35);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .access-card::after {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(201, 167, 77, 0.18) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .access-hero {
+            padding: 38px 38px 28px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        .access-icon {
+            width: 78px; height: 78px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #2C0A11;
+            box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45);
+            position: relative;
+            animation: pulseGold 3s ease-in-out infinite;
+        }
+        .access-icon::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border: 1px solid rgba(201, 167, 77, 0.4);
+            border-radius: 50%;
+        }
+        .access-icon::after {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border: 1px solid rgba(201, 167, 77, 0.18);
+            border-radius: 50%;
+        }
+        @keyframes pulseGold {
+            0%,100% { box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45); }
+            50%     { box-shadow: 0 18px 38px rgba(201, 167, 77, 0.65); }
+        }
+        .access-hero .ornament {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 10px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--accent-light);
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .access-hero .ornament::before,
+        .access-hero .ornament::after {
+            content: '';
+            height: 1px; width: 30px;
+            background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+        }
+        .access-hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #fff;
+            margin: 0 0 4px;
+            font-weight: 600;
+        }
+        .access-hero .accent-italic {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--accent-light);
+            font-size: 36px;
+            display: block;
+            margin-top: -6px;
+            margin-bottom: 8px;
+        }
+        .access-hero p {
+            color: rgba(255,255,255,.65);
+            font-size: 12px;
+            letter-spacing: .8px;
+            margin: 0 0 6px;
+        }
+        .access-form {
+            background: rgba(255,255,255,.04);
+            border-top: 1px solid rgba(201, 167, 77, 0.25);
+            padding: 32px 38px 36px;
+            position: relative;
+            z-index: 2;
+        }
+        .access-form .field input {
+            color: #fff;
+            border-bottom-color: rgba(255,255,255,.18);
+            font-size: 14px;
+        }
+        .access-form .field label { color: rgba(255,255,255,.55); }
+        .access-form .field input:focus { border-bottom-color: var(--accent); }
+        .access-form .field input:focus + label,
+        .access-form .field input:not(:placeholder-shown) + label {
+            color: var(--accent);
+        }
+        .access-form .field-icon { color: rgba(255,255,255,.3); }
+        .access-form .btn-luxury {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: #2C0A11;
+            box-shadow: 0 12px 28px rgba(201, 167, 77, .35);
+        }
+        .access-form .btn-luxury::after { background: linear-gradient(135deg, #B89238, var(--accent)); }
+        .access-form .btn-luxury:hover { box-shadow: 0 18px 36px rgba(201, 167, 77, .5); }
+        .access-form .btn-luxury .spinner { border-color: rgba(44,10,17,.3); border-top-color: #2C0A11; }
+        .access-back {
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,.5);
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: color .3s var(--ease);
+        }
+        .access-back:hover { color: var(--accent-light); }
+
+        .access-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 22px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(201, 167, 77, 0.18);
+        }
+        .access-feature {
+            text-align: center;
+            color: rgba(255,255,255,.7);
+            font-size: 9.5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .access-feature i {
+            display: block;
+            font-size: 16px;
+            color: var(--accent-light);
+            margin-bottom: 6px;
+        }
+
+        /* ---------- EDIT CITA MODAL ---------- */
+        .modal-x.wide { max-width: 480px; }
+        .edit-modal-header {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+        .edit-modal-header h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-size: 24px;
+            margin: 0 0 4px;
+        }
+        .edit-modal-header p {
+            color: var(--muted);
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* ---------- CUSTOM DATE & TIME PICKER ---------- */
+        .picker-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--burgundy);
+            font-weight: 600;
+            margin: 18px 0 12px;
+        }
+        .picker-label .picked {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 13px;
+            text-transform: none;
+            letter-spacing: .5px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .picker-label .picked.empty { color: var(--line); font-style: italic; }
+
+        .calendar {
+            background: linear-gradient(180deg, #fff, var(--cream));
+            border: 1px solid rgba(201, 167, 77, 0.25);
+            padding: 18px;
+            margin-bottom: 8px;
+            user-select: none;
+        }
+        .cal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .cal-month {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-size: 17px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .cal-nav {
+            width: 32px; height: 32px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--burgundy);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: all .25s var(--ease);
+        }
+        .cal-nav:hover:not(:disabled) { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+        .cal-nav:disabled { opacity: .3; cursor: not-allowed; }
+        .cal-nav-group { display: flex; gap: 6px; }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .cal-dow {
+            text-align: center;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 6px 0 8px;
+            font-weight: 600;
+        }
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            color: var(--dark-text);
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all .25s var(--ease);
+            position: relative;
+            font-weight: 400;
+        }
+        .cal-day:hover:not(.disabled):not(.selected) {
+            background: #fff;
+            border-color: var(--accent);
+            color: var(--burgundy);
+        }
+        .cal-day.muted { color: var(--line); pointer-events: none; }
+        .cal-day.disabled { color: #D9CFC4; cursor: not-allowed; text-decoration: line-through; }
+        .cal-day.today {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .cal-day.today::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .cal-day.selected {
+            background: var(--burgundy);
+            color: #fff;
+            border-color: var(--burgundy);
+            box-shadow: 0 6px 14px rgba(122, 18, 31, .25);
+            font-weight: 600;
+        }
+        .cal-day.selected::after { background: #fff; }
+
+        /* time slots */
+        .time-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            margin-bottom: 14px;
+            border: 1px solid var(--line);
+        }
+        .time-tab {
+            background: #fff;
+            border: none;
+            padding: 11px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all .3s var(--ease);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .time-tab i { font-size: 11px; }
+        .time-tab.active {
+            background: var(--burgundy);
+            color: #fff;
+        }
+        .time-tab:not(.active):hover { color: var(--burgundy); background: var(--cream); }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .time-slot {
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 10px 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            color: var(--dark-text);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all .25s var(--ease);
+            text-align: center;
+        }
+        .time-slot:hover:not(.selected):not(.disabled) {
+            border-color: var(--accent);
+            color: var(--burgundy);
+            transform: translateY(-1px);
+        }
+        .time-slot.selected {
+            background: var(--burgundy);
+            color: #fff;
+            border-color: var(--burgundy);
+            box-shadow: 0 6px 14px rgba(122, 18, 31, .22);
+        }
+        .time-slot.disabled {
+            color: var(--line);
+            cursor: not-allowed;
+            text-decoration: line-through;
+            background: var(--cream);
+        }
+        .time-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            color: var(--muted);
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* utility */
+        .text-center { text-align: center; }
+        .mt-auto-link { margin-top: 26px; }
+
+        /* =========================================================
+           RESPONSIVE — MOBILE FIRST POLISH
+           ========================================================= */
+
+        /* Tablet & under */
+        @media (max-width: 991px) {
+            .stat-row { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* Mobile (≤ 768px) */
+        @media (max-width: 768px) {
+            body {
+                background-image:
+                    radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.05), transparent 60%),
+                    radial-gradient(ellipse at bottom right, rgba(122, 18, 31, 0.04), transparent 60%);
+            }
+            main.container { padding-left: 14px !important; padding-right: 14px !important; padding-top: 24px !important; padding-bottom: 24px !important; }
+
+            /* nav */
+            nav.topbar { padding: 12px 16px; }
+            .nav-logo { font-size: 16px; letter-spacing: 3px; }
+            .nav-btn { padding: 8px 12px; font-size: 9px; letter-spacing: 1.6px; }
+
+            /* brand */
+            .brand-container { margin-bottom: 24px; }
+            .brand-ornament { font-size: 9px; letter-spacing: 4px; gap: 10px; margin-bottom: 12px; }
+            .brand-ornament::before, .brand-ornament::after { width: 30px; }
+            .brand-main { font-size: 36px; letter-spacing: 1.5px; }
+            .brand-sub { font-size: 46px; margin-top: -8px; }
+
+            /* card */
+            .luxury-card { padding: 28px 22px; }
+            .luxury-card::before { inset: 6px; }
+            .card-title { font-size: 12px; letter-spacing: 4px; }
+            .card-subtitle { font-size: 11px; margin-bottom: 24px; }
+
+            /* fields — bigger touch targets */
+            .field input, .field select { font-size: 16px; padding: 14px 0 8px; } /* 16px prevents iOS zoom */
+            .field-icon { font-size: 12px; top: 18px; }
+
+            /* buttons */
+            .btn-luxury { padding: 16px 18px; font-size: 11px; letter-spacing: 3px; }
+            .btn-ghost { padding: 12px 16px; font-size: 10px; letter-spacing: 2px; }
+
+            /* CTA pedir cita */
+            .btn-cta { padding: 16px 18px; gap: 10px; }
+            .btn-cta .cta-sub { font-size: 8.5px; letter-spacing: 1.6px; }
+            .btn-cta .cta-main { font-size: 17px; }
+            .btn-cta .cta-arrow { width: 34px; height: 34px; font-size: 12px; }
+
+            /* stamps */
+            .stamps-wrap { padding: 22px 18px; }
+            .stamps-container { gap: 8px; }
+            .stamp-circle { font-size: 14px; }
+
+            /* social */
+            .social-section { margin-top: 22px; }
+            .social-icons { gap: 10px; }
+            .social-link { width: 46px; height: 46px; font-size: 17px; }
+
+            /* picker */
+            .picker-label { flex-direction: column; align-items: flex-start; gap: 4px; font-size: 9.5px; letter-spacing: 2px; margin: 18px 0 10px; }
+            .picker-label .picked { font-size: 12px; align-self: flex-start; }
+            .calendar { padding: 14px 12px; }
+            .cal-head { margin-bottom: 12px; }
+            .cal-month { font-size: 15px; }
+            .cal-nav { width: 30px; height: 30px; font-size: 10px; }
+            .cal-grid { gap: 3px; }
+            .cal-dow { font-size: 8.5px; padding: 4px 0 6px; letter-spacing: 1px; }
+            .cal-day { font-size: 13px; }
+
+            /* time slots — 3 cols on mobile, bigger touch */
+            .time-tabs { margin-bottom: 12px; }
+            .time-tab { padding: 12px 8px; font-size: 9.5px; letter-spacing: 1.6px; gap: 6px; }
+            .time-slots { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .time-slot { padding: 13px 4px; font-size: 13px; }
+            .time-empty { padding: 16px; font-size: 12px; }
+
+            /* admin */
+            .stat-row { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+            .stat { padding: 14px 10px; }
+            .stat .num { font-size: 24px; }
+            .stat .lbl { font-size: 8.5px; letter-spacing: 1.4px; margin-top: 4px; }
+            .admin-header { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 18px; }
+            .admin-header h5 { font-size: 18px; }
+            .admin-search { flex: 1 1 100%; }
+            .admin-search input { font-size: 14px; padding: 11px 12px 11px 34px; }
+
+            /* admin table → card mode */
+            .admin-table thead { display: none; }
+            .admin-table, .admin-table tbody { display: block; }
+            .admin-table tr {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                grid-template-areas: "name pill" "actions actions";
+                gap: 10px;
+                padding: 14px;
+                margin-bottom: 8px;
+                background: var(--cream);
+            }
+            .admin-table tr:hover { transform: none; }
+            .admin-table td { display: block; padding: 0; border: none; }
+            .admin-table td:nth-child(1) { grid-area: name; padding: 0 !important; }
+            .admin-table td:nth-child(2) { grid-area: pill; padding: 0 !important; align-self: center; text-align: right; }
+            .admin-table td:nth-child(3) {
+                grid-area: actions;
+                padding: 8px 0 0 !important;
+                border-top: 1px solid var(--line);
+                margin-top: 4px;
+                display: flex;
+                gap: 6px;
+                justify-content: flex-end;
+                text-align: right !important;
+            }
+            .stamps-pill { font-size: 10.5px; padding: 5px 10px; gap: 6px; }
+            .stamps-pill .bar { width: 50px; }
+            .action-icon { width: 36px; height: 36px; margin: 0; }
+
+            /* citas */
+            .cita-card { padding: 14px; }
+            .cita-card .cita-name { font-size: 15px; }
+            .cita-card .cita-meta { gap: 10px; flex-wrap: wrap; font-size: 11px; }
+            .cita-actions { gap: 6px; }
+            .cita-btn { padding: 10px 6px; font-size: 9.5px; letter-spacing: 1.2px; }
+            .cita-btn.approve { flex: 2; }
+
+            /* access card (admin login) */
+            .access-hero { padding: 32px 24px 22px; }
+            .access-icon { width: 66px; height: 66px; font-size: 26px; margin-bottom: 16px; }
+            .access-hero h2 { font-size: 28px; }
+            .access-hero .accent-italic { font-size: 32px; }
+            .access-hero p { font-size: 11px; }
+            .access-form { padding: 26px 24px 28px; }
+            .access-features { gap: 4px; padding-top: 18px; margin-top: 18px; }
+            .access-feature { font-size: 8.5px; letter-spacing: .8px; }
+            .access-feature i { font-size: 14px; margin-bottom: 4px; }
+
+            /* toasts */
+            .toast-stack { right: 12px; left: 12px; bottom: 12px; max-width: none; }
+            .toast { padding: 12px 14px; font-size: 12px; }
+
+            /* modals */
+            .modal-backdrop-x { padding: 12px; align-items: flex-end; }
+            .modal-x, .modal-x.wide {
+                max-width: 100%;
+                width: 100%;
+                padding: 28px 22px;
+                max-height: calc(100vh - 24px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .modal-x h4 { font-size: 20px; }
+            .modal-x p { font-size: 12.5px; margin-bottom: 20px; }
+            .modal-actions { flex-direction: column-reverse; gap: 8px; }
+            .modal-actions button { width: 100%; }
+            .modal-backdrop-x.show .modal-x {
+                animation: slideUp .35s var(--ease);
+            }
+            @keyframes slideUp {
+                from { transform: translateY(40px); }
+                to { transform: translateY(0); }
+            }
+            .edit-modal-header h4 { font-size: 20px; }
+
+            /* divider */
+            .divider-soft { font-size: 9px; letter-spacing: 2px; margin: 20px 0 14px; }
+        }
+
+        /* Small phones (≤ 480px) */
+        @media (max-width: 480px) {
+            main.container { padding-left: 12px !important; padding-right: 12px !important; }
+            .luxury-card { padding: 24px 18px; }
+            .luxury-card::before { inset: 5px; }
+
+            .brand-main { font-size: 32px; }
+            .brand-sub { font-size: 40px; }
+
+            .stat-row { gap: 6px; }
+            .stat { padding: 12px 8px; }
+            .stat .num { font-size: 20px; }
+            .stat .lbl { font-size: 8px; letter-spacing: 1.2px; }
+
+            /* calendar even tighter */
+            .calendar { padding: 12px 8px; }
+            .cal-grid { gap: 2px; }
+            .cal-day { font-size: 12px; }
+            .cal-dow { font-size: 8px; }
+            .cal-month { font-size: 14px; }
+
+            /* time slots stay 3 cols but padding compact */
+            .time-slot { padding: 12px 2px; font-size: 12.5px; }
+
+            /* social */
+            .social-link { width: 44px; height: 44px; font-size: 16px; }
+
+            /* CTA */
+            .btn-cta { padding: 14px 14px; }
+            .btn-cta .cta-main { font-size: 15px; }
+            .btn-cta .cta-arrow { width: 30px; height: 30px; font-size: 11px; }
+
+            /* access card */
+            .access-hero { padding: 28px 18px 20px; }
+            .access-form { padding: 22px 18px 24px; }
+            .access-hero h2 { font-size: 24px; }
+            .access-hero .accent-italic { font-size: 28px; }
+
+            /* admin actions row tighter */
+            .cita-btn { padding: 9px 4px; font-size: 9px; letter-spacing: 1px; }
+            .action-icon { width: 34px; height: 34px; font-size: 11px; }
+        }
+
+        /* Tiny phones (≤ 360px) */
+        @media (max-width: 360px) {
+            .brand-main { font-size: 28px; }
+            .brand-sub { font-size: 36px; }
+            .nav-btn { padding: 7px 10px; font-size: 8.5px; letter-spacing: 1.4px; }
+            .nav-logo { font-size: 14px; }
+            .cal-day { font-size: 11px; }
+            .time-slot { font-size: 11.5px; padding: 11px 2px; }
+        }
+
+        /* Landscape phones — keep modals scrollable */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .modal-backdrop-x { align-items: center; }
+            .modal-x, .modal-x.wide { max-height: 92vh; overflow-y: auto; }
+            .access-icon { width: 56px; height: 56px; font-size: 22px; margin-bottom: 12px; }
+            .access-hero { padding: 22px 24px 16px; }
+        }
+
+        /* Reduce motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+            .btn-cta::after { animation: none; }
+            .access-icon { animation: none; }
+        }
     </style>
 </head>
-<body onload="configurarFechas()">
+<body>
 
-    <nav>
-        <div style="font-family: 'Playfair Display', serif; font-size: 18px; color: var(--burgundy);">S.N</div>
-        <div class="d-flex gap-2">
+    <nav class="topbar">
+        <div class="nav-logo">S<span class="dot"></span>N</div>
+        <div class="nav-actions">
             <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
-            <button class="nav-btn" onclick="mostrarVista('login')" style="background: var(--burgundy); color: white;">Inicio</button>
+            <button class="nav-btn solid" onclick="mostrarVista('login')">Inicio</button>
         </div>
     </nav>
 
-    <div class="container py-5">
-        
-        <div id="login" class="row justify-content-center">
-            <div class="col-12 col-md-5">
-                <div class="brand-container">
-                    <span class="brand-main">SHANAHAN</span>
+    <main class="container py-5">
+
+        <!-- LOGIN CLIENTE -->
+        <section id="login" class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Luxury Nail Salon</span></div>
+                    <span class="brand-main">Shanahan</span>
                     <span class="brand-sub">Nails</span>
                 </div>
-                <div class="luxury-card">
-                    <h5 class="text-center mb-4" style="color: var(--burgundy);">CONSULTAR PUNTOS</h5>
-                    <input type="text" class="form-control mb-3" id="loginUsuario" placeholder="Nombre completo">
-                    <input type="text" class="form-control mb-4" id="loginPass" placeholder="Teléfono" oninput="validarVitalNumeros(this)">
-                    <button class="btn btn-luxury" onclick="iniciarSesionCliente()">ENTRAR</button>
-                    <button class="btn btn-link w-100 mt-3 text-dark text-decoration-none" style="font-size: 11px;" onclick="mostrarVista('vistaPedirCita')">¿NUEVA CLIENTA? PIDE TU CITA AQUÍ</button>
-                </div>
-            </div>
-        </div>
+                <div class="luxury-card view-anim">
+                    <h5 class="card-title">Consultar Puntos</h5>
+                    <p class="card-subtitle">Accede a tu programa de fidelización</p>
 
-        <div id="vistaCliente" class="row justify-content-center" style="display: none;">
-            <div class="col-12 col-md-6 text-center">
-                <div class="luxury-card">
-                    <h2 id="clienteNombre" style="font-family: 'Playfair Display', serif;">Cliente</h2>
-                    <div class="stamps-container" id="stampsGrid"></div>
-                    <div id="clienteEstado" class="reward-info mt-3"></div>
-                    <button class="btn btn-link mt-4 text-secondary" onclick="mostrarVista('login')">Cerrar Sesión</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="vistaPedirCita" class="row justify-content-center" style="display: none;">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="luxury-card">
-                    <h5 class="mb-4 text-center" style="color: var(--burgundy); font-family: 'Playfair Display', serif; font-size: 24px;">SOLICITAR CITA</h5>
-                    <div class="mb-3">
-                        <label class="form-label small text-muted">Nombre y Apellido</label>
-                        <input type="text" class="form-control" id="citaNombre" placeholder="Tu nombre">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small text-muted">Teléfono (Solo números)</label>
-                        <input type="text" class="form-control" id="citaTelefono" placeholder="Ej: 600000000" oninput="validarVitalNumeros(this)">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small text-muted">Fecha (Hoy en adelante)</label>
-                            <input type="date" class="form-control" id="citaFecha" onchange="validarFechaVital(this)">
+                    <form onsubmit="event.preventDefault(); iniciarSesionCliente();">
+                        <div class="field">
+                            <input type="text" id="loginUsuario" placeholder=" " autocomplete="name">
+                            <label>Nombre completo</label>
+                            <i class="fa-regular fa-user field-icon"></i>
                         </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label small text-muted">Hora</label>
-                            <input type="time" class="form-control" id="citaHora">
+                        <div class="field">
+                            <input type="tel" id="loginPass" placeholder=" " autocomplete="tel">
+                            <label>Teléfono</label>
+                            <i class="fa-solid fa-phone field-icon"></i>
+                        </div>
+                        <button type="submit" class="btn-luxury" id="btnLoginCliente"><span>Entrar</span><span class="spinner"></span></button>
+                    </form>
+
+                    <div class="divider-soft">¿Eres nueva?</div>
+
+                    <button class="btn-cta" onclick="mostrarVista('vistaPedirCita')">
+                        <span class="cta-text">
+                            <span class="cta-sub">Reserva ahora</span>
+                            <span class="cta-main">Pide tu cita</span>
+                        </span>
+                        <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                    </button>
+                </div>
+
+                <div class="social-section view-anim">
+                    <div class="social-title">Síguenos</div>
+                    <div class="social-icons">
+                        <a href="https://instagram.com/" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://tiktok.com/" target="_blank" rel="noopener" class="social-link tiktok" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://wa.me/" target="_blank" rel="noopener" class="social-link whatsapp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA CLIENTE -->
+        <section id="vistaCliente" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-7 col-lg-6">
+                <div class="luxury-card view-anim text-center">
+                    <div class="brand-ornament"><span>Bienvenida</span></div>
+                    <h2 id="clienteNombre" style="font-family:'Playfair Display',serif; color:var(--burgundy); font-size:34px; margin:0 0 4px;">Cliente</h2>
+                    <p class="card-subtitle" style="margin-bottom:0;">Tu tarjeta de fidelización</p>
+
+                    <div class="stamps-wrap">
+                        <div class="stamps-header">
+                            <span class="label">Sellos acumulados</span>
+                            <span class="count"><strong id="stampCountText">0</strong> / 10</span>
+                        </div>
+                        <div class="stamps-container" id="stampsGrid"></div>
+                    </div>
+
+                    <div id="clienteEstado" class="reward-info"></div>
+
+                    <button class="btn-ghost mt-auto-link" onclick="mostrarVista('login')" style="margin-top:24px;">
+                        <i class="fa-solid fa-arrow-left-long" style="margin-right:8px;"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA PEDIR CITA -->
+        <section id="vistaPedirCita" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Reservar</span></div>
+                    <span class="brand-main">Solicitar</span>
+                    <span class="brand-sub">Cita</span>
+                </div>
+                <div class="luxury-card view-anim">
+                    <p class="card-subtitle">Te contactaremos para confirmar disponibilidad</p>
+
+                    <form onsubmit="event.preventDefault(); enviarSolicitudCita();">
+                        <div class="field">
+                            <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
+                            <label>Nombre completo</label>
+                            <i class="fa-regular fa-user field-icon"></i>
+                        </div>
+                        <div class="field">
+                            <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
+                            <label>Teléfono</label>
+                            <i class="fa-solid fa-phone field-icon"></i>
+                        </div>
+                        <div class="picker-label">
+                            <span><i class="fa-regular fa-calendar" style="margin-right:8px; color:var(--accent);"></i>Selecciona una fecha</span>
+                            <span class="picked empty" id="pickedDateLabel">Sin elegir</span>
+                        </div>
+                        <div class="calendar" id="calendar">
+                            <div class="cal-head">
+                                <div class="cal-month" id="calMonth"></div>
+                                <div class="cal-nav-group">
+                                    <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="cal-nav" id="calNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="cal-grid" id="calGrid"></div>
+                        </div>
+                        <input type="hidden" id="citaFecha">
+
+                        <div class="picker-label">
+                            <span><i class="fa-regular fa-clock" style="margin-right:8px; color:var(--accent);"></i>Selecciona la hora</span>
+                            <span class="picked empty" id="pickedTimeLabel">Sin elegir</span>
+                        </div>
+                        <div class="time-tabs">
+                            <button type="button" class="time-tab active" data-period="morning"><i class="fa-solid fa-sun"></i>Mañana</button>
+                            <button type="button" class="time-tab" data-period="afternoon"><i class="fa-solid fa-moon"></i>Tarde</button>
+                        </div>
+                        <div class="time-slots" id="timeSlots"></div>
+                        <input type="hidden" id="citaHora">
+
+                        <button type="submit" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;"><span>Enviar Solicitud</span><span class="spinner"></span></button>
+                    </form>
+
+                    <button class="link-soft" onclick="mostrarVista('login')">
+                        <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA ACCESO ADMIN -->
+        <section id="vistaAccesoAdmin" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-7 col-lg-5">
+                <div class="luxury-card access-card view-anim">
+                    <div class="access-hero">
+                        <div class="access-icon"><i class="fa-solid fa-key"></i></div>
+                        <div class="ornament"><span>Área Privada</span></div>
+                        <h2>Acceso</h2>
+                        <span class="accent-italic">Salón</span>
+                        <p>Panel exclusivo del personal Shanahan Nails</p>
+                    </div>
+                    <div class="access-form">
+                        <form onsubmit="event.preventDefault(); loginAdmin();">
+                            <div class="field">
+                                <input type="text" id="adminUser" placeholder=" " autocomplete="username">
+                                <label>Usuario</label>
+                                <i class="fa-regular fa-user field-icon"></i>
+                            </div>
+                            <div class="field">
+                                <input type="password" id="adminPass" placeholder=" " autocomplete="current-password">
+                                <label>Contraseña</label>
+                                <i class="fa-solid fa-lock field-icon"></i>
+                            </div>
+                            <button type="submit" class="btn-luxury" id="btnLoginAdmin"><span>Entrar al Salón</span><span class="spinner"></span></button>
+                        </form>
+
+                        <div class="access-features">
+                            <div class="access-feature"><i class="fa-solid fa-gem"></i>Fidelización</div>
+                            <div class="access-feature"><i class="fa-regular fa-calendar-check"></i>Citas</div>
+                            <div class="access-feature"><i class="fa-solid fa-users"></i>Clientas</div>
+                        </div>
+
+                        <button class="access-back" onclick="mostrarVista('login')">
+                            <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver al inicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA ADMIN -->
+        <section id="vistaAdmin" class="row g-4" style="display:none;">
+            <div class="col-12">
+                <div class="brand-container view-anim" style="margin-bottom:18px;">
+                    <div class="brand-ornament"><span>Panel del Salón</span></div>
+                    <span class="brand-main" style="font-size:38px;">Shanahan</span>
+                    <span class="brand-sub" style="font-size:46px;">Dashboard</span>
+                </div>
+                <div class="stat-row view-anim">
+                    <div class="stat"><div class="num" id="statClientas">0</div><div class="lbl">Clientas Activas</div></div>
+                    <div class="stat"><div class="num" id="statCitas">0</div><div class="lbl">Citas Pendientes</div></div>
+                    <div class="stat"><div class="num" id="statSellos">0</div><div class="lbl">Sellos Totales</div></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="luxury-card view-anim">
+                    <div class="admin-header" style="margin-bottom:16px;">
+                        <h5><i class="fa-solid fa-user-plus"></i> Nueva Clienta</h5>
+                    </div>
+                    <form onsubmit="event.preventDefault(); registrarNuevoCliente();">
+                        <div class="field">
+                            <input type="text" id="regNombre" placeholder=" ">
+                            <label>Nombre</label>
+                        </div>
+                        <div class="field">
+                            <input type="tel" id="regTelef" placeholder=" ">
+                            <label>Teléfono</label>
+                        </div>
+                        <button type="submit" class="btn-luxury" id="btnRegistrar"><span>Registrar</span><span class="spinner"></span></button>
+                    </form>
+
+                    <hr style="border:none; border-top:1px solid var(--line); margin:36px 0 24px;">
+
+                    <div class="admin-header" style="margin-bottom:16px;">
+                        <h5><i class="fa-regular fa-calendar-check"></i> Solicitudes</h5>
+                    </div>
+                    <div id="listaCitasPendientes"></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-7">
+                <div class="luxury-card view-anim">
+                    <div class="admin-header">
+                        <h5><i class="fa-solid fa-gem"></i> Fidelización</h5>
+                        <div class="admin-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="adminSearch" placeholder="Buscar clienta…" oninput="renderAdmin()">
                         </div>
                     </div>
-                    <button class="btn btn-luxury" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
-                    <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="vistaAccesoAdmin" class="row justify-content-center" style="display: none;">
-            <div class="col-12 col-md-4">
-                <div class="luxury-card">
-                    <h5 class="text-center mb-4">ACCESO ADMINISTRADOR</h5>
-                    <input type="text" class="form-control mb-3" id="adminUser" placeholder="Usuario">
-                    <input type="password" class="form-control mb-4" id="adminPass" placeholder="Contraseña">
-                    <button class="btn btn-luxury" onclick="loginAdmin()">ENTRAR</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="vistaAdmin" class="row g-4" style="display: none;">
-            <div class="col-12 col-lg-4">
-                <div class="luxury-card">
-                    <h5 class="mb-4">Nueva Clienta</h5>
-                    <input type="text" class="form-control mb-3" id="regNombre" placeholder="Nombre">
-                    <input type="text" class="form-control mb-4" id="regTelef" placeholder="Teléfono" oninput="validarVitalNumeros(this)">
-                    <button class="btn-luxury" onclick="registrarNuevoCliente()">REGISTRAR</button>
-                    <hr class="my-5">
-                    <h5>Solicitudes Pendientes</h5>
-                    <div id="listaCitasPendientes" class="mt-3"></div>
-                    <button class="btn btn-link btn-sm text-danger mt-5" onclick="mostrarVista('login')">Cerrar Sesión Admin</button>
-                </div>
-            </div>
-            <div class="col-12 col-lg-8">
-                <div class="luxury-card">
-                    <h5>Gestión de Fidelización</h5>
                     <div class="table-responsive">
                         <table class="admin-table" id="tablaClientes">
                             <thead>
-                                <tr><th>CLIENTA</th><th>SELLOS</th><th class="text-end">ACCIONES</th></tr>
+                                <tr>
+                                    <th>Clienta</th>
+                                    <th>Sellos</th>
+                                    <th style="text-align:right;">Acciones</th>
+                                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
             </div>
+        </section>
+
+    </main>
+
+    <!-- TOAST STACK -->
+    <div class="toast-stack" id="toastStack"></div>
+
+    <!-- MODAL EDITAR CITA -->
+    <div class="modal-backdrop-x" id="editCitaModal">
+        <div class="modal-x wide">
+            <div class="edit-modal-header">
+                <h4>Editar cita</h4>
+                <p>Modifica los datos antes de aprobar o guarda los cambios</p>
+            </div>
+            <input type="hidden" id="editCitaId">
+            <div class="field">
+                <input type="text" id="editCitaNombre" placeholder=" ">
+                <label>Nombre</label>
+                <i class="fa-regular fa-user field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="tel" id="editCitaTelefono" placeholder=" ">
+                <label>Teléfono</label>
+                <i class="fa-solid fa-phone field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="date" id="editCitaFecha" placeholder=" ">
+                <label>Fecha</label>
+                <i class="fa-regular fa-calendar field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="time" id="editCitaHora" placeholder=" ">
+                <label>Hora</label>
+                <i class="fa-regular fa-clock field-icon"></i>
+            </div>
+            <div class="modal-actions" style="margin-top:24px;">
+                <button class="btn-ghost" onclick="closeEditCita()">Cancelar</button>
+                <button class="btn-luxury" style="margin-top:0;" onclick="guardarEdicionCita()" id="btnGuardarEdicion"><span>Guardar cambios</span><span class="spinner"></span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM -->
+    <div class="modal-backdrop-x" id="confirmModal">
+        <div class="modal-x">
+            <h4 id="confirmTitle">¿Estás segura?</h4>
+            <p id="confirmMsg">Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeConfirm(false)">Cancelar</button>
+                <button class="btn-luxury" style="margin-top:0;" onclick="closeConfirm(true)"><span>Confirmar</span></button>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <script>
         const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
@@ -153,80 +1817,146 @@
         let clientas = [];
         let citas = [];
 
-        // --- VALIDACIONES VITALES ---
-        function validarVitalNumeros(input) {
-            const original = input.value;
-            input.value = input.value.replace(/[^0-9]/g, '');
-            if (original !== input.value) {
-                alert("🚨 ¡ERROR CRÍTICO DE SISTEMA! Ingresar letras en un campo de contacto es como intentar operar un corazón con un tenedor. Por favor, usa solo números para mantener el pulso del salón.");
-            }
+        /* ---------- TOASTS ---------- */
+        function toast(message, type = 'info', title = '') {
+            const stack = document.getElementById('toastStack');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
+            const titles = { success: title || 'Hecho', error: title || 'Atención', info: title || 'Aviso' };
+            t.innerHTML = `<i class="fa-solid ${icons[type]}"></i><div><div class="msg-title">${titles[type]}</div><div class="msg-body">${message}</div></div>`;
+            stack.appendChild(t);
+            setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 3800);
         }
 
-        function validarFechaVital(input) {
-            const hoy = new Date();
-            hoy.setHours(0,0,0,0);
-            const elegida = new Date(input.value);
-            
-            if (elegida < hoy) {
-                input.value = "";
-                alert("⏳ ¡ALERTA TEMPORAL! El tiempo es nuestro recurso más vital y no podemos viajar al pasado (todavía). Elige una fecha futura para asegurar la existencia de tu cita... y de la humanidad.");
-            }
+        /* ---------- CONFIRM MODAL ---------- */
+        let confirmResolver = null;
+        function askConfirm(title, msg) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMsg').textContent = msg;
+            modal.classList.add('show');
+            return new Promise(resolve => { confirmResolver = resolve; });
+        }
+        function closeConfirm(result) {
+            document.getElementById('confirmModal').classList.remove('show');
+            if (confirmResolver) confirmResolver(result);
+        }
+        document.getElementById('confirmModal').addEventListener('click', e => {
+            if (e.target.id === 'confirmModal') closeConfirm(false);
+        });
+
+        /* ---------- BUTTON LOADING ---------- */
+        function setBtnLoading(id, on) {
+            const b = document.getElementById(id);
+            if (!b) return;
+            b.classList.toggle('loading', on);
+            b.disabled = on;
         }
 
-        function configurarFechas() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const campoFecha = document.getElementById('citaFecha');
-            if(campoFecha) campoFecha.setAttribute('min', hoy);
-        }
-
-        // --- LÓGICA DE VISTAS ---
+        /* ---------- VIEW SWITCH ---------- */
         function mostrarVista(idVista) {
             ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
-                document.getElementById(v).style.display = 'none';
+                const el = document.getElementById(v);
+                if (el) el.style.display = 'none';
             });
             const vistaActiva = document.getElementById(idVista);
-            vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login' || idVista === 'vistaPedirCita' || idVista === 'vistaAccesoAdmin') ? 'flex' : 'block';
-            if (idVista === 'vistaAdmin') cargarDatosAdmin();
-        }
-
-        async function cargarDatosAdmin() {
-            const { data: dC } = await sb.from('clientas').select('*');
-            clientas = dC || [];
-            const { data: dCi } = await sb.from('citas').select('*');
-            citas = dCi || [];
-            renderAdmin();
-        }
-
-        async function loginAdmin() {
-            const user = document.getElementById('adminUser').value;
-            const pass = document.getElementById('adminPass').value;
-            const { data } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
-            if (data) {
-                mostrarVista('vistaAdmin');
-            } else {
-                alert("🛑 Acceso bloqueado. Las credenciales no coinciden con los registros vitales.");
+            if (vistaActiva) {
+                vistaActiva.style.display = 'flex';
+                vistaActiva.querySelectorAll('.view-anim').forEach(el => {
+                    el.style.animation = 'none';
+                    el.offsetHeight;
+                    el.style.animation = '';
+                });
+                if (idVista === 'vistaAdmin') cargarDatosAdmin();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
+        /* ---------- ADMIN DATA ---------- */
+        async function cargarDatosAdmin() {
+            try {
+                const [{ data: dC }, { data: dCi }] = await Promise.all([
+                    sb.from('clientas').select('*').order('nombre', { ascending: true }),
+                    sb.from('citas').select('*').order('fecha', { ascending: true })
+                ]);
+                clientas = dC || [];
+                citas = dCi || [];
+                renderAdmin();
+            } catch (e) {
+                toast('No se pudieron cargar los datos', 'error');
+            }
+        }
+
+        /* ---------- ADMIN LOGIN ---------- */
+        async function loginAdmin() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            if (!user || !pass) return toast('Completa usuario y contraseña', 'error');
+
+            setBtnLoading('btnLoginAdmin', true);
+            try {
+                const { data } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
+                if (data) {
+                    toast('Bienvenida al panel', 'success');
+                    mostrarVista('vistaAdmin');
+                } else {
+                    toast('Credenciales incorrectas', 'error');
+                }
+            } catch (e) {
+                toast('Error al iniciar sesión', 'error');
+            } finally {
+                setBtnLoading('btnLoginAdmin', false);
+            }
+        }
+
+        /* ---------- CLIENT LOGIN ---------- */
         async function iniciarSesionCliente() {
             const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
             const telef = document.getElementById('loginPass').value.trim();
-            const { data } = await sb.from('clientas').select('*').eq('telefono', telef);
-            const cliente = (data || []).find(c => c.nombre.toLowerCase() === nombre);
-            
-            if (cliente) {
-                document.getElementById('clienteNombre').innerText = cliente.nombre;
-                const grid = document.getElementById('stampsGrid');
-                grid.innerHTML = "";
-                for(let i=1; i<=10; i++) {
-                    grid.innerHTML += `<div class="stamp-circle ${i <= cliente.visitas ? 'active' : ''}">${i}</div>`;
+            if (!nombre || !telef) return toast('Introduce tu nombre y teléfono', 'error');
+
+            setBtnLoading('btnLoginCliente', true);
+            try {
+                const { data } = await sb.from('clientas').select('*').eq('telefono', telef);
+                const cliente = (data || []).find(c => (c.nombre || '').toLowerCase() === nombre);
+
+                if (cliente) {
+                    document.getElementById('clienteNombre').innerText = cliente.nombre;
+                    document.getElementById('stampCountText').innerText = cliente.visitas;
+                    const grid = document.getElementById('stampsGrid');
+                    grid.innerHTML = "";
+                    for (let i = 1; i <= 10; i++) {
+                        const isReward = i === 10 && cliente.visitas >= 10;
+                        const cls = i <= cliente.visitas ? (isReward ? 'reward' : 'active') : '';
+                        grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward ? '<i class="fa-solid fa-star"></i>' : i}</div>`;
+                    }
+
+                    const estado = document.getElementById('clienteEstado');
+                    if (cliente.visitas >= 10) {
+                        estado.className = 'reward-info gold';
+                        estado.innerHTML = '<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible! Canjea tu tarjeta en tu próxima visita.';
+                    } else if (cliente.visitas === 5) {
+                        estado.className = 'reward-info gold';
+                        estado.innerHTML = '<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
+                    } else {
+                        const restantes = 10 - cliente.visitas;
+                        estado.className = 'reward-info';
+                        estado.innerHTML = `<i class="fa-regular fa-gem"></i>Te ${restantes === 1 ? 'queda' : 'quedan'} <strong>${restantes}</strong> ${restantes === 1 ? 'sello' : 'sellos'} para tu recompensa.`;
+                    }
+
+                    mostrarVista('vistaCliente');
+                } else {
+                    toast('No se encontró el registro. Solicita una cita para registrarte.', 'error');
                 }
-                mostrarVista('vistaCliente');
-            } else {
-                alert("🔎 Sujeto no identificado. No existen registros de este cliente en nuestra línea de tiempo.");
+            } catch (e) {
+                toast('Error al consultar tus datos', 'error');
+            } finally {
+                setBtnLoading('btnLoginCliente', false);
             }
         }
 
+        /* ---------- APPOINTMENT REQUEST ---------- */
         async function enviarSolicitudCita() {
             const cita = {
                 id: Date.now(),
@@ -235,65 +1965,364 @@
                 fecha: document.getElementById('citaFecha').value,
                 hora: document.getElementById('citaHora').value
             };
-
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
-                return alert("⚠️ Incompletitud detectada. Un ser humano necesita todos sus órganos para vivir, y nosotros necesitamos todos tus datos para la cita.");
+                return toast('Completa todos los campos', 'error');
             }
 
-            const { error } = await sb.from('citas').insert([cita]);
-            if (!error) {
-                alert("✅ Transmisión exitosa. Tu solicitud ha sido enviada al centro de mando.");
-                mostrarVista('login');
+            setBtnLoading('btnEnviarCita', true);
+            try {
+                const { error } = await sb.from('citas').insert([cita]);
+                if (!error) {
+                    toast('Solicitud enviada. Te contactaremos para confirmar.', 'success', 'Reserva enviada');
+                    document.querySelectorAll('#vistaPedirCita input[type="text"], #vistaPedirCita input[type="tel"]').forEach(i => i.value = '');
+                    resetPicker();
+                    setTimeout(() => mostrarVista('login'), 800);
+                } else {
+                    toast('No se pudo enviar la solicitud', 'error');
+                }
+            } catch (e) {
+                toast('Error de conexión', 'error');
+            } finally {
+                setBtnLoading('btnEnviarCita', false);
             }
         }
 
+        /* ---------- ADMIN RENDER ---------- */
         function renderAdmin() {
-            const tb = document.querySelector("#tablaClientes tbody");
-            tb.innerHTML = "";
-            clientas.forEach(c => {
-                tb.innerHTML += `<tr>
-                    <td><b>${c.nombre}</b><br><small>${c.telefono}</small></td>
-                    <td>${c.visitas}/10</td>
-                    <td class="text-end">
-                        <i class="fa-solid fa-plus action-icon" onclick="sumarVisita(${c.id}, ${c.visitas})"></i>
-                        <i class="fa-solid fa-trash-can action-icon" onclick="borrarCliente(${c.id})"></i>
-                    </td>
-                </tr>`;
-            });
+            const search = (document.getElementById('adminSearch')?.value || '').trim().toLowerCase();
+            const filtered = search
+                ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search))
+                : clientas;
 
+            // stats
+            document.getElementById('statClientas').textContent = clientas.length;
+            document.getElementById('statCitas').textContent = citas.length;
+            document.getElementById('statSellos').textContent = clientas.reduce((s, c) => s + (c.visitas || 0), 0);
+
+            // table
+            const tb = document.querySelector('#tablaClientes tbody');
+            tb.innerHTML = "";
+            if (filtered.length === 0) {
+                tb.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search ? 'Sin resultados' : 'Todavía no hay clientas registradas'}</div></div></td></tr>`;
+            } else {
+                filtered.forEach(c => {
+                    const v = c.visitas || 0;
+                    const pct = Math.min(v, 10) * 10;
+                    const fullClass = v >= 10 ? 'full' : '';
+                    tb.innerHTML += `<tr>
+                        <td>
+                            <div class="client-name">${c.nombre}</div>
+                            <div class="client-phone">${c.telefono || '—'}</div>
+                        </td>
+                        <td>
+                            <span class="stamps-pill ${fullClass}">
+                                <span>${v}/10</span>
+                                <span class="bar" style="--p:${pct}%"></span>
+                            </span>
+                        </td>
+                        <td style="text-align:right;">
+                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id}, ${v})"><i class="fa-solid fa-plus"></i></button>
+                            <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${c.id})"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            }
+
+            // appointments
             const lista = document.getElementById('listaCitasPendientes');
             lista.innerHTML = "";
-            citas.forEach(cita => {
-                lista.innerHTML += `<div class="p-3 border mb-2 bg-light small">
-                    <b>${cita.nombre_cliente}</b><br>${cita.fecha} - ${cita.hora}<br>
-                    <button class="btn btn-sm btn-success mt-2" onclick="aprobarCita(${cita.id})">APROBAR</button>
-                </div>`;
-            });
+            if (citas.length === 0) {
+                lista.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar"></i><div class="label">Sin solicitudes pendientes</div></div>`;
+            } else {
+                citas.forEach(cita => {
+                    const fecha = cita.fecha ? new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'long' }) : '—';
+                    lista.innerHTML += `<div class="cita-card">
+                        <div class="cita-name">${cita.nombre_cliente}</div>
+                        <div class="cita-meta">
+                            <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
+                            <span><i class="fa-regular fa-clock"></i>${cita.hora || '—'}</span>
+                            <span><i class="fa-solid fa-phone"></i>${cita.telefono || '—'}</span>
+                        </div>
+                        <div class="cita-actions">
+                            <button class="cita-btn approve" onclick="aprobarCita(${cita.id})"><i class="fa-solid fa-check" style="margin-right:5px;"></i>Aprobar</button>
+                            <button class="cita-btn reject" onclick="abrirEditarCita(${cita.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                            <button class="cita-btn reject" onclick="rechazarCita(${cita.id})" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>`;
+                });
+            }
+        }
+
+        /* ---------- ADMIN ACTIONS ---------- */
+        async function aprobarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (!cita) return;
+            try {
+                await sb.from('clientas').insert([{ id: Date.now(), nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
+                await sb.from('citas').delete().eq('id', idCita);
+                toast('Clienta registrada correctamente', 'success');
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('No se pudo aprobar la cita', 'error');
+            }
+        }
+
+        function abrirEditarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (!cita) return;
+            document.getElementById('editCitaId').value = cita.id;
+            document.getElementById('editCitaNombre').value = cita.nombre_cliente || '';
+            document.getElementById('editCitaTelefono').value = cita.telefono || '';
+            document.getElementById('editCitaFecha').value = cita.fecha || '';
+            document.getElementById('editCitaHora').value = cita.hora || '';
+            document.getElementById('editCitaModal').classList.add('show');
+        }
+
+        function closeEditCita() {
+            document.getElementById('editCitaModal').classList.remove('show');
+        }
+
+        document.getElementById('editCitaModal').addEventListener('click', e => {
+            if (e.target.id === 'editCitaModal') closeEditCita();
+        });
+
+        async function guardarEdicionCita() {
+            const id = parseInt(document.getElementById('editCitaId').value, 10);
+            const payload = {
+                nombre_cliente: document.getElementById('editCitaNombre').value.trim(),
+                telefono: document.getElementById('editCitaTelefono').value.trim(),
+                fecha: document.getElementById('editCitaFecha').value,
+                hora: document.getElementById('editCitaHora').value
+            };
+            if (!payload.nombre_cliente || !payload.telefono || !payload.fecha || !payload.hora) {
+                return toast('Completa todos los campos', 'error');
+            }
+            setBtnLoading('btnGuardarEdicion', true);
+            try {
+                const { error } = await sb.from('citas').update(payload).eq('id', id);
+                if (!error) {
+                    toast('Cita actualizada', 'success');
+                    closeEditCita();
+                    cargarDatosAdmin();
+                } else {
+                    toast('No se pudo actualizar', 'error');
+                }
+            } catch (e) {
+                toast('Error al guardar', 'error');
+            } finally {
+                setBtnLoading('btnGuardarEdicion', false);
+            }
+        }
+
+        async function rechazarCita(idCita) {
+            const ok = await askConfirm('Rechazar solicitud', '¿Quieres descartar esta solicitud de cita?');
+            if (!ok) return;
+            try {
+                await sb.from('citas').delete().eq('id', idCita);
+                toast('Solicitud descartada', 'success');
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('No se pudo descartar', 'error');
+            }
         }
 
         async function sumarVisita(id, actual) {
             if (actual < 10) {
-                await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
-                cargarDatosAdmin();
+                try {
+                    await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
+                    if (actual + 1 === 10) toast('¡Tarjeta completada! Servicio gratis desbloqueado.', 'success', 'Recompensa');
+                    cargarDatosAdmin();
+                } catch (e) { toast('No se pudo añadir el sello', 'error'); }
+            } else {
+                toast('Esta tarjeta ya está completa', 'info');
             }
         }
 
-        async function borrarCliente(id) {
-            if(confirm("¿Deseas eliminar permanentemente esta existencia del sistema?")) {
-                await sb.from('clientas').delete().eq('id', id);
+        async function reiniciarVisitas(id) {
+            const ok = await askConfirm('Reiniciar tarjeta', 'Se pondrán los sellos a 0 (tras canjear la recompensa).');
+            if (!ok) return;
+            try {
+                await sb.from('clientas').update({ visitas: 0 }).eq('id', id);
+                toast('Tarjeta reiniciada', 'success');
                 cargarDatosAdmin();
-            }
+            } catch (e) { toast('No se pudo reiniciar', 'error'); }
+        }
+
+        async function borrarCliente(id) {
+            const ok = await askConfirm('Eliminar clienta', 'Esta acción no se puede deshacer.');
+            if (!ok) return;
+            try {
+                await sb.from('clientas').delete().eq('id', id);
+                toast('Clienta eliminada', 'success');
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo eliminar', 'error'); }
         }
 
         async function registrarNuevoCliente() {
             const n = document.getElementById('regNombre').value.trim();
             const t = document.getElementById('regTelef').value.trim();
-            if(n && t) {
-                await sb.from('clientas').insert([{ id: Date.now(), nombre: n, telefono: t, visitas: 0 }]);
-                cargarDatosAdmin();
-            }
+            if (!n || !t) return toast('Introduce nombre y teléfono', 'error');
+
+            setBtnLoading('btnRegistrar', true);
+            try {
+                const { error } = await sb.from('clientas').insert([{ id: Date.now(), nombre: n, telefono: t, visitas: 0 }]);
+                if (!error) {
+                    toast('Clienta registrada', 'success');
+                    document.getElementById('regNombre').value = '';
+                    document.getElementById('regTelef').value = '';
+                    cargarDatosAdmin();
+                } else { toast('No se pudo registrar', 'error'); }
+            } catch (e) { toast('Error de conexión', 'error'); }
+            finally { setBtnLoading('btnRegistrar', false); }
         }
-        
+
+        /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
+        const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        const DOW_ES = ['L','M','X','J','V','S','D'];
+        const SLOTS = {
+            morning:   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30'],
+            afternoon: ['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30']
+        };
+        const today = new Date(); today.setHours(0,0,0,0);
+        let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+        let selectedDate = null;
+        let selectedTime = null;
+        let activePeriod = 'morning';
+
+        function pad2(n){ return String(n).padStart(2,'0'); }
+        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+        function fmtPretty(d){
+            const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+            return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
+        }
+
+        function renderCalendar(){
+            const monthEl = document.getElementById('calMonth');
+            const grid = document.getElementById('calGrid');
+            if (!monthEl || !grid) return;
+
+            monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
+
+            // limit prev nav: cannot go before current month
+            const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('calPrev').disabled = calCursor <= minMonth;
+
+            grid.innerHTML = '';
+            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+
+            const year = calCursor.getFullYear();
+            const month = calCursor.getMonth();
+            const firstDay = new Date(year, month, 1);
+            // mon=0 .. sun=6
+            let startOffset = (firstDay.getDay() + 6) % 7;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const prevDays = new Date(year, month, 0).getDate();
+
+            // leading days from prev month
+            for (let i = startOffset - 1; i >= 0; i--) {
+                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
+            }
+            // current month
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dt = new Date(year, month, d);
+                const iso = fmtISO(dt);
+                const past = dt < today;
+                const isToday = dt.getTime() === today.getTime();
+                const isSelected = selectedDate && fmtISO(selectedDate) === iso;
+                let cls = 'cal-day';
+                if (past) cls += ' disabled';
+                if (isToday) cls += ' today';
+                if (isSelected) cls += ' selected';
+                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
+            }
+            // trailing fill to multiple of 7
+            const totalCells = startOffset + daysInMonth;
+            const trail = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= trail; i++) {
+                grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
+            }
+
+            grid.querySelectorAll('.cal-day:not(.disabled):not(.muted)').forEach(el => {
+                el.addEventListener('click', () => {
+                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
+                    selectedDate = new Date(y, m-1, d);
+                    document.getElementById('citaFecha').value = el.dataset.iso;
+                    const lbl = document.getElementById('pickedDateLabel');
+                    lbl.textContent = fmtPretty(selectedDate);
+                    lbl.classList.remove('empty');
+                    renderCalendar();
+                    renderTimeSlots();
+                });
+            });
+        }
+
+        function renderTimeSlots(){
+            const wrap = document.getElementById('timeSlots');
+            if (!wrap) return;
+            const slots = SLOTS[activePeriod];
+            wrap.innerHTML = '';
+            if (!selectedDate) {
+                wrap.innerHTML = `<div class="time-empty">Elige primero una fecha</div>`;
+                return;
+            }
+            slots.forEach(t => {
+                const isSel = selectedTime === t;
+                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''}" data-time="${t}">${t}</button>`;
+            });
+            wrap.querySelectorAll('.time-slot').forEach(el => {
+                el.addEventListener('click', () => {
+                    selectedTime = el.dataset.time;
+                    document.getElementById('citaHora').value = selectedTime;
+                    const lbl = document.getElementById('pickedTimeLabel');
+                    lbl.textContent = `${selectedTime} h`;
+                    lbl.classList.remove('empty');
+                    renderTimeSlots();
+                });
+            });
+        }
+
+        function initPicker(){
+            renderCalendar();
+            renderTimeSlots();
+
+            document.getElementById('calPrev').addEventListener('click', () => {
+                const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const candidate = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1);
+                if (candidate >= minMonth) { calCursor = candidate; renderCalendar(); }
+            });
+            document.getElementById('calNext').addEventListener('click', () => {
+                calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1);
+                renderCalendar();
+            });
+            document.querySelectorAll('.time-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    activePeriod = tab.dataset.period;
+                    renderTimeSlots();
+                });
+            });
+        }
+
+        function resetPicker(){
+            selectedDate = null;
+            selectedTime = null;
+            activePeriod = 'morning';
+            calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('citaFecha').value = '';
+            document.getElementById('citaHora').value = '';
+            document.getElementById('pickedDateLabel').textContent = 'Sin elegir';
+            document.getElementById('pickedDateLabel').classList.add('empty');
+            document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
+            document.getElementById('pickedTimeLabel').classList.add('empty');
+            document.querySelectorAll('.time-tab').forEach(t => t.classList.toggle('active', t.dataset.period === 'morning'));
+            renderCalendar();
+            renderTimeSlots();
+        }
+
+        /* ---------- INIT ---------- */
+        initPicker();
         mostrarVista('login');
     </script>
 </body>
