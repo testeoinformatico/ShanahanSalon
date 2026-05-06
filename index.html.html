@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shanahan Nails | Luxury Loyalty & Citas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --burgundy: #7A121F;
+            --cream: #F9F4F0;
+            --dark-text: #2C2C2C;
+            --accent: #D4AF37;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--cream);
+            color: var(--dark-text);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        } [cite: 3, 4, 5, 6]
+
+        .brand-container {
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+        } [cite: 7]
+
+        .brand-main {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            color: var(--burgundy);
+            text-transform: uppercase;
+            font-weight: 700;
+            line-height: 0.9;
+        } [cite: 10, 11]
+
+        .brand-sub {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 56px;
+            color: var(--burgundy);
+            margin-top: -15px;
+            display: block;
+        } [cite: 12, 13]
+
+        nav {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(122, 18, 31, 0.08);
+            background: rgba(249, 244, 240, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        } [cite: 14, 15]
+
+        .nav-btn {
+            text-decoration: none;
+            color: var(--burgundy);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 8px 16px;
+            border: 1px solid var(--burgundy);
+            cursor: pointer;
+            font-weight: 600;
+            background: transparent;
+        } [cite: 16, 17]
+
+        .nav-btn:hover {
+            background: var(--burgundy);
+            color: white;
+        } [cite: 18]
+
+        .luxury-card {
+            background: white;
+            padding: 40px;
+            box-shadow: 10px 10px 40px rgba(122, 18, 31, 0.03);
+            position: relative;
+        } [cite: 19, 20]
+
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #D1C7BD;
+            border-radius: 0;
+            background: transparent;
+            padding: 12px 5px;
+            font-size: 13px;
+        } [cite: 23, 24]
+
+        .btn-luxury {
+            background: var(--burgundy);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: 600;
+        } [cite: 26, 27]
+
+        .stamps-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin: 35px 0;
+        } [cite: 29]
+
+        .stamp-circle {
+            aspect-ratio: 1;
+            border: 1px solid #D1C7BD;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            color: #D1C7BD;
+        } [cite: 30, 31]
+
+        .stamp-circle.active {
+            background: var(--burgundy);
+            color: white;
+            border-color: var(--burgundy);
+        } [cite: 32]
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        } [cite: 36]
+
+        .admin-table th {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--burgundy);
+            border-bottom: 2px solid var(--burgundy);
+            padding: 8px 10px;
+        } [cite: 37, 38]
+
+        .action-icon {
+            cursor: pointer;
+            margin: 0 6px;
+            opacity: 0.6;
+        } [cite: 40]
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="font-family: 'Playfair Display', serif; font-size: 18px; color: var(--burgundy);">S.N</div>
+        <div class="d-flex gap-2">
+            <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
+            <button class="nav-btn" onclick="mostrarVista('login')" style="background: var(--burgundy); color: white;">Inicio</button>
+        </div>
+    </nav> [cite: 46]
+
+    <div class="container py-5">
+        
+        <div id="login" class="row justify-content-center">
+            <div class="col-12 col-md-5">
+                <div class="brand-container">
+                    <span class="brand-main">SHANAHAN</span>
+                    <span class="brand-sub">Nails</span>
+                </div>
+                <div class="luxury-card">
+                    <h5 class="text-center mb-4" style="color: var(--burgundy);">CONSULTAR PUNTOS</h5>
+                    <input type="text" class="form-control mb-3" id="loginUsuario" placeholder="Nombre completo">
+                    <input type="password" class="form-control mb-4" id="loginPass" placeholder="Teléfono">
+                    <button class="btn btn-luxury" onclick="iniciarSesionCliente()">ENTRAR</button>
+                    <button class="btn btn-link w-100 mt-3 text-dark text-decoration-none" style="font-size: 11px;" onclick="mostrarVista('vistaPedirCita')">¿NUEVA CLIENTA? PIDE TU CITA AQUÍ</button>
+                </div>
+            </div>
+        </div> [cite: 47, 48, 49, 50]
+
+        <div id="vistaCliente" class="row justify-content-center" style="display: none;">
+            <div class="col-12 col-md-6 text-center">
+                <div class="luxury-card">
+                    <h2 id="clienteNombre" style="font-family: 'Playfair Display', serif;">Cliente</h2>
+                    <div class="stamps-container" id="stampsGrid"></div>
+                    <div id="clienteEstado" class="reward-info mt-3"></div>
+                    <button class="btn btn-link mt-4 text-secondary" onclick="mostrarVista('login')">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div> [cite: 51, 54, 55]
+
+        <div id="vistaPedirCita" class="row justify-content-center" style="display: none;">
+            <div class="col-12 col-md-5">
+                <div class="luxury-card">
+                    <h5 class="mb-4 text-center" style="color: var(--burgundy);">SOLICITAR CITA</h5>
+                    <input type="text" class="form-control mb-3" id="citaNombre" placeholder="Nombre completo">
+                    <input type="text" class="form-control mb-3" id="citaTelefono" placeholder="Teléfono">
+                    <label class="small text-muted">Fecha deseada</label>
+                    <input type="date" class="form-control mb-3" id="citaFecha">
+                    <label class="small text-muted">Hora deseada</label>
+                    <input type="time" class="form-control mb-4" id="citaHora">
+                    <button class="btn btn-luxury" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="vistaAccesoAdmin" class="row justify-content-center" style="display: none;">
+            <div class="col-12 col-md-4">
+                <div class="luxury-card">
+                    <h5 class="text-center mb-4">ACCESO ADMINISTRADOR</h5>
+                    <input type="text" class="form-control mb-3" id="adminUser" placeholder="Usuario">
+                    <input type="password" class="form-control mb-4" id="adminPass" placeholder="Contraseña">
+                    <button class="btn btn-luxury" onclick="loginAdmin()">ENTRAR AL SALÓN</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="vistaAdmin" class="row g-4" style="display: none;">
+            <div class="col-12 col-lg-4">
+                <div class="luxury-card">
+                    <h5 class="mb-4">Nueva Clienta</h5>
+                    <input type="text" class="form-control mb-3" id="regNombre" placeholder="Nombre">
+                    <input type="text" class="form-control mb-4" id="regTelef" placeholder="Teléfono">
+                    <button class="btn btn-luxury" onclick="registrarNuevoCliente()">REGISTRAR</button>
+                    
+                    <hr class="my-5">
+                    
+                    <h5>Solicitudes de Citas</h5>
+                    <div id="listaCitasPendientes" class="mt-3"></div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-8">
+                <div class="luxury-card">
+                    <h5>Gestión de Fidelización</h5>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="tablaClientes">
+                            <thead>
+                                <tr>
+                                    <th>CLIENTA</th>
+                                    <th>SELLOS</th>
+                                    <th class="text-end">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div> [cite: 56, 57, 58, 65, 66, 67, 68]
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); [cite: 72]
+
+        let clientas = [];
+        let citas = [];
+
+        // GESTIÓN DE VISTAS [cite: 79, 80]
+        function mostrarVista(idVista) {
+            ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
+                const el = document.getElementById(v);
+                if (el) el.style.display = 'none';
+            });
+            const vistaActiva = document.getElementById(idVista);
+            if (vistaActiva) {
+                vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login') ? 'flex' : 'block';
+                if (idVista === 'vistaAdmin') cargarDatosAdmin();
+            }
+        }
+
+        // CARGA DE DATOS DESDE SUPABASE [cite: 73, 74]
+        async function cargarDatosAdmin() {
+            const { data: dC } = await sb.from('clientas').select('*');
+            clientas = dC || [];
+            const { data: dCi } = await sb.from('citas').select('*');
+            citas = dCi || [];
+            renderAdmin();
+        }
+
+        // LOGIN ADMINISTRADOR
+        async function loginAdmin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+            const { data, error } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
+            
+            if (data) {
+                mostrarVista('vistaAdmin');
+            } else {
+                alert("Credenciales incorrectas");
+            }
+        }
+
+        // LOGIN CLIENTE [cite: 90, 91, 92]
+        async function iniciarSesionCliente() {
+            const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
+            const telef = document.getElementById('loginPass').value.trim();
+            const { data } = await sb.from('clientas').select('*').eq('telefono', telef);
+            
+            const cliente = (data || []).find(c => c.nombre.toLowerCase() === nombre);
+            
+            if (cliente) {
+                document.getElementById('clienteNombre').innerText = cliente.nombre;
+                const grid = document.getElementById('stampsGrid');
+                grid.innerHTML = "";
+                for(let i=1; i<=10; i++) {
+                    grid.innerHTML += `<div class="stamp-circle ${i <= cliente.visitas ? 'active' : ''}">${i}</div>`;
+                }
+                
+                document.getElementById('clienteEstado').innerText = 
+                    cliente.visitas >= 10 ? "✨ ¡SERVICIO GRATIS DISPONIBLE!" : 
+                    cliente.visitas === 5 ? "🎁 Tienes un 20% de descuento hoy" : 
+                    "Sigue acumulando sellos para tus premios."; [cite: 94, 95, 96, 97]
+                
+                mostrarVista('vistaCliente');
+            } else {
+                alert("No se encontró el registro. Solicita una cita para registrarte.");
+            }
+        }
+
+        // SOLICITUD DE CITAS
+        async function enviarSolicitudCita() {
+            const cita = {
+                id: Date.now(),
+                nombre_cliente: document.getElementById('citaNombre').value,
+                telefono: document.getElementById('citaTelefono').value,
+                fecha: document.getElementById('citaFecha').value,
+                hora: document.getElementById('citaHora').value
+            };
+            const { error } = await sb.from('citas').insert([cita]);
+            if (!error) {
+                alert("Solicitud enviada. Te contactaremos para confirmar.");
+                mostrarVista('login');
+            }
+        }
+
+        // RENDERIZADO PANEL ADMIN [cite: 87, 88]
+        function renderAdmin() {
+            const tb = document.querySelector("#tablaClientes tbody");
+            tb.innerHTML = "";
+            clientas.forEach(c => {
+                tb.innerHTML += `<tr>
+                    <td><b>${c.nombre}</b><br><small>${c.telefono}</small></td>
+                    <td>${c.visitas}/10</td>
+                    <td class="text-end">
+                        <i class="fa-solid fa-plus action-icon" onclick="sumarVisita(${c.id}, ${c.visitas})"></i>
+                        <i class="fa-solid fa-trash action-icon" onclick="borrarCliente(${c.id})"></i>
+                    </td>
+                </tr>`;
+            });
+
+            const lista = document.getElementById('listaCitasPendientes');
+            lista.innerHTML = "";
+            citas.forEach(cita => {
+                lista.innerHTML += `<div class="p-3 border mb-2 bg-light small">
+                    <b>${cita.nombre_cliente}</b><br>${cita.fecha} a las ${cita.hora}<br>
+                    <button class="btn btn-sm btn-success mt-2" onclick="aprobarCita(${cita.id})">APROBAR Y REGISTRAR</button>
+                </div>`;
+            });
+        }
+
+        async function aprobarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            await sb.from('clientas').insert([{ id: Date.now(), nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
+            await sb.from('citas').delete().eq('id', idCita);
+            alert("Cliente registrado correctamente");
+            cargarDatosAdmin();
+        }
+
+        async function sumarVisita(id, actual) { [cite: 98, 99]
+            if (actual < 10) {
+                await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
+                cargarDatosAdmin();
+            }
+        }
+
+        async function borrarCliente(id) { [cite: 100, 101]
+            if(confirm("¿Eliminar cliente definitivamente?")) {
+                await sb.from('clientas').delete().eq('id', id);
+                cargarDatosAdmin();
+            }
+        }
+
+        async function registrarNuevoCliente() { [cite: 85, 86]
+            const n = document.getElementById('regNombre').value;
+            const t = document.getElementById('regTelef').value;
+            if(n && t) {
+                await sb.from('clientas').insert([{ id: Date.now(), nombre: n, telefono: t, visitas: 0 }]);
+                cargarDatosAdmin();
+            }
+        }
+
+        // INICIALIZACIÓN
+        mostrarVista('login');
+        cargarDatosAdmin();
+    </script>
+</body>
+</html>
