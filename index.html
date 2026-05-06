@@ -2374,6 +2374,10 @@
                 ]);
                 clientas = dC || [];
                 citas = dCi || [];
+                if (!agendaInitialized) {
+                    initAgenda();
+                    agendaInitialized = true;
+                }
                 renderAdmin();
             } catch (e) {
                 toast('No se pudieron cargar los datos', 'error');
@@ -3112,8 +3116,9 @@
         }
 
         /* ---------- INIT ---------- */
+        let agendaInitialized = false;
+
         initPicker();
-        initAgenda();
         mostrarVista('login');
     </script>
 </body>
