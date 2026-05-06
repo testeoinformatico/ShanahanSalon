@@ -33,7 +33,6 @@
 
         .admin-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
         .admin-table th { font-size: 9px; text-transform: uppercase; color: var(--burgundy); border-bottom: 2px solid var(--burgundy); padding: 8px 10px; }
-        .calendar-box { background: var(--cream); padding: 15px; margin-top: 20px; max-height: 300px; overflow-y: auto; border-left: 3px solid var(--burgundy); }
     </style>
 </head>
 <body onload="configurarFechas()">
@@ -57,7 +56,7 @@
                 <div class="luxury-card">
                     <h5 class="text-center mb-4" style="color: var(--burgundy);">CONSULTAR PUNTOS</h5>
                     <input type="text" class="form-control mb-3" id="loginUsuario" placeholder="Nombre completo">
-                    <input type="text" class="form-control mb-4" id="loginPass" placeholder="Teléfono" oninput="validarSoloNumeros(this)">
+                    <input type="text" class="form-control mb-4" id="loginPass" placeholder="Teléfono" oninput="validarVitalNumeros(this)">
                     <button class="btn btn-luxury" onclick="iniciarSesionCliente()">ENTRAR</button>
                     <button class="btn btn-link w-100 mt-3 text-dark text-decoration-none" style="font-size: 11px;" onclick="mostrarVista('vistaPedirCita')">¿NUEVA CLIENTA? PIDE TU CITA AQUÍ</button>
                 </div>
@@ -85,12 +84,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small text-muted">Teléfono (Solo números)</label>
-                        <input type="text" class="form-control" id="citaTelefono" placeholder="Ej: 600000000" oninput="validarSoloNumeros(this)">
+                        <input type="text" class="form-control" id="citaTelefono" placeholder="Ej: 600000000" oninput="validarVitalNumeros(this)">
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label small text-muted">Fecha (Hoy en adelante)</label>
-                            <input type="date" class="form-control" id="citaFecha">
+                            <input type="date" class="form-control" id="citaFecha" onchange="validarFechaVital(this)">
                         </div>
                         <div class="col-md-6 mb-4">
                             <label class="form-label small text-muted">Hora</label>
@@ -99,8 +98,6 @@
                     </div>
                     <button class="btn btn-luxury" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
                     <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
-                    <h6 class="mt-5 mb-3" style="color: var(--burgundy); font-family: 'Playfair Display', serif;">Agenda de Citas</h6>
-                    <div id="clienteCalendario" class="calendar-box"></div>
                 </div>
             </div>
         </div>
@@ -108,7 +105,7 @@
         <div id="vistaAccesoAdmin" class="row justify-content-center" style="display: none;">
             <div class="col-12 col-md-4">
                 <div class="luxury-card">
-                    <h5 class="text-center mb-4">ACCESO SALÓN</h5>
+                    <h5 class="text-center mb-4">ACCESO ADMINISTRADOR</h5>
                     <input type="text" class="form-control mb-3" id="adminUser" placeholder="Usuario">
                     <input type="password" class="form-control mb-4" id="adminPass" placeholder="Contraseña">
                     <button class="btn btn-luxury" onclick="loginAdmin()">ENTRAR</button>
@@ -121,7 +118,7 @@
                 <div class="luxury-card">
                     <h5 class="mb-4">Nueva Clienta</h5>
                     <input type="text" class="form-control mb-3" id="regNombre" placeholder="Nombre">
-                    <input type="text" class="form-control mb-4" id="regTelef" placeholder="Teléfono" oninput="validarSoloNumeros(this)">
+                    <input type="text" class="form-control mb-4" id="regTelef" placeholder="Teléfono" oninput="validarVitalNumeros(this)">
                     <button class="btn-luxury" onclick="registrarNuevoCliente()">REGISTRAR</button>
                     <hr class="my-5">
                     <h5>Solicitudes Pendientes</h5>
@@ -156,9 +153,24 @@
         let clientas = [];
         let citas = [];
 
-        // --- FUNCIONES DE VALIDACIÓN ---
-        function validarSoloNumeros(input) {
+        // --- VALIDACIONES VITALES ---
+        function validarVitalNumeros(input) {
+            const original = input.value;
             input.value = input.value.replace(/[^0-9]/g, '');
+            if (original !== input.value) {
+                alert("🚨 ¡ERROR CRÍTICO DE SISTEMA! Ingresar letras en un campo de contacto es como intentar operar un corazón con un tenedor. Por favor, usa solo números para mantener el pulso del salón.");
+            }
+        }
+
+        function validarFechaVital(input) {
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+            const elegida = new Date(input.value);
+            
+            if (elegida < hoy) {
+                input.value = "";
+                alert("⏳ ¡ALERTA TEMPORAL! El tiempo es nuestro recurso más vital y no podemos viajar al pasado (todavía). Elige una fecha futura para asegurar la existencia de tu cita... y de la humanidad.");
+            }
         }
 
         function configurarFechas() {
@@ -175,7 +187,6 @@
             const vistaActiva = document.getElementById(idVista);
             vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login' || idVista === 'vistaPedirCita' || idVista === 'vistaAccesoAdmin') ? 'flex' : 'block';
             if (idVista === 'vistaAdmin') cargarDatosAdmin();
-            if (idVista === 'vistaPedirCita') cargarAgendaCliente();
         }
 
         async function cargarDatosAdmin() {
@@ -193,7 +204,7 @@
             if (data) {
                 mostrarVista('vistaAdmin');
             } else {
-                alert("Acceso denegado");
+                alert("🛑 Acceso bloqueado. Las credenciales no coinciden con los registros vitales.");
             }
         }
 
@@ -212,7 +223,7 @@
                 }
                 mostrarVista('vistaCliente');
             } else {
-                alert("No se encontró el registro.");
+                alert("🔎 Sujeto no identificado. No existen registros de este cliente en nuestra línea de tiempo.");
             }
         }
 
@@ -225,11 +236,13 @@
                 hora: document.getElementById('citaHora').value
             };
 
-            if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) return alert("Completa todos los campos correctamente.");
+            if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
+                return alert("⚠️ Incompletitud detectada. Un ser humano necesita todos sus órganos para vivir, y nosotros necesitamos todos tus datos para la cita.");
+            }
 
             const { error } = await sb.from('citas').insert([cita]);
             if (!error) {
-                alert("Solicitud enviada con éxito.");
+                alert("✅ Transmisión exitosa. Tu solicitud ha sido enviada al centro de mando.");
                 mostrarVista('login');
             }
         }
@@ -258,12 +271,6 @@
             });
         }
 
-        async function cargarAgendaCliente() {
-            const { data } = await sb.from('citas').select('*');
-            const cal = document.getElementById('clienteCalendario');
-            cal.innerHTML = (data || []).map(c => `<div class="p-2 border-bottom small">${c.fecha} a las ${c.hora} (Ocupado)</div>`).join('');
-        }
-
         async function sumarVisita(id, actual) {
             if (actual < 10) {
                 await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
@@ -272,7 +279,7 @@
         }
 
         async function borrarCliente(id) {
-            if(confirm("¿Eliminar?")) {
+            if(confirm("¿Deseas eliminar permanentemente esta existencia del sistema?")) {
                 await sb.from('clientas').delete().eq('id', id);
                 cargarDatosAdmin();
             }
