@@ -240,7 +240,7 @@
                             <input type="time" class="form-control" id="citaHora">
                         </div>
                     </div>
-                    <button class="btn btn-luxury mt-0" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
+                    <button class="btn btn-luxury mt-0" onclick="enviarSolicitudCita()">ENVIERNES SOLICITUD</button>
                     <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
 
                     <h6 class="mt-5 mb-3" style="color: var(--burgundy); font-family: 'Playfair Display', serif;">Citas disponibles y agendadas</h6>
@@ -257,6 +257,18 @@
                     <input type="password" class="form-control mb-4" id="adminPass" placeholder="Contraseña">
                     <button class="btn btn-luxury mt-0" onclick="loginAdmin()">ENTRAR AL SALÓN</button>
                     <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="vista2FA" class="row justify-content-center" style="display: none;">
+            <div class="col-12 col-md-4">
+                <div class="luxury-card text-center">
+                    <h5 class="mb-3" style="color: var(--burgundy); font-family: 'Playfair Display', serif;">VERIFICACIÓN EN DOS PASOS</h5>
+                    <p class="small text-muted mb-4">Hemos enviado un código a tu correo electrónico registrado.</p>
+                    <input type="text" class="form-control text-center mb-4" id="codigo2FA" placeholder="######" maxlength="6" style="letter-spacing: 5px; font-size: 20px;">
+                    <button class="btn btn-luxury mt-0" onclick="verificarCodigo2FA()">CONFIRMAR CÓDIGO</button>
+                    <button class="btn btn-link text-secondary w-100 mt-3" onclick="mostrarVista('vistaAccesoAdmin')">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -340,22 +352,22 @@
 
         let clientas = [];
         let citas = [];
+        let codigoGenerado2FA = null;
 
         // GESTIÓN DE VISTAS
         function mostrarVista(idVista) {
-            ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
+            ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin', 'vista2FA'].forEach(v => {
                 const el = document.getElementById(v);
                 if (el) el.style.display = 'none';
             });
             const vistaActiva = document.getElementById(idVista);
             if (vistaActiva) {
-                vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login' || idVista === 'vistaAccesoAdmin' || idVista === 'vistaPedirCita') ? 'flex' : 'block';
+                vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login' || idVista === 'vistaAccesoAdmin' || idVista === 'vistaPedirCita' || idVista === 'vista2FA') ? 'flex' : 'block';
                 if (idVista === 'vistaAdmin') cargarDatosAdmin();
                 if (idVista === 'vistaPedirCita') cargarAgendaCliente();
             }
         }
 
-        // CARGA DE DATOS DESDE SUPABASE
         async function cargarDatosAdmin() {
             const { data: dC } = await sb.from('clientas').select('*');
             clientas = dC || [];
@@ -365,22 +377,37 @@
             renderCalendarios();
         }
 
-        // LOGIN ADMINISTRADOR
         async function loginAdmin() {
             const user = document.getElementById('adminUser').value;
             const pass = document.getElementById('adminPass').value;
             const { data, error } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
             
             if (data) {
+                // Generar código aleatorio 2FA
+                codigoGenerado2FA = Math.floor(100000 + Math.random() * 900000).toString();
+                
+                alert(`[SIMULACIÓN 2FA] Código enviado a tu correo para ${user}: ${codigoGenerado2FA}`);
+                
                 document.getElementById('adminUser').value = '';
                 document.getElementById('adminPass').value = '';
-                mostrarVista('vistaAdmin');
+                mostrarVista('vista2FA');
             } else {
                 alert("Credenciales incorrectas");
             }
         }
 
-        // LOGIN CLIENTE
+        function verificarCodigo2FA() {
+            const ingreso = document.getElementById('codigo2FA').value.trim();
+            if (ingreso === codigoGenerado2FA) {
+                alert("Doble verificación correcta. ¡Bienvenido!");
+                codigoGenerado2FA = null;
+                document.getElementById('codigo2FA').value = '';
+                mostrarVista('vistaAdmin');
+            } else {
+                alert("Código incorrecto, inténtalo de nuevo.");
+            }
+        }
+
         async function iniciarSesionCliente() {
             const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
             const telef = document.getElementById('loginPass').value.trim();
@@ -407,7 +434,6 @@
             }
         }
 
-        // SOLICITUD DE CITAS
         async function enviarSolicitudCita() {
             const cita = {
                 id: Date.now(),
@@ -434,7 +460,6 @@
             }
         }
 
-        // RENDERIZADO PANEL ADMIN
         function renderAdmin() {
             const tb = document.querySelector("#tablaClientes tbody");
             tb.innerHTML = "";
@@ -469,7 +494,6 @@
         }
 
         async function cargarAgendaCliente() {
-            // Cargar también las citas ya aprobadas/agendadas
             const { data } = await sb.from('citas').select('*');
             citas = data || [];
 
@@ -494,7 +518,6 @@
         }
 
         function renderCalendarios() {
-            // Muestra los registros agendados en la vista del administrador
             const adminCal = document.getElementById('adminCalendario');
             adminCal.innerHTML = "";
 
