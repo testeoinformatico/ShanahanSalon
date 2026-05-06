@@ -14,19 +14,19 @@
 
     <style>
         :root {
-            --burgundy: #7A121F;
-            --burgundy-dark: #5C0E18;
-            --burgundy-soft: rgba(122, 18, 31, 0.08);
-            --cream: #F9F4F0;
-            --cream-deep: #F2EAE2;
-            --dark-text: #2C2C2C;
+            --burgundy: #921F23;
+            --burgundy-dark: #6E1419;
+            --burgundy-soft: rgba(146, 31, 35, 0.08);
+            --cream: #F8EEE2;
+            --cream-deep: #F1E4D2;
+            --dark-text: #2C2424;
             --muted: #8A7E76;
-            --line: #E5DACE;
+            --line: #E8D9C7;
             --accent: #C9A74D;
             --accent-light: #E2C879;
-            --shadow-sm: 0 4px 18px rgba(122, 18, 31, 0.05);
-            --shadow-md: 0 18px 50px rgba(122, 18, 31, 0.08);
-            --shadow-lg: 0 30px 80px rgba(122, 18, 31, 0.10);
+            --shadow-sm: 0 4px 18px rgba(146, 31, 35, 0.05);
+            --shadow-md: 0 18px 50px rgba(146, 31, 35, 0.08);
+            --shadow-lg: 0 30px 80px rgba(146, 31, 35, 0.10);
             --ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -45,7 +45,7 @@
             -moz-osx-font-smoothing: grayscale;
             background-image:
                 radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.06), transparent 55%),
-                radial-gradient(ellipse at bottom right, rgba(122, 18, 31, 0.05), transparent 55%);
+                radial-gradient(ellipse at bottom right, rgba(146, 31, 35, 0.05), transparent 55%);
         }
 
         ::selection { background: var(--burgundy); color: #fff; }
@@ -66,20 +66,29 @@
         }
 
         .nav-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            color: var(--burgundy);
-            letter-spacing: 4px;
-            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .25s var(--ease);
         }
-        .nav-logo .dot {
-            width: 5px; height: 5px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: inline-block;
+        .nav-logo:hover { opacity: .82; }
+        .nav-logo img {
+            height: 44px;
+            width: auto;
+            display: block;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+        @media (max-width: 768px) {
+            .nav-logo img { height: 36px; }
+        }
+        @media (max-width: 360px) {
+            .nav-logo img { height: 32px; }
         }
 
         .nav-actions { display: flex; gap: 10px; }
@@ -266,7 +275,7 @@
         .btn-luxury > * { position: relative; z-index: 1; }
         .btn-luxury span { position: relative; z-index: 1; }
         .btn-luxury:hover::after { transform: scaleX(1); }
-        .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(122, 18, 31, .25); }
+        .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(146, 31, 35, .25); }
         .btn-luxury:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
         .btn-luxury .spinner {
             display: none;
@@ -383,7 +392,7 @@
             background: var(--burgundy);
             color: #fff;
             border-color: var(--burgundy);
-            box-shadow: 0 6px 16px rgba(122, 18, 31, .25);
+            box-shadow: 0 6px 16px rgba(146, 31, 35, .25);
         }
         .stamp-circle.active::after {
             content: '';
@@ -714,7 +723,7 @@
             transition: transform .35s var(--ease);
         }
         .social-link i { position: relative; z-index: 1; transition: color .35s var(--ease); }
-        .social-link:hover { transform: translateY(-3px); border-color: var(--burgundy); box-shadow: 0 10px 22px rgba(122, 18, 31, .18); }
+        .social-link:hover { transform: translateY(-3px); border-color: var(--burgundy); box-shadow: 0 10px 22px rgba(146, 31, 35, .18); }
         .social-link:hover::before { transform: translateY(0); }
         .social-link:hover i { color: #fff; }
         .social-link.whatsapp:hover { border-color: #25D366; }
@@ -882,12 +891,12 @@
 
         /* ---------- ACCESO SALON (rediseño gráfico) ---------- */
         .access-card {
-            background: linear-gradient(160deg, #2C0A11 0%, var(--burgundy) 55%, #4A0C16 100%);
+            background: linear-gradient(160deg, #2D1011 0%, var(--burgundy) 55%, #5C161A 100%);
             color: #fff;
             padding: 0;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 30px 80px rgba(122, 18, 31, 0.35);
+            box-shadow: 0 30px 80px rgba(146, 31, 35, 0.35);
             border: none;
         }
         .access-card::before {
@@ -921,7 +930,7 @@
             align-items: center;
             justify-content: center;
             font-size: 30px;
-            color: #2C0A11;
+            color: #2D1011;
             box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45);
             position: relative;
             animation: pulseGold 3s ease-in-out infinite;
@@ -1005,12 +1014,12 @@
         .access-form .field-icon { color: rgba(255,255,255,.3); }
         .access-form .btn-luxury {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-            color: #2C0A11;
+            color: #2D1011;
             box-shadow: 0 12px 28px rgba(201, 167, 77, .35);
         }
         .access-form .btn-luxury::after { background: linear-gradient(135deg, #B89238, var(--accent)); }
         .access-form .btn-luxury:hover { box-shadow: 0 18px 36px rgba(201, 167, 77, .5); }
-        .access-form .btn-luxury .spinner { border-color: rgba(44,10,17,.3); border-top-color: #2C0A11; }
+        .access-form .btn-luxury .spinner { border-color: rgba(45,16,17,.3); border-top-color: #2D1011; }
         .access-back {
             text-align: center;
             margin-top: 20px;
@@ -1117,7 +1126,7 @@
             align-items: center;
             justify-content: center;
             line-height: 1;
-            box-shadow: 0 6px 14px rgba(122, 18, 31, .18);
+            box-shadow: 0 6px 14px rgba(146, 31, 35, .18);
         }
         .mi-cita-card.cancelada .mi-cita-date {
             background: var(--muted);
@@ -1551,13 +1560,13 @@
 
 
         .disp-mini-cal .cal-day.excluido-admin {
-            background: rgba(122,18,31,.1);
+            background: rgba(146,31,35,.1);
             color: #c9a0a7;
             text-decoration: line-through;
-            border-color: rgba(122,18,31,.2);
+            border-color: rgba(146,31,35,.2);
         }
         .disp-mini-cal .cal-day.excluido-admin:hover {
-            background: rgba(122,18,31,.18);
+            background: rgba(146,31,35,.18);
             border-color: var(--burgundy);
         }
 
@@ -1690,7 +1699,7 @@
             background: var(--burgundy);
             color: #fff;
             border-color: var(--burgundy);
-            box-shadow: 0 6px 14px rgba(122, 18, 31, .25);
+            box-shadow: 0 6px 14px rgba(146, 31, 35, .25);
             font-weight: 600;
         }
         .cal-day.selected::after { background: #fff; }
@@ -1753,7 +1762,7 @@
             background: var(--burgundy);
             color: #fff;
             border-color: var(--burgundy);
-            box-shadow: 0 6px 14px rgba(122, 18, 31, .22);
+            box-shadow: 0 6px 14px rgba(146, 31, 35, .22);
         }
         .time-slot.disabled {
             color: var(--line);
@@ -1789,7 +1798,7 @@
             body {
                 background-image:
                     radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.05), transparent 60%),
-                    radial-gradient(ellipse at bottom right, rgba(122, 18, 31, 0.04), transparent 60%);
+                    radial-gradient(ellipse at bottom right, rgba(146, 31, 35, 0.04), transparent 60%);
             }
             main.container { padding-left: 14px !important; padding-right: 14px !important; padding-top: 24px !important; padding-bottom: 24px !important; }
 
@@ -2018,7 +2027,9 @@
 <body>
 
     <nav class="topbar">
-        <div class="nav-logo">S<span class="dot"></span>N</div>
+        <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
+            <img src="logo.png" alt="Shanahan Nails">
+        </button>
         <div class="nav-actions">
             <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
             <button class="nav-btn solid" onclick="mostrarVista('login')">Inicio</button>
@@ -2033,7 +2044,7 @@
         </button>
         <button class="admin-menu-item" data-section="solicitudes" onclick="switchAdminSection('solicitudes')">
             <i class="fa-regular fa-calendar-check"></i>Solicitudes
-            <span id="menuBadgePendientes" style="background:var(--accent);color:#2C0A11;border-radius:100px;padding:1px 7px;font-size:9px;margin-left:2px;display:none;"></span>
+            <span id="menuBadgePendientes" style="background:var(--accent);color:#2D1011;border-radius:100px;padding:1px 7px;font-size:9px;margin-left:2px;display:none;"></span>
         </button>
         <button class="admin-menu-item" data-section="fidelizacion" onclick="switchAdminSection('fidelizacion')">
             <i class="fa-solid fa-gem"></i>Fidelización
@@ -2542,9 +2553,11 @@
                 const el = document.getElementById(v);
                 if (el) el.style.display = 'none';
             });
-            // ocultar menú y welcome al cambiar de vista
-            document.getElementById('adminMenu').style.display = 'none';
-            document.getElementById('welcomeModal').style.display = 'none';
+            // ocultar menú y welcome al cambiar de vista (defensivo)
+            const adminMenuEl = document.getElementById('adminMenu');
+            if (adminMenuEl) adminMenuEl.style.display = 'none';
+            const welcomeEl = document.getElementById('welcomeModal');
+            if (welcomeEl) welcomeEl.style.display = 'none';
 
             const vistaActiva = document.getElementById(idVista);
             if (vistaActiva) {
@@ -2555,8 +2568,8 @@
                     el.style.animation = '';
                 });
                 if (idVista === 'vistaAdmin') {
-                    document.getElementById('adminMenu').style.display = 'flex';
-                    cargarDatosAdmin().then(() => showWelcome());
+                    if (adminMenuEl) adminMenuEl.style.display = 'flex';
+                    cargarDatosAdmin().then(() => { try { showWelcome(); } catch (e) {} });
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -2599,11 +2612,11 @@
                 clientas = dC || [];
                 citas = dCi || [];
                 if (!agendaInitialized) {
-                    initAgenda();
-                    initDispPanel();
+                    try { initAgenda(); } catch (e) { console.error('initAgenda:', e); }
                     agendaInitialized = true;
                 }
-                cargarDisponibles();
+                try { initDispPanel(); } catch (e) { console.warn('initDispPanel omitido:', e); }
+                try { await cargarDisponibles(); } catch (e) { console.warn('cargarDisponibles omitido:', e); }
                 renderAdmin();
             } catch (e) {
                 toast('No se pudieron cargar los datos', 'error');
@@ -2888,15 +2901,18 @@
         }
 
         function initAgenda() {
-            document.getElementById('agendaPrev').addEventListener('click', () => {
+            const aPrev = document.getElementById('agendaPrev');
+            const aNext = document.getElementById('agendaNext');
+            const aToday = document.getElementById('agendaToday');
+            if (aPrev) aPrev.addEventListener('click', () => {
                 agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()-1, 1);
                 renderAgenda();
             });
-            document.getElementById('agendaNext').addEventListener('click', () => {
+            if (aNext) aNext.addEventListener('click', () => {
                 agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()+1, 1);
                 renderAgenda();
             });
-            document.getElementById('agendaToday').addEventListener('click', () => {
+            if (aToday) aToday.addEventListener('click', () => {
                 agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
                 agendaSelected = new Date(today);
                 renderAgenda();
@@ -3216,12 +3232,12 @@
 
         async function cargarDisponibles(){
             try {
-                const { data } = await sb.from('dias_disponibles').select('*');
+                const { data, error } = await sb.from('dias_disponibles').select('*');
+                if (error) { diasDisponibles = []; return; }
                 diasDisponibles = data || [];
-                renderDCalendar();
-                renderMesesGrid();
-                renderDispDiaItems();
-                renderCalendar(); // refresh client picker
+                try { renderDCalendar(); } catch(e) {}
+                try { renderMesesGrid(); } catch(e) {}
+                try { renderDispDiaItems(); } catch(e) {}
             } catch(e) { console.warn('dias_disponibles tabla no existe aún', e); }
         }
 
@@ -3319,11 +3335,13 @@
         }
 
         function initDispPanel(){
-            document.getElementById('dCalPrev').addEventListener('click',()=>{
+            const dPrev = document.getElementById('dCalPrev');
+            const dNext = document.getElementById('dCalNext');
+            if (dPrev) dPrev.addEventListener('click',()=>{
                 dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()-1,1);
                 renderDCalendar();
             });
-            document.getElementById('dCalNext').addEventListener('click',()=>{
+            if (dNext) dNext.addEventListener('click',()=>{
                 dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()+1,1);
                 renderDCalendar();
             });
@@ -3332,12 +3350,11 @@
                     document.querySelectorAll('.disp-tab').forEach(t=>t.classList.remove('active'));
                     document.querySelectorAll('.disp-panel').forEach(p=>p.classList.remove('active'));
                     tab.classList.add('active');
-                    document.getElementById('dpanel'+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1)).classList.add('active');
+                    const target = document.getElementById('dpanel'+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1));
+                    if (target) target.classList.add('active');
                 });
             });
         }
-
-        /* ---------- CUSTOM CALENDAR
 
         /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
         let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -3385,10 +3402,8 @@
                 const past = dt < today;
                 const isToday = dt.getTime() === today.getTime();
                 const isSelected = selectedDate && fmtISO(selectedDate) === iso;
-                const noDisp = diasDisponibles.length > 0 && !isDiaDisponible(iso);
                 let cls = 'cal-day';
-                if (past || noDisp) cls += ' disabled';
-                if (noDisp && !past) cls += ' no-disponible';
+                if (past) cls += ' disabled';
                 if (isToday) cls += ' today';
                 if (isSelected) cls += ' selected';
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
@@ -3443,12 +3458,14 @@
             renderCalendar();
             renderTimeSlots();
 
-            document.getElementById('calPrev').addEventListener('click', () => {
+            const cPrev = document.getElementById('calPrev');
+            const cNext = document.getElementById('calNext');
+            if (cPrev) cPrev.addEventListener('click', () => {
                 const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
                 const candidate = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1);
                 if (candidate >= minMonth) { calCursor = candidate; renderCalendar(); }
             });
-            document.getElementById('calNext').addEventListener('click', () => {
+            if (cNext) cNext.addEventListener('click', () => {
                 calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1);
                 renderCalendar();
             });
@@ -3481,8 +3498,9 @@
         /* ---------- INIT ---------- */
         let agendaInitialized = false;
 
-        initPicker();
-        mostrarVista('login');
+        try { initPicker(); } catch (e) { console.error('initPicker falló:', e); }
+        try { initAgenda(); agendaInitialized = true; } catch (e) { console.error('initAgenda falló:', e); }
+        try { mostrarVista('login'); } catch (e) { console.error('mostrarVista falló:', e); }
     </script>
 </body>
 </html>
