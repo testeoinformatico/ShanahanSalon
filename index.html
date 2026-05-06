@@ -102,6 +102,114 @@
         .nav-btn.solid { background: var(--burgundy); color: #fff; }
         .nav-btn.solid:hover { background: var(--burgundy-dark); }
 
+        /* ---------- ADMIN MENU ---------- */
+        .admin-menu {
+            background: #280b11;
+            padding: 12px 5vw;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border-bottom: 1px solid rgba(201, 167, 77, 0.2);
+            position: sticky;
+            top: 60px;
+            z-index: 999;
+            overflow-x: auto;
+        }
+        .admin-menu-item {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all .25s var(--ease);
+            padding: 6px 12px;
+        }
+        .admin-menu-item:hover, .admin-menu-item.active {
+            color: var(--accent-light);
+        }
+        .admin-menu-item.active {
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 4px;
+        }
+
+        /* ---------- WELCOME MODAL ---------- */
+        .welcome-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(44, 44, 44, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .welcome-box {
+            background: linear-gradient(160deg, #2C0A11 0%, var(--burgundy) 55%, #4A0C16 100%);
+            color: #fff;
+            padding: 42px 36px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--accent);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            border-radius: 6px;
+        }
+        .welcome-crown {
+            font-size: 38px;
+            margin-bottom: 16px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-light);
+            margin-bottom: 8px;
+        }
+        .welcome-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            font-style: italic;
+            color: #fff;
+            margin-bottom: 24px;
+            font-weight: 600;
+            line-height: 1;
+        }
+        .welcome-msg {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 12.5px;
+            line-height: 1.5;
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+        }
+        .welcome-close {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #2C0A11;
+            border: none;
+            padding: 14px 28px;
+            font-size: 10px;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .35s var(--ease);
+            box-shadow: 0 10px 24px rgba(201, 167, 77, 0.4);
+            border-radius: 4px;
+        }
+        .welcome-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 32px rgba(201, 167, 77, 0.55);
+        }
+
         /* ---------- BRAND ---------- */
         .brand-container {
             text-align: center;
@@ -220,11 +328,6 @@
             color: var(--burgundy);
             letter-spacing: 2px;
             text-transform: uppercase;
-        }
-        .field input[type="date"],
-        .field input[type="time"] {
-            color: var(--dark-text);
-            font-family: 'Poppins', sans-serif;
         }
         .field-icon {
             position: absolute;
@@ -717,12 +820,6 @@
         .social-link:hover { transform: translateY(-3px); border-color: var(--burgundy); box-shadow: 0 10px 22px rgba(122, 18, 31, .18); }
         .social-link:hover::before { transform: translateY(0); }
         .social-link:hover i { color: #fff; }
-        .social-link.whatsapp:hover { border-color: #25D366; }
-        .social-link.whatsapp:hover::before { background: #25D366; }
-        .social-link.instagram:hover { border-color: #E1306C; }
-        .social-link.instagram:hover::before { background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF); }
-        .social-link.tiktok:hover { border-color: #000; }
-        .social-link.tiktok:hover::before { background: #000; }
 
         /* empty state */
         .empty-state {
@@ -880,7 +977,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ---------- ACCESO SALON (rediseño gráfico) ---------- */
+        /* ---------- ACCESO SALON ---------- */
         .access-card {
             background: linear-gradient(160deg, #2C0A11 0%, var(--burgundy) 55%, #4A0C16 100%);
             color: #fff;
@@ -942,7 +1039,7 @@
         }
         @keyframes pulseGold {
             0%,100% { box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45); }
-            50%     { box-shadow: 0 18px 38px rgba(201, 167, 77, 0.65); }
+            50%      { box-shadow: 0 18px 38px rgba(201, 167, 77, 0.65); }
         }
         .access-hero .ornament {
             display: flex;
@@ -1050,7 +1147,7 @@
             margin-bottom: 6px;
         }
 
-        /* ---------- MIS CITAS (vista cliente) ---------- */
+        /* ---------- MIS CITAS ---------- */
         .mis-citas-section {
             margin-top: 28px;
             text-align: left;
@@ -1213,12 +1310,6 @@
             font-style: italic;
             font-size: 14px;
             color: var(--muted);
-        }
-
-        @media (max-width: 480px) {
-            .mi-cita-card { grid-template-columns: 64px 1fr; gap: 12px; padding: 14px; }
-            .mi-cita-date .day { font-size: 24px; }
-            .mi-cita-info .hora { font-size: 19px; }
         }
 
         /* ---------- AGENDA VISUAL (admin) ---------- */
@@ -1467,16 +1558,6 @@
             .agenda-cal { border-right: none; border-bottom: 1px solid var(--line); }
             .agenda-day-panel { min-height: auto; padding: 22px; }
         }
-        @media (max-width: 480px) {
-            .appt-row { grid-template-columns: 60px 1fr; gap: 10px; }
-            .appt-actions { grid-column: 1 / -1; justify-content: flex-end; padding-top: 6px; border-top: 1px dashed var(--line); }
-            .appt-time { font-size: 18px; }
-            .agenda-cal { padding: 14px; }
-            .agenda-day-panel { padding: 18px; }
-            .agenda-day-header .day-title { font-size: 18px; }
-            .estado-select-group { grid-template-columns: 1fr 1fr; }
-        }
-
 
         /* ---------- DÍAS DISPONIBLES ---------- */
         .disp-wrap { display: flex; flex-direction: column; gap: 18px; }
@@ -1539,7 +1620,6 @@
         }
         .disp-item button:hover { color: var(--burgundy); }
 
-        /* En el picker de clientas */
         .cal-day.no-disponible {
             background: transparent !important;
             color: #D9CFC4 !important;
@@ -1548,7 +1628,6 @@
             border-color: transparent !important;
             pointer-events: none !important;
         }
-
 
         .disp-mini-cal .cal-day.excluido-admin {
             background: rgba(122,18,31,.1);
@@ -1771,247 +1850,23 @@
             font-size: 13px;
         }
 
-        /* utility */
         .text-center { text-align: center; }
         .mt-auto-link { margin-top: 26px; }
 
-        /* =========================================================
-           RESPONSIVE — MOBILE FIRST POLISH
-           ========================================================= */
-
-        /* Tablet & under */
-        @media (max-width: 991px) {
-            .stat-row { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        /* Mobile (≤ 768px) */
         @media (max-width: 768px) {
             body {
                 background-image:
                     radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.05), transparent 60%),
                     radial-gradient(ellipse at bottom right, rgba(122, 18, 31, 0.04), transparent 60%);
             }
-            main.container { padding-left: 14px !important; padding-right: 14px !important; padding-top: 24px !important; padding-bottom: 24px !important; }
-
-            /* nav */
+            main.container { padding: 24px 14px !important; }
             nav.topbar { padding: 12px 16px; }
             .nav-logo { font-size: 16px; letter-spacing: 3px; }
             .nav-btn { padding: 8px 12px; font-size: 9px; letter-spacing: 1.6px; }
-
-            /* brand */
-            .brand-container { margin-bottom: 24px; }
-            .brand-ornament { font-size: 9px; letter-spacing: 4px; gap: 10px; margin-bottom: 12px; }
-            .brand-ornament::before, .brand-ornament::after { width: 30px; }
-            .brand-main { font-size: 36px; letter-spacing: 1.5px; }
-            .brand-sub { font-size: 46px; margin-top: -8px; }
-
-            /* card */
-            .luxury-card { padding: 28px 22px; }
-            .luxury-card::before { inset: 6px; }
-            .card-title { font-size: 12px; letter-spacing: 4px; }
-            .card-subtitle { font-size: 11px; margin-bottom: 24px; }
-
-            /* fields — bigger touch targets */
-            .field input, .field select { font-size: 16px; padding: 14px 0 8px; } /* 16px prevents iOS zoom */
-            .field-icon { font-size: 12px; top: 18px; }
-
-            /* buttons */
-            .btn-luxury { padding: 16px 18px; font-size: 11px; letter-spacing: 3px; }
-            .btn-ghost { padding: 12px 16px; font-size: 10px; letter-spacing: 2px; }
-
-            /* CTA pedir cita */
-            .btn-cta { padding: 16px 18px; gap: 10px; }
-            .btn-cta .cta-sub { font-size: 8.5px; letter-spacing: 1.6px; }
-            .btn-cta .cta-main { font-size: 17px; }
-            .btn-cta .cta-arrow { width: 34px; height: 34px; font-size: 12px; }
-
-            /* stamps */
-            .stamps-wrap { padding: 22px 18px; }
-            .stamps-container { gap: 8px; }
-            .stamp-circle { font-size: 14px; }
-
-            /* social */
-            .social-section { margin-top: 22px; }
-            .social-icons { gap: 10px; }
-            .social-link { width: 46px; height: 46px; font-size: 17px; }
-
-            /* picker */
-            .picker-label { flex-direction: column; align-items: flex-start; gap: 4px; font-size: 9.5px; letter-spacing: 2px; margin: 18px 0 10px; }
-            .picker-label .picked { font-size: 12px; align-self: flex-start; }
-            .calendar { padding: 14px 12px; }
-            .cal-head { margin-bottom: 12px; }
-            .cal-month { font-size: 15px; }
-            .cal-nav { width: 30px; height: 30px; font-size: 10px; }
-            .cal-grid { gap: 3px; }
-            .cal-dow { font-size: 8.5px; padding: 4px 0 6px; letter-spacing: 1px; }
-            .cal-day { font-size: 13px; }
-
-            /* time slots — 3 cols on mobile, bigger touch */
-            .time-tabs { margin-bottom: 12px; }
-            .time-tab { padding: 12px 8px; font-size: 9.5px; letter-spacing: 1.6px; gap: 6px; }
-            .time-slots { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-            .time-slot { padding: 13px 4px; font-size: 13px; }
-            .time-empty { padding: 16px; font-size: 12px; }
-
-            /* admin */
-            .stat-row { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
-            .stat { padding: 14px 10px; }
-            .stat .num { font-size: 24px; }
-            .stat .lbl { font-size: 8.5px; letter-spacing: 1.4px; margin-top: 4px; }
-            .admin-header { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 18px; }
-            .admin-header h5 { font-size: 18px; }
-            .admin-search { flex: 1 1 100%; }
-            .admin-search input { font-size: 14px; padding: 11px 12px 11px 34px; }
-
-            /* admin table → card mode */
-            .admin-table thead { display: none; }
-            .admin-table, .admin-table tbody { display: block; }
-            .admin-table tr {
-                display: grid;
-                grid-template-columns: 1fr auto;
-                grid-template-areas: "name pill" "actions actions";
-                gap: 10px;
-                padding: 14px;
-                margin-bottom: 8px;
-                background: var(--cream);
-            }
-            .admin-table tr:hover { transform: none; }
-            .admin-table td { display: block; padding: 0; border: none; }
-            .admin-table td:nth-child(1) { grid-area: name; padding: 0 !important; }
-            .admin-table td:nth-child(2) { grid-area: pill; padding: 0 !important; align-self: center; text-align: right; }
-            .admin-table td:nth-child(3) {
-                grid-area: actions;
-                padding: 8px 0 0 !important;
-                border-top: 1px solid var(--line);
-                margin-top: 4px;
-                display: flex;
-                gap: 6px;
-                justify-content: flex-end;
-                text-align: right !important;
-            }
-            .stamps-pill { font-size: 10.5px; padding: 5px 10px; gap: 6px; }
-            .stamps-pill .bar { width: 50px; }
-            .action-icon { width: 36px; height: 36px; margin: 0; }
-
-            /* citas */
-            .cita-card { padding: 14px; }
-            .cita-card .cita-name { font-size: 15px; }
-            .cita-card .cita-meta { gap: 10px; flex-wrap: wrap; font-size: 11px; }
-            .cita-actions { gap: 6px; }
-            .cita-btn { padding: 10px 6px; font-size: 9.5px; letter-spacing: 1.2px; }
-            .cita-btn.approve { flex: 2; }
-
-            /* access card (admin login) */
-            .access-hero { padding: 32px 24px 22px; }
-            .access-icon { width: 66px; height: 66px; font-size: 26px; margin-bottom: 16px; }
-            .access-hero h2 { font-size: 28px; }
-            .access-hero .accent-italic { font-size: 32px; }
-            .access-hero p { font-size: 11px; }
-            .access-form { padding: 26px 24px 28px; }
-            .access-features { gap: 4px; padding-top: 18px; margin-top: 18px; }
-            .access-feature { font-size: 8.5px; letter-spacing: .8px; }
-            .access-feature i { font-size: 14px; margin-bottom: 4px; }
-
-            /* toasts */
-            .toast-stack { right: 12px; left: 12px; bottom: 12px; max-width: none; }
-            .toast { padding: 12px 14px; font-size: 12px; }
-
-            /* modals */
-            .modal-backdrop-x { padding: 12px; align-items: flex-end; }
-            .modal-x, .modal-x.wide {
-                max-width: 100%;
-                width: 100%;
-                padding: 28px 22px;
-                max-height: calc(100vh - 24px);
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .modal-x h4 { font-size: 20px; }
-            .modal-x p { font-size: 12.5px; margin-bottom: 20px; }
-            .modal-actions { flex-direction: column-reverse; gap: 8px; }
-            .modal-actions button { width: 100%; }
-            .modal-backdrop-x.show .modal-x {
-                animation: slideUp .35s var(--ease);
-            }
-            @keyframes slideUp {
-                from { transform: translateY(40px); }
-                to { transform: translateY(0); }
-            }
-            .edit-modal-header h4 { font-size: 20px; }
-
-            /* divider */
-            .divider-soft { font-size: 9px; letter-spacing: 2px; margin: 20px 0 14px; }
-        }
-
-        /* Small phones (≤ 480px) */
-        @media (max-width: 480px) {
-            main.container { padding-left: 12px !important; padding-right: 12px !important; }
-            .luxury-card { padding: 24px 18px; }
-            .luxury-card::before { inset: 5px; }
-
-            .brand-main { font-size: 32px; }
-            .brand-sub { font-size: 40px; }
-
-            .stat-row { gap: 6px; }
-            .stat { padding: 12px 8px; }
-            .stat .num { font-size: 20px; }
-            .stat .lbl { font-size: 8px; letter-spacing: 1.2px; }
-
-            /* calendar even tighter */
-            .calendar { padding: 12px 8px; }
-            .cal-grid { gap: 2px; }
-            .cal-day { font-size: 12px; }
-            .cal-dow { font-size: 8px; }
-            .cal-month { font-size: 14px; }
-
-            /* time slots stay 3 cols but padding compact */
-            .time-slot { padding: 12px 2px; font-size: 12.5px; }
-
-            /* social */
-            .social-link { width: 44px; height: 44px; font-size: 16px; }
-
-            /* CTA */
-            .btn-cta { padding: 14px 14px; }
-            .btn-cta .cta-main { font-size: 15px; }
-            .btn-cta .cta-arrow { width: 30px; height: 30px; font-size: 11px; }
-
-            /* access card */
-            .access-hero { padding: 28px 18px 20px; }
-            .access-form { padding: 22px 18px 24px; }
-            .access-hero h2 { font-size: 24px; }
-            .access-hero .accent-italic { font-size: 28px; }
-
-            /* admin actions row tighter */
-            .cita-btn { padding: 9px 4px; font-size: 9px; letter-spacing: 1px; }
-            .action-icon { width: 34px; height: 34px; font-size: 11px; }
-        }
-
-        /* Tiny phones (≤ 360px) */
-        @media (max-width: 360px) {
-            .brand-main { font-size: 28px; }
-            .brand-sub { font-size: 36px; }
-            .nav-btn { padding: 7px 10px; font-size: 8.5px; letter-spacing: 1.4px; }
-            .nav-logo { font-size: 14px; }
-            .cal-day { font-size: 11px; }
-            .time-slot { font-size: 11.5px; padding: 11px 2px; }
-        }
-
-        /* Landscape phones — keep modals scrollable */
-        @media (max-height: 600px) and (orientation: landscape) {
-            .modal-backdrop-x { align-items: center; }
-            .modal-x, .modal-x.wide { max-height: 92vh; overflow-y: auto; }
-            .access-icon { width: 56px; height: 56px; font-size: 22px; margin-bottom: 12px; }
-            .access-hero { padding: 22px 24px 16px; }
-        }
-
-        /* Reduce motion preference */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: .01ms !important;
-                transition-duration: .01ms !important;
-            }
-            .btn-cta::after { animation: none; }
-            .access-icon { animation: none; }
+            .admin-menu { gap: 12px; }
+            .admin-menu-item { font-size: 10px; gap: 6px; }
+            .welcome-box { padding: 32px 24px; }
+            .welcome-name { font-size: 30px; }
         }
     </style>
 </head>
@@ -2025,8 +1880,6 @@
         </div>
     </nav>
 
-
-    <!-- ADMIN NAV MENU -->
     <nav class="admin-menu" id="adminMenu" style="display:none;">
         <button class="admin-menu-item active" data-section="agenda" onclick="switchAdminSection('agenda')">
             <i class="fa-regular fa-calendar"></i>Agenda
@@ -2041,18 +1894,16 @@
         <button class="admin-menu-item" data-section="disponibilidad" onclick="switchAdminSection('disponibilidad')">
             <i class="fa-solid fa-calendar-days"></i>Disponibilidad
         </button>
-        <div class="admin-menu-sep"></div>
-        <button class="admin-menu-item admin-menu-end" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.35);">
+        <button class="admin-menu-item" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.5); margin-left: auto;">
             <i class="fa-solid fa-right-from-bracket"></i>Salir
         </button>
     </nav>
 
-    <!-- WELCOME MODAL -->
     <div class="welcome-modal" id="welcomeModal" style="display:none;">
         <div class="welcome-box">
             <span class="welcome-crown">👑</span>
             <div class="welcome-title">Bienvenida de vuelta</div>
-            <div class="welcome-name">mi culona</div>
+            <div class="welcome-name">Shanahan</div>
             <div class="welcome-msg">El salón te espera. Tienes <strong id="welcomePendientes">0</strong> solicitudes pendientes y <strong id="welcomeHoy">0</strong> citas hoy.</div>
             <button class="welcome-close" onclick="closeWelcome()">Entrar al panel ✨</button>
         </div>
@@ -2060,7 +1911,6 @@
 
     <main class="container py-5">
 
-        <!-- LOGIN CLIENTE -->
         <section id="login" class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="brand-container view-anim">
@@ -2100,7 +1950,7 @@
                 <div class="social-section view-anim">
                     <div class="social-title">Síguenos</div>
                     <div class="social-icons">
-                        <a href="https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.instagram.com/shanahanails" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                         <a href="https://www.tiktok.com/@shanahanails" target="_blank" rel="noopener" class="social-link tiktok" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                         <a href="https://wa.me/34621303635" target="_blank" rel="noopener" class="social-link whatsapp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
@@ -2108,7 +1958,6 @@
             </div>
         </section>
 
-        <!-- VISTA CLIENTE -->
         <section id="vistaCliente" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-7 col-lg-6">
                 <div class="luxury-card view-anim text-center">
@@ -2138,7 +1987,6 @@
             </div>
         </section>
 
-        <!-- VISTA PEDIR CITA -->
         <section id="vistaPedirCita" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="brand-container view-anim">
@@ -2197,7 +2045,6 @@
             </div>
         </section>
 
-        <!-- VISTA ACCESO ADMIN -->
         <section id="vistaAccesoAdmin" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-7 col-lg-5">
                 <div class="luxury-card access-card view-anim">
@@ -2237,7 +2084,6 @@
             </div>
         </section>
 
-        <!-- VISTA ADMIN -->
         <section id="vistaAdmin" class="row g-4" style="display:none;">
             <div class="col-12">
                 <div class="brand-container view-anim" style="margin-bottom:18px;">
@@ -2249,176 +2095,153 @@
                     <div class="stat"><div class="num" id="statClientas">0</div><div class="lbl">Clientas Activas</div></div>
                     <div class="stat"><div class="num" id="statPendientes">0</div><div class="lbl">Solicitudes</div></div>
                     <div class="stat"><div class="num" id="statHoy">0</div><div class="lbl">Citas Hoy</div></div>
-                    <div class="stat"><div class="num" id="statSemana">0</div><div class="lbl">Esta Semana</div></div>
                 </div>
             </div>
 
-            <!-- AGENDA VISUAL -->
-            <div class="admin-section active" id="asecAgenda" style="display:contents;">
-            <div class="col-12">
-                <div class="luxury-card view-anim" style="padding:30px;">
-                    <div class="admin-header">
-                        <h5><i class="fa-regular fa-calendar"></i> Agenda</h5>
-                        <div class="agenda-filters">
-                            <button type="button" class="filter-chip active" data-filter="all">Todas</button>
-                            <button type="button" class="filter-chip" data-filter="pendiente">Pendientes</button>
-                            <button type="button" class="filter-chip" data-filter="confirmada">Confirmadas</button>
-                            <button type="button" class="filter-chip" data-filter="completada">Completadas</button>
-                        </div>
-                    </div>
-
-                    <div class="agenda-wrap">
-                        <div class="agenda-cal">
-                            <div class="cal-head">
-                                <div class="cal-month" id="agendaMonth"></div>
-                                <div class="cal-nav-group">
-                                    <button type="button" class="cal-nav" id="agendaPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
-                                    <button type="button" class="cal-nav" id="agendaToday" aria-label="Hoy" title="Ir a hoy"><i class="fa-solid fa-circle-dot"></i></button>
-                                    <button type="button" class="cal-nav" id="agendaNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
-                                </div>
-                            </div>
-                            <div class="cal-grid" id="agendaGrid"></div>
-                            <div class="agenda-legend">
-                                <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span>Pendientes</div>
-                                <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span>Confirmadas</div>
-                                <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span>Completadas</div>
+            <div class="admin-section" id="asecAgenda" style="display:contents;">
+                <div class="col-12">
+                    <div class="luxury-card view-anim" style="padding:30px;">
+                        <div class="admin-header">
+                            <h5><i class="fa-regular fa-calendar"></i> Agenda</h5>
+                            <div class="agenda-filters">
+                                <button type="button" class="filter-chip active" data-filter="all">Todas</button>
+                                <button type="button" class="filter-chip" data-filter="pendiente">Pendientes</button>
+                                <button type="button" class="filter-chip" data-filter="confirmada">Confirmadas</button>
+                                <button type="button" class="filter-chip" data-filter="completada">Completadas</button>
                             </div>
                         </div>
 
-                        <div class="agenda-day-panel">
-                            <div class="agenda-day-header">
-                                <div>
-                                    <div class="day-title" id="dayTitle">—</div>
-                                    <div class="day-sub" id="daySub"></div>
-                                </div>
-                                <div class="day-count" id="dayCount"></div>
-                            </div>
-                            <div class="agenda-day-list" id="dayList"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            </div><!-- /asecAgenda -->
-
-            <!-- SOLICITUDES + NUEVA CLIENTA -->
-            <div class="admin-section" id="asecSolicitudes" style="display:none;">
-            <div class="col-12 col-lg-5">
-                <div class="luxury-card view-anim">
-                    <div class="admin-header" style="margin-bottom:16px;">
-                        <h5><i class="fa-solid fa-user-plus"></i> Nueva Clienta</h5>
-                    </div>
-                    <form onsubmit="event.preventDefault(); registrarNuevoCliente();">
-                        <div class="field">
-                            <input type="text" id="regNombre" placeholder=" ">
-                            <label>Nombre</label>
-                        </div>
-                        <div class="field">
-                            <input type="tel" id="regTelef" placeholder=" ">
-                            <label>Teléfono</label>
-                        </div>
-                        <button type="submit" class="btn-luxury" id="btnRegistrar"><span>Registrar</span><span class="spinner"></span></button>
-                    </form>
-
-                    <hr style="border:none; border-top:1px solid var(--line); margin:36px 0 24px;">
-
-                    <div class="admin-header" style="margin-bottom:16px;">
-                        <h5><i class="fa-regular fa-calendar-check"></i> Solicitudes</h5>
-                    </div>
-                    <div id="listaCitasPendientes"></div>
-                </div>
-            </div>
-
-            </div><!-- /asecSolicitudes -->
-
-            <!-- FIDELIZACIÓN -->
-            <div class="admin-section" id="asecFidelizacion" style="display:none;">
-            <div class="col-12 col-lg-7">
-                <div class="luxury-card view-anim">
-                    <div class="admin-header">
-                        <h5><i class="fa-solid fa-gem"></i> Fidelización</h5>
-                        <div class="admin-search">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="adminSearch" placeholder="Buscar clienta…" oninput="renderAdmin()">
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="admin-table" id="tablaClientes">
-                            <thead>
-                                <tr>
-                                    <th>Clienta</th>
-                                    <th>Sellos</th>
-                                    <th style="text-align:right;">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            </div><!-- /asecFidelizacion -->
-
-            <!-- DISPONIBILIDAD -->
-            <div class="admin-section" id="asecDisponibilidad" style="display:none;">
-            <!-- GESTIÓN DÍAS DISPONIBLES -->
-            <div class="col-12">
-                <div class="luxury-card view-anim" style="padding:30px;">
-                    <div class="admin-header" style="margin-bottom:20px;">
-                        <h5><i class="fa-regular fa-calendar-check"></i> Días disponibles para reserva</h5>
-                    </div>
-                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas <strong>solo podrán reservar</strong> en los días y meses que marques como disponibles.</p>
-                    <div class="disp-wrap">
-                        <div class="disp-tabs">
-                            <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i>Días concretos</button>
-                            <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i>Meses enteros</button>
-                        </div>
-
-                        <!-- Panel días -->
-                        <div class="disp-panel active" id="dpanelDias">
-                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un día para marcarlo disponible o quitarlo.</p>
-                            <div class="disp-mini-cal">
+                        <div class="agenda-wrap">
+                            <div class="agenda-cal">
                                 <div class="cal-head">
-                                    <div class="cal-month" id="dCalMonth"></div>
+                                    <div class="cal-month" id="agendaMonth"></div>
                                     <div class="cal-nav-group">
-                                        <button type="button" class="cal-nav" id="dCalPrev"><i class="fa-solid fa-chevron-left"></i></button>
-                                        <button type="button" class="cal-nav" id="dCalNext"><i class="fa-solid fa-chevron-right"></i></button>
+                                        <button type="button" class="cal-nav" id="agendaPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                                        <button type="button" class="cal-nav" id="agendaToday" aria-label="Hoy" title="Ir a hoy"><i class="fa-solid fa-circle-dot"></i></button>
+                                        <button type="button" class="cal-nav" id="agendaNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
                                     </div>
                                 </div>
-                                <div class="cal-grid" id="dCalGrid"></div>
+                                <div class="cal-grid" id="agendaGrid"></div>
+                                <div class="agenda-legend">
+                                    <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span>Pendientes</div>
+                                    <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span>Confirmadas</div>
+                                    <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span>Completadas</div>
+                                </div>
                             </div>
-                            <div class="disp-lista">
-                                <div class="disp-lista-title">Días habilitados</div>
-                                <div id="dispDiaItems"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div></div>
-                            </div>
-                        </div>
 
-                        <!-- Panel meses -->
-                        <div class="disp-panel" id="dpanelMeses">
-                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para habilitarlo o deshabilitarlo entero.</p>
-                            <div class="meses-grid" id="mesesGrid"></div>
+                            <div class="agenda-day-panel">
+                                <div class="agenda-day-header">
+                                    <div>
+                                        <div class="day-title" id="dayTitle">—</div>
+                                        <div class="day-sub" id="daySub"></div>
+                                    </div>
+                                    <div class="day-count" id="dayCount"></div>
+                                </div>
+                                <div class="agenda-day-list" id="dayList"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-                        <!-- Panel meses -->
-                        <div class="bloqueo-panel" id="bpanelMeses">
-                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para bloquearlo o desbloquearlo completamente.</p>
-                            <div class="meses-grid" id="mesesGrid"></div>
+            <div class="admin-section" id="asecSolicitudes" style="display:none;">
+                <div class="col-12 col-lg-5">
+                    <div class="luxury-card view-anim">
+                        <div class="admin-header" style="margin-bottom:16px;">
+                            <h5><i class="fa-solid fa-user-plus"></i> Nueva Clienta</h5>
+                        </div>
+                        <form onsubmit="event.preventDefault(); registrarNuevoCliente();">
+                            <div class="field">
+                                <input type="text" id="regNombre" placeholder=" ">
+                                <label>Nombre</label>
+                            </div>
+                            <div class="field">
+                                <input type="tel" id="regTelef" placeholder=" ">
+                                <label>Teléfono</label>
+                            </div>
+                            <button type="submit" class="btn-luxury" id="btnRegistrar"><span>Registrar</span><span class="spinner"></span></button>
+                        </form>
+
+                        <hr style="border:none; border-top:1px solid var(--line); margin:36px 0 24px;">
+
+                        <div class="admin-header" style="margin-bottom:16px;">
+                            <h5><i class="fa-regular fa-calendar-check"></i> Solicitudes</h5>
+                        </div>
+                        <div id="listaCitasPendientes"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section" id="asecFidelizacion" style="display:none;">
+                <div class="col-12 col-lg-7">
+                    <div class="luxury-card view-anim">
+                        <div class="admin-header">
+                            <h5><i class="fa-solid fa-gem"></i> Fidelización</h5>
+                            <div class="admin-search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="adminSearch" placeholder="Buscar clienta…" oninput="renderAdmin()">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table" id="tablaClientes">
+                                <thead>
+                                    <tr>
+                                        <th>Clienta</th>
+                                        <th>Sellos</th>
+                                        <th style="text-align:right;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-            </div><!-- /asecDisponibilidad -->
+
+            <div class="admin-section" id="asecDisponibilidad" style="display:none;">
+                <div class="col-12">
+                    <div class="luxury-card view-anim" style="padding:30px;">
+                        <div class="admin-header" style="margin-bottom:20px;">
+                            <h5><i class="fa-regular fa-calendar-check"></i> Días disponibles para reserva</h5>
+                        </div>
+                        <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas <strong>solo podrán reservar</strong> en los días y meses que marques como disponibles.</p>
+                        <div class="disp-wrap">
+                            <div class="disp-tabs">
+                                <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i>Días concretos</button>
+                                <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i>Meses enteros</button>
+                            </div>
+
+                            <div class="disp-panel active" id="dpanelDias">
+                                <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un día para marcarlo disponible o quitarlo.</p>
+                                <div class="disp-mini-cal">
+                                    <div class="cal-head">
+                                        <div class="cal-month" id="dCalMonth"></div>
+                                        <div class="cal-nav-group">
+                                            <button type="button" class="cal-nav" id="dCalPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                                            <button type="button" class="cal-nav" id="dCalNext"><i class="fa-solid fa-chevron-right"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="cal-grid" id="dCalGrid"></div>
+                                </div>
+                                <div class="disp-lista">
+                                    <div class="disp-lista-title">Días habilitados</div>
+                                    <div id="dispDiaItems"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div></div>
+                                </div>
+                            </div>
+
+                            <div class="disp-panel" id="dpanelMeses">
+                                <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para habilitarlo o deshabilitarlo entero.</p>
+                                <div class="meses-grid" id="mesesGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
-
     </main>
 
-    <!-- TOAST STACK -->
     <div class="toast-stack" id="toastStack"></div>
 
-    <!-- MODAL EDITAR CITA -->
     <div class="modal-backdrop-x" id="editCitaModal">
         <div class="modal-x wide">
             <div class="edit-modal-header">
@@ -2463,7 +2286,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRM -->
     <div class="modal-backdrop-x" id="confirmModal">
         <div class="modal-x">
             <h4 id="confirmTitle">¿Estás segura?</h4>
@@ -2484,13 +2306,10 @@
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const SALON_WHATSAPP = '34621303635';
-        const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
-        const SALON_TIKTOK = 'https://www.tiktok.com/@shanahanails';
 
         let clientas = [];
         let citas = [];
 
-        /* ---------- SHARED DATE CONSTANTS ---------- */
         const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
         const DOW_ES = ['L','M','X','J','V','S','D'];
         const SLOTS = {
@@ -2499,7 +2318,6 @@
         };
         const today = new Date(); today.setHours(0,0,0,0);
 
-        /* ---------- TOASTS ---------- */
         function toast(message, type = 'info', title = '') {
             const stack = document.getElementById('toastStack');
             const t = document.createElement('div');
@@ -2511,7 +2329,6 @@
             setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 3800);
         }
 
-        /* ---------- CONFIRM MODAL ---------- */
         let confirmResolver = null;
         function askConfirm(title, msg) {
             const modal = document.getElementById('confirmModal');
@@ -2528,7 +2345,6 @@
             if (e.target.id === 'confirmModal') closeConfirm(false);
         });
 
-        /* ---------- BUTTON LOADING ---------- */
         function setBtnLoading(id, on) {
             const b = document.getElementById(id);
             if (!b) return;
@@ -2536,13 +2352,11 @@
             b.disabled = on;
         }
 
-        /* ---------- VIEW SWITCH ---------- */
         function mostrarVista(idVista) {
             ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
                 const el = document.getElementById(v);
                 if (el) el.style.display = 'none';
             });
-            // ocultar menú y welcome al cambiar de vista
             document.getElementById('adminMenu').style.display = 'none';
             document.getElementById('welcomeModal').style.display = 'none';
 
@@ -2562,10 +2376,7 @@
             }
         }
 
-
-        /* ---------- ADMIN NAV SECTIONS ---------- */
         const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
-
         function switchAdminSection(name) {
             ADMIN_SECTIONS.forEach(s => {
                 const el = document.getElementById('asec' + s.charAt(0).toUpperCase() + s.slice(1));
@@ -2576,7 +2387,6 @@
             });
         }
 
-        /* ---------- WELCOME MODAL ---------- */
         function showWelcome() {
             const pend = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
             const todayIso = fmtIso(today);
@@ -2589,7 +2399,6 @@
             document.getElementById('welcomeModal').style.display = 'none';
         }
 
-        /* ---------- ADMIN DATA ---------- */
         async function cargarDatosAdmin() {
             try {
                 const [{ data: dC }, { data: dCi }] = await Promise.all([
@@ -2598,19 +2407,18 @@
                 ]);
                 clientas = dC || [];
                 citas = dCi || [];
-                if (!agendaInitialized) {
+                if (!window.agendaInitialized) {
                     initAgenda();
                     initDispPanel();
-                    agendaInitialized = true;
+                    window.agendaInitialized = true;
                 }
-                cargarDisponibles();
+                await cargarDisponibles();
                 renderAdmin();
             } catch (e) {
                 toast('No se pudieron cargar los datos', 'error');
             }
         }
 
-        /* ---------- ADMIN LOGIN ---------- */
         async function loginAdmin() {
             const user = document.getElementById('adminUser').value.trim();
             const pass = document.getElementById('adminPass').value.trim();
@@ -2632,7 +2440,6 @@
             }
         }
 
-        /* ---------- CLIENT LOGIN ---------- */
         async function iniciarSesionCliente() {
             const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
             const telef = document.getElementById('loginPass').value.trim();
@@ -2679,7 +2486,6 @@
             }
         }
 
-        /* ---------- CLIENT APPOINTMENTS VIEW ---------- */
         async function renderMisCitas(cliente) {
             const list = document.getElementById('misCitasList');
             if (!list) return;
@@ -2699,7 +2505,6 @@
                     list.innerHTML = `<div class="mis-citas-empty">
                         <i class="fa-regular fa-calendar"></i>
                         <div class="label">No tienes citas próximas</div>
-                        <div style="margin-top:10px; font-size:11.5px;">Reserva una nueva desde el inicio</div>
                     </div>`;
                     return;
                 }
@@ -2709,7 +2514,6 @@
                     const day = dt.getDate();
                     const monthShort = MONTHS_ES[dt.getMonth()].substring(0,3);
                     const weekdays = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-                    const weekday = weekdays[dt.getDay()];
                     const fullDay = weekdays[dt.getDay()] + ', ' + day + ' de ' + MONTHS_ES[dt.getMonth()].toLowerCase();
                     const hora = (c.hora || '').slice(0,5);
                     const estado = c.estado || 'pendiente';
@@ -2732,20 +2536,17 @@
                     </div>`;
                 }).join('');
             } catch (e) {
-                list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar tus citas</div></div>`;
+                list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">Error al cargar</div></div>`;
             }
         }
 
         function whatsappCambioCita(nombre, fecha, hora) {
             const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
-            const fechaTexto = dt
-                ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`
-                : 'mi cita';
+            const fechaTexto = dt ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}` : 'mi cita';
             const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
             return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
         }
 
-        /* ---------- APPOINTMENT REQUEST ---------- */
         async function enviarSolicitudCita() {
             const cita = {
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
@@ -2776,7 +2577,6 @@
             }
         }
 
-        /* ---------- AGENDA STATE ---------- */
         let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let agendaSelected = new Date(today);
         let agendaFilter = 'all';
@@ -2796,7 +2596,6 @@
             if (!monthEl || !grid) return;
 
             monthEl.textContent = `${MONTHS_ES[agendaCursor.getMonth()]} ${agendaCursor.getFullYear()}`;
-
             grid.innerHTML = '';
             DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
 
@@ -2822,8 +2621,7 @@
                 if (isToday) cls += ' today';
                 if (isSelected) cls += ' selected';
                 if (total > 0) cls += ' has-citas';
-                const badge = total > 0
-                    ? `<span class="cnt ${pendCount > 0 ? 'pendiente' : ''}">${total}</span>` : '';
+                const badge = total > 0 ? `<span class="cnt ${pendCount > 0 ? 'pendiente' : ''}">${total}</span>` : '';
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}${badge}</div>`;
             }
             const totalCells = startOffset + daysInMonth;
@@ -2913,41 +2711,26 @@
             });
         }
 
-        /* ---------- ADMIN RENDER ---------- */
         function renderAdmin() {
             const search = (document.getElementById('adminSearch')?.value || '').trim().toLowerCase();
-            const filtered = search
-                ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search))
-                : clientas;
+            const filtered = search ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search)) : clientas;
 
-            // stats
-            const todayIso = fmtIso(today);
-            const startWeek = new Date(today); startWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
-            const endWeek = new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
             const pendCount = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
-            const todayCount = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
-            const weekCount = citas.filter(c => {
-                if (!c.fecha) return false;
-                const d = new Date(c.fecha + 'T00:00:00');
-                return d >= startWeek && d <= endWeek && (c.estado||'pendiente') !== 'cancelada';
-            }).length;
+            const todayCount = citas.filter(c => c.fecha === fmtIso(today) && (c.estado||'pendiente') !== 'cancelada').length;
 
             document.getElementById('statClientas').textContent = clientas.length;
             document.getElementById('statPendientes').textContent = pendCount;
             const badge = document.getElementById('menuBadgePendientes');
             if (badge) { badge.textContent = pendCount; badge.style.display = pendCount > 0 ? 'inline' : 'none'; }
             document.getElementById('statHoy').textContent = todayCount;
-            document.getElementById('statSemana').textContent = weekCount;
 
-            // refresh agenda views
             renderAgenda();
             renderAgendaDay();
 
-            // table
             const tb = document.querySelector('#tablaClientes tbody');
             tb.innerHTML = "";
             if (filtered.length === 0) {
-                tb.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search ? 'Sin resultados' : 'Todavía no hay clientas registradas'}</div></div></td></tr>`;
+                tb.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search ? 'Sin resultados' : 'No hay clientas registradas'}</div></div></td></tr>`;
             } else {
                 filtered.forEach(c => {
                     const v = c.visitas || 0;
@@ -2973,7 +2756,6 @@
                 });
             }
 
-            // appointments — only pending
             const pendientes = citas.filter(c => (c.estado||'pendiente') === 'pendiente');
             const lista = document.getElementById('listaCitasPendientes');
             lista.innerHTML = "";
@@ -2999,12 +2781,10 @@
             }
         }
 
-        /* ---------- ADMIN ACTIONS ---------- */
         async function aprobarCita(idCita) {
             const cita = citas.find(c => c.id === idCita);
             if (!cita) return;
             try {
-                // create client only if not already registered (match by phone)
                 const yaExiste = clientas.some(cl => (cl.telefono || '').trim() === (cita.telefono || '').trim());
                 if (!yaExiste) {
                     await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
@@ -3022,7 +2802,6 @@
             if (!cita) return;
             try {
                 await sb.from('citas').update({ estado: 'completada' }).eq('id', idCita);
-                // auto-add stamp to matching client
                 const cl = clientas.find(c => (c.telefono || '').trim() === (cita.telefono || '').trim());
                 if (cl && (cl.visitas || 0) < 10) {
                     await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
@@ -3114,12 +2893,11 @@
                 const { error } = await sb.from('citas').update(payload).eq('id', id);
                 if (error) { toast('No se pudo actualizar', 'error'); return; }
 
-                // pasar de pendiente a confirmada → registrar clienta si no existe
                 if (estadoAnterior === 'pendiente' && nuevoEstado === 'confirmada') {
                     const ya = clientas.some(c => (c.telefono||'').trim() === payload.telefono);
                     if (!ya) await sb.from('clientas').insert([{ nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
                 }
-                // pasar a completada → sumar sello
+
                 if (estadoAnterior !== 'completada' && nuevoEstado === 'completada') {
                     const cl = clientas.find(c => (c.telefono||'').trim() === payload.telefono);
                     if (cl && (cl.visitas||0) < 10) {
@@ -3199,17 +2977,15 @@
             finally { setBtnLoading('btnRegistrar', false); }
         }
 
-
-        /* ---------- DÍAS DISPONIBLES ---------- */
-        let diasDisponibles = []; // [{id, tipo:'dia'|'mes', valor:'2025-06-15'|'2025-06'}]
+        let diasDisponibles = [];
         let dCalCursor = new Date(today.getFullYear(), today.getMonth(), 1);
 
         function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
+        function pad2(n){ return String(n).padStart(2,'0'); }
 
         function isDiaDisponible(iso){
             if(diasDisponibles.length === 0) return false;
             const mes = iso.substring(0,7);
-            // if explicitly excluded, never available
             if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
             return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
         }
@@ -3221,7 +2997,7 @@
                 renderDCalendar();
                 renderMesesGrid();
                 renderDispDiaItems();
-                renderCalendar(); // refresh client picker
+                renderCalendar();
             } catch(e) { console.warn('dias_disponibles tabla no existe aún', e); }
         }
 
@@ -3286,17 +3062,10 @@
                 const disp = diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===valor);
                 grid.innerHTML += `<button type="button" class="mes-chip ${disp?'disponible':''}" onclick="toggleDisponible('mes','${valor}')">${MONTHS_ES[m]}</button>`;
             }
-            const nextYear = year+1;
-            for(let m=0;m<12;m++){
-                const valor=`${nextYear}-${pad2(m+1)}`;
-                const disp=diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===valor);
-                grid.innerHTML+=`<button type="button" class="mes-chip ${disp?'disponible':''}" onclick="toggleDisponible('mes','${valor}')" style="opacity:.75">${MONTHS_ES[m]} '${String(nextYear).slice(2)}</button>`;
-            }
         }
 
         async function toggleDisponible(tipo, valor, mesDisp){
             if(tipo === 'dia' && mesDisp === 'true') {
-                // month is enabled — toggle exclusion for this specific day
                 const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
                 if(excl){
                     await sb.from('dias_disponibles').delete().eq('id',excl.id);
@@ -3337,20 +3106,17 @@
             });
         }
 
-        /* ---------- CUSTOM CALENDAR
-
-        /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
         let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let selectedDate = null;
         let selectedTime = null;
         let activePeriod = 'morning';
 
-        function pad2(n){ return String(n).padStart(2,'0'); }
-        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
         function fmtPretty(d){
             const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
             return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
         }
+
+        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
 
         function renderCalendar(){
             const monthEl = document.getElementById('calMonth');
@@ -3358,27 +3124,22 @@
             if (!monthEl || !grid) return;
 
             monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
-
-            // limit prev nav: cannot go before current month
             const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('calPrev').disabled = calCursor <= minMonth;
 
             grid.innerHTML = '';
             DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
-
+            
             const year = calCursor.getFullYear();
             const month = calCursor.getMonth();
             const firstDay = new Date(year, month, 1);
-            // mon=0 .. sun=6
             let startOffset = (firstDay.getDay() + 6) % 7;
             const daysInMonth = new Date(year, month+1, 0).getDate();
             const prevDays = new Date(year, month, 0).getDate();
 
-            // leading days from prev month
             for (let i = startOffset - 1; i >= 0; i--) {
                 grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
             }
-            // current month
             for (let d = 1; d <= daysInMonth; d++) {
                 const dt = new Date(year, month, d);
                 const iso = fmtISO(dt);
@@ -3393,7 +3154,6 @@
                 if (isSelected) cls += ' selected';
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
             }
-            // trailing fill to multiple of 7
             const totalCells = startOffset + daysInMonth;
             const trail = (7 - (totalCells % 7)) % 7;
             for (let i = 1; i <= trail; i++) {
@@ -3477,9 +3237,6 @@
             renderCalendar();
             renderTimeSlots();
         }
-
-        /* ---------- INIT ---------- */
-        let agendaInitialized = false;
 
         initPicker();
         mostrarVista('login');
