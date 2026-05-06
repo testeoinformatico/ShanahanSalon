@@ -99,20 +99,30 @@
             border-radius: 0;
             background: transparent;
             padding: 12px 5px;
-            font-size: 13px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: var(--burgundy);
+            box-shadow: none;
         }
 
         .btn-luxury {
             background: var(--burgundy);
             color: white;
             border: none;
-            padding: 14px 20px;
-            font-size: 11px;
+            padding: 16px 20px;
+            font-size: 12px;
             letter-spacing: 3px;
             text-transform: uppercase;
             width: 100%;
             margin-top: 20px;
             font-weight: 600;
+        }
+
+        .btn-luxury:hover {
+            opacity: 0.9;
+            color: white;
         }
 
         .stamps-container {
@@ -158,6 +168,15 @@
             margin: 0 6px;
             opacity: 0.6;
         }
+
+        .calendar-box {
+            background: var(--cream);
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-left: 3px solid var(--burgundy);
+        }
     </style>
 </head>
 <body>
@@ -200,17 +219,32 @@
         </div>
 
         <div id="vistaPedirCita" class="row justify-content-center" style="display: none;">
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-8 col-lg-6">
                 <div class="luxury-card">
-                    <h5 class="mb-4 text-center" style="color: var(--burgundy);">SOLICITAR CITA</h5>
-                    <input type="text" class="form-control mb-3" id="citaNombre" placeholder="Nombre completo">
-                    <input type="text" class="form-control mb-3" id="citaTelefono" placeholder="Teléfono">
-                    <label class="small text-muted">Fecha deseada</label>
-                    <input type="date" class="form-control mb-3" id="citaFecha">
-                    <label class="small text-muted">Hora deseada</label>
-                    <input type="time" class="form-control mb-4" id="citaHora">
-                    <button class="btn btn-luxury" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
+                    <h5 class="mb-4 text-center" style="color: var(--burgundy); font-family: 'Playfair Display', serif; font-size: 24px;">SOLICITAR CITA</h5>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Nombre y Apellido</label>
+                        <input type="text" class="form-control" id="citaNombre" placeholder="Tu nombre completo">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Teléfono</label>
+                        <input type="text" class="form-control" id="citaTelefono" placeholder="Tu teléfono">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small text-muted">Fecha deseada</label>
+                            <input type="date" class="form-control" id="citaFecha">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label small text-muted">Hora deseada</label>
+                            <input type="time" class="form-control" id="citaHora">
+                        </div>
+                    </div>
+                    <button class="btn btn-luxury mt-0" onclick="enviarSolicitudCita()">ENVIAR SOLICITUD</button>
                     <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
+
+                    <h6 class="mt-5 mb-3" style="color: var(--burgundy); font-family: 'Playfair Display', serif;">Citas disponibles y agendadas</h6>
+                    <div id="clienteCalendario" class="calendar-box"></div>
                 </div>
             </div>
         </div>
@@ -221,7 +255,7 @@
                     <h5 class="text-center mb-4">ACCESO ADMINISTRADOR</h5>
                     <input type="text" class="form-control mb-3" id="adminUser" placeholder="Usuario">
                     <input type="password" class="form-control mb-4" id="adminPass" placeholder="Contraseña">
-                    <button class="btn btn-luxury" onclick="loginAdmin()">ENTRAR AL SALÓN</button>
+                    <button class="btn btn-luxury mt-0" onclick="loginAdmin()">ENTRAR AL SALÓN</button>
                     <button class="btn btn-outline-secondary w-100 mt-2" onclick="mostrarVista('login')">VOLVER</button>
                 </div>
             </div>
@@ -233,7 +267,7 @@
                     <h5 class="mb-4">Nueva Clienta</h5>
                     <input type="text" class="form-control mb-3" id="regNombre" placeholder="Nombre">
                     <input type="text" class="form-control mb-4" id="regTelef" placeholder="Teléfono">
-                    <button class="btn-luxury" onclick="registrarNuevoCliente()">REGISTRAR</button>
+                    <button class="btn btn-luxury mt-0" onclick="registrarNuevoCliente()">REGISTRAR</button>
                     
                     <hr class="my-5">
                     
@@ -258,6 +292,9 @@
                             <tbody></tbody>
                         </table>
                     </div>
+
+                    <h5 class="mt-5" style="color: var(--burgundy); font-family: 'Playfair Display', serif;">Agenda de Citas Aprobadas</h5>
+                    <div id="adminCalendario" class="calendar-box"></div>
                 </div>
             </div>
         </div>
@@ -271,7 +308,23 @@
                     <input type="hidden" id="editId">
                     <input type="text" class="form-control mb-3" id="editNombre" placeholder="Nombre">
                     <input type="text" class="form-control mb-4" id="editTelefono" placeholder="Teléfono">
-                    <button class="btn btn-luxury" onclick="guardarEdicion()">ACTUALIZAR</button>
+                    <button class="btn btn-luxury mt-0" onclick="guardarEdicion()">ACTUALIZAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalModificarCita" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content luxury-card">
+                <div class="modal-body p-4">
+                    <h5 class="text-center mb-4" style="color: var(--burgundy);">Modificar Cita</h5>
+                    <input type="hidden" id="editCitaId">
+                    <input type="text" class="form-control mb-3" id="editCitaNombre" placeholder="Nombre completo">
+                    <input type="text" class="form-control mb-3" id="editCitaTelefono" placeholder="Teléfono">
+                    <input type="date" class="form-control mb-3" id="editCitaFecha">
+                    <input type="time" class="form-control mb-4" id="editCitaHora">
+                    <button class="btn btn-luxury mt-0" onclick="guardarEdicionCita()">ACTUALIZAR CITA</button>
                 </div>
             </div>
         </div>
@@ -298,6 +351,7 @@
             if (vistaActiva) {
                 vistaActiva.style.display = (idVista === 'vistaAdmin' || idVista === 'login' || idVista === 'vistaAccesoAdmin' || idVista === 'vistaPedirCita') ? 'flex' : 'block';
                 if (idVista === 'vistaAdmin') cargarDatosAdmin();
+                if (idVista === 'vistaPedirCita') cargarAgendaCliente();
             }
         }
 
@@ -308,6 +362,7 @@
             const { data: dCi } = await sb.from('citas').select('*');
             citas = dCi || [];
             renderAdmin();
+            renderCalendarios();
         }
 
         // LOGIN ADMINISTRADOR
@@ -411,6 +466,76 @@
                     </div>`;
                 });
             }
+        }
+
+        async function cargarAgendaCliente() {
+            // Cargar también las citas ya aprobadas/agendadas
+            const { data } = await sb.from('citas').select('*');
+            citas = data || [];
+
+            const calendarioEl = document.getElementById('clienteCalendario');
+            calendarioEl.innerHTML = "";
+
+            if (citas.length === 0) {
+                calendarioEl.innerHTML = "<p class='text-muted small'>No hay citas agendadas en este momento.</p>";
+            } else {
+                citas.forEach(cita => {
+                    calendarioEl.innerHTML += `
+                        <div class="p-2 border-bottom small">
+                            <b>${cita.nombre_cliente}</b><br>
+                            Fecha: ${cita.fecha} | Hora: ${cita.hora}<br>
+                            <button class="btn btn-link btn-sm text-decoration-none p-0" onclick="abrirModificarCita(${cita.id}, '${cita.nombre_cliente}', '${cita.telefono}', '${cita.fecha}', '${cita.hora}')">
+                                <i class="fa-solid fa-pen"></i> Modificar
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function renderCalendarios() {
+            // Muestra los registros agendados en la vista del administrador
+            const adminCal = document.getElementById('adminCalendario');
+            adminCal.innerHTML = "";
+
+            if (citas.length === 0) {
+                adminCal.innerHTML = "<p class='text-muted small'>No hay citas agendadas.</p>";
+            } else {
+                citas.forEach(cita => {
+                    adminCal.innerHTML += `
+                        <div class="p-2 border-bottom small">
+                            <b>${cita.nombre_cliente}</b> - Tel: ${cita.telefono}<br>
+                            📅 Fecha: ${cita.fecha} | ⏰ Hora: ${cita.hora}
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function abrirModificarCita(id, nombre, tel, fecha, hora) {
+            document.getElementById('editCitaId').value = id;
+            document.getElementById('editCitaNombre').value = nombre;
+            document.getElementById('editCitaTelefono').value = tel;
+            document.getElementById('editCitaFecha').value = fecha;
+            document.getElementById('editCitaHora').value = hora;
+            
+            var myModal = new bootstrap.Modal(document.getElementById('modalModificarCita'));
+            myModal.show();
+        }
+
+        async function guardarEdicionCita() {
+            const id = document.getElementById('editCitaId').value;
+            const nombre = document.getElementById('editCitaNombre').value.trim();
+            const tel = document.getElementById('editCitaTelefono').value.trim();
+            const fecha = document.getElementById('editCitaFecha').value;
+            const hora = document.getElementById('editCitaHora').value;
+
+            if (!nombre || !tel || !fecha || !hora) return alert("Completa todos los campos");
+
+            await sb.from('citas').update({ nombre_cliente: nombre, telefono: tel, fecha: fecha, hora: hora }).eq('id', id);
+            alert("Cita modificada con éxito");
+            bootstrap.Modal.getInstance(document.getElementById('modalModificarCita')).hide();
+            cargarAgendaCliente();
         }
 
         async function aprobarCita(idCita) {
