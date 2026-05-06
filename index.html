@@ -2354,7 +2354,8 @@
             });
             const vistaActiva = document.getElementById(idVista);
             if (vistaActiva) {
-                vistaActiva.style.display = 'flex';
+                // vistaAdmin es un Bootstrap "row" que necesita display:block para que sus col-* funcionen bien
+                vistaActiva.style.display = idVista === 'vistaAdmin' ? 'block' : 'flex';
                 vistaActiva.querySelectorAll('.view-anim').forEach(el => {
                     el.style.animation = 'none';
                     el.offsetHeight;
