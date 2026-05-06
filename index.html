@@ -104,34 +104,36 @@
 
         /* ---------- ADMIN MENU ---------- */
         .admin-menu {
-            background: #280b11;
+            background: linear-gradient(135deg, #2C0A11, #4A0C16);
             padding: 12px 5vw;
             display: flex;
             align-items: center;
             gap: 24px;
-            border-bottom: 1px solid rgba(201, 167, 77, 0.2);
+            border-bottom: 1px solid var(--accent);
             position: sticky;
             top: 60px;
             z-index: 999;
             overflow-x: auto;
+            box-shadow: var(--shadow-sm);
         }
         .admin-menu-item {
             background: transparent;
             border: none;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.65);
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all .25s var(--ease);
+            transition: all .3s var(--ease);
             padding: 6px 12px;
         }
         .admin-menu-item:hover, .admin-menu-item.active {
             color: var(--accent-light);
+            text-shadow: 0 0 10px rgba(201, 167, 77, 0.5);
         }
         .admin-menu-item.active {
             border-bottom: 2px solid var(--accent);
@@ -143,7 +145,7 @@
             position: fixed;
             inset: 0;
             background: rgba(44, 44, 44, 0.7);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -152,24 +154,24 @@
         .welcome-box {
             background: linear-gradient(160deg, #2C0A11 0%, var(--burgundy) 55%, #4A0C16 100%);
             color: #fff;
-            padding: 42px 36px;
+            padding: 44px 38px;
             max-width: 420px;
             width: 90%;
             text-align: center;
             border: 1px solid var(--accent);
             box-shadow: var(--shadow-lg);
             position: relative;
-            border-radius: 6px;
+            border-radius: 8px;
         }
         .welcome-crown {
-            font-size: 38px;
+            font-size: 42px;
             margin-bottom: 16px;
             display: block;
-            animation: bounce 2s infinite;
+            animation: float 2.5s ease-in-out infinite;
         }
         .welcome-title {
             font-family: 'Playfair Display', serif;
-            font-size: 14px;
+            font-size: 13px;
             letter-spacing: 4px;
             text-transform: uppercase;
             color: var(--accent-light);
@@ -183,13 +185,14 @@
             margin-bottom: 24px;
             font-weight: 600;
             line-height: 1;
+            letter-spacing: 0.5px;
         }
         .welcome-msg {
             color: rgba(255, 255, 255, 0.75);
-            font-size: 12.5px;
+            font-size: 13px;
             line-height: 1.5;
             margin-bottom: 32px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
         }
         .welcome-close {
             background: linear-gradient(135deg, var(--accent), var(--accent-light));
@@ -207,7 +210,11 @@
         }
         .welcome-close:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 32px rgba(201, 167, 77, 0.55);
+            box-shadow: 0 16px 36px rgba(201, 167, 77, 0.6);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         /* ---------- BRAND ---------- */
@@ -764,7 +771,7 @@
         }
         .btn-cta:hover .cta-arrow { transform: translateX(4px); background: rgba(255,255,255,.3); }
 
-        /* ---------- SOCIAL BAR ---------- */
+        /* ---------- SOCIAL BARRA SOCIAL ---------- */
         .social-section {
             margin-top: 28px;
             text-align: center;
@@ -821,27 +828,7 @@
         .social-link:hover::before { transform: translateY(0); }
         .social-link:hover i { color: #fff; }
 
-        /* empty state */
-        .empty-state {
-            text-align: center;
-            padding: 30px 18px;
-            color: var(--muted);
-            font-size: 12.5px;
-        }
-        .empty-state i {
-            font-size: 26px;
-            color: var(--line);
-            margin-bottom: 12px;
-            display: block;
-        }
-        .empty-state .label {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 14px;
-            color: var(--muted);
-        }
-
-        /* stat cards */
+        /* Varios */
         .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
         .stat {
             background: #fff;
@@ -874,7 +861,6 @@
         .stat:nth-child(2)::before { background: var(--accent); }
         .stat:nth-child(2) .num { color: var(--accent); }
 
-        /* toasts */
         .toast-stack {
             position: fixed;
             bottom: 30px;
@@ -918,7 +904,6 @@
         @keyframes toastIn { to { transform: translateX(0); opacity: 1; } }
         @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
 
-        /* modal */
         .modal-backdrop-x {
             position: fixed; inset: 0;
             background: rgba(44, 44, 44, .55);
@@ -967,907 +952,6 @@
         }
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; }
-
-        /* page enter animation */
-        .view-anim {
-            animation: viewIn .55s var(--ease);
-        }
-        @keyframes viewIn {
-            from { opacity: 0; transform: translateY(14px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ---------- ACCESO SALON ---------- */
-        .access-card {
-            background: linear-gradient(160deg, #2C0A11 0%, var(--burgundy) 55%, #4A0C16 100%);
-            color: #fff;
-            padding: 0;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(122, 18, 31, 0.35);
-            border: none;
-        }
-        .access-card::before {
-            content: '';
-            position: absolute;
-            inset: 14px;
-            border: 1px solid rgba(201, 167, 77, 0.35);
-            pointer-events: none;
-            z-index: 1;
-        }
-        .access-card::after {
-            content: '';
-            position: absolute;
-            top: -100px; right: -100px;
-            width: 320px; height: 320px;
-            background: radial-gradient(circle, rgba(201, 167, 77, 0.18) 0%, transparent 65%);
-            pointer-events: none;
-        }
-        .access-hero {
-            padding: 38px 38px 28px;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-        .access-icon {
-            width: 78px; height: 78px;
-            margin: 0 auto 20px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: #2C0A11;
-            box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45);
-            position: relative;
-            animation: pulseGold 3s ease-in-out infinite;
-        }
-        .access-icon::before {
-            content: '';
-            position: absolute;
-            inset: -6px;
-            border: 1px solid rgba(201, 167, 77, 0.4);
-            border-radius: 50%;
-        }
-        .access-icon::after {
-            content: '';
-            position: absolute;
-            inset: -14px;
-            border: 1px solid rgba(201, 167, 77, 0.18);
-            border-radius: 50%;
-        }
-        @keyframes pulseGold {
-            0%,100% { box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45); }
-            50%      { box-shadow: 0 18px 38px rgba(201, 167, 77, 0.65); }
-        }
-        .access-hero .ornament {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 10px;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: var(--accent-light);
-            font-weight: 500;
-            margin-bottom: 12px;
-        }
-        .access-hero .ornament::before,
-        .access-hero .ornament::after {
-            content: '';
-            height: 1px; width: 30px;
-            background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
-        }
-        .access-hero h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            color: #fff;
-            margin: 0 0 4px;
-            font-weight: 600;
-        }
-        .access-hero .accent-italic {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: var(--accent-light);
-            font-size: 36px;
-            display: block;
-            margin-top: -6px;
-            margin-bottom: 8px;
-        }
-        .access-hero p {
-            color: rgba(255,255,255,.65);
-            font-size: 12px;
-            letter-spacing: .8px;
-            margin: 0 0 6px;
-        }
-        .access-form {
-            background: rgba(255,255,255,.04);
-            border-top: 1px solid rgba(201, 167, 77, 0.25);
-            padding: 32px 38px 36px;
-            position: relative;
-            z-index: 2;
-        }
-        .access-form .field input {
-            color: #fff;
-            border-bottom-color: rgba(255,255,255,.18);
-            font-size: 14px;
-        }
-        .access-form .field label { color: rgba(255,255,255,.55); }
-        .access-form .field input:focus { border-bottom-color: var(--accent); }
-        .access-form .field input:focus + label,
-        .access-form .field input:not(:placeholder-shown) + label {
-            color: var(--accent);
-        }
-        .access-form .field-icon { color: rgba(255,255,255,.3); }
-        .access-form .btn-luxury {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-            color: #2C0A11;
-            box-shadow: 0 12px 28px rgba(201, 167, 77, .35);
-        }
-        .access-form .btn-luxury::after { background: linear-gradient(135deg, #B89238, var(--accent)); }
-        .access-form .btn-luxury:hover { box-shadow: 0 18px 36px rgba(201, 167, 77, .5); }
-        .access-form .btn-luxury .spinner { border-color: rgba(44,10,17,.3); border-top-color: #2C0A11; }
-        .access-back {
-            text-align: center;
-            margin-top: 20px;
-            display: block;
-            background: none;
-            border: none;
-            color: rgba(255,255,255,.5);
-            font-size: 10px;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            transition: color .3s var(--ease);
-        }
-        .access-back:hover { color: var(--accent-light); }
-
-        .access-features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 22px;
-            padding-top: 22px;
-            border-top: 1px solid rgba(201, 167, 77, 0.18);
-        }
-        .access-feature {
-            text-align: center;
-            color: rgba(255,255,255,.7);
-            font-size: 9.5px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .access-feature i {
-            display: block;
-            font-size: 16px;
-            color: var(--accent-light);
-            margin-bottom: 6px;
-        }
-
-        /* ---------- MIS CITAS ---------- */
-        .mis-citas-section {
-            margin-top: 28px;
-            text-align: left;
-        }
-        .mis-citas-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 14px;
-            color: var(--muted);
-            margin-bottom: 18px;
-        }
-        .mis-citas-title::before,
-        .mis-citas-title::after {
-            content: '';
-            flex: 1;
-            max-width: 50px;
-            height: 1px;
-            background: var(--line);
-        }
-        .mis-citas-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .mi-cita-card {
-            display: grid;
-            grid-template-columns: 76px 1fr;
-            gap: 16px;
-            padding: 16px;
-            background: linear-gradient(180deg, #fff, var(--cream));
-            border: 1px solid rgba(201, 167, 77, 0.25);
-            text-align: left;
-            transition: all .3s var(--ease);
-            position: relative;
-            overflow: hidden;
-        }
-        .mi-cita-card::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;
-            background: var(--burgundy);
-            transition: width .3s var(--ease);
-        }
-        .mi-cita-card.pendiente::before  { background: var(--accent); }
-        .mi-cita-card.confirmada::before { background: var(--burgundy); }
-        .mi-cita-card.completada::before { background: #4A7C59; }
-        .mi-cita-card.cancelada::before  { background: var(--muted); }
-        .mi-cita-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
-        .mi-cita-card:hover::before { width: 5px; }
-
-        .mi-cita-date {
-            background: var(--burgundy);
-            color: #fff;
-            border-radius: 4px;
-            text-align: center;
-            padding: 10px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-            box-shadow: 0 6px 14px rgba(122, 18, 31, .18);
-        }
-        .mi-cita-card.cancelada .mi-cita-date {
-            background: var(--muted);
-            box-shadow: none;
-            opacity: .7;
-        }
-        .mi-cita-date .day {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            font-weight: 700;
-        }
-        .mi-cita-date .month {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 1.8px;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        .mi-cita-info { display: flex; flex-direction: column; justify-content: center; gap: 4px; }
-        .mi-cita-info .weekday {
-            font-family: 'Poppins', sans-serif;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--muted);
-            font-weight: 600;
-        }
-        .mi-cita-info .hora {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            color: var(--burgundy);
-            font-weight: 600;
-            line-height: 1;
-        }
-        .mi-cita-card.cancelada .mi-cita-info .hora {
-            color: var(--muted);
-            text-decoration: line-through;
-        }
-        .mi-cita-info .estado-pill { align-self: flex-start; margin-top: 4px; }
-
-        .mi-cita-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            gap: 8px;
-            padding-top: 12px;
-            margin-top: 4px;
-            border-top: 1px dashed var(--line);
-        }
-        .btn-whatsapp {
-            flex: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 14px;
-            background: #25D366;
-            color: #fff;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-size: 10.5px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all .25s var(--ease);
-        }
-        .btn-whatsapp i { font-size: 14px; }
-        .btn-whatsapp:hover {
-            background: #1ebe5d;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(37, 211, 102, .35);
-            color: #fff;
-        }
-
-        .mis-citas-empty {
-            text-align: center;
-            padding: 24px 16px;
-            color: var(--muted);
-            font-size: 12.5px;
-            border: 1px dashed var(--line);
-            background: #fff;
-        }
-        .mis-citas-empty i {
-            display: block;
-            font-size: 22px;
-            color: var(--line);
-            margin-bottom: 10px;
-        }
-        .mis-citas-empty .label {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 14px;
-            color: var(--muted);
-        }
-
-        /* ---------- AGENDA VISUAL (admin) ---------- */
-        .agenda-wrap {
-            display: grid;
-            grid-template-columns: 360px 1fr;
-            gap: 0;
-            border: 1px solid rgba(229, 218, 206, 0.6);
-            background: #fff;
-        }
-        .agenda-cal {
-            padding: 22px;
-            border-right: 1px solid var(--line);
-            background: linear-gradient(180deg, #fff, var(--cream));
-        }
-        .agenda-day-panel {
-            padding: 22px 26px;
-            min-height: 460px;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-        }
-        .agenda-cal .cal-grid { gap: 4px; }
-        .agenda-cal .cal-day {
-            aspect-ratio: 1;
-            position: relative;
-            font-size: 13px;
-            background: #fff;
-        }
-        .agenda-cal .cal-day .cnt {
-            position: absolute;
-            top: 3px; right: 3px;
-            min-width: 16px; height: 16px;
-            padding: 0 4px;
-            background: var(--burgundy);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 700;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Poppins', sans-serif;
-            letter-spacing: 0;
-            border: 1.5px solid #fff;
-        }
-        .agenda-cal .cal-day .cnt.pendiente { background: var(--accent); }
-        .agenda-cal .cal-day.has-citas { font-weight: 600; }
-        .agenda-cal .cal-day.selected { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
-        .agenda-cal .cal-day.selected .cnt { background: #fff; color: var(--burgundy); border-color: var(--burgundy); }
-
-        .agenda-day-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--line);
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .agenda-day-header .day-title {
-            font-family: 'Playfair Display', serif;
-            color: var(--burgundy);
-            font-size: 22px;
-            font-weight: 600;
-            line-height: 1.1;
-            text-transform: capitalize;
-        }
-        .agenda-day-header .day-sub {
-            font-style: italic;
-            color: var(--muted);
-            font-size: 12px;
-            margin-top: 4px;
-        }
-        .agenda-day-header .day-count {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .agenda-day-list { flex: 1; overflow-y: auto; }
-        .agenda-day-list::-webkit-scrollbar { width: 6px; }
-        .agenda-day-list::-webkit-scrollbar-thumb { background: var(--line); }
-
-        .appt-row {
-            display: grid;
-            grid-template-columns: 78px 1fr auto;
-            gap: 14px;
-            padding: 14px 0;
-            border-bottom: 1px dashed var(--line);
-            align-items: center;
-            transition: all .25s var(--ease);
-        }
-        .appt-row:hover { background: var(--cream); padding-left: 8px; padding-right: 8px; margin: 0 -8px; }
-        .appt-row:last-child { border-bottom: none; }
-        .appt-time {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            color: var(--burgundy);
-            font-weight: 600;
-            text-align: center;
-            line-height: 1;
-        }
-        .appt-time .ampm {
-            display: block;
-            font-size: 9px;
-            font-style: italic;
-            font-weight: 400;
-            color: var(--muted);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-top: 4px;
-        }
-        .appt-info .appt-name {
-            font-weight: 600;
-            color: var(--dark-text);
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-        .appt-info .appt-phone {
-            color: var(--muted);
-            font-size: 11.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .appt-info .appt-phone i { color: var(--accent); font-size: 10px; }
-        .appt-actions { display: flex; gap: 4px; align-items: center; }
-
-        .estado-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 10px;
-            font-size: 9.5px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            border-radius: 100px;
-            white-space: nowrap;
-        }
-        .estado-pill::before {
-            content: '';
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            display: block;
-        }
-        .estado-pill.pendiente { background: rgba(201, 167, 77, .15); color: #8a6f25; }
-        .estado-pill.pendiente::before { background: var(--accent); }
-        .estado-pill.confirmada { background: var(--burgundy-soft); color: var(--burgundy); }
-        .estado-pill.confirmada::before { background: var(--burgundy); }
-        .estado-pill.completada { background: rgba(74, 124, 89, .15); color: #2D4F37; }
-        .estado-pill.completada::before { background: #4A7C59; }
-        .estado-pill.cancelada { background: rgba(140, 130, 120, .15); color: var(--muted); text-decoration: line-through; }
-        .estado-pill.cancelada::before { background: var(--muted); }
-
-        .agenda-empty {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--muted);
-        }
-        .agenda-empty i {
-            font-size: 36px;
-            color: var(--line);
-            margin-bottom: 14px;
-            display: block;
-        }
-        .agenda-empty .label {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 16px;
-        }
-
-        /* filter chips */
-        .agenda-filters {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .filter-chip {
-            background: #fff;
-            border: 1px solid var(--line);
-            padding: 6px 12px;
-            font-size: 10px;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--muted);
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            transition: all .25s var(--ease);
-        }
-        .filter-chip:hover { border-color: var(--burgundy); color: var(--burgundy); }
-        .filter-chip.active { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
-
-        /* legend */
-        .agenda-legend {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid var(--line);
-            font-size: 9.5px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-        }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        /* mini status select inside edit modal */
-        .estado-select-group {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            margin: 16px 0 6px;
-        }
-        .estado-select-group .estado-opt {
-            padding: 10px 8px;
-            border: 1px solid var(--line);
-            background: #fff;
-            cursor: pointer;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            font-weight: 600;
-            color: var(--muted);
-            font-family: 'Poppins', sans-serif;
-            transition: all .25s var(--ease);
-            text-align: center;
-        }
-        .estado-select-group .estado-opt:hover { border-color: var(--burgundy); color: var(--burgundy); }
-        .estado-select-group .estado-opt.active.pendiente { background: var(--accent); color: #fff; border-color: var(--accent); }
-        .estado-select-group .estado-opt.active.confirmada { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
-        .estado-select-group .estado-opt.active.completada { background: #4A7C59; color: #fff; border-color: #4A7C59; }
-        .estado-select-group .estado-opt.active.cancelada { background: var(--muted); color: #fff; border-color: var(--muted); }
-
-        @media (max-width: 991px) {
-            .agenda-wrap { grid-template-columns: 1fr; }
-            .agenda-cal { border-right: none; border-bottom: 1px solid var(--line); }
-            .agenda-day-panel { min-height: auto; padding: 22px; }
-        }
-
-        /* ---------- DÍAS DISPONIBLES ---------- */
-        .disp-wrap { display: flex; flex-direction: column; gap: 18px; }
-        .disp-tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); }
-        .disp-tab {
-            background: #fff; border: none; padding: 12px;
-            font-family: 'Poppins', sans-serif; font-size: 10px;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: var(--muted); cursor: pointer; font-weight: 600;
-            transition: all .3s var(--ease);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .disp-tab.active { background: var(--burgundy); color: #fff; }
-        .disp-tab:not(.active):hover { color: var(--burgundy); background: var(--cream); }
-        .disp-panel { display: none; }
-        .disp-panel.active { display: block; }
-
-        .disp-mini-cal { user-select: none; }
-        .disp-mini-cal .cal-day.disponible {
-            background: rgba(74,124,89,.12);
-            color: #2D4F37;
-            border-color: rgba(74,124,89,.35);
-            font-weight: 600;
-        }
-        .disp-mini-cal .cal-day.disponible:hover:not(.selected) {
-            background: rgba(74,124,89,.22);
-            border-color: #4A7C59;
-        }
-        .disp-mini-cal .cal-day.pasado-no-disp {
-            color: #D9CFC4; cursor: not-allowed; text-decoration: line-through;
-        }
-
-        .meses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .mes-chip {
-            padding: 10px 6px; border: 1px solid var(--line);
-            background: #fff; font-family: 'Poppins', sans-serif;
-            font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-            font-weight: 600; color: var(--muted); cursor: pointer;
-            text-align: center; transition: all .25s var(--ease);
-        }
-        .mes-chip:hover { border-color: #4A7C59; color: #2D4F37; }
-        .mes-chip.disponible { background: #4A7C59; color: #fff; border-color: #4A7C59; }
-        .mes-chip.disponible:hover { background: #3a6347; }
-
-        .disp-lista { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
-        .disp-lista-title {
-            font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase;
-            color: var(--muted); margin-bottom: 10px; font-weight: 600;
-        }
-        .disp-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 12px; background: rgba(74,124,89,.07);
-            border-left: 2px solid #4A7C59; margin-bottom: 6px;
-            font-size: 12px; color: var(--dark-text);
-        }
-        .disp-item button {
-            background: none; border: none; color: var(--muted);
-            cursor: pointer; font-size: 12px; padding: 2px 6px;
-            transition: color .2s; line-height: 1;
-        }
-        .disp-item button:hover { color: var(--burgundy); }
-
-        .cal-day.no-disponible {
-            background: transparent !important;
-            color: #D9CFC4 !important;
-            text-decoration: line-through !important;
-            cursor: not-allowed !important;
-            border-color: transparent !important;
-            pointer-events: none !important;
-        }
-
-        .disp-mini-cal .cal-day.excluido-admin {
-            background: rgba(122,18,31,.1);
-            color: #c9a0a7;
-            text-decoration: line-through;
-            border-color: rgba(122,18,31,.2);
-        }
-        .disp-mini-cal .cal-day.excluido-admin:hover {
-            background: rgba(122,18,31,.18);
-            border-color: var(--burgundy);
-        }
-
-        /* ---------- EDIT CITA MODAL ---------- */
-        .modal-x.wide { max-width: 480px; }
-        .edit-modal-header {
-            text-align: center;
-            margin-bottom: 22px;
-        }
-        .edit-modal-header h4 {
-            font-family: 'Playfair Display', serif;
-            color: var(--burgundy);
-            font-size: 24px;
-            margin: 0 0 4px;
-        }
-        .edit-modal-header p {
-            color: var(--muted);
-            font-size: 12px;
-            margin: 0;
-        }
-
-        /* ---------- CUSTOM DATE & TIME PICKER ---------- */
-        .picker-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 10px;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: var(--burgundy);
-            font-weight: 600;
-            margin: 18px 0 12px;
-        }
-        .picker-label .picked {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 13px;
-            text-transform: none;
-            letter-spacing: .5px;
-            color: var(--accent);
-            font-weight: 500;
-        }
-        .picker-label .picked.empty { color: var(--line); font-style: italic; }
-
-        .calendar {
-            background: linear-gradient(180deg, #fff, var(--cream));
-            border: 1px solid rgba(201, 167, 77, 0.25);
-            padding: 18px;
-            margin-bottom: 8px;
-            user-select: none;
-        }
-        .cal-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-        .cal-month {
-            font-family: 'Playfair Display', serif;
-            color: var(--burgundy);
-            font-size: 17px;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-        .cal-nav {
-            width: 32px; height: 32px;
-            border: 1px solid var(--line);
-            background: #fff;
-            color: var(--burgundy);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            transition: all .25s var(--ease);
-        }
-        .cal-nav:hover:not(:disabled) { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
-        .cal-nav:disabled { opacity: .3; cursor: not-allowed; }
-        .cal-nav-group { display: flex; gap: 6px; }
-
-        .cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-        }
-        .cal-dow {
-            text-align: center;
-            font-size: 9px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--muted);
-            padding: 6px 0 8px;
-            font-weight: 600;
-        }
-        .cal-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            color: var(--dark-text);
-            background: transparent;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all .25s var(--ease);
-            position: relative;
-            font-weight: 400;
-        }
-        .cal-day:hover:not(.disabled):not(.selected) {
-            background: #fff;
-            border-color: var(--accent);
-            color: var(--burgundy);
-        }
-        .cal-day.muted { color: var(--line); pointer-events: none; }
-        .cal-day.disabled { color: #D9CFC4; cursor: not-allowed; text-decoration: line-through; }
-        .cal-day.today {
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .cal-day.today::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 4px; height: 4px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-        .cal-day.selected {
-            background: var(--burgundy);
-            color: #fff;
-            border-color: var(--burgundy);
-            box-shadow: 0 6px 14px rgba(122, 18, 31, .25);
-            font-weight: 600;
-        }
-        .cal-day.selected::after { background: #fff; }
-
-        /* time slots */
-        .time-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            margin-bottom: 14px;
-            border: 1px solid var(--line);
-        }
-        .time-tab {
-            background: #fff;
-            border: none;
-            padding: 11px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--muted);
-            cursor: pointer;
-            font-weight: 600;
-            transition: all .3s var(--ease);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .time-tab i { font-size: 11px; }
-        .time-tab.active {
-            background: var(--burgundy);
-            color: #fff;
-        }
-        .time-tab:not(.active):hover { color: var(--burgundy); background: var(--cream); }
-
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
-        .time-slot {
-            background: #fff;
-            border: 1px solid var(--line);
-            padding: 10px 4px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 12px;
-            color: var(--dark-text);
-            cursor: pointer;
-            font-weight: 500;
-            transition: all .25s var(--ease);
-            text-align: center;
-        }
-        .time-slot:hover:not(.selected):not(.disabled) {
-            border-color: var(--accent);
-            color: var(--burgundy);
-            transform: translateY(-1px);
-        }
-        .time-slot.selected {
-            background: var(--burgundy);
-            color: #fff;
-            border-color: var(--burgundy);
-            box-shadow: 0 6px 14px rgba(122, 18, 31, .22);
-        }
-        .time-slot.disabled {
-            color: var(--line);
-            cursor: not-allowed;
-            text-decoration: line-through;
-            background: var(--cream);
-        }
-        .time-empty {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 20px;
-            color: var(--muted);
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 13px;
-        }
-
-        .text-center { text-align: center; }
-        .mt-auto-link { margin-top: 26px; }
-
-        @media (max-width: 768px) {
-            body {
-                background-image:
-                    radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.05), transparent 60%),
-                    radial-gradient(ellipse at bottom right, rgba(122, 18, 31, 0.04), transparent 60%);
-            }
-            main.container { padding: 24px 14px !important; }
-            nav.topbar { padding: 12px 16px; }
-            .nav-logo { font-size: 16px; letter-spacing: 3px; }
-            .nav-btn { padding: 8px 12px; font-size: 9px; letter-spacing: 1.6px; }
-            .admin-menu { gap: 12px; }
-            .admin-menu-item { font-size: 10px; gap: 6px; }
-            .welcome-box { padding: 32px 24px; }
-            .welcome-name { font-size: 30px; }
-        }
     </style>
 </head>
 <body>
@@ -1882,20 +966,20 @@
 
     <nav class="admin-menu" id="adminMenu" style="display:none;">
         <button class="admin-menu-item active" data-section="agenda" onclick="switchAdminSection('agenda')">
-            <i class="fa-regular fa-calendar"></i>Agenda
+            <i class="fa-regular fa-calendar"></i> Agenda
         </button>
         <button class="admin-menu-item" data-section="solicitudes" onclick="switchAdminSection('solicitudes')">
-            <i class="fa-regular fa-calendar-check"></i>Solicitudes
+            <i class="fa-regular fa-calendar-check"></i> Solicitudes
             <span id="menuBadgePendientes" style="background:var(--accent);color:#2C0A11;border-radius:100px;padding:1px 7px;font-size:9px;margin-left:2px;display:none;"></span>
         </button>
         <button class="admin-menu-item" data-section="fidelizacion" onclick="switchAdminSection('fidelizacion')">
-            <i class="fa-solid fa-gem"></i>Fidelización
+            <i class="fa-solid fa-gem"></i> Fidelización
         </button>
         <button class="admin-menu-item" data-section="disponibilidad" onclick="switchAdminSection('disponibilidad')">
-            <i class="fa-solid fa-calendar-days"></i>Disponibilidad
+            <i class="fa-solid fa-calendar-days"></i> Disponibilidad
         </button>
         <button class="admin-menu-item" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.5); margin-left: auto;">
-            <i class="fa-solid fa-right-from-bracket"></i>Salir
+            <i class="fa-solid fa-right-from-bracket"></i> Salir
         </button>
     </nav>
 
@@ -1903,14 +987,13 @@
         <div class="welcome-box">
             <span class="welcome-crown">👑</span>
             <div class="welcome-title">Bienvenida de vuelta</div>
-            <div class="welcome-name">Shanahan</div>
+            <div class="welcome-name">mi culona</div>
             <div class="welcome-msg">El salón te espera. Tienes <strong id="welcomePendientes">0</strong> solicitudes pendientes y <strong id="welcomeHoy">0</strong> citas hoy.</div>
             <button class="welcome-close" onclick="closeWelcome()">Entrar al panel ✨</button>
         </div>
     </div>
 
     <main class="container py-5">
-
         <section id="login" class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="brand-container view-anim">
@@ -2071,9 +1154,9 @@
                         </form>
 
                         <div class="access-features">
-                            <div class="access-feature"><i class="fa-solid fa-gem"></i>Fidelización</div>
-                            <div class="access-feature"><i class="fa-regular fa-calendar-check"></i>Citas</div>
-                            <div class="access-feature"><i class="fa-solid fa-users"></i>Clientas</div>
+                            <div class="access-feature"><i class="fa-solid fa-gem"></i> Fidelidad</div>
+                            <div class="access-feature"><i class="fa-regular fa-calendar-check"></i> Citas</div>
+                            <div class="access-feature"><i class="fa-solid fa-users"></i> Clientas</div>
                         </div>
 
                         <button class="access-back" onclick="mostrarVista('login')">
@@ -2123,9 +1206,9 @@
                                 </div>
                                 <div class="cal-grid" id="agendaGrid"></div>
                                 <div class="agenda-legend">
-                                    <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span>Pendientes</div>
-                                    <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span>Confirmadas</div>
-                                    <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span>Completadas</div>
+                                    <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span> Pendientes</div>
+                                    <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span> Confirmadas</div>
+                                    <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span> Completadas</div>
                                 </div>
                             </div>
 
@@ -2161,9 +1244,7 @@
                             </div>
                             <button type="submit" class="btn-luxury" id="btnRegistrar"><span>Registrar</span><span class="spinner"></span></button>
                         </form>
-
                         <hr style="border:none; border-top:1px solid var(--line); margin:36px 0 24px;">
-
                         <div class="admin-header" style="margin-bottom:16px;">
                             <h5><i class="fa-regular fa-calendar-check"></i> Solicitudes</h5>
                         </div>
@@ -2207,10 +1288,9 @@
                         <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas <strong>solo podrán reservar</strong> en los días y meses que marques como disponibles.</p>
                         <div class="disp-wrap">
                             <div class="disp-tabs">
-                                <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i>Días concretos</button>
-                                <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i>Meses enteros</button>
+                                <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i> Días concretos</button>
+                                <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i> Meses enteros</button>
                             </div>
-
                             <div class="disp-panel active" id="dpanelDias">
                                 <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un día para marcarlo disponible o quitarlo.</p>
                                 <div class="disp-mini-cal">
@@ -2228,7 +1308,6 @@
                                     <div id="dispDiaItems"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div></div>
                                 </div>
                             </div>
-
                             <div class="disp-panel" id="dpanelMeses">
                                 <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para habilitarlo o deshabilitarlo entero.</p>
                                 <div class="meses-grid" id="mesesGrid"></div>
@@ -2270,7 +1349,7 @@
                 <i class="fa-regular fa-clock field-icon"></i>
             </div>
 
-            <div class="picker-label" style="margin:18px 0 4px;"><span><i class="fa-solid fa-circle-dot" style="margin-right:8px; color:var(--accent);"></i>Estado de la cita</span></div>
+            <div class="picker-label" style="margin:18px 0 4px;"><span><i class="fa-solid fa-circle-dot" style="margin-right:8px; color:var(--accent);"></i> Estado de la cita</span></div>
             <div class="estado-select-group" id="editEstadoGroup">
                 <button type="button" class="estado-opt pendiente" data-estado="pendiente">Pendiente</button>
                 <button type="button" class="estado-opt confirmada" data-estado="confirmada">Confirmada</button>
@@ -2280,7 +1359,7 @@
             <input type="hidden" id="editCitaEstado">
 
             <div class="modal-actions" style="margin-top:24px;">
-                <button class="btn-ghost" onclick="confirmarEliminarCita()" style="color:#b03030; border-color:#e8c5c5;"><i class="fa-solid fa-trash" style="margin-right:6px;"></i>Eliminar</button>
+                <button class="btn-ghost" onclick="confirmarEliminarCita()" style="color:#b03030; border-color:#e8c5c5;"><i class="fa-solid fa-trash" style="margin-right:6px;"></i> Eliminar</button>
                 <button class="btn-luxury" style="margin-top:0;" onclick="guardarEdicionCita()" id="btnGuardarEdicion"><span>Guardar cambios</span><span class="spinner"></span></button>
             </div>
         </div>
@@ -2345,6 +1424,10 @@
             if (e.target.id === 'confirmModal') closeConfirm(false);
         });
 
+        function setBtnLoading = false;
+        function setBtnLoadingName = "";
+
+        function setBtnLoadingName = "";
         function setBtnLoading(id, on) {
             const b = document.getElementById(id);
             if (!b) return;
@@ -2543,7 +1626,7 @@
         function whatsappCambioCita(nombre, fecha, hora) {
             const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
             const fechaTexto = dt ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}` : 'mi cita';
-            const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
+            const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${constTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
             return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
         }
 
@@ -2986,8 +2069,12 @@
         function isDiaDisponible(iso){
             if(diasDisponibles.length === 0) return false;
             const mes = iso.substring(0,7);
-            if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
-            return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
+            
+            // Si está explícitamente excluido por el admin, NO está disponible
+            if(diasDisponibles.some(b => b.tipo === 'excluido' && b.valor === iso)) return false;
+            
+            // Comprobamos si el día o el mes entero están habilitados
+            return diasDisponibles.some(b => (b.tipo === 'dia' && b.valor === iso) || (b.tipo === 'mes' && b.valor === mes));
         }
 
         async function cargarDisponibles(){
@@ -3084,7 +2171,7 @@
                     toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
                 }
             }
-            cargarDisponibles();
+            await cargarDisponibles();
         }
 
         function initDispPanel(){
@@ -3116,8 +2203,6 @@
             return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
         }
 
-        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
-
         function renderCalendar(){
             const monthEl = document.getElementById('calMonth');
             const grid = document.getElementById('calGrid');
@@ -3142,16 +2227,18 @@
             }
             for (let d = 1; d <= daysInMonth; d++) {
                 const dt = new Date(year, month, d);
-                const iso = fmtISO(dt);
+                const iso = fmtIso(dt);
                 const past = dt < today;
                 const isToday = dt.getTime() === today.getTime();
                 const isSelected = selectedDate && fmtISO(selectedDate) === iso;
                 const noDisp = diasDisponibles.length > 0 && !isDiaDisponible(iso);
+                
                 let cls = 'cal-day';
                 if (past || noDisp) cls += ' disabled';
                 if (noDisp && !past) cls += ' no-disponible';
                 if (isToday) cls += ' today';
                 if (isSelected) cls += ' selected';
+                
                 grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
             }
             const totalCells = startOffset + daysInMonth;
