@@ -2027,7 +2027,7 @@
 
 
     <!-- ADMIN NAV MENU -->
-    <nav class="admin-menu" id="adminMenu">
+    <nav class="admin-menu" id="adminMenu" style="display:none;">
         <button class="admin-menu-item active" data-section="agenda" onclick="switchAdminSection('agenda')">
             <i class="fa-regular fa-calendar"></i>Agenda
         </button>
@@ -2048,7 +2048,7 @@
     </nav>
 
     <!-- WELCOME MODAL -->
-    <div class="welcome-modal" id="welcomeModal">
+    <div class="welcome-modal" id="welcomeModal" style="display:none;">
         <div class="welcome-box">
             <span class="welcome-crown">👑</span>
             <div class="welcome-title">Bienvenida de vuelta</div>
@@ -2542,9 +2542,12 @@
                 const el = document.getElementById(v);
                 if (el) el.style.display = 'none';
             });
+            // ocultar menú y welcome al cambiar de vista
+            document.getElementById('adminMenu').style.display = 'none';
+            document.getElementById('welcomeModal').style.display = 'none';
+
             const vistaActiva = document.getElementById(idVista);
             if (vistaActiva) {
-                // vistaAdmin es un Bootstrap "row" que necesita display:block para que sus col-* funcionen bien
                 vistaActiva.style.display = idVista === 'vistaAdmin' ? 'block' : 'flex';
                 vistaActiva.querySelectorAll('.view-anim').forEach(el => {
                     el.style.animation = 'none';
@@ -2552,9 +2555,9 @@
                     el.style.animation = '';
                 });
                 if (idVista === 'vistaAdmin') {
+                    document.getElementById('adminMenu').style.display = 'flex';
                     cargarDatosAdmin().then(() => showWelcome());
                 }
-                document.getElementById('adminMenu').classList.toggle('visible', idVista === 'vistaAdmin');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -2580,10 +2583,10 @@
             const hoy = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
             document.getElementById('welcomePendientes').textContent = pend;
             document.getElementById('welcomeHoy').textContent = hoy;
-            document.getElementById('welcomeModal').classList.add('show');
+            document.getElementById('welcomeModal').style.display = 'flex';
         }
         function closeWelcome() {
-            document.getElementById('welcomeModal').classList.remove('show');
+            document.getElementById('welcomeModal').style.display = 'none';
         }
 
         /* ---------- ADMIN DATA ---------- */
