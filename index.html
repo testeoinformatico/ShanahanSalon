@@ -1050,6 +1050,433 @@
             margin-bottom: 6px;
         }
 
+        /* ---------- MIS CITAS (vista cliente) ---------- */
+        .mis-citas-section {
+            margin-top: 28px;
+            text-align: left;
+        }
+        .mis-citas-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+        .mis-citas-title::before,
+        .mis-citas-title::after {
+            content: '';
+            flex: 1;
+            max-width: 50px;
+            height: 1px;
+            background: var(--line);
+        }
+        .mis-citas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .mi-cita-card {
+            display: grid;
+            grid-template-columns: 76px 1fr;
+            gap: 16px;
+            padding: 16px;
+            background: linear-gradient(180deg, #fff, var(--cream));
+            border: 1px solid rgba(201, 167, 77, 0.25);
+            text-align: left;
+            transition: all .3s var(--ease);
+            position: relative;
+            overflow: hidden;
+        }
+        .mi-cita-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: var(--burgundy);
+            transition: width .3s var(--ease);
+        }
+        .mi-cita-card.pendiente::before  { background: var(--accent); }
+        .mi-cita-card.confirmada::before { background: var(--burgundy); }
+        .mi-cita-card.completada::before { background: #4A7C59; }
+        .mi-cita-card.cancelada::before  { background: var(--muted); }
+        .mi-cita-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+        .mi-cita-card:hover::before { width: 5px; }
+
+        .mi-cita-date {
+            background: var(--burgundy);
+            color: #fff;
+            border-radius: 4px;
+            text-align: center;
+            padding: 10px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            box-shadow: 0 6px 14px rgba(122, 18, 31, .18);
+        }
+        .mi-cita-card.cancelada .mi-cita-date {
+            background: var(--muted);
+            box-shadow: none;
+            opacity: .7;
+        }
+        .mi-cita-date .day {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .mi-cita-date .month {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .mi-cita-info { display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+        .mi-cita-info .weekday {
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .mi-cita-info .hora {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--burgundy);
+            font-weight: 600;
+            line-height: 1;
+        }
+        .mi-cita-card.cancelada .mi-cita-info .hora {
+            color: var(--muted);
+            text-decoration: line-through;
+        }
+        .mi-cita-info .estado-pill { align-self: flex-start; margin-top: 4px; }
+
+        .mi-cita-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 8px;
+            padding-top: 12px;
+            margin-top: 4px;
+            border-top: 1px dashed var(--line);
+        }
+        .btn-whatsapp {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #25D366;
+            color: #fff;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 10.5px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .25s var(--ease);
+        }
+        .btn-whatsapp i { font-size: 14px; }
+        .btn-whatsapp:hover {
+            background: #1ebe5d;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(37, 211, 102, .35);
+            color: #fff;
+        }
+
+        .mis-citas-empty {
+            text-align: center;
+            padding: 24px 16px;
+            color: var(--muted);
+            font-size: 12.5px;
+            border: 1px dashed var(--line);
+            background: #fff;
+        }
+        .mis-citas-empty i {
+            display: block;
+            font-size: 22px;
+            color: var(--line);
+            margin-bottom: 10px;
+        }
+        .mis-citas-empty .label {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 480px) {
+            .mi-cita-card { grid-template-columns: 64px 1fr; gap: 12px; padding: 14px; }
+            .mi-cita-date .day { font-size: 24px; }
+            .mi-cita-info .hora { font-size: 19px; }
+        }
+
+        /* ---------- AGENDA VISUAL (admin) ---------- */
+        .agenda-wrap {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+            border: 1px solid rgba(229, 218, 206, 0.6);
+            background: #fff;
+        }
+        .agenda-cal {
+            padding: 22px;
+            border-right: 1px solid var(--line);
+            background: linear-gradient(180deg, #fff, var(--cream));
+        }
+        .agenda-day-panel {
+            padding: 22px 26px;
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .agenda-cal .cal-grid { gap: 4px; }
+        .agenda-cal .cal-day {
+            aspect-ratio: 1;
+            position: relative;
+            font-size: 13px;
+            background: #fff;
+        }
+        .agenda-cal .cal-day .cnt {
+            position: absolute;
+            top: 3px; right: 3px;
+            min-width: 16px; height: 16px;
+            padding: 0 4px;
+            background: var(--burgundy);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0;
+            border: 1.5px solid #fff;
+        }
+        .agenda-cal .cal-day .cnt.pendiente { background: var(--accent); }
+        .agenda-cal .cal-day.has-citas { font-weight: 600; }
+        .agenda-cal .cal-day.selected { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+        .agenda-cal .cal-day.selected .cnt { background: #fff; color: var(--burgundy); border-color: var(--burgundy); }
+
+        .agenda-day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .agenda-day-header .day-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--burgundy);
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.1;
+            text-transform: capitalize;
+        }
+        .agenda-day-header .day-sub {
+            font-style: italic;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .agenda-day-header .day-count {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .agenda-day-list { flex: 1; overflow-y: auto; }
+        .agenda-day-list::-webkit-scrollbar { width: 6px; }
+        .agenda-day-list::-webkit-scrollbar-thumb { background: var(--line); }
+
+        .appt-row {
+            display: grid;
+            grid-template-columns: 78px 1fr auto;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--line);
+            align-items: center;
+            transition: all .25s var(--ease);
+        }
+        .appt-row:hover { background: var(--cream); padding-left: 8px; padding-right: 8px; margin: 0 -8px; }
+        .appt-row:last-child { border-bottom: none; }
+        .appt-time {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--burgundy);
+            font-weight: 600;
+            text-align: center;
+            line-height: 1;
+        }
+        .appt-time .ampm {
+            display: block;
+            font-size: 9px;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        .appt-info .appt-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        .appt-info .appt-phone {
+            color: var(--muted);
+            font-size: 11.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .appt-info .appt-phone i { color: var(--accent); font-size: 10px; }
+        .appt-actions { display: flex; gap: 4px; align-items: center; }
+
+        .estado-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            font-size: 9.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+        .estado-pill::before {
+            content: '';
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            display: block;
+        }
+        .estado-pill.pendiente { background: rgba(201, 167, 77, .15); color: #8a6f25; }
+        .estado-pill.pendiente::before { background: var(--accent); }
+        .estado-pill.confirmada { background: var(--burgundy-soft); color: var(--burgundy); }
+        .estado-pill.confirmada::before { background: var(--burgundy); }
+        .estado-pill.completada { background: rgba(74, 124, 89, .15); color: #2D4F37; }
+        .estado-pill.completada::before { background: #4A7C59; }
+        .estado-pill.cancelada { background: rgba(140, 130, 120, .15); color: var(--muted); text-decoration: line-through; }
+        .estado-pill.cancelada::before { background: var(--muted); }
+
+        .agenda-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--muted);
+        }
+        .agenda-empty i {
+            font-size: 36px;
+            color: var(--line);
+            margin-bottom: 14px;
+            display: block;
+        }
+        .agenda-empty .label {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 16px;
+        }
+
+        /* filter chips */
+        .agenda-filters {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-chip {
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 6px 12px;
+            font-size: 10px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all .25s var(--ease);
+        }
+        .filter-chip:hover { border-color: var(--burgundy); color: var(--burgundy); }
+        .filter-chip.active { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+
+        /* legend */
+        .agenda-legend {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
+            font-size: 9.5px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* mini status select inside edit modal */
+        .estado-select-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin: 16px 0 6px;
+        }
+        .estado-select-group .estado-opt {
+            padding: 10px 8px;
+            border: 1px solid var(--line);
+            background: #fff;
+            cursor: pointer;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 600;
+            color: var(--muted);
+            font-family: 'Poppins', sans-serif;
+            transition: all .25s var(--ease);
+            text-align: center;
+        }
+        .estado-select-group .estado-opt:hover { border-color: var(--burgundy); color: var(--burgundy); }
+        .estado-select-group .estado-opt.active.pendiente { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .estado-select-group .estado-opt.active.confirmada { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+        .estado-select-group .estado-opt.active.completada { background: #4A7C59; color: #fff; border-color: #4A7C59; }
+        .estado-select-group .estado-opt.active.cancelada { background: var(--muted); color: #fff; border-color: var(--muted); }
+
+        @media (max-width: 991px) {
+            .agenda-wrap { grid-template-columns: 1fr; }
+            .agenda-cal { border-right: none; border-bottom: 1px solid var(--line); }
+            .agenda-day-panel { min-height: auto; padding: 22px; }
+        }
+        @media (max-width: 480px) {
+            .appt-row { grid-template-columns: 60px 1fr; gap: 10px; }
+            .appt-actions { grid-column: 1 / -1; justify-content: flex-end; padding-top: 6px; border-top: 1px dashed var(--line); }
+            .appt-time { font-size: 18px; }
+            .agenda-cal { padding: 14px; }
+            .agenda-day-panel { padding: 18px; }
+            .agenda-day-header .day-title { font-size: 18px; }
+            .estado-select-group { grid-template-columns: 1fr 1fr; }
+        }
+
         /* ---------- EDIT CITA MODAL ---------- */
         .modal-x.wide { max-width: 480px; }
         .edit-modal-header {
@@ -1556,9 +1983,9 @@
                 <div class="social-section view-anim">
                     <div class="social-title">Síguenos</div>
                     <div class="social-icons">
-                        <a href="https://instagram.com/" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="https://tiktok.com/" target="_blank" rel="noopener" class="social-link tiktok" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                        <a href="https://wa.me/" target="_blank" rel="noopener" class="social-link whatsapp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@shanahanails" target="_blank" rel="noopener" class="social-link tiktok" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://wa.me/34621303635" target="_blank" rel="noopener" class="social-link whatsapp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>
@@ -1581,6 +2008,11 @@
                     </div>
 
                     <div id="clienteEstado" class="reward-info"></div>
+
+                    <div class="mis-citas-section" id="misCitasSection">
+                        <div class="mis-citas-title">Mis Citas</div>
+                        <div class="mis-citas-list" id="misCitasList"></div>
+                    </div>
 
                     <button class="btn-ghost mt-auto-link" onclick="mostrarVista('login')" style="margin-top:24px;">
                         <i class="fa-solid fa-arrow-left-long" style="margin-right:8px;"></i> Cerrar Sesión
@@ -1698,8 +2130,54 @@
                 </div>
                 <div class="stat-row view-anim">
                     <div class="stat"><div class="num" id="statClientas">0</div><div class="lbl">Clientas Activas</div></div>
-                    <div class="stat"><div class="num" id="statCitas">0</div><div class="lbl">Citas Pendientes</div></div>
-                    <div class="stat"><div class="num" id="statSellos">0</div><div class="lbl">Sellos Totales</div></div>
+                    <div class="stat"><div class="num" id="statPendientes">0</div><div class="lbl">Solicitudes</div></div>
+                    <div class="stat"><div class="num" id="statHoy">0</div><div class="lbl">Citas Hoy</div></div>
+                    <div class="stat"><div class="num" id="statSemana">0</div><div class="lbl">Esta Semana</div></div>
+                </div>
+            </div>
+
+            <!-- AGENDA VISUAL -->
+            <div class="col-12">
+                <div class="luxury-card view-anim" style="padding:30px;">
+                    <div class="admin-header">
+                        <h5><i class="fa-regular fa-calendar"></i> Agenda</h5>
+                        <div class="agenda-filters">
+                            <button type="button" class="filter-chip active" data-filter="all">Todas</button>
+                            <button type="button" class="filter-chip" data-filter="pendiente">Pendientes</button>
+                            <button type="button" class="filter-chip" data-filter="confirmada">Confirmadas</button>
+                            <button type="button" class="filter-chip" data-filter="completada">Completadas</button>
+                        </div>
+                    </div>
+
+                    <div class="agenda-wrap">
+                        <div class="agenda-cal">
+                            <div class="cal-head">
+                                <div class="cal-month" id="agendaMonth"></div>
+                                <div class="cal-nav-group">
+                                    <button type="button" class="cal-nav" id="agendaPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaToday" aria-label="Hoy" title="Ir a hoy"><i class="fa-solid fa-circle-dot"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="cal-grid" id="agendaGrid"></div>
+                            <div class="agenda-legend">
+                                <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span>Pendientes</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span>Confirmadas</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span>Completadas</div>
+                            </div>
+                        </div>
+
+                        <div class="agenda-day-panel">
+                            <div class="agenda-day-header">
+                                <div>
+                                    <div class="day-title" id="dayTitle">—</div>
+                                    <div class="day-sub" id="daySub"></div>
+                                </div>
+                                <div class="day-count" id="dayCount"></div>
+                            </div>
+                            <div class="agenda-day-list" id="dayList"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1787,8 +2265,18 @@
                 <label>Hora</label>
                 <i class="fa-regular fa-clock field-icon"></i>
             </div>
+
+            <div class="picker-label" style="margin:18px 0 4px;"><span><i class="fa-solid fa-circle-dot" style="margin-right:8px; color:var(--accent);"></i>Estado de la cita</span></div>
+            <div class="estado-select-group" id="editEstadoGroup">
+                <button type="button" class="estado-opt pendiente" data-estado="pendiente">Pendiente</button>
+                <button type="button" class="estado-opt confirmada" data-estado="confirmada">Confirmada</button>
+                <button type="button" class="estado-opt completada" data-estado="completada">Completada</button>
+                <button type="button" class="estado-opt cancelada" data-estado="cancelada">Cancelada</button>
+            </div>
+            <input type="hidden" id="editCitaEstado">
+
             <div class="modal-actions" style="margin-top:24px;">
-                <button class="btn-ghost" onclick="closeEditCita()">Cancelar</button>
+                <button class="btn-ghost" onclick="confirmarEliminarCita()" style="color:#b03030; border-color:#e8c5c5;"><i class="fa-solid fa-trash" style="margin-right:6px;"></i>Eliminar</button>
                 <button class="btn-luxury" style="margin-top:0;" onclick="guardarEdicionCita()" id="btnGuardarEdicion"><span>Guardar cambios</span><span class="spinner"></span></button>
             </div>
         </div>
@@ -1813,6 +2301,10 @@
         const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const SALON_WHATSAPP = '34621303635';
+        const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
+        const SALON_TIKTOK = 'https://www.tiktok.com/@shanahanails';
 
         let clientas = [];
         let citas = [];
@@ -1945,6 +2437,7 @@
                         estado.innerHTML = `<i class="fa-regular fa-gem"></i>Te ${restantes === 1 ? 'queda' : 'quedan'} <strong>${restantes}</strong> ${restantes === 1 ? 'sello' : 'sellos'} para tu recompensa.`;
                     }
 
+                    await renderMisCitas(cliente);
                     mostrarVista('vistaCliente');
                 } else {
                     toast('No se encontró el registro. Solicita una cita para registrarte.', 'error');
@@ -1956,14 +2449,80 @@
             }
         }
 
+        /* ---------- CLIENT APPOINTMENTS VIEW ---------- */
+        async function renderMisCitas(cliente) {
+            const list = document.getElementById('misCitasList');
+            if (!list) return;
+            list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-hourglass-half"></i><div class="label">Cargando…</div></div>`;
+
+            try {
+                const { data } = await sb.from('citas')
+                    .select('*')
+                    .eq('telefono', cliente.telefono)
+                    .order('fecha', { ascending: true })
+                    .order('hora', { ascending: true });
+
+                const todayIso = fmtIso(today);
+                const upcoming = (data || []).filter(c => (c.fecha >= todayIso) && (c.estado || 'pendiente') !== 'cancelada');
+
+                if (upcoming.length === 0) {
+                    list.innerHTML = `<div class="mis-citas-empty">
+                        <i class="fa-regular fa-calendar"></i>
+                        <div class="label">No tienes citas próximas</div>
+                        <div style="margin-top:10px; font-size:11.5px;">Reserva una nueva desde el inicio</div>
+                    </div>`;
+                    return;
+                }
+
+                list.innerHTML = upcoming.map(c => {
+                    const dt = new Date((c.fecha || todayIso) + 'T00:00:00');
+                    const day = dt.getDate();
+                    const monthShort = MONTHS_ES[dt.getMonth()].substring(0,3);
+                    const weekdays = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+                    const weekday = weekdays[dt.getDay()];
+                    const fullDay = weekdays[dt.getDay()] + ', ' + day + ' de ' + MONTHS_ES[dt.getMonth()].toLowerCase();
+                    const hora = (c.hora || '').slice(0,5);
+                    const estado = c.estado || 'pendiente';
+
+                    return `<div class="mi-cita-card ${estado}">
+                        <div class="mi-cita-date">
+                            <span class="day">${day}</span>
+                            <span class="month">${monthShort}</span>
+                        </div>
+                        <div class="mi-cita-info">
+                            <span class="weekday">${fullDay}</span>
+                            <span class="hora">${hora} h</span>
+                            <span class="estado-pill ${estado}">${estado}</span>
+                        </div>
+                        <div class="mi-cita-actions">
+                            <a href="${whatsappCambioCita(cliente.nombre, c.fecha, hora)}" target="_blank" rel="noopener" class="btn-whatsapp">
+                                <i class="fa-brands fa-whatsapp"></i> Cambiar fecha u hora
+                            </a>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar tus citas</div></div>`;
+            }
+        }
+
+        function whatsappCambioCita(nombre, fecha, hora) {
+            const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
+            const fechaTexto = dt
+                ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`
+                : 'mi cita';
+            const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
+            return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+        }
+
         /* ---------- APPOINTMENT REQUEST ---------- */
         async function enviarSolicitudCita() {
             const cita = {
-                id: Date.now(),
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
                 telefono: document.getElementById('citaTelefono').value.trim(),
                 fecha: document.getElementById('citaFecha').value,
-                hora: document.getElementById('citaHora').value
+                hora: document.getElementById('citaHora').value,
+                estado: 'pendiente'
             };
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
                 return toast('Completa todos los campos', 'error');
@@ -1987,6 +2546,143 @@
             }
         }
 
+        /* ---------- AGENDA STATE ---------- */
+        let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+        let agendaSelected = new Date(today);
+        let agendaFilter = 'all';
+
+        function citasOfDay(iso) {
+            return citas.filter(c => c.fecha === iso && (agendaFilter === 'all' || (c.estado || 'pendiente') === agendaFilter));
+        }
+        function fmtIso(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+        function fmtDayLong(d){
+            const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+            return `${days[d.getDay()]}, ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
+        }
+
+        function renderAgenda() {
+            const monthEl = document.getElementById('agendaMonth');
+            const grid = document.getElementById('agendaGrid');
+            if (!monthEl || !grid) return;
+
+            monthEl.textContent = `${MONTHS_ES[agendaCursor.getMonth()]} ${agendaCursor.getFullYear()}`;
+
+            grid.innerHTML = '';
+            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+
+            const year = agendaCursor.getFullYear();
+            const month = agendaCursor.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const startOffset = (firstDay.getDay() + 6) % 7;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const prevDays = new Date(year, month, 0).getDate();
+
+            for (let i = startOffset - 1; i >= 0; i--) {
+                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dt = new Date(year, month, d);
+                const iso = fmtIso(dt);
+                const dayCitas = citasOfDay(iso);
+                const total = dayCitas.length;
+                const pendCount = dayCitas.filter(c => (c.estado||'pendiente') === 'pendiente').length;
+                const isToday = dt.getTime() === today.getTime();
+                const isSelected = fmtIso(agendaSelected) === iso;
+                let cls = 'cal-day';
+                if (isToday) cls += ' today';
+                if (isSelected) cls += ' selected';
+                if (total > 0) cls += ' has-citas';
+                const badge = total > 0
+                    ? `<span class="cnt ${pendCount > 0 ? 'pendiente' : ''}">${total}</span>` : '';
+                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}${badge}</div>`;
+            }
+            const totalCells = startOffset + daysInMonth;
+            const trail = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= trail; i++) grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
+
+            grid.querySelectorAll('.cal-day:not(.muted)').forEach(el => {
+                el.addEventListener('click', () => {
+                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
+                    agendaSelected = new Date(y, m-1, d);
+                    renderAgenda();
+                    renderAgendaDay();
+                });
+            });
+        }
+
+        function renderAgendaDay() {
+            const iso = fmtIso(agendaSelected);
+            const dayCitas = citasOfDay(iso).slice().sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
+
+            document.getElementById('dayTitle').textContent = fmtDayLong(agendaSelected);
+            const isToday = fmtIso(agendaSelected) === fmtIso(today);
+            document.getElementById('daySub').textContent = isToday ? 'Hoy' : '';
+
+            const counts = {
+                pendiente: dayCitas.filter(c => (c.estado||'pendiente')==='pendiente').length,
+                confirmada: dayCitas.filter(c => c.estado==='confirmada').length,
+                completada: dayCitas.filter(c => c.estado==='completada').length,
+                cancelada: dayCitas.filter(c => c.estado==='cancelada').length
+            };
+            const cntEl = document.getElementById('dayCount');
+            cntEl.innerHTML = '';
+            ['pendiente','confirmada','completada','cancelada'].forEach(k => {
+                if (counts[k] > 0) cntEl.innerHTML += `<span class="estado-pill ${k}">${counts[k]} ${k}</span>`;
+            });
+
+            const list = document.getElementById('dayList');
+            if (dayCitas.length === 0) {
+                list.innerHTML = `<div class="agenda-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="label">Sin citas para este día</div></div>`;
+                return;
+            }
+
+            list.innerHTML = dayCitas.map(c => {
+                const estado = c.estado || 'pendiente';
+                const [hh, mm] = (c.hora || '00:00').split(':');
+                const period = parseInt(hh,10) < 14 ? 'mañana' : 'tarde';
+                return `<div class="appt-row">
+                    <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
+                    <div class="appt-info">
+                        <div class="appt-name">${c.nombre_cliente || '—'}</div>
+                        <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono || '—'}</div>
+                        <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
+                    </div>
+                    <div class="appt-actions">
+                        ${estado === 'pendiente' ? `<button class="action-icon success" title="Aprobar" onclick="aprobarCita(${c.id})"><i class="fa-solid fa-check"></i></button>` : ''}
+                        ${estado === 'confirmada' ? `<button class="action-icon success" title="Marcar completada" onclick="completarCita(${c.id})"><i class="fa-solid fa-circle-check"></i></button>` : ''}
+                        <button class="action-icon" title="Editar" onclick="abrirEditarCita(${c.id})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="action-icon danger" title="Eliminar" onclick="eliminarCita(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function initAgenda() {
+            document.getElementById('agendaPrev').addEventListener('click', () => {
+                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()-1, 1);
+                renderAgenda();
+            });
+            document.getElementById('agendaNext').addEventListener('click', () => {
+                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()+1, 1);
+                renderAgenda();
+            });
+            document.getElementById('agendaToday').addEventListener('click', () => {
+                agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+                agendaSelected = new Date(today);
+                renderAgenda();
+                renderAgendaDay();
+            });
+            document.querySelectorAll('.agenda-filters .filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.agenda-filters .filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    agendaFilter = chip.dataset.filter;
+                    renderAgenda();
+                    renderAgendaDay();
+                });
+            });
+        }
+
         /* ---------- ADMIN RENDER ---------- */
         function renderAdmin() {
             const search = (document.getElementById('adminSearch')?.value || '').trim().toLowerCase();
@@ -1995,9 +2691,25 @@
                 : clientas;
 
             // stats
+            const todayIso = fmtIso(today);
+            const startWeek = new Date(today); startWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
+            const endWeek = new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
+            const pendCount = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
+            const todayCount = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
+            const weekCount = citas.filter(c => {
+                if (!c.fecha) return false;
+                const d = new Date(c.fecha + 'T00:00:00');
+                return d >= startWeek && d <= endWeek && (c.estado||'pendiente') !== 'cancelada';
+            }).length;
+
             document.getElementById('statClientas').textContent = clientas.length;
-            document.getElementById('statCitas').textContent = citas.length;
-            document.getElementById('statSellos').textContent = clientas.reduce((s, c) => s + (c.visitas || 0), 0);
+            document.getElementById('statPendientes').textContent = pendCount;
+            document.getElementById('statHoy').textContent = todayCount;
+            document.getElementById('statSemana').textContent = weekCount;
+
+            // refresh agenda views
+            renderAgenda();
+            renderAgendaDay();
 
             // table
             const tb = document.querySelector('#tablaClientes tbody');
@@ -2029,13 +2741,14 @@
                 });
             }
 
-            // appointments
+            // appointments — only pending
+            const pendientes = citas.filter(c => (c.estado||'pendiente') === 'pendiente');
             const lista = document.getElementById('listaCitasPendientes');
             lista.innerHTML = "";
-            if (citas.length === 0) {
+            if (pendientes.length === 0) {
                 lista.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar"></i><div class="label">Sin solicitudes pendientes</div></div>`;
             } else {
-                citas.forEach(cita => {
+                pendientes.forEach(cita => {
                     const fecha = cita.fecha ? new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'long' }) : '—';
                     lista.innerHTML += `<div class="cita-card">
                         <div class="cita-name">${cita.nombre_cliente}</div>
@@ -2059,13 +2772,57 @@
             const cita = citas.find(c => c.id === idCita);
             if (!cita) return;
             try {
-                await sb.from('clientas').insert([{ id: Date.now(), nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
-                await sb.from('citas').delete().eq('id', idCita);
-                toast('Clienta registrada correctamente', 'success');
+                // create client only if not already registered (match by phone)
+                const yaExiste = clientas.some(cl => (cl.telefono || '').trim() === (cita.telefono || '').trim());
+                if (!yaExiste) {
+                    await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
+                }
+                await sb.from('citas').update({ estado: 'confirmada' }).eq('id', idCita);
+                toast(yaExiste ? 'Cita confirmada' : 'Cita confirmada y clienta registrada', 'success');
                 cargarDatosAdmin();
             } catch (e) {
                 toast('No se pudo aprobar la cita', 'error');
             }
+        }
+
+        async function completarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (!cita) return;
+            try {
+                await sb.from('citas').update({ estado: 'completada' }).eq('id', idCita);
+                // auto-add stamp to matching client
+                const cl = clientas.find(c => (c.telefono || '').trim() === (cita.telefono || '').trim());
+                if (cl && (cl.visitas || 0) < 10) {
+                    await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
+                    if ((cl.visitas || 0) + 1 === 10) {
+                        toast('¡Tarjeta completa! Servicio gratis disponible.', 'success', 'Recompensa');
+                    } else {
+                        toast('Cita completada · sello sumado', 'success');
+                    }
+                } else {
+                    toast('Cita marcada como completada', 'success');
+                }
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('No se pudo completar la cita', 'error');
+            }
+        }
+
+        async function eliminarCita(idCita) {
+            const ok = await askConfirm('Eliminar cita', 'Esta acción no se puede deshacer.');
+            if (!ok) return;
+            try {
+                await sb.from('citas').delete().eq('id', idCita);
+                toast('Cita eliminada', 'success');
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo eliminar', 'error'); }
+        }
+
+        function setEditEstado(estado) {
+            document.getElementById('editCitaEstado').value = estado;
+            document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
+                b.classList.toggle('active', b.dataset.estado === estado);
+            });
         }
 
         function abrirEditarCita(idCita) {
@@ -2076,6 +2833,7 @@
             document.getElementById('editCitaTelefono').value = cita.telefono || '';
             document.getElementById('editCitaFecha').value = cita.fecha || '';
             document.getElementById('editCitaHora').value = cita.hora || '';
+            setEditEstado(cita.estado || 'pendiente');
             document.getElementById('editCitaModal').classList.add('show');
         }
 
@@ -2087,13 +2845,34 @@
             if (e.target.id === 'editCitaModal') closeEditCita();
         });
 
+        document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
+            b.addEventListener('click', () => setEditEstado(b.dataset.estado));
+        });
+
+        async function confirmarEliminarCita() {
+            const id = parseInt(document.getElementById('editCitaId').value, 10);
+            const ok = await askConfirm('Eliminar cita', 'Esta cita se eliminará definitivamente.');
+            if (!ok) return;
+            try {
+                await sb.from('citas').delete().eq('id', id);
+                toast('Cita eliminada', 'success');
+                closeEditCita();
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo eliminar', 'error'); }
+        }
+
         async function guardarEdicionCita() {
             const id = parseInt(document.getElementById('editCitaId').value, 10);
+            const nuevoEstado = document.getElementById('editCitaEstado').value || 'pendiente';
+            const previa = citas.find(c => c.id === id);
+            const estadoAnterior = previa ? (previa.estado || 'pendiente') : 'pendiente';
+
             const payload = {
                 nombre_cliente: document.getElementById('editCitaNombre').value.trim(),
                 telefono: document.getElementById('editCitaTelefono').value.trim(),
                 fecha: document.getElementById('editCitaFecha').value,
-                hora: document.getElementById('editCitaHora').value
+                hora: document.getElementById('editCitaHora').value,
+                estado: nuevoEstado
             };
             if (!payload.nombre_cliente || !payload.telefono || !payload.fecha || !payload.hora) {
                 return toast('Completa todos los campos', 'error');
@@ -2101,13 +2880,24 @@
             setBtnLoading('btnGuardarEdicion', true);
             try {
                 const { error } = await sb.from('citas').update(payload).eq('id', id);
-                if (!error) {
-                    toast('Cita actualizada', 'success');
-                    closeEditCita();
-                    cargarDatosAdmin();
-                } else {
-                    toast('No se pudo actualizar', 'error');
+                if (error) { toast('No se pudo actualizar', 'error'); return; }
+
+                // pasar de pendiente a confirmada → registrar clienta si no existe
+                if (estadoAnterior === 'pendiente' && nuevoEstado === 'confirmada') {
+                    const ya = clientas.some(c => (c.telefono||'').trim() === payload.telefono);
+                    if (!ya) await sb.from('clientas').insert([{ nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
                 }
+                // pasar a completada → sumar sello
+                if (estadoAnterior !== 'completada' && nuevoEstado === 'completada') {
+                    const cl = clientas.find(c => (c.telefono||'').trim() === payload.telefono);
+                    if (cl && (cl.visitas||0) < 10) {
+                        await sb.from('clientas').update({ visitas: (cl.visitas||0) + 1 }).eq('id', cl.id);
+                    }
+                }
+
+                toast('Cita actualizada', 'success');
+                closeEditCita();
+                cargarDatosAdmin();
             } catch (e) {
                 toast('Error al guardar', 'error');
             } finally {
@@ -2166,7 +2956,7 @@
 
             setBtnLoading('btnRegistrar', true);
             try {
-                const { error } = await sb.from('clientas').insert([{ id: Date.now(), nombre: n, telefono: t, visitas: 0 }]);
+                const { error } = await sb.from('clientas').insert([{ nombre: n, telefono: t, visitas: 0 }]);
                 if (!error) {
                     toast('Clienta registrada', 'success');
                     document.getElementById('regNombre').value = '';
@@ -2323,6 +3113,7 @@
 
         /* ---------- INIT ---------- */
         initPicker();
+        initAgenda();
         mostrarVista('login');
     </script>
 </body>
