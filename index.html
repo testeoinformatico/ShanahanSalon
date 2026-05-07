@@ -1419,7 +1419,7 @@
         }
 
         /* ---------- APPOINTMENT REQUEST ---------- */
-        async function enviarSolicitudCita() {
+       async function enviarSolicitudCita() {
             const cita = {
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
                 telefono: document.getElementById('citaTelefono').value.trim(),
@@ -1428,46 +1428,42 @@
                 estado: 'pendiente'
             };
 
-            // 1. Validar que no se envíe vacío y avisar al cliente
+            // 1. Validar usando el pop-up estético de la web
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
-                alert("Por favor, selecciona la fecha, la hora y completa tus datos antes de enviar.");
-                return toast('Completa todos los campos', 'error');
+                return toast('Por favor, selecciona la fecha, la hora y completa tus datos.', 'error', 'Faltan datos');
             }
 
             setBtnLoading('btnEnviarCita', true);
             try {
-                // --- NUEVO BLOQUEO ANTISPAM ---
-                // Comprobamos cuántas citas pendientes tiene ya este teléfono
+                // --- BLOQUEO ANTISPAM ---
                 const { data: citasPrevias } = await sb.from('citas')
                     .select('id')
                     .eq('telefono', cita.telefono)
                     .eq('estado', 'pendiente');
 
-                // Si ya tiene 2 (o más) citas pendientes, le bloqueamos
                 if (citasPrevias && citasPrevias.length >= 2) {
                     setBtnLoading('btnEnviarCita', false);
-                    alert("Ya tienes solicitudes pendientes de confirmación. Por favor, espera a que te contactemos o escríbenos por WhatsApp.");
-                    return toast('Límite de solicitudes alcanzado', 'error');
+                    // Usamos tu pop-up para el aviso de spam
+                    return toast('Ya tienes solicitudes pendientes. Por favor, espera a que te contactemos.', 'error', 'Límite alcanzado');
                 }
                 // ------------------------------
 
-                // 2. Guardar en Supabase y pedir que nos devuelva el registro (.select())
+                // 2. Guardar en Supabase
                 const { data, error } = await sb.from('citas').insert([cita]).select();
 
                 if (!error) {
-                    // 3. ¡El anuncio emergente que pediste!
-                    alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
-                    toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
+                    // 3. ¡Notificación de éxito usando tu diseño!
+                    toast('Nos pondremos en contacto contigo para confirmar disponibilidad.', 'success', '¡Reserva enviada!');
 
-                    // 4. Que quede registrado al instante en tu sistema (memoria local)
+                    // 4. Que quede registrado al instante en tu sistema
                     if (data && data.length > 0) {
-                        citas.push(data[0]); // Se añade con el ID real de Supabase
+                        citas.push(data[0]); 
                     } else {
-                        cita.id = Date.now(); // Fallback temporal por si Supabase no devuelve ID
+                        cita.id = Date.now();
                         citas.push(cita);
                     }
 
-                    // Actualizar la vista de administrador por detrás
+                    // Actualizar la vista de administrador
                     if (typeof renderAdmin === 'function') renderAdmin();
 
                     // 5. Limpiar el formulario
@@ -1476,15 +1472,15 @@
                     resetPicker();
 
                     // 6. Volver a la pantalla de inicio
-                    setTimeout(() => mostrarVista('login'), 800);
-                    
+                    setTimeout(() => mostrarVista('login'), 1500); // Le damos un poquito más de tiempo (1.5s) para que el cliente lea el pop-up
+
                 } else {
                     console.error("Error de Supabase:", error);
-                    alert('No se pudo guardar la cita. Revisa los permisos (RLS) de tu tabla "citas" en Supabase.');
+                    toast('Revisa los permisos (RLS) de tu tabla "citas".', 'error', 'No se pudo guardar');
                 }
             } catch (e) {
                 console.error("Error de conexión:", e);
-                alert('Hubo un problema de red. Por favor, revisa tu conexión e inténtalo de nuevo.');
+                toast('Por favor, revisa tu conexión e inténtalo de nuevo.', 'error', 'Problema de red');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
