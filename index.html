@@ -1436,7 +1436,7 @@
         }
 
         /* ---------- APPOINTMENT REQUEST ---------- */
-  async function enviarSolicitudCita() {
+async function enviarSolicitudCita() {
             const cita = {
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
                 telefono: document.getElementById('citaTelefono').value.trim(),
@@ -1445,7 +1445,7 @@
                 estado: 'pendiente'
             };
 
-            // 1. Validar
+            // 1. Validar campos vacíos
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
                 return toast('Por favor, selecciona la fecha, la hora y completa tus datos.', 'error', 'Faltan datos');
             }
@@ -1453,6 +1453,7 @@
             setBtnLoading('btnEnviarCita', true);
             try {
                 // --- BLOQUEO ANTISPAM (Límite 1 cita pendiente) ---
+                // Importante: Asegúrate de haber ejecutado el permiso SELECT en Supabase
                 const { data: citasPrevias } = await sb.from('citas')
                     .select('id')
                     .eq('telefono', cita.telefono)
@@ -1462,13 +1463,13 @@
                     setBtnLoading('btnEnviarCita', false);
                     return toast('Ya tienes una solicitud pendiente. Por favor, espera a que te contactemos.', 'error', 'Límite alcanzado');
                 }
-                // ------------------------------
+                // --------------------------------------------------
 
                 // 2. Guardar en Supabase
                 const { data, error } = await sb.from('citas').insert([cita]).select();
 
                 if (!error) {
-                    // 3. Que quede registrado al instante
+                    // 3. Registrar en memoria local para actualización inmediata
                     if (data && data.length > 0) {
                         citas.push(data[0]); 
                     } else {
@@ -1483,12 +1484,13 @@
                     document.getElementById('citaTelefono').value = '';
                     resetPicker();
 
-                    // 5. ¡Mostramos el Pop-up central!
-                    document.getElementById('successModal').classList.add('show');
+                    // 5. Mostrar el Pop-up central de éxito
+                    const modalExito = document.getElementById('successModal');
+                    if (modalExito) modalExito.classList.add('show');
 
                 } else {
                     console.error("Error de Supabase:", error);
-                    toast('Revisa los permisos (RLS) de tu tabla "citas".', 'error', 'No se pudo guardar');
+                    toast('No se pudo guardar la cita. Revisa los permisos RLS.', 'error', 'Error');
                 }
             } catch (e) {
                 console.error("Error de conexión:", e);
