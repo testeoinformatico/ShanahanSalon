@@ -1125,6 +1125,7 @@
             </div>
         </div>
     </div>
+    
     <div class="modal-backdrop-x" id="successModal">
         <div class="modal-x" style="text-align: center;">
             <div style="font-size: 42px; color: var(--accent); margin-bottom: 15px;"><i class="fa-regular fa-calendar-check"></i></div>
@@ -1170,7 +1171,7 @@
             setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 3800);
         }
 
-        /* ---------- CONFIRM MODAL ---------- */
+    /* ---------- CONFIRM MODAL ---------- */
         let confirmResolver = null;
         function askConfirm(title, msg) {
             const modal = document.getElementById('confirmModal');
@@ -1183,6 +1184,14 @@
             document.getElementById('confirmModal').classList.remove('show');
             if (confirmResolver) confirmResolver(result);
         }
+
+        // --- PEGA TU FUNCIÓN AQUÍ ---
+        function cerrarSuccessModal() {
+            document.getElementById('successModal').classList.remove('show');
+            mostrarVista('login'); 
+        }
+        // ----------------------------
+
         document.getElementById('confirmModal').addEventListener('click', e => {
             if (e.target.id === 'confirmModal') closeConfirm(false);
         });
