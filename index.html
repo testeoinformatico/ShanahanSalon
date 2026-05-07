@@ -1439,41 +1439,21 @@
             
             try {
                 // 2. Guardar en Supabase y pedir que nos devuelva el registro (.select())
-            try {
+                const { data, error } = await sb.from('citas').insert([cita]).select();
 
-                const { error } = await sb
-                    .from('citas')
-                    .insert([
-                        {
-                            nombre_cliente: cita.nombre_cliente,
-                            telefono: cita.telefono,
-                            fecha: cita.fecha,
-                            hora: cita.hora,
-                            estado: 'pendiente'
-                        }
-                    ]);
+                if (!error) {
+                    // 3. ¡El anuncio emergente que pediste!
+                    alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
+                    toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
 
-                console.log("SUPABASE ERROR:", error);
+                    // 4. Que quede registrado al instante en tu sistema (memoria local)
+                    if (data && data.length > 0) {
+                        citas.push(data[0]); // Se añade con el ID real de Supabase
+                    } else {
+                        cita.id = Date.now(); // Fallback temporal por si Supabase no devuelve ID
+                        citas.push(cita);
+                    }
 
-                if (error) {
-                    alert(error.message);
-                    return;
-                }
-
-                // 3. Mensaje éxito
-                alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
-                toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
-
-                // 4. Registro local
-                cita.id = Date.now();
-                citas.push(cita);
-
-            } catch (err) {
-
-                console.error(err);
-                alert('Error al enviar la cita');
-
-            }
                     // Actualizar la vista de administrador por detrás
                     if (typeof renderAdmin === 'function') renderAdmin();
 
