@@ -1436,7 +1436,7 @@
         }
 
         /* ---------- APPOINTMENT REQUEST ---------- */
-       async function enviarSolicitudCita() {
+async function enviarSolicitudCita() {
             const cita = {
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
                 telefono: document.getElementById('citaTelefono').value.trim(),
@@ -1445,7 +1445,7 @@
                 estado: 'pendiente'
             };
 
-            // 1. Validar usando el pop-up estético de la web
+            // 1. Validar
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
                 return toast('Por favor, selecciona la fecha, la hora y completa tus datos.', 'error', 'Faltan datos');
             }
@@ -1460,7 +1460,6 @@
 
                 if (citasPrevias && citasPrevias.length >= 2) {
                     setBtnLoading('btnEnviarCita', false);
-                    // Usamos tu pop-up para el aviso de spam
                     return toast('Ya tienes solicitudes pendientes. Por favor, espera a que te contactemos.', 'error', 'Límite alcanzado');
                 }
                 // ------------------------------
@@ -1469,10 +1468,7 @@
                 const { data, error } = await sb.from('citas').insert([cita]).select();
 
                 if (!error) {
-                    // 3. ¡Notificación de éxito usando tu diseño!
-                    toast('Nos pondremos en contacto contigo para confirmar disponibilidad.', 'success', '¡Reserva enviada!');
-
-                    // 4. Que quede registrado al instante en tu sistema
+                    // 3. Que quede registrado al instante en tu sistema
                     if (data && data.length > 0) {
                         citas.push(data[0]); 
                     } else {
@@ -1480,16 +1476,15 @@
                         citas.push(cita);
                     }
 
-                    // Actualizar la vista de administrador
                     if (typeof renderAdmin === 'function') renderAdmin();
 
-                    // 5. Limpiar el formulario
+                    // 4. Limpiar el formulario
                     document.getElementById('citaNombre').value = '';
                     document.getElementById('citaTelefono').value = '';
                     resetPicker();
 
-                    // 6. Volver a la pantalla de inicio
-                    setTimeout(() => mostrarVista('login'), 1500); // Le damos un poquito más de tiempo (1.5s) para que el cliente lea el pop-up
+                    // 5. ¡AQUÍ ESTÁ LA MAGIA! Mostramos el Pop-up central
+                    document.getElementById('successModal').classList.add('show');
 
                 } else {
                     console.error("Error de Supabase:", error);
@@ -1502,7 +1497,6 @@
                 setBtnLoading('btnEnviarCita', false);
             }
         }
-
         /* ---------- AGENDA STATE ---------- */
         let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let agendaSelected = new Date(today);
