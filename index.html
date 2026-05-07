@@ -1439,7 +1439,9 @@
             
             try {
                 // 2. Guardar en Supabase y pedir que nos devuelva el registro (.select())
-                 const { error } = await sb
+            try {
+
+                const { error } = await sb
                     .from('citas')
                     .insert([
                         {
@@ -1458,15 +1460,20 @@
                     return;
                 }
 
-                // 3. ¡El anuncio emergente que pediste!
+                // 3. Mensaje éxito
                 alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
                 toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
 
                 // 4. Registro local
                 cita.id = Date.now();
                 citas.push(cita);
-                    }
 
+            } catch (err) {
+
+                console.error(err);
+                alert('Error al enviar la cita');
+
+            }
                     // Actualizar la vista de administrador por detrás
                     if (typeof renderAdmin === 'function') renderAdmin();
 
