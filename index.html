@@ -1439,7 +1439,19 @@
             
             try {
                 // 2. Guardar en Supabase y pedir que nos devuelva el registro (.select())
-                const { data, error } = await sb.from('citas').insert([cita]).select();
+                const { data, error } = await sb
+                    .from('citas')
+                    .insert([{
+                        nombre_cliente: cita.nombre_cliente,
+                        telefono: cita.telefono,
+                        fecha: cita.fecha,
+                        hora: cita.hora,
+                        estado: 'pendiente'
+                    }])
+                    .select();
+
+                console.log("SUPABASE DATA:", data);
+                console.log("SUPABASE ERROR:", error);
 
                 if (!error) {
                     // 3. ¡El anuncio emergente que pediste!
