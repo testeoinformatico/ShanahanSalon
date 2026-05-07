@@ -1445,49 +1445,58 @@ async function enviarSolicitudCita() {
                 estado: 'pendiente'
             };
 
+            // 1. Validar
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
                 return toast('Por favor, selecciona la fecha, la hora y completa tus datos.', 'error', 'Faltan datos');
             }
 
             setBtnLoading('btnEnviarCita', true);
             try {
-                // Bloqueo Anti-Spam: comprobamos si ya existe una cita pendiente
+                // --- BLOQUEO ANTISPAM ---
                 const { data: citasPrevias } = await sb.from('citas')
                     .select('id')
                     .eq('telefono', cita.telefono)
                     .eq('estado', 'pendiente');
 
-                if (citasPrevias && citasPrevias.length >= 1) {
+                if (citasPrevias && citasPrevias.length >= 2) {
                     setBtnLoading('btnEnviarCita', false);
-                    return toast('Ya tienes una solicitud pendiente. Espera a que te contactemos.', 'error', 'Límite alcanzado');
+                    return toast('Ya tienes solicitudes pendientes. Por favor, espera a que te contactemos.', 'error', 'Límite alcanzado');
                 }
+                // ------------------------------
 
+                // 2. Guardar en Supabase
                 const { data, error } = await sb.from('citas').insert([cita]).select();
 
                 if (!error) {
-                    if (data && data.length > 0) { citas.push(data[0]); }
+                    // 3. Que quede registrado al instante en tu sistema
+                    if (data && data.length > 0) {
+                        citas.push(data[0]); 
+                    } else {
+                        cita.id = Date.now();
+                        citas.push(cita);
+                    }
+
                     if (typeof renderAdmin === 'function') renderAdmin();
 
+                    // 4. Limpiar el formulario
                     document.getElementById('citaNombre').value = '';
                     document.getElementById('citaTelefono').value = '';
                     resetPicker();
 
-                    // Abrir el pop-up central
-                    const modalSuccess = document.getElementById('successModal');
-                    if(modalSuccess) modalSuccess.classList.add('show');
+                    // 5. ¡AQUÍ ESTÁ LA MAGIA! Mostramos el Pop-up central
+                    document.getElementById('successModal').classList.add('show');
 
                 } else {
-                    console.error("Error Supabase:", error);
-                    toast('Error al guardar. Revisa el RLS en Supabase.', 'error');
+                    console.error("Error de Supabase:", error);
+                    toast('Revisa los permisos (RLS) de tu tabla "citas".', 'error', 'No se pudo guardar');
                 }
             } catch (e) {
-                console.error("Error Red:", e);
-                toast('Error de conexión. Revisa tu internet.', 'error');
+                console.error("Error de conexión:", e);
+                toast('Por favor, revisa tu conexión e inténtalo de nuevo.', 'error', 'Problema de red');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
         }
-        
         /* ---------- AGENDA STATE ---------- */
         let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let agendaSelected = new Date(today);
