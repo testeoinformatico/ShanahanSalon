@@ -400,7 +400,7 @@
         .stat::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--burgundy); }
         .stat .num { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--burgundy); font-weight: 700; line-height: 1; }
         .stat .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-top: 6px; }
-        .stat:nth-child(2)::before { background: var(--accent); }
+        .stat:nth-child(2):before { background: var(--accent); }
         .stat:nth-child(2) .num { color: var(--accent); }
 
         /* toasts */
@@ -1428,23 +1428,50 @@
                 hora: document.getElementById('citaHora').value,
                 estado: 'pendiente'
             };
+
+            // 1. Validar que no se envíe vacío y avisar al cliente
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
+                alert("Por favor, selecciona la fecha, la hora y completa tus datos antes de enviar.");
                 return toast('Completa todos los campos', 'error');
             }
 
             setBtnLoading('btnEnviarCita', true);
+            
             try {
-                const { error } = await sb.from('citas').insert([cita]);
+                // 2. Guardar en Supabase y pedir que nos devuelva el registro (.select())
+                const { data, error } = await sb.from('citas').insert([cita]).select();
+
                 if (!error) {
-                    toast('Solicitud enviada. Te contactaremos para confirmar.', 'success', 'Reserva enviada');
-                    document.querySelectorAll('#vistaPedirCita input[type="text"], #vistaPedirCita input[type="tel"]').forEach(i => i.value = '');
+                    // 3. ¡El anuncio emergente que pediste!
+                    alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
+                    toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
+
+                    // 4. Que quede registrado al instante en tu sistema (memoria local)
+                    if (data && data.length > 0) {
+                        citas.push(data[0]); // Se añade con el ID real de Supabase
+                    } else {
+                        cita.id = Date.now(); // Fallback temporal por si Supabase no devuelve ID
+                        citas.push(cita);
+                    }
+
+                    // Actualizar la vista de administrador por detrás
+                    if (typeof renderAdmin === 'function') renderAdmin();
+
+                    // 5. Limpiar el formulario
+                    document.getElementById('citaNombre').value = '';
+                    document.getElementById('citaTelefono').value = '';
                     resetPicker();
+
+                    // 6. Volver a la pantalla de inicio
                     setTimeout(() => mostrarVista('login'), 800);
+                    
                 } else {
-                    toast('No se pudo enviar la solicitud', 'error');
+                    console.error("Error de Supabase:", error);
+                    alert('No se pudo guardar la cita. Revisa los permisos (RLS) de tu tabla "citas" en Supabase.');
                 }
             } catch (e) {
-                toast('Error de conexión', 'error');
+                console.error("Error de conexión:", e);
+                alert('Hubo un problema de red. Por favor, revisa tu conexión e inténtalo de nuevo.');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
