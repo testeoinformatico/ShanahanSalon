@@ -1436,7 +1436,7 @@
         }
 
         /* ---------- APPOINTMENT REQUEST ---------- */
-async function enviarSolicitudCita() {
+  async function enviarSolicitudCita() {
             const cita = {
                 nombre_cliente: document.getElementById('citaNombre').value.trim(),
                 telefono: document.getElementById('citaTelefono').value.trim(),
@@ -1452,15 +1452,15 @@ async function enviarSolicitudCita() {
 
             setBtnLoading('btnEnviarCita', true);
             try {
-                // --- BLOQUEO ANTISPAM ---
+                // --- BLOQUEO ANTISPAM (Límite 1 cita pendiente) ---
                 const { data: citasPrevias } = await sb.from('citas')
                     .select('id')
                     .eq('telefono', cita.telefono)
                     .eq('estado', 'pendiente');
 
-                if (citasPrevias && citasPrevias.length >= 2) {
+                if (citasPrevias && citasPrevias.length >= 1) {
                     setBtnLoading('btnEnviarCita', false);
-                    return toast('Ya tienes solicitudes pendientes. Por favor, espera a que te contactemos.', 'error', 'Límite alcanzado');
+                    return toast('Ya tienes una solicitud pendiente. Por favor, espera a que te contactemos.', 'error', 'Límite alcanzado');
                 }
                 // ------------------------------
 
@@ -1468,7 +1468,7 @@ async function enviarSolicitudCita() {
                 const { data, error } = await sb.from('citas').insert([cita]).select();
 
                 if (!error) {
-                    // 3. Que quede registrado al instante en tu sistema
+                    // 3. Que quede registrado al instante
                     if (data && data.length > 0) {
                         citas.push(data[0]); 
                     } else {
@@ -1483,7 +1483,7 @@ async function enviarSolicitudCita() {
                     document.getElementById('citaTelefono').value = '';
                     resetPicker();
 
-                    // 5. ¡AQUÍ ESTÁ LA MAGIA! Mostramos el Pop-up central
+                    // 5. ¡Mostramos el Pop-up central!
                     document.getElementById('successModal').classList.add('show');
 
                 } else {
@@ -1497,6 +1497,7 @@ async function enviarSolicitudCita() {
                 setBtnLoading('btnEnviarCita', false);
             }
         }
+        
         /* ---------- AGENDA STATE ---------- */
         let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         let agendaSelected = new Date(today);
