@@ -889,115 +889,118 @@
                     <span class="brand-sub">Cita</span>
                 </div>
                 <div class="luxury-card view-anim">
-                    <p class="card-subtitle">Te contactaremos para confirmar disponibilidad</p>
+                    <p class="card-subtitle">Rellena el formulario y te confirmamos la cita</p>
 
-                    <form onsubmit="event.preventDefault(); enviarSolicitudCita();">
-                        <div class="field">
-                            <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
-                            <label>Nombre completo</label>
-                            <i class="fa-regular fa-user field-icon"></i>
-                        </div>
-                        <div class="field">
-                            <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
-                            <label>Teléfono</label>
-                            <i class="fa-solid fa-phone field-icon"></i>
-                        </div>
+                    <!-- PASO 1: Datos personales -->
+                    <div class="picker-label" style="margin-top:0;">
+                        <span><i class="fa-regular fa-user" style="margin-right:8px;color:var(--accent);"></i>Tus datos</span>
+                    </div>
+                    <div class="field">
+                        <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
+                        <label>Nombre completo</label>
+                        <i class="fa-regular fa-user field-icon"></i>
+                    </div>
+                    <div class="field">
+                        <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
+                        <label>Teléfono</label>
+                        <i class="fa-solid fa-phone field-icon"></i>
+                    </div>
 
-                        <div class="cuenta-nueva-box">
-                            <div class="cuenta-nueva-label"><i class="fa-solid fa-key"></i>Crea tu cuenta para consultar tus citas</div>
-                            <div class="field">
-                                <input type="text" id="citaUsuario" placeholder=" " autocomplete="username" oninput="checkUsuarioDisponible(this.value)">
-                                <label>Nombre de usuario</label>
-                                <i class="fa-regular fa-at field-icon"></i>
+                    <!-- PASO 2: Cuenta -->
+                    <div class="picker-label">
+                        <span><i class="fa-solid fa-key" style="margin-right:8px;color:var(--accent);"></i>Crea tu cuenta</span>
+                    </div>
+                    <div class="field">
+                        <input type="text" id="citaUsuario" placeholder=" " autocomplete="off">
+                        <label>Nombre de usuario</label>
+                        <i class="fa-regular fa-at field-icon"></i>
+                    </div>
+                    <div id="usuarioFeedback" style="font-size:11px;min-height:18px;margin-top:-16px;margin-bottom:12px;"></div>
+                    <div class="field" style="position:relative;">
+                        <input type="password" id="citaClave" placeholder=" " autocomplete="new-password">
+                        <label>Contraseña</label>
+                        <button type="button" style="position:absolute;right:0;top:14px;background:none;border:none;cursor:pointer;color:var(--line);font-size:13px;padding:0;" onclick="this.previousElementSibling.previousElementSibling.type=this.previousElementSibling.previousElementSibling.type==='password'?'text':'password'"><i class="fa-regular fa-eye"></i></button>
+                    </div>
+                    <div class="field" style="position:relative;">
+                        <input type="password" id="citaClaveConfirm" placeholder=" " autocomplete="new-password">
+                        <label>Repite la contraseña</label>
+                        <button type="button" style="position:absolute;right:0;top:14px;background:none;border:none;cursor:pointer;color:var(--line);font-size:13px;padding:0;" onclick="this.previousElementSibling.previousElementSibling.type=this.previousElementSibling.previousElementSibling.type==='password'?'text':'password'"><i class="fa-regular fa-eye"></i></button>
+                    </div>
+
+                    <!-- PASO 3: Servicio -->
+                    <div class="picker-label">
+                        <span><i class="fa-solid fa-spa" style="margin-right:8px;color:var(--accent);"></i>Servicio</span>
+                        <span class="picked empty" id="pickedServiceLabel">Sin elegir</span>
+                    </div>
+                    <div class="servicio-grid" id="servicioGrid">
+                        <div class="servicio-grupo">
+                            <div class="servicio-grupo-titulo">Manicura Rusa</div>
+                            <div class="servicio-opcion" data-val="Mani Rusa · Nivelación + Color Liso" data-dur="75"><span class="servicio-opcion-nombre">Nivelación + Color Liso</span><span class="servicio-opcion-dur">1 h 15 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa · Nivelación + Decoración Sencilla" data-dur="105"><span class="servicio-opcion-nombre">Nivelación + Decoración Sencilla</span><span class="servicio-opcion-dur">1 h 45 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa · Nivelación + Decoración Elaborada" data-dur="135"><span class="servicio-opcion-nombre">Nivelación + Decoración Elaborada</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa · Extensión Gel + Color Liso" data-dur="120"><span class="servicio-opcion-nombre">Extensión de Gel + Color Liso</span><span class="servicio-opcion-dur">2 h</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa · Extensión Gel + Decoración Sencilla" data-dur="150"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Sencilla</span><span class="servicio-opcion-dur">2 h 30 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa · Extensión Gel + Decoración Elaborada" data-dur="180"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Elaborada</span><span class="servicio-opcion-dur">3 h</span></div>
+                        </div>
+                        <div class="servicio-grupo">
+                            <div class="servicio-grupo-titulo">Pedicura Macro</div>
+                            <div class="servicio-opcion" data-val="Pedi Macro · Esmalte Semipermanente" data-dur="60"><span class="servicio-opcion-nombre">Con Esmalte Semipermanente</span><span class="servicio-opcion-dur">1 h</span></div>
+                            <div class="servicio-opcion" data-val="Pedi Macro · Semipermanente + Tratamiento Durezas" data-dur="80"><span class="servicio-opcion-nombre">Semipermanente + Tratamiento Durezas</span><span class="servicio-opcion-dur">1 h 20 min</span></div>
+                            <div class="servicio-opcion" data-val="Pedi Macro · Solo Limpieza" data-dur="40"><span class="servicio-opcion-nombre">Solo Limpieza</span><span class="servicio-opcion-dur">40 min</span></div>
+                        </div>
+                        <div class="servicio-grupo">
+                            <div class="servicio-grupo-titulo">Combos Mani + Pedi</div>
+                            <div class="servicio-opcion" data-val="Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente" data-dur="135"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
+                            <div class="servicio-opcion" data-val="Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente" data-dur="195"><span class="servicio-opcion-nombre">Mani Rusa Extensión Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">3 h 15 min</span></div>
+                        </div>
+                        <div class="servicio-grupo">
+                            <div class="servicio-grupo-titulo">Extras de Decoración</div>
+                            <div class="servicio-opcion" data-val="Extra · Decoración Sencilla" data-dur="20"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-dur">+20 min</span></div>
+                            <div class="servicio-opcion" data-val="Extra · Decoración Elaborada" data-dur="40"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-dur">+40 min</span></div>
+                        </div>
+                    </div>
+
+                    <!-- PASO 4: Fecha -->
+                    <div class="picker-label">
+                        <span><i class="fa-regular fa-calendar" style="margin-right:8px;color:var(--accent);"></i>Fecha</span>
+                        <span class="picked empty" id="pickedDateLabel">Sin elegir</span>
+                    </div>
+                    <div class="calendar" id="calendar">
+                        <div class="cal-head">
+                            <div class="cal-month" id="calMonth"></div>
+                            <div class="cal-nav-group">
+                                <button type="button" class="cal-nav" id="calPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button type="button" class="cal-nav" id="calNext"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
-                            <div style="font-size:10.5px; margin-top:-14px; margin-bottom:14px;" id="usuarioFeedback"></div>
-                            <div class="field field-pass-wrap">
-                                <input type="password" id="citaClave" placeholder=" " autocomplete="new-password" oninput="evalPassStrength(this.value)">
-                                <label>Contraseña</label>
-                                <button type="button" class="toggle-pass" onclick="togglePassVis('citaClave',this)" tabindex="-1" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button>
-                            </div>
-                            <div class="pass-strength"><div class="pass-strength-bar" id="passBar"></div></div>
-                            <div class="pass-hint" id="passHint">Mínimo 6 caracteres</div>
-                            <div class="field field-pass-wrap" style="margin-top:18px;">
-                                <input type="password" id="citaClaveConfirm" placeholder=" " autocomplete="new-password">
-                                <label>Repite la contraseña</label>
-                                <button type="button" class="toggle-pass" onclick="togglePassVis('citaClaveConfirm',this)" tabindex="-1" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button>
-                            </div>
                         </div>
-                        <div class="picker-label" style="margin-top:8px;">
-                            <span><i class="fa-solid fa-spa" style="margin-right:8px; color:var(--accent);"></i>Selecciona un servicio</span>
-                            <span class="picked empty" id="pickedServiceLabel">Sin elegir</span>
-                        </div>
-                        <div class="servicio-grid" id="servicioGrid">
+                        <div class="cal-grid" id="calGrid"></div>
+                    </div>
 
-                            <div class="servicio-grupo">
-                                <div class="servicio-grupo-titulo">Manicura Rusa</div>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Nivelación + Color Liso" data-dur="75"><span class="servicio-opcion-nombre">Nivelación + Color Liso</span><span class="servicio-opcion-dur">1 h 15 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Nivelación + Decoración Sencilla" data-dur="105"><span class="servicio-opcion-nombre">Nivelación + Decoración Sencilla</span><span class="servicio-opcion-dur">1 h 45 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Nivelación + Decoración Elaborada" data-dur="135"><span class="servicio-opcion-nombre">Nivelación + Decoración Elaborada</span><span class="servicio-opcion-dur">2 h 15 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Extensión Gel + Color Liso" data-dur="120"><span class="servicio-opcion-nombre">Extensión de Gel + Color Liso</span><span class="servicio-opcion-dur">2 h</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Extensión Gel + Decoración Sencilla" data-dur="150"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Sencilla</span><span class="servicio-opcion-dur">2 h 30 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Extensión Gel + Decoración Elaborada" data-dur="180"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Elaborada</span><span class="servicio-opcion-dur">3 h</span></label>
-                            </div>
+                    <!-- PASO 5: Hora -->
+                    <div class="picker-label">
+                        <span><i class="fa-regular fa-clock" style="margin-right:8px;color:var(--accent);"></i>Hora</span>
+                        <span class="picked empty" id="pickedTimeLabel">Sin elegir</span>
+                    </div>
+                    <div class="time-tabs">
+                        <button type="button" class="time-tab active" data-period="morning"><i class="fa-solid fa-sun"></i>Mañana</button>
+                        <button type="button" class="time-tab" data-period="afternoon"><i class="fa-solid fa-moon"></i>Tarde</button>
+                    </div>
+                    <div class="time-slots" id="timeSlots"></div>
 
-                            <div class="servicio-grupo">
-                                <div class="servicio-grupo-titulo">Pedicura Macro</div>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Pedi Macro · Esmalte Semipermanente" data-dur="60"><span class="servicio-opcion-nombre">Con Esmalte Semipermanente</span><span class="servicio-opcion-dur">1 h</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Pedi Macro · Semipermanente + Tratamiento Durezas" data-dur="80"><span class="servicio-opcion-nombre">Semipermanente + Tratamiento Durezas</span><span class="servicio-opcion-dur">1 h 20 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Pedi Macro · Solo Limpieza" data-dur="40"><span class="servicio-opcion-nombre">Solo Limpieza</span><span class="servicio-opcion-dur">40 min</span></label>
-                            </div>
+                    <div id="citaErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
 
-                            <div class="servicio-grupo">
-                                <div class="servicio-grupo-titulo">Combos Mani + Pedi</div>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente" data-dur="135"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">2 h 15 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente" data-dur="195"><span class="servicio-opcion-nombre">Mani Rusa Extensión Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">3 h 15 min</span></label>
-                            </div>
+                    <button type="button" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;" onclick="enviarCita()">
+                        <span>Enviar Solicitud</span>
+                        <span class="spinner"></span>
+                    </button>
 
-                            <div class="servicio-grupo">
-                                <div class="servicio-grupo-titulo">Extras de Decoración</div>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Extra · Decoración Sencilla" data-dur="20"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-dur">+ 20 min</span></label>
-                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Extra · Decoración Elaborada" data-dur="40"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-dur">+ 40 min</span></label>
-                            </div>
-                        </div>
-                        <div class="servicio-duracion-info" id="servicioDurInfo"></div>
-                        <input type="hidden" id="citaServicio">
-                        <input type="hidden" id="citaDuracion">
-
-                        <div class="picker-label">
-                            <span><i class="fa-regular fa-calendar" style="margin-right:8px; color:var(--accent);"></i>Selecciona una fecha</span>
-                            <span class="picked empty" id="pickedDateLabel">Sin elegir</span>
-                        </div>
-                        <div class="calendar" id="calendar">
-                            <div class="cal-head">
-                                <div class="cal-month" id="calMonth"></div>
-                                <div class="cal-nav-group">
-                                    <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
-                                    <button type="button" class="cal-nav" id="calNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
-                                </div>
-                            </div>
-                            <div class="cal-grid" id="calGrid"></div>
-                        </div>
-                        <input type="hidden" id="citaFecha">
-
-                        <div class="picker-label">
-                            <span><i class="fa-regular fa-clock" style="margin-right:8px; color:var(--accent);"></i>Selecciona la hora</span>
-                            <span class="picked empty" id="pickedTimeLabel">Sin elegir</span>
-                        </div>
-                        <div class="time-tabs">
-                            <button type="button" class="time-tab active" data-period="morning"><i class="fa-solid fa-sun"></i>Mañana</button>
-                            <button type="button" class="time-tab" data-period="afternoon"><i class="fa-solid fa-moon"></i>Tarde</button>
-                        </div>
-                        <div class="time-slots" id="timeSlots"></div>
-                        <input type="hidden" id="citaHora">
-
-                        <button type="button" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;" onclick="enviarSolicitudCita()"><span>Enviar Solicitud</span><span class="spinner"></span></button>
-                    </form>
-
-                    <button class="link-soft" onclick="mostrarVista('login')">
+                    <button type="button" class="link-soft" onclick="mostrarVista('login')" style="margin-top:12px;">
                         <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
                     </button>
                 </div>
             </div>
+        </section>
+
         </section>
 
         <section id="vistaAccesoAdmin" class="row justify-content-center" style="display:none;">
@@ -1255,678 +1258,764 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ═══════════════════════════════════════════════════════
+    //  SHANAHAN NAILS — JS principal
+    //  Columnas requeridas en Supabase:
+    //  clientas : id, nombre, telefono, usuario, clave, visitas
+    //  citas    : id, nombre_cliente, telefono, servicio,
+    //             duracion_minutos, fecha, hora, estado
+    //  admins   : id, usuario, password
+    //  dias_disponibles : id, tipo, valor
+    // ═══════════════════════════════════════════════════════
 
-        const SALON_WHATSAPP = '34621303635';
-        const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
-        const SALON_TIKTOK = 'https://www.tiktok.com/@shanahanails';
+    const SUPABASE_URL     = "https://lofgjkrcgkqufqpybddn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
+    const sb               = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SALON_WHATSAPP   = "34621303635";
 
-        let clientas = [];
-        let citas = [];
+    // ── Estado global ──────────────────────────────────────
+    let clientas       = [];
+    let citas          = [];
+    let diasDisponibles = [];
+    let agendaInitialized = false;
 
-        /* ---------- SHARED DATE CONSTANTS ---------- */
-        const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-        const DOW_ES = ['L','M','X','J','V','S','D'];
-        // Todos los slots de inicio posibles (intervalos 30 min)
-        const ALL_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30',
-                           '16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30'];
-        const SLOTS = {
-            morning:   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30'],
-            afternoon: ['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30']
-        };
-        // Duración seleccionada en minutos (se actualiza al elegir servicio)
-        let selectedDuracion = 30;
-        const today = new Date(); today.setHours(0,0,0,0);
+    // Picker estado
+    let calCursor    = null;   // se inicializa en initPicker
+    let selectedDate = null;
+    let selectedTime = null;
+    let selectedServicio  = null;
+    let selectedDuracion  = 0;
+    let activePeriod = "morning";
 
-        /* ---------- TOASTS ---------- */
-        function toast(message, type = 'info', title = '') {
-            const stack = document.getElementById('toastStack');
-            const t = document.createElement('div');
-            t.className = `toast ${type}`;
-            const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
-            const titles = { success: title || 'Hecho', error: title || 'Atención', info: title || 'Aviso' };
-            t.innerHTML = `<i class="fa-solid ${icons[type]}"></i><div><div class="msg-title">${titles[type]}</div><div class="msg-body">${message}</div></div>`;
-            stack.appendChild(t);
-            setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 3800);
+    // Agenda admin
+    let agendaCursor   = null;
+    let agendaSelected = null;
+    let agendaFilter   = "all";
+    let dCalCursor     = null;
+
+    // ── Constantes ─────────────────────────────────────────
+    const MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    const DOW_ES    = ["L","M","X","J","V","S","D"];
+    const SLOTS = {
+        morning:   ["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"],
+        afternoon: ["16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"]
+    };
+
+    // ── Utilidades ─────────────────────────────────────────
+    const pad2   = n => String(n).padStart(2,"0");
+    const fmtISO = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    const fmtIso = fmtISO; // alias
+    const toMin  = s => { const [h,m] = (s||"00:00").split(":").map(Number); return h*60+m; };
+
+    const today = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
+
+    function fmtPretty(d) {
+        const days = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+        return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
+    }
+    function fmtDayLong(d) {
+        const days = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+        return `${days[d.getDay()]}, ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
+    }
+    function fmtMes(d) { return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
+    function durStr(min) {
+        const h = Math.floor(min/60), m = min%60;
+        return h>0 ? (m>0 ? `${h}h ${m}min` : `${h}h`) : `${m}min`;
+    }
+
+    // ── Slot helpers ───────────────────────────────────────
+    function slotBloqueado(t, citasDelDia, durNueva) {
+        const tMin = toMin(t), durN = parseInt(durNueva,10)||30;
+        for (const c of citasDelDia) {
+            if ((c.estado||"pendiente") === "cancelada") continue;
+            const inicio = toMin((c.hora||"00:00").slice(0,5));
+            const fin    = inicio + (parseInt(c.duracion_minutos,10)||30);
+            if (tMin < fin && tMin + durN > inicio) return true;
+        }
+        return false;
+    }
+    function slotFueraDeHorario(t, durN) {
+        const tMin = toMin(t), fin = tMin + (parseInt(durN,10)||30);
+        return tMin < 14*60 ? fin > 14*60 : fin > 21*60;
+    }
+
+    // ── Toast ──────────────────────────────────────────────
+    function toast(message, type="info", title="") {
+        const stack = document.getElementById("toastStack");
+        if (!stack) return;
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        const icons  = {success:"fa-circle-check", error:"fa-circle-exclamation", info:"fa-circle-info"};
+        const titles = {success:title||"Hecho", error:title||"Atención", info:title||"Aviso"};
+        t.innerHTML = `<i class="fa-solid ${icons[type]||icons.info}"></i><div><div class="msg-title">${titles[type]}</div><div class="msg-body">${message}</div></div>`;
+        stack.appendChild(t);
+        setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 350); }, 4000);
+    }
+
+    // ── Confirm modal ──────────────────────────────────────
+    let confirmResolver = null;
+    function askConfirm(title, msg) {
+        document.getElementById("confirmTitle").textContent = title;
+        document.getElementById("confirmMsg").textContent   = msg;
+        document.getElementById("confirmModal").classList.add("show");
+        return new Promise(r => { confirmResolver = r; });
+    }
+    function closeConfirm(v) {
+        document.getElementById("confirmModal").classList.remove("show");
+        if (confirmResolver) confirmResolver(v);
+    }
+    document.getElementById("confirmModal").addEventListener("click", e => {
+        if (e.target.id === "confirmModal") closeConfirm(false);
+    });
+
+    // ── Btn loading ────────────────────────────────────────
+    function setBtnLoading(id, on) {
+        const b = document.getElementById(id);
+        if (!b) return;
+        b.classList.toggle("loading", on);
+        b.disabled = on;
+    }
+
+    // ── Vista switch ───────────────────────────────────────
+    function mostrarVista(id) {
+        ["login","vistaCliente","vistaPedirCita","vistaAccesoAdmin","vistaAdmin"].forEach(v => {
+            const el = document.getElementById(v);
+            if (el) el.style.display = "none";
+        });
+        const adminMenu = document.getElementById("adminMenu");
+        const body      = document.body;
+        if (adminMenu) { adminMenu.classList.remove("show"); setTimeout(()=>{ if (!body.classList.contains("admin-mode")) adminMenu.style.display="none"; }, 400); }
+
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.display = id === "vistaAdmin" ? "block" : "flex";
+        el.querySelectorAll(".view-anim").forEach(a => { a.style.animation="none"; a.offsetHeight; a.style.animation=""; });
+
+        if (id === "vistaAdmin") {
+            body.classList.add("admin-mode");
+            el.classList.add("active-layout");
+            if (adminMenu) { adminMenu.style.display="flex"; setTimeout(()=>adminMenu.classList.add("show"),50); }
+            cargarDatosAdmin().then(()=>{ try{showWelcome();}catch(e){} });
+        } else {
+            body.classList.remove("admin-mode");
+            document.getElementById("vistaAdmin")?.classList.remove("active-layout");
+        }
+        window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    // ── Admin sections ─────────────────────────────────────
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad"];
+    function switchAdminSection(name) {
+        ADMIN_SECTIONS.forEach(s => {
+            const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
+            if (el) el.style.display = s===name ? "contents" : "none";
+        });
+        document.querySelectorAll(".admin-menu-item[data-section]").forEach(b => {
+            b.classList.toggle("active", b.dataset.section===name);
+        });
+    }
+
+    // ── Welcome modal ──────────────────────────────────────
+    function showWelcome() {
+        const pend = citas.filter(c=>(c.estado||"pendiente")==="pendiente").length;
+        const hoy  = citas.filter(c=>c.fecha===fmtISO(today) && (c.estado||"pendiente")!=="cancelada").length;
+        document.getElementById("welcomePendientes").textContent = pend;
+        document.getElementById("welcomeHoy").textContent = hoy;
+        const modal = document.getElementById("welcomeModal");
+        modal.style.display = "flex";
+        setTimeout(()=>modal.classList.add("show"),50);
+    }
+    function closeWelcome() {
+        const modal = document.getElementById("welcomeModal");
+        modal.classList.remove("show");
+        setTimeout(()=>modal.style.display="none",500);
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  DÍAS DISPONIBLES
+    // ══════════════════════════════════════════════════════
+    function isDiaDisponible(iso) {
+        if (diasDisponibles.length === 0) return true;
+        const mes = iso.slice(0,7);
+        if (diasDisponibles.some(b=>b.tipo==="excluido"&&b.valor===iso)) return false;
+        return diasDisponibles.some(b=>(b.tipo==="dia"&&b.valor===iso)||(b.tipo==="mes"&&b.valor===mes));
+    }
+
+    async function cargarDisponibles() {
+        try {
+            const { data } = await sb.from("dias_disponibles").select("*");
+            diasDisponibles = data || [];
+        } catch(e) { diasDisponibles = []; }
+        try { renderDCalendar(); }    catch(e){}
+        try { renderMesesGrid(); }    catch(e){}
+        try { renderDispDiaItems(); } catch(e){}
+        try { renderCalendar(); }     catch(e){}
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  CALENDAR PICKER (formulario cita)
+    // ══════════════════════════════════════════════════════
+    function renderCalendar() {
+        const monthEl = document.getElementById("calMonth");
+        const grid    = document.getElementById("calGrid");
+        if (!monthEl || !grid) return;
+
+        monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
+        document.getElementById("calPrev").disabled = calCursor <= new Date(today.getFullYear(), today.getMonth(), 1);
+
+        grid.innerHTML = "";
+        DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+
+        const y = calCursor.getFullYear(), m = calCursor.getMonth();
+        const firstDay = new Date(y,m,1);
+        const offset   = (firstDay.getDay()+6)%7;
+        const dim      = new Date(y,m+1,0).getDate();
+        const prevDim  = new Date(y,m,0).getDate();
+
+        for (let i=offset-1; i>=0; i--) grid.innerHTML += `<div class="cal-day muted">${prevDim-i}</div>`;
+
+        for (let d=1; d<=dim; d++) {
+            const dt  = new Date(y,m,d);
+            const iso = fmtISO(dt);
+            const past = dt < today;
+            const disp = isDiaDisponible(iso);
+            const isSel = selectedDate && fmtISO(selectedDate)===iso;
+            let cls = "cal-day";
+            if (past)  cls += " disabled";
+            else if (!disp) cls += " no-disponible";
+            if (dt.getTime()===today.getTime()) cls += " today";
+            if (isSel) cls += " selected";
+            grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
+        }
+        const trail = (7-((offset+dim)%7))%7;
+        for (let i=1; i<=trail; i++) grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
+
+        grid.querySelectorAll(".cal-day:not(.disabled):not(.muted):not(.no-disponible)").forEach(el => {
+            el.addEventListener("click", async () => {
+                const [y2,m2,d2] = el.dataset.iso.split("-").map(Number);
+                selectedDate = new Date(y2,m2-1,d2);
+                // Si cambia la fecha, limpiar hora
+                if (selectedTime) {
+                    selectedTime = null;
+                    document.getElementById("pickedTimeLabel").textContent = "Sin elegir";
+                    document.getElementById("pickedTimeLabel").classList.add("empty");
+                }
+                document.getElementById("pickedDateLabel").textContent = fmtPretty(selectedDate);
+                document.getElementById("pickedDateLabel").classList.remove("empty");
+                // Recargar citas de ese día para tener ocupación fresca
+                try {
+                    const { data } = await sb.from("citas")
+                        .select("hora,duracion_minutos,estado")
+                        .eq("fecha", el.dataset.iso)
+                        .neq("estado","cancelada");
+                    // Reemplazar citas de ese día en memoria local
+                    citas = citas.filter(c => c.fecha !== el.dataset.iso);
+                    (data||[]).forEach(c => citas.push({...c, fecha: el.dataset.iso}));
+                } catch(e) {}
+                renderCalendar();
+                renderTimeSlots();
+            });
+        });
+    }
+
+    function renderTimeSlots() {
+        const wrap = document.getElementById("timeSlots");
+        if (!wrap) return;
+        wrap.innerHTML = "";
+
+        if (!selectedDate) {
+            wrap.innerHTML = `<div class="time-empty">Elige primero una fecha</div>`;
+            return;
+        }
+        if (!selectedServicio) {
+            wrap.innerHTML = `<div class="time-empty">Elige primero el servicio</div>`;
+            return;
         }
 
-        /* ---------- CONFIRM MODAL ---------- */
-        let confirmResolver = null;
-        function askConfirm(title, msg) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMsg').textContent = msg;
-            modal.classList.add('show');
-            return new Promise(resolve => { confirmResolver = resolve; });
-        }
-        function closeConfirm(result) {
-            document.getElementById('confirmModal').classList.remove('show');
-            if (confirmResolver) confirmResolver(result);
-        }
-        document.getElementById('confirmModal').addEventListener('click', e => {
-            if (e.target.id === 'confirmModal') closeConfirm(false);
+        const iso = fmtISO(selectedDate);
+        const citasDelDia = citas.filter(c => c.fecha===iso);
+        const now   = new Date();
+        const esHoy = iso === fmtISO(today);
+
+        SLOTS[activePeriod].forEach(t => {
+            const tMin    = toMin(t);
+            const pasado  = esHoy && tMin <= now.getHours()*60+now.getMinutes();
+            const fuera   = slotFueraDeHorario(t, selectedDuracion);
+            const bloq    = slotBloqueado(t, citasDelDia, selectedDuracion);
+            const noDisp  = pasado || fuera || bloq;
+            const isSel   = selectedTime===t && !noDisp;
+            const subtext = bloq ? `<span style="font-size:8px;display:block;line-height:1.2;opacity:.6;">ocupado</span>`
+                          : fuera ? `<span style="font-size:8px;display:block;line-height:1.2;opacity:.6;">no cabe</span>`
+                          : "";
+            wrap.innerHTML += `<button type="button" class="time-slot${isSel?" selected":""}${noDisp?" disabled":""}" data-time="${t}"${noDisp?" disabled":""}>${t}${subtext}</button>`;
         });
 
-        /* ---------- BUTTON LOADING ---------- */
-        function setBtnLoading(id, on) {
-            const b = document.getElementById(id);
-            if (!b) return;
-            b.classList.toggle('loading', on);
-            b.disabled = on;
-        }
-
-        /* ---------- VIEW SWITCH ---------- */
-        function mostrarVista(idVista) {
-            const body = document.body;
-            const vistaAdmin = document.getElementById('vistaAdmin');
-            const adminMenuEl = document.getElementById('adminMenu');
-            const welcomeEl = document.getElementById('welcomeModal');
-
-            ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
-                const el = document.getElementById(v);
-                if (el) el.style.display = 'none';
+        wrap.querySelectorAll(".time-slot:not([disabled])").forEach(el => {
+            el.addEventListener("click", () => {
+                selectedTime = el.dataset.time;
+                document.getElementById("pickedTimeLabel").textContent = `${selectedTime} h`;
+                document.getElementById("pickedTimeLabel").classList.remove("empty");
+                renderTimeSlots();
             });
-            
-            if (adminMenuEl) {
-                adminMenuEl.classList.remove('show');
-                setTimeout(() => { if (!body.classList.contains('admin-mode')) adminMenuEl.style.display = 'none'; }, 400);
-            }
-            if (welcomeEl) welcomeEl.classList.remove('show');
+        });
+    }
 
-            const vistaActiva = document.getElementById(idVista);
-            if (vistaActiva) {
-                vistaActiva.style.display = idVista === 'vistaAdmin' ? 'block' : 'flex';
-                vistaActiva.querySelectorAll('.view-anim').forEach(el => {
-                    el.style.animation = 'none';
-                    el.offsetHeight;
-                    el.style.animation = '';
-                });
+    function initPicker() {
+        calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+        renderCalendar();
+        renderTimeSlots();
 
-                if (idVista === 'vistaAdmin') {
-                    body.classList.add('admin-mode');
-                    if(vistaAdmin) vistaAdmin.classList.add('active-layout');
-                    if (adminMenuEl) {
-                        adminMenuEl.style.display = 'flex';
-                        setTimeout(() => adminMenuEl.classList.add('show'), 50);
+        document.getElementById("calPrev").addEventListener("click", () => {
+            const min = new Date(today.getFullYear(), today.getMonth(), 1);
+            const cand = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1);
+            if (cand >= min) { calCursor = cand; renderCalendar(); }
+        });
+        document.getElementById("calNext").addEventListener("click", () => {
+            calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1);
+            renderCalendar();
+        });
+        document.querySelectorAll(".time-tab").forEach(tab => {
+            tab.addEventListener("click", () => {
+                document.querySelectorAll(".time-tab").forEach(t=>t.classList.remove("active"));
+                tab.classList.add("active");
+                activePeriod = tab.dataset.period;
+                renderTimeSlots();
+            });
+        });
+
+        // Servicio selector (divs, no radio)
+        document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(el => {
+            el.addEventListener("click", () => {
+                document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(e=>e.classList.remove("selected"));
+                el.classList.add("selected");
+                selectedServicio = el.dataset.val;
+                selectedDuracion = parseInt(el.dataset.dur, 10);
+                document.getElementById("pickedServiceLabel").textContent = el.dataset.val.split(" · ")[1] || el.dataset.val;
+                document.getElementById("pickedServiceLabel").classList.remove("empty");
+                // Reset hora si ya no encaja
+                if (selectedTime && selectedDate) {
+                    const citasDelDia = citas.filter(c=>c.fecha===fmtISO(selectedDate));
+                    if (slotBloqueado(selectedTime,citasDelDia,selectedDuracion)||slotFueraDeHorario(selectedTime,selectedDuracion)) {
+                        selectedTime = null;
+                        document.getElementById("pickedTimeLabel").textContent="Sin elegir";
+                        document.getElementById("pickedTimeLabel").classList.add("empty");
                     }
-                    cargarDatosAdmin().then(() => { try { showWelcome(); } catch (e) {} });
-                } else {
-                    body.classList.remove('admin-mode');
-                    if(vistaAdmin) vistaAdmin.classList.remove('active-layout');
                 }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-
-        /* ---------- ADMIN NAV SECTIONS ---------- */
-        const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
-
-        function switchAdminSection(name) {
-            ADMIN_SECTIONS.forEach(s => {
-                const el = document.getElementById('asec' + s.charAt(0).toUpperCase() + s.slice(1));
-                if (el) el.style.display = s === name ? 'contents' : 'none';
+                renderTimeSlots();
             });
-            document.querySelectorAll('.admin-menu-item[data-section]').forEach(b => {
-                b.classList.toggle('active', b.dataset.section === name);
+        });
+
+        // Check usuario disponible
+        document.getElementById("citaUsuario")?.addEventListener("input", () => {
+            checkUsuarioDisponible(document.getElementById("citaUsuario").value);
+        });
+    }
+
+    function resetPicker() {
+        selectedDate = null; selectedTime = null;
+        selectedServicio = null; selectedDuracion = 0;
+        activePeriod = "morning";
+        calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+        ["pickedDateLabel","pickedTimeLabel","pickedServiceLabel"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.textContent="Sin elegir"; el.classList.add("empty"); }
+        });
+        document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(e=>e.classList.remove("selected"));
+        document.querySelectorAll(".time-tab").forEach(t=>t.classList.toggle("active",t.dataset.period==="morning"));
+        renderCalendar();
+        renderTimeSlots();
+    }
+
+    // ── Usuario check ──────────────────────────────────────
+    let usuarioTimer = null;
+    async function checkUsuarioDisponible(val) {
+        const fb = document.getElementById("usuarioFeedback");
+        if (!fb) return;
+        val = (val||"").trim().toLowerCase();
+        if (!val) { fb.textContent=""; return; }
+        if (!/^[a-z0-9._]{3,20}$/.test(val)) {
+            fb.innerHTML = `<span style="color:#c0392b">✗ Solo letras/números/punto/guión bajo, 3-20 caracteres</span>`;
+            return;
+        }
+        fb.innerHTML = `<span style="color:var(--muted)">Comprobando…</span>`;
+        clearTimeout(usuarioTimer);
+        usuarioTimer = setTimeout(async () => {
+            try {
+                const { data } = await sb.from("clientas").select("id").eq("usuario",val).maybeSingle();
+                fb.innerHTML = data
+                    ? `<span style="color:#c0392b">✗ Ese usuario ya existe</span>`
+                    : `<span style="color:#27ae60">✓ Disponible</span>`;
+            } catch(e) { fb.textContent=""; }
+        }, 600);
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  ENVIAR CITA — función principal
+    // ══════════════════════════════════════════════════════
+    async function enviarCita() {
+        // Leer valores
+        const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
+        const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
+        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
+        const clave    = document.getElementById("citaClave")?.value||"";
+        const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
+
+        function showErr(msg) {
+            const el = document.getElementById("citaErrorMsg");
+            if (el) { el.textContent=msg; el.style.display="block"; }
+            toast(msg,"error");
+        }
+        function hideErr() {
+            const el = document.getElementById("citaErrorMsg");
+            if (el) el.style.display="none";
+        }
+        hideErr();
+
+        // Validar
+        if (!nombre)            return showErr("Introduce tu nombre completo");
+        if (!telefono)          return showErr("Introduce tu teléfono");
+        if (!usuario)           return showErr("Elige un nombre de usuario");
+        if (!/^[a-z0-9._]{3,20}$/.test(usuario)) return showErr("Usuario inválido (3-20 caracteres, sin espacios)");
+        if (clave.length < 6)   return showErr("La contraseña debe tener al menos 6 caracteres");
+        if (clave !== claveC)   return showErr("Las contraseñas no coinciden");
+        if (!selectedServicio)  return showErr("Selecciona un servicio");
+        if (!selectedDate)      return showErr("Selecciona una fecha");
+        if (!selectedTime)      return showErr("Selecciona una hora");
+
+        setBtnLoading("btnEnviarCita", true);
+
+        try {
+            // 1. Usuario único
+            const { data: uExiste, error: uErr } = await sb.from("clientas").select("id").eq("usuario",usuario).maybeSingle();
+            if (uErr) { showErr("Error comprobando usuario: "+uErr.message); return; }
+            if (uExiste) { showErr("Ese usuario ya está en uso, elige otro"); return; }
+
+            // 2. Crear clienta con usuario+clave
+            const { data: nuevaClienta, error: cErr } = await sb.from("clientas")
+                .insert([{ nombre, telefono, usuario, clave, visitas:0 }])
+                .select().single();
+            if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
+
+            // 3. Guardar cita
+            const fechaISO = fmtISO(selectedDate);
+            const { data: nuevaCita, error: aErr } = await sb.from("citas")
+                .insert([{
+                    nombre_cliente: nombre,
+                    telefono,
+                    servicio: selectedServicio,
+                    duracion_minutos: selectedDuracion,
+                    fecha: fechaISO,
+                    hora: selectedTime,
+                    estado: "pendiente"
+                }])
+                .select().single();
+            if (aErr) { showErr("Cuenta creada, pero error al guardar la cita: "+aErr.message); return; }
+
+            // Éxito
+            toast("¡Solicitud enviada! Te confirmaremos la cita pronto.", "success", "¡Bienvenida!");
+            if (nuevaCita) citas.push(nuevaCita);
+
+            // Limpiar
+            ["citaNombre","citaTelefono","citaUsuario","citaClave","citaClaveConfirm"].forEach(id => {
+                const el=document.getElementById(id); if(el) el.value="";
             });
+            const fb=document.getElementById("usuarioFeedback"); if(fb) fb.textContent="";
+            resetPicker();
+            hideErr();
+
+            // Pre-rellenar login y redirigir
+            const lu=document.getElementById("loginUsuario"); if(lu) lu.value=usuario;
+            setTimeout(()=>{
+                mostrarVista("login");
+                setTimeout(()=>toast("Inicia sesión con tu usuario y contraseña","info"),500);
+            }, 1200);
+
+        } catch(e) {
+            showErr("Error inesperado: "+(e.message||String(e)));
+        } finally {
+            setBtnLoading("btnEnviarCita", false);
         }
+    }
 
-        /* ---------- WELCOME MODAL ---------- */
-        function showWelcome() {
-            const pend = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
-            const todayIso = fmtIso(today);
-            const hoy = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
-            document.getElementById('welcomePendientes').textContent = pend;
-            document.getElementById('welcomeHoy').textContent = hoy;
-            
-            const modal = document.getElementById('welcomeModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 50);
-        }
-        function closeWelcome() {
-            const modal = document.getElementById('welcomeModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 500);
-        }
+    // ══════════════════════════════════════════════════════
+    //  LOGIN CLIENTE
+    // ══════════════════════════════════════════════════════
+    async function iniciarSesionCliente() {
+        const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
+        const clave   = document.getElementById("loginPass")?.value||"";
+        if (!usuario||!clave) return toast("Introduce usuario y contraseña","error");
 
-        /* ---------- ADMIN DATA ---------- */
-        async function cargarDatosAdmin() {
-            try {
-                const [resC, resCi] = await Promise.all([
-                    sb.from('clientas').select('*').order('nombre', { ascending: true }),
-                    sb.from('citas').select('*').order('fecha', { ascending: true })
-                ]);
+        setBtnLoading("btnLoginCliente", true);
+        try {
+            const { data, error } = await sb.from("clientas").select("*").eq("usuario",usuario).maybeSingle();
+            if (error) { toast("Error: "+error.message,"error"); return; }
+            if (!data)  { toast("Usuario no encontrado","error"); return; }
+            if (data.clave !== clave) { toast("Contraseña incorrecta","error"); return; }
 
-                if (resC.error) {
-                    console.error('Error cargando clientas:', resC.error);
-                    toast('Error cargando clientas: ' + resC.error.message, 'error');
-                    return;
-                }
-                if (resCi.error) {
-                    console.error('Error cargando citas:', resCi.error);
-                    toast('Error cargando citas: ' + resCi.error.message, 'error');
-                    return;
-                }
-
-                clientas = resC.data || [];
-                citas = resCi.data || [];
-
-                console.log(`Supabase: ${clientas.length} clientas, ${citas.length} citas cargadas`);
-
-                if (!agendaInitialized) {
-                    try { initAgenda(); } catch (e) { console.error('initAgenda:', e); }
-                    agendaInitialized = true;
-                }
-                try { initDispPanel(); } catch (e) { console.warn('initDispPanel omitido:', e); }
-                try { await cargarDisponibles(); } catch (e) { console.warn('cargarDisponibles omitido:', e); }
-                renderAdmin();
-            } catch (e) {
-                console.error('cargarDatosAdmin error:', e);
-                toast('No se pudieron cargar los datos: ' + (e.message || ''), 'error');
+            // Mostrar perfil
+            document.getElementById("clienteNombre").innerText = data.nombre;
+            document.getElementById("stampCountText").innerText = data.visitas;
+            const grid = document.getElementById("stampsGrid");
+            grid.innerHTML = "";
+            for (let i=1; i<=10; i++) {
+                const isReward = i===10 && data.visitas>=10;
+                const cls = i<=data.visitas ? (isReward?"reward":"active") : "";
+                grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward?'<i class="fa-solid fa-star"></i>':i}</div>`;
             }
-        }
-
-        /* ---------- ADMIN LOGIN ---------- */
-        async function loginAdmin() {
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-            if (!user || !pass) return toast('Completa usuario y contraseña', 'error');
-
-            setBtnLoading('btnLoginAdmin', true);
-            try {
-                const { data } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
-                if (data) {
-                    toast('Bienvenida al panel', 'success');
-                    mostrarVista('vistaAdmin');
-                } else {
-                    toast('Credenciales incorrectas', 'error');
-                }
-            } catch (e) {
-                toast('Error al iniciar sesión', 'error');
-            } finally {
-                setBtnLoading('btnLoginAdmin', false);
-            }
-        }
-
-        /* ---------- CLIENT LOGIN ---------- */
-        async function iniciarSesionCliente() {
-            const usuario = document.getElementById('loginUsuario').value.trim().toLowerCase();
-            const clave   = document.getElementById('loginPass').value;
-            if (!usuario || !clave) return toast('Introduce tu usuario y contraseña', 'error');
-
-            setBtnLoading('btnLoginCliente', true);
-            try {
-                const { data, error } = await sb.from('clientas').select('*').eq('usuario', usuario).maybeSingle();
-
-                if (error) {
-                    console.error('Supabase error:', error);
-                    return toast('Error de base de datos: ' + error.message, 'error');
-                }
-                if (!data) {
-                    return toast('Usuario no encontrado. ¿Aún no tienes cuenta? Solicita una cita.', 'error');
-                }
-                if (data.clave !== clave) {
-                    return toast('Contraseña incorrecta', 'error');
-                }
-
-                const cliente = data;
-                document.getElementById('clienteNombre').innerText = cliente.nombre;
-                document.getElementById('stampCountText').innerText = cliente.visitas;
-                const grid = document.getElementById('stampsGrid');
-                grid.innerHTML = "";
-                for (let i = 1; i <= 10; i++) {
-                    const isReward = i === 10 && cliente.visitas >= 10;
-                    const cls = i <= cliente.visitas ? (isReward ? 'reward' : 'active') : '';
-                    grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward ? '<i class="fa-solid fa-star"></i>' : i}</div>`;
-                }
-
-                const estado = document.getElementById('clienteEstado');
-                if (cliente.visitas >= 10) {
-                    estado.className = 'reward-info gold';
-                    estado.innerHTML = '<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible! Canjea tu tarjeta en tu próxima visita.';
-                } else if (cliente.visitas === 5) {
-                    estado.className = 'reward-info gold';
-                    estado.innerHTML = '<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
-                } else {
-                    const restantes = 10 - cliente.visitas;
-                    estado.className = 'reward-info';
-                    estado.innerHTML = `<i class="fa-regular fa-gem"></i>Te ${restantes === 1 ? 'queda' : 'quedan'} <strong>${restantes}</strong> ${restantes === 1 ? 'sello' : 'sellos'} para tu recompensa.`;
-                }
-
-                await renderMisCitas(cliente);
-                mostrarVista('vistaCliente');
-            } catch (e) {
-                console.error('Error en iniciarSesionCliente:', e);
-                toast('Error de conexión: ' + (e.message || 'Revisa tu red'), 'error');
-            } finally {
-                setBtnLoading('btnLoginCliente', false);
-            }
-        }
-
-        /* ---------- HELPERS CUENTA ---------- */
-        function togglePassVis(inputId, btn) {
-            const inp = document.getElementById(inputId);
-            const icon = btn.querySelector('i');
-            if (inp.type === 'password') {
-                inp.type = 'text';
-                icon.className = 'fa-regular fa-eye-slash';
+            const estado = document.getElementById("clienteEstado");
+            if (data.visitas>=10) {
+                estado.className="reward-info gold";
+                estado.innerHTML='<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible!';
+            } else if (data.visitas===5) {
+                estado.className="reward-info gold";
+                estado.innerHTML='<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
             } else {
-                inp.type = 'password';
-                icon.className = 'fa-regular fa-eye';
+                const r=10-data.visitas;
+                estado.className="reward-info";
+                estado.innerHTML=`<i class="fa-regular fa-gem"></i>Te ${r===1?"queda":"quedan"} <strong>${r}</strong> ${r===1?"sello":"sellos"} para tu recompensa.`;
             }
+            await renderMisCitas(data);
+            mostrarVista("vistaCliente");
+        } catch(e) {
+            toast("Error de conexión: "+(e.message||""),"error");
+        } finally {
+            setBtnLoading("btnLoginCliente", false);
         }
+    }
 
-        function evalPassStrength(val) {
-            const bar  = document.getElementById('passBar');
-            const hint = document.getElementById('passHint');
-            if (!bar) return;
-            let score = 0;
-            if (val.length >= 6) score++;
-            if (val.length >= 10) score++;
-            if (/[A-Z]/.test(val)) score++;
-            if (/[0-9]/.test(val)) score++;
-            if (/[^A-Za-z0-9]/.test(val)) score++;
-            const pcts  = ['0%','25%','50%','75%','100%'];
-            const cols  = ['transparent','#e05353','#e0a233','#4A7C59','#2d6a4f'];
-            const hints = ['','Muy débil','Débil','Aceptable','Fuerte','Muy fuerte'];
-            bar.style.width = pcts[score] || '0%';
-            bar.style.background = cols[score] || 'transparent';
-            hint.textContent = hints[score] || 'Mínimo 6 caracteres';
-            hint.style.color = score >= 3 ? '#4A7C59' : score >= 2 ? '#8a6f25' : 'var(--muted)';
-        }
-
-        let usuarioTimer = null;
-        async function checkUsuarioDisponible(val) {
-            const fb = document.getElementById('usuarioFeedback');
-            if (!fb) return;
-            val = val.trim().toLowerCase();
-            if (!val) { fb.textContent = ''; return; }
-            if (!/^[a-z0-9._]{3,}$/.test(val)) {
-                fb.innerHTML = '<span style="color:#e05353"><i class="fa-solid fa-xmark" style="margin-right:4px;"></i>Solo letras, números, puntos y guión bajo. Mín. 3 caracteres.</span>';
+    async function renderMisCitas(cliente) {
+        const list = document.getElementById("misCitasList");
+        if (!list) return;
+        list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-hourglass-half"></i><div class="label">Cargando…</div></div>`;
+        try {
+            const { data } = await sb.from("citas")
+                .select("*").eq("telefono",cliente.telefono)
+                .order("fecha",{ascending:true}).order("hora",{ascending:true});
+            const upcoming = (data||[]).filter(c=>c.fecha>=fmtISO(today) && (c.estado||"pendiente")!=="cancelada");
+            if (!upcoming.length) {
+                list.innerHTML=`<div class="mis-citas-empty"><i class="fa-regular fa-calendar"></i><div class="label">No tienes citas próximas</div></div>`;
                 return;
             }
-            fb.innerHTML = '<span style="color:var(--muted)"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:4px;"></i>Comprobando…</span>';
-            clearTimeout(usuarioTimer);
-            usuarioTimer = setTimeout(async () => {
-                try {
-                    const { data } = await sb.from('clientas').select('id').eq('usuario', val).maybeSingle();
-                    if (data) {
-                        fb.innerHTML = '<span style="color:#e05353"><i class="fa-solid fa-xmark" style="margin-right:4px;"></i>Ese usuario ya existe, elige otro.</span>';
-                    } else {
-                        fb.innerHTML = '<span style="color:#4A7C59"><i class="fa-solid fa-check" style="margin-right:4px;"></i>¡Disponible!</span>';
-                    }
-                } catch(e) { fb.textContent = ''; }
-            }, 600);
-        }
-
-        /* ---------- CLIENT APPOINTMENTS VIEW ---------- */
-        async function renderMisCitas(cliente) {
-            const list = document.getElementById('misCitasList');
-            if (!list) return;
-            list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-hourglass-half"></i><div class="label">Cargando…</div></div>`;
-
-            try {
-                const { data } = await sb.from('citas')
-                    .select('*')
-                    .eq('telefono', cliente.telefono)
-                    .order('fecha', { ascending: true })
-                    .order('hora', { ascending: true });
-
-                const todayIso = fmtIso(today);
-                const upcoming = (data || []).filter(c => (c.fecha >= todayIso) && (c.estado || 'pendiente') !== 'cancelada');
-
-                if (upcoming.length === 0) {
-                    list.innerHTML = `<div class="mis-citas-empty">
-                        <i class="fa-regular fa-calendar"></i>
-                        <div class="label">No tienes citas próximas</div>
-                        <div style="margin-top:10px; font-size:11.5px;">Reserva una nueva desde el inicio</div>
-                    </div>`;
-                    return;
-                }
-
-                list.innerHTML = upcoming.map(c => {
-                    const dt = new Date((c.fecha || todayIso) + 'T00:00:00');
-                    const day = dt.getDate();
-                    const monthShort = MONTHS_ES[dt.getMonth()].substring(0,3);
-                    const weekdays = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-                    const weekday = weekdays[dt.getDay()];
-                    const fullDay = weekdays[dt.getDay()] + ', ' + day + ' de ' + MONTHS_ES[dt.getMonth()].toLowerCase();
-                    const hora = (c.hora || '').slice(0,5);
-                    const estado = c.estado || 'pendiente';
-
-                    return `<div class="mi-cita-card ${estado}">
-                        <div class="mi-cita-date">
-                            <span class="day">${day}</span>
-                            <span class="month">${monthShort}</span>
-                        </div>
-                        <div class="mi-cita-info">
-                            <span class="weekday">${fullDay}</span>
-                            <span class="hora">${hora} h</span>
-                            <span class="estado-pill ${estado}">${estado}</span>
-                        </div>
-                        <div class="mi-cita-actions">
-                            <a href="${whatsappCambioCita(cliente.nombre, c.fecha, hora)}" target="_blank" rel="noopener" class="btn-whatsapp">
-                                <i class="fa-brands fa-whatsapp"></i> Cambiar fecha u hora
-                            </a>
-                        </div>
-                    </div>`;
-                }).join('');
-            } catch (e) {
-                list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar tus citas</div></div>`;
-            }
-        }
-
-        function whatsappCambioCita(nombre, fecha, hora) {
-            const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
-            const fechaTexto = dt
-                ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`
-                : 'mi cita';
-            const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
-            return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
-        }
-
-        /* ---------- APPOINTMENT REQUEST ---------- */
-        async function enviarSolicitudCita() {
-            console.log('[cita] enviarSolicitudCita iniciado');
-            // ── Leer campos ───────────────────────────────────────────────
-            const nombre   = (document.getElementById('citaNombre')?.value || '').trim();
-            const telefono = (document.getElementById('citaTelefono')?.value || '').trim();
-            const usuario  = (document.getElementById('citaUsuario')?.value || '').trim().toLowerCase();
-            const clave    = document.getElementById('citaClave')?.value || '';
-            const claveC   = document.getElementById('citaClaveConfirm')?.value || '';
-            const fecha    = document.getElementById('citaFecha')?.value || '';
-            const hora     = document.getElementById('citaHora')?.value || '';
-            const servicio = document.getElementById('citaServicio')?.value || '';
-            const duracion = parseInt(document.getElementById('citaDuracion')?.value, 10) || 30;
-
-            // ── Validaciones (antes de bloquear botón) ────────────────────
-            if (!nombre || !telefono) { toast('Introduce tu nombre y teléfono', 'error'); return; }
-            if (!usuario) { toast('Elige un nombre de usuario para tu cuenta', 'error'); return; }
-            if (!/^[a-z0-9._]{3,}$/.test(usuario)) { toast('Usuario: solo letras, números, punto o guión bajo. Mín. 3 caracteres.', 'error'); return; }
-            if (!clave || clave.length < 6) { toast('La contraseña debe tener al menos 6 caracteres', 'error'); return; }
-            if (clave !== claveC) { toast('Las contraseñas no coinciden', 'error'); return; }
-            if (!servicio) { toast('Selecciona el servicio', 'error'); return; }
-            if (!fecha) { toast('Selecciona una fecha', 'error'); return; }
-            if (!hora) { toast('Selecciona una hora', 'error'); return; }
-            const fechaDt = new Date(fecha + 'T00:00:00');
-            if (fechaDt < today) { toast('La fecha ya ha pasado, elige otra.', 'error'); return; }
-
-            // ── Bloquear botón ────────────────────────────────────────────
-            setBtnLoading('btnEnviarCita', true);
-
-            try {
-                // 1. Usuario único
-                const resU = await sb.from('clientas').select('id').eq('usuario', usuario).maybeSingle();
-                if (resU.error) { toast('Error comprobando usuario: ' + resU.error.message, 'error'); return; }
-                if (resU.data)  { toast('Ese usuario ya existe, elige otro.', 'error'); return; }
-
-                // 2. Conflicto de horario
-                const resC = await sb.from('citas').select('hora,duracion_minutos,estado').eq('fecha', fecha).neq('estado', 'cancelada');
-                if (!resC.error && slotBloqueado(hora, resC.data || [], duracion)) {
-                    toast('Ese horario se solapa con otra cita. Elige otra hora.', 'error');
-                    return;
-                }
-
-                // 3. Crear perfil
-                const resP = await sb.from('clientas').insert([{ nombre, telefono, usuario, clave, visitas: 0 }]).select().single();
-                if (resP.error) { toast('No se pudo crear tu perfil: ' + resP.error.message, 'error'); return; }
-
-                // 4. Guardar cita
-                const resA = await sb.from('citas').insert([{
-                    nombre_cliente: nombre, telefono, fecha, hora,
-                    servicio, duracion_minutos: duracion, estado: 'pendiente'
-                }]).select();
-                if (resA.error) { toast('Perfil creado, pero error al guardar la cita: ' + resA.error.message, 'error'); return; }
-
-                // ── Éxito ─────────────────────────────────────────────────
-                if (resA.data && resA.data.length > 0) citas.push(resA.data[0]);
-                toast('¡Solicitud enviada! Te avisaremos cuando esté confirmada.', 'success', '¡Bienvenida!');
-
-                // Limpiar form
-                ['citaNombre','citaTelefono','citaUsuario','citaClave','citaClaveConfirm'].forEach(id => {
-                    const el = document.getElementById(id); if (el) el.value = '';
-                });
-                const fb = document.getElementById('usuarioFeedback'); if (fb) fb.textContent = '';
-                evalPassStrength('');
-                resetPicker();
-
-                // Pre-rellenar login
-                const loginU = document.getElementById('loginUsuario');
-                if (loginU) loginU.value = usuario;
-
-                setTimeout(() => {
-                    mostrarVista('login');
-                    setTimeout(() => toast('Usa tu usuario y contraseña para entrar', 'info'), 400);
-                }, 800);
-
-            } catch (e) {
-                console.error('enviarSolicitudCita excepción:', e);
-                toast('Error inesperado: ' + (e.message || String(e)), 'error');
-            } finally {
-                setBtnLoading('btnEnviarCita', false);
-            }
-        }
-
-        /* ---------- AGENDA STATE ---------- */
-        let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-        let agendaSelected = new Date(today);
-        let agendaFilter = 'all';
-
-        function citasOfDay(iso) {
-            return citas.filter(c => c.fecha === iso && (agendaFilter === 'all' || (c.estado || 'pendiente') === agendaFilter));
-        }
-        function fmtIso(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
-        function fmtDayLong(d){
-            const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-            return `${days[d.getDay()]}, ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
-        }
-
-        function renderAgenda() {
-            const monthEl = document.getElementById('agendaMonth');
-            const grid = document.getElementById('agendaGrid');
-            if (!monthEl || !grid) return;
-
-            monthEl.textContent = `${MONTHS_ES[agendaCursor.getMonth()]} ${agendaCursor.getFullYear()}`;
-
-            grid.innerHTML = '';
-            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
-
-            const year = agendaCursor.getFullYear();
-            const month = agendaCursor.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const startOffset = (firstDay.getDay() + 6) % 7;
-            const daysInMonth = new Date(year, month+1, 0).getDate();
-            const prevDays = new Date(year, month, 0).getDate();
-
-            for (let i = startOffset - 1; i >= 0; i--) {
-                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
-            }
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dt = new Date(year, month, d);
-                const iso = fmtIso(dt);
-                const dayCitas = citasOfDay(iso);
-                const total = dayCitas.length;
-                const pendCount = dayCitas.filter(c => (c.estado||'pendiente') === 'pendiente').length;
-                const isToday = dt.getTime() === today.getTime();
-                const isSelected = fmtIso(agendaSelected) === iso;
-                let cls = 'cal-day';
-                if (isToday) cls += ' today';
-                if (isSelected) cls += ' selected';
-                if (total > 0) cls += ' has-citas';
-                const badge = total > 0
-                    ? `<span class="cnt ${pendCount > 0 ? 'pendiente' : ''}">${total}</span>` : '';
-                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}${badge}</div>`;
-            }
-            const totalCells = startOffset + daysInMonth;
-            const trail = (7 - (totalCells % 7)) % 7;
-            for (let i = 1; i <= trail; i++) grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
-
-            grid.querySelectorAll('.cal-day:not(.muted)').forEach(el => {
-                el.addEventListener('click', () => {
-                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
-                    agendaSelected = new Date(y, m-1, d);
-                    renderAgenda();
-                    renderAgendaDay();
-                });
-            });
-        }
-
-        function renderAgendaDay() {
-            const iso = fmtIso(agendaSelected);
-            const dayCitas = citasOfDay(iso).slice().sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
-
-            document.getElementById('dayTitle').textContent = fmtDayLong(agendaSelected);
-            const isToday = fmtIso(agendaSelected) === fmtIso(today);
-            document.getElementById('daySub').textContent = isToday ? 'Hoy' : '';
-
-            const counts = {
-                pendiente: dayCitas.filter(c => (c.estado||'pendiente')==='pendiente').length,
-                confirmada: dayCitas.filter(c => c.estado==='confirmada').length,
-                completada: dayCitas.filter(c => c.estado==='completada').length,
-                cancelada: dayCitas.filter(c => c.estado==='cancelada').length
-            };
-            const cntEl = document.getElementById('dayCount');
-            cntEl.innerHTML = '';
-            ['pendiente','confirmada','completada','cancelada'].forEach(k => {
-                if (counts[k] > 0) cntEl.innerHTML += `<span class="estado-pill ${k}">${counts[k]} ${k}</span>`;
-            });
-
-            const list = document.getElementById('dayList');
-            if (dayCitas.length === 0) {
-                list.innerHTML = `<div class="agenda-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="label">Sin citas para este día</div></div>`;
-                return;
-            }
-
-            list.innerHTML = dayCitas.map(c => {
-                const estado = c.estado || 'pendiente';
-                const [hh, mm] = (c.hora || '00:00').split(':');
-                const period = parseInt(hh,10) < 14 ? 'mañana' : 'tarde';
-                return `<div class="appt-row">
-                    <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
-                    <div class="appt-info">
-                        <div class="appt-name">${c.nombre_cliente || '—'}</div>
-                        ${c.servicio ? `<div style="font-size:10.5px;color:var(--accent);letter-spacing:.8px;font-weight:600;margin-bottom:2px;">${c.servicio}</div>` : ''}
-                        <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono || '—'}${c.duracion_minutos ? ` · <span style="color:var(--muted)">${c.duracion_minutos} min</span>` : ''}</div>
-                        <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
+            list.innerHTML = upcoming.map(c => {
+                const dt = new Date(c.fecha+"T00:00:00");
+                const dias=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+                const fullDay=`${dias[dt.getDay()]}, ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`;
+                const hora=(c.hora||"").slice(0,5);
+                const estado=c.estado||"pendiente";
+                const msg=`Hola Shanahan Nails ✨
+Soy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} a las ${hora}h. ¿Podríamos cambiar?`;
+                return `<div class="mi-cita-card ${estado}">
+                    <div class="mi-cita-date"><span class="day">${dt.getDate()}</span><span class="month">${MONTHS_ES[dt.getMonth()].slice(0,3)}</span></div>
+                    <div class="mi-cita-info">
+                        <span class="weekday">${fullDay}</span>
+                        ${c.servicio?`<span style="font-size:10.5px;color:var(--accent);font-weight:600;">${c.servicio}</span>`:""}
+                        <span class="hora">${hora} h${c.duracion_minutos?` · ${durStr(c.duracion_minutos)}`:""}  </span>
+                        <span class="estado-pill ${estado}">${estado}</span>
                     </div>
-                    <div class="appt-actions">
-                        ${estado === 'pendiente' ? `<button class="action-icon success" title="Aprobar" onclick="aprobarCita(${c.id})"><i class="fa-solid fa-check"></i></button>` : ''}
-                        ${estado === 'confirmada' ? `<button class="action-icon success" title="Marcar completada" onclick="completarCita(${c.id})"><i class="fa-solid fa-circle-check"></i></button>` : ''}
-                        <button class="action-icon" title="Editar" onclick="abrirEditarCita(${c.id})"><i class="fa-solid fa-pen"></i></button>
-                        <button class="action-icon danger" title="Eliminar" onclick="eliminarCita(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                    <div class="mi-cita-actions">
+                        <a href="https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}" target="_blank" class="btn-whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i> Cambiar
+                        </a>
                     </div>
                 </div>`;
-            }).join('');
+            }).join("");
+        } catch(e) {
+            list.innerHTML=`<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar las citas</div></div>`;
         }
+    }
 
-        function initAgenda() {
-            const aPrev = document.getElementById('agendaPrev');
-            const aNext = document.getElementById('agendaNext');
-            const aToday = document.getElementById('agendaToday');
-            if (aPrev) aPrev.addEventListener('click', () => {
-                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()-1, 1);
-                renderAgenda();
-            });
-            if (aNext) aNext.addEventListener('click', () => {
-                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()+1, 1);
-                renderAgenda();
-            });
-            if (aToday) aToday.addEventListener('click', () => {
-                agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-                agendaSelected = new Date(today);
-                renderAgenda();
-                renderAgendaDay();
-            });
-            document.querySelectorAll('.agenda-filters .filter-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    document.querySelectorAll('.agenda-filters .filter-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    agendaFilter = chip.dataset.filter;
-                    renderAgenda();
-                    renderAgendaDay();
-                });
-            });
+    // ══════════════════════════════════════════════════════
+    //  ADMIN
+    // ══════════════════════════════════════════════════════
+    async function loginAdmin() {
+        const user = (document.getElementById("adminUser")?.value||"").trim();
+        const pass = (document.getElementById("adminPass")?.value||"").trim();
+        if (!user||!pass) return toast("Completa usuario y contraseña","error");
+        setBtnLoading("btnLoginAdmin",true);
+        try {
+            const { data } = await sb.from("admins").select("*").eq("usuario",user).eq("password",pass).maybeSingle();
+            if (data) { toast("Bienvenida al panel","success"); mostrarVista("vistaAdmin"); }
+            else toast("Credenciales incorrectas","error");
+        } catch(e) { toast("Error al iniciar sesión","error"); }
+        finally { setBtnLoading("btnLoginAdmin",false); }
+    }
+
+    async function cargarDatosAdmin() {
+        try {
+            const [rC, rCi] = await Promise.all([
+                sb.from("clientas").select("*").order("nombre",{ascending:true}),
+                sb.from("citas").select("*").order("fecha",{ascending:true})
+            ]);
+            if (rC.error)  { toast("Error cargando clientas: "+rC.error.message,"error"); return; }
+            if (rCi.error) { toast("Error cargando citas: "+rCi.error.message,"error"); return; }
+            clientas = rC.data||[];
+            citas    = rCi.data||[];
+            console.log(`Admin data: ${clientas.length} clientas, ${citas.length} citas`);
+            if (!agendaInitialized) { try{initAgenda();}catch(e){} agendaInitialized=true; }
+            try { initDispPanel(); } catch(e){}
+            try { await cargarDisponibles(); } catch(e){}
+            renderAdmin();
+        } catch(e) {
+            toast("Error cargando datos: "+(e.message||""),"error");
         }
+    }
 
-        /* ---------- ADMIN RENDER ---------- */
-        function renderAdmin() {
-            const search = (document.getElementById('adminSearch')?.value || '').trim().toLowerCase();
-            const filtered = search
-                ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search))
-                : clientas;
+    // ── Agenda admin ───────────────────────────────────────
+    function citasOfDay(iso) {
+        return citas.filter(c=>c.fecha===iso && (agendaFilter==="all"||(c.estado||"pendiente")===agendaFilter));
+    }
 
-            // stats
-            const todayIso = fmtIso(today);
-            const startWeek = new Date(today); startWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
-            const endWeek = new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
-            const pendCount = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
-            const todayCount = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
-            const weekCount = citas.filter(c => {
-                if (!c.fecha) return false;
-                const d = new Date(c.fecha + 'T00:00:00');
-                return d >= startWeek && d <= endWeek && (c.estado||'pendiente') !== 'cancelada';
-            }).length;
+    function renderAgenda() {
+        const monthEl=document.getElementById("agendaMonth");
+        const grid=document.getElementById("agendaGrid");
+        if (!monthEl||!grid) return;
+        monthEl.textContent=`${MONTHS_ES[agendaCursor.getMonth()]} ${agendaCursor.getFullYear()}`;
+        grid.innerHTML="";
+        DOW_ES.forEach(d=>grid.innerHTML+=`<div class="cal-dow">${d}</div>`);
+        const y=agendaCursor.getFullYear(), m=agendaCursor.getMonth();
+        const offset=(new Date(y,m,1).getDay()+6)%7;
+        const dim=new Date(y,m+1,0).getDate();
+        const prevDim=new Date(y,m,0).getDate();
+        for (let i=offset-1;i>=0;i--) grid.innerHTML+=`<div class="cal-day muted">${prevDim-i}</div>`;
+        for (let d=1;d<=dim;d++) {
+            const dt=new Date(y,m,d), iso=fmtISO(dt);
+            const dayCitas=citasOfDay(iso);
+            const pend=dayCitas.filter(c=>(c.estado||"pendiente")==="pendiente").length;
+            const isToday=dt.getTime()===today.getTime();
+            const isSel=fmtISO(agendaSelected)===iso;
+            let cls="cal-day";
+            if(isToday) cls+=" today";
+            if(isSel) cls+=" selected";
+            if(dayCitas.length>0) cls+=" has-citas";
+            const badge=dayCitas.length>0?`<span class="cnt ${pend>0?"pendiente":""}">${dayCitas.length}</span>`:"";
+            grid.innerHTML+=`<div class="${cls}" data-iso="${iso}">${d}${badge}</div>`;
+        }
+        const trail=(7-((offset+dim)%7))%7;
+        for(let i=1;i<=trail;i++) grid.innerHTML+=`<div class="cal-day muted">${i}</div>`;
+        grid.querySelectorAll(".cal-day:not(.muted)").forEach(el=>{
+            el.addEventListener("click",()=>{
+                const [y2,m2,d2]=el.dataset.iso.split("-").map(Number);
+                agendaSelected=new Date(y2,m2-1,d2);
+                renderAgenda(); renderAgendaDay();
+            });
+        });
+    }
 
-            document.getElementById('statClientas').textContent = clientas.length;
-            document.getElementById('statPendientes').textContent = pendCount;
-            const badge = document.getElementById('menuBadgePendientes');
-            if (badge) { badge.textContent = pendCount; badge.style.display = pendCount > 0 ? 'flex' : 'none'; }
-            document.getElementById('statHoy').textContent = todayCount;
-            document.getElementById('statSemana').textContent = weekCount;
+    function renderAgendaDay() {
+        const iso=fmtISO(agendaSelected);
+        const dayCitas=citasOfDay(iso).slice().sort((a,b)=>(a.hora||"").localeCompare(b.hora||""));
+        document.getElementById("dayTitle").textContent=fmtDayLong(agendaSelected);
+        document.getElementById("daySub").textContent=iso===fmtISO(today)?"Hoy":"";
+        const counts={pendiente:0,confirmada:0,completada:0,cancelada:0};
+        dayCitas.forEach(c=>counts[c.estado||"pendiente"]=(counts[c.estado||"pendiente"]||0)+1);
+        const cntEl=document.getElementById("dayCount");
+        cntEl.innerHTML="";
+        Object.entries(counts).forEach(([k,v])=>{ if(v>0) cntEl.innerHTML+=`<span class="estado-pill ${k}">${v} ${k}</span>`; });
+        const list=document.getElementById("dayList");
+        if (!dayCitas.length) {
+            list.innerHTML=`<div class="agenda-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="label">Sin citas para este día</div></div>`;
+            return;
+        }
+        list.innerHTML=dayCitas.map(c=>{
+            const estado=c.estado||"pendiente";
+            const [hh,mm]=(c.hora||"00:00").split(":");
+            const period=parseInt(hh,10)<14?"mañana":"tarde";
+            return `<div class="appt-row">
+                <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
+                <div class="appt-info">
+                    <div class="appt-name">${c.nombre_cliente||"—"}</div>
+                    ${c.servicio?`<div style="font-size:10.5px;color:var(--accent);font-weight:600;margin-bottom:2px;">${c.servicio}</div>`:""}
+                    <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono||"—"}${c.duracion_minutos?` · <span style="color:var(--muted)">${durStr(c.duracion_minutos)}</span>`:""}</div>
+                    <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
+                </div>
+                <div class="appt-actions">
+                    ${estado==="pendiente"?`<button class="action-icon success" onclick="aprobarCita(${c.id})" title="Aprobar"><i class="fa-solid fa-check"></i></button>`:""}
+                    ${estado==="confirmada"?`<button class="action-icon success" onclick="completarCita(${c.id})" title="Completada"><i class="fa-solid fa-circle-check"></i></button>`:""}
+                    <button class="action-icon" onclick="abrirEditarCita(${c.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="action-icon danger" onclick="eliminarCita(${c.id})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>`;
+        }).join("");
+    }
 
-            // refresh agenda views
-            renderAgenda();
-            renderAgendaDay();
+    function initAgenda() {
+        agendaCursor   = new Date(today.getFullYear(), today.getMonth(), 1);
+        agendaSelected = new Date(today);
+        const aPrev=document.getElementById("agendaPrev");
+        const aNext=document.getElementById("agendaNext");
+        const aTod=document.getElementById("agendaToday");
+        if(aPrev) aPrev.addEventListener("click",()=>{ agendaCursor=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth()-1,1); renderAgenda(); });
+        if(aNext) aNext.addEventListener("click",()=>{ agendaCursor=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth()+1,1); renderAgenda(); });
+        if(aTod)  aTod.addEventListener("click",()=>{ agendaCursor=new Date(today.getFullYear(),today.getMonth(),1); agendaSelected=new Date(today); renderAgenda(); renderAgendaDay(); });
+        document.querySelectorAll(".agenda-filters .filter-chip").forEach(chip=>{
+            chip.addEventListener("click",()=>{
+                document.querySelectorAll(".agenda-filters .filter-chip").forEach(c=>c.classList.remove("active"));
+                chip.classList.add("active");
+                agendaFilter=chip.dataset.filter;
+                renderAgenda(); renderAgendaDay();
+            });
+        });
+    }
 
-            // table
-            const tb = document.querySelector('#tablaClientes tbody');
-            tb.innerHTML = "";
-            if (filtered.length === 0) {
-                tb.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search ? 'Sin resultados' : 'Todavía no hay clientas registradas'}</div></div></td></tr>`;
+    // ── renderAdmin ────────────────────────────────────────
+    function renderAdmin() {
+        const search=(document.getElementById("adminSearch")?.value||"").toLowerCase();
+        const filtered=search?clientas.filter(c=>(c.nombre||"").toLowerCase().includes(search)||(c.telefono||"").includes(search)):clientas;
+
+        const todayISO=fmtISO(today);
+        const startWeek=new Date(today); startWeek.setDate(today.getDate()-((today.getDay()+6)%7));
+        const endWeek=new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
+        const pendCount=citas.filter(c=>(c.estado||"pendiente")==="pendiente").length;
+        const todayCount=citas.filter(c=>c.fecha===todayISO&&(c.estado||"pendiente")!=="cancelada").length;
+        const weekCount=citas.filter(c=>{ if(!c.fecha) return false; const d=new Date(c.fecha+"T00:00:00"); return d>=startWeek&&d<=endWeek&&(c.estado||"pendiente")!=="cancelada"; }).length;
+
+        document.getElementById("statClientas").textContent=clientas.length;
+        document.getElementById("statPendientes").textContent=pendCount;
+        document.getElementById("statHoy").textContent=todayCount;
+        document.getElementById("statSemana").textContent=weekCount;
+        const badge=document.getElementById("menuBadgePendientes");
+        if(badge){ badge.textContent=pendCount; badge.style.display=pendCount>0?"flex":"none"; }
+
+        renderAgenda(); renderAgendaDay();
+
+        // Tabla clientas
+        const tb=document.querySelector("#tablaClientes tbody");
+        if(tb) {
+            tb.innerHTML="";
+            if(!filtered.length) {
+                tb.innerHTML=`<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search?"Sin resultados":"Sin clientas registradas"}</div></div></td></tr>`;
             } else {
-                filtered.forEach(c => {
-                    const v = c.visitas || 0;
-                    const pct = Math.min(v, 10) * 10;
-                    const fullClass = v >= 10 ? 'full' : '';
-                    tb.innerHTML += `<tr>
-                        <td>
-                            <div class="client-name">${c.nombre}</div>
-                            <div class="client-phone">${c.telefono || '—'}</div>
-                        </td>
-                        <td>
-                            <span class="stamps-pill ${fullClass}">
-                                <span>${v}/10</span>
-                                <span class="bar" style="--p:${pct}%"></span>
-                            </span>
-                        </td>
+                filtered.forEach(c=>{
+                    const v=c.visitas||0, pct=Math.min(v,10)*10;
+                    tb.innerHTML+=`<tr>
+                        <td><div class="client-name">${c.nombre}</div><div class="client-phone">${c.usuario?`@${c.usuario} · `:""} ${c.telefono||"—"}</div></td>
+                        <td><span class="stamps-pill ${v>=10?"full":""}"><span>${v}/10</span><span class="bar" style="--p:${pct}%"></span></span></td>
                         <td style="text-align:right;">
-                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id}, ${v})"><i class="fa-solid fa-plus"></i></button>
+                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id},${v})"><i class="fa-solid fa-plus"></i></button>
                             <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${c.id})"><i class="fa-solid fa-rotate-left"></i></button>
                             <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${c.id})"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+                        </td></tr>`;
                 });
             }
+        }
 
-            // appointments — only pending
-            const pendientes = citas.filter(c => (c.estado||'pendiente') === 'pendiente');
-            const lista = document.getElementById('listaCitasPendientes');
-            lista.innerHTML = "";
-            if (pendientes.length === 0) {
-                lista.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar"></i><div class="label">Sin solicitudes pendientes</div></div>`;
+        // Lista solicitudes pendientes
+        const lista=document.getElementById("listaCitasPendientes");
+        if(lista) {
+            const pendientes=citas.filter(c=>(c.estado||"pendiente")==="pendiente");
+            lista.innerHTML="";
+            if(!pendientes.length) {
+                lista.innerHTML=`<div class="empty-state"><i class="fa-regular fa-calendar"></i><div class="label">Sin solicitudes pendientes</div></div>`;
             } else {
-                pendientes.forEach(cita => {
-                    const fecha = cita.fecha ? new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'long' }) : '—';
-                    lista.innerHTML += `<div class="cita-card">
-                        <div class="cita-name">${cita.nombre_cliente}</div>
-                        ${cita.servicio ? `<div style="font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:600;">${cita.servicio}</div>` : ''}
+                pendientes.forEach(cita=>{
+                    const fecha=cita.fecha?new Date(cita.fecha+"T00:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long"}):"—";
+                    lista.innerHTML+=`<div class="cita-card">
+                        <div class="cita-name">${cita.nombre_cliente||"—"}</div>
+                        ${cita.servicio?`<div style="font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:600;">${cita.servicio}</div>`:""}
                         <div class="cita-meta">
                             <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
-                            <span><i class="fa-regular fa-clock"></i>${cita.hora || '—'}${cita.duracion_minutos ? ` · ${cita.duracion_minutos} min` : ''}</span>
-                            <span><i class="fa-solid fa-phone"></i>${cita.telefono || '—'}</span>
+                            <span><i class="fa-regular fa-clock"></i>${(cita.hora||"—").slice(0,5)}${cita.duracion_minutos?` · ${durStr(cita.duracion_minutos)}`:""}</span>
+                            <span><i class="fa-solid fa-phone"></i>${cita.telefono||"—"}</span>
                         </div>
                         <div class="cita-actions">
                             <button class="cita-btn approve" onclick="aprobarCita(${cita.id})"><i class="fa-solid fa-check" style="margin-right:5px;"></i>Aprobar</button>
@@ -1937,603 +2026,216 @@
                 });
             }
         }
+    }
 
-        /* ---------- ADMIN ACTIONS ---------- */
-        async function aprobarCita(idCita) {
-            const cita = citas.find(c => c.id === idCita);
-            if (!cita) return;
-            try {
-                const { error } = await sb.from('citas').update({ estado: 'confirmada' }).eq('id', idCita);
-                if (error) { toast('No se pudo aprobar: ' + error.message, 'error'); return; }
-                toast('Cita confirmada', 'success');
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('No se pudo aprobar la cita', 'error');
+    // ── Admin acciones ─────────────────────────────────────
+    async function aprobarCita(id) {
+        try {
+            const { error } = await sb.from("citas").update({estado:"confirmada"}).eq("id",id);
+            if (error) { toast("Error: "+error.message,"error"); return; }
+            toast("Cita confirmada","success");
+            cargarDatosAdmin();
+        } catch(e) { toast("No se pudo aprobar","error"); }
+    }
+
+    async function completarCita(id) {
+        const cita=citas.find(c=>c.id===id);
+        if (!cita) return;
+        try {
+            await sb.from("citas").update({estado:"completada"}).eq("id",id);
+            const cl=clientas.find(c=>(c.telefono||"").trim()===(cita.telefono||"").trim());
+            if (cl && (cl.visitas||0)<10) {
+                await sb.from("clientas").update({visitas:(cl.visitas||0)+1}).eq("id",cl.id);
+                if ((cl.visitas||0)+1===10) toast("¡Tarjeta completa! Servicio gratis desbloqueado.","success","Recompensa");
+                else toast("Cita completada · sello sumado","success");
+            } else toast("Cita completada","success");
+            cargarDatosAdmin();
+        } catch(e) { toast("No se pudo completar","error"); }
+    }
+
+    async function eliminarCita(id) {
+        const ok=await askConfirm("Eliminar cita","Esta acción no se puede deshacer.");
+        if (!ok) return;
+        try { await sb.from("citas").delete().eq("id",id); toast("Cita eliminada","success"); cargarDatosAdmin(); }
+        catch(e) { toast("No se pudo eliminar","error"); }
+    }
+
+    async function rechazarCita(id) {
+        const ok=await askConfirm("Rechazar solicitud","¿Descartar esta solicitud?");
+        if (!ok) return;
+        try { await sb.from("citas").delete().eq("id",id); toast("Solicitud descartada","success"); cargarDatosAdmin(); }
+        catch(e) { toast("No se pudo descartar","error"); }
+    }
+
+    // ── Editar cita modal ──────────────────────────────────
+    function setEditEstado(estado) {
+        document.getElementById("editCitaEstado").value=estado;
+        document.querySelectorAll("#editEstadoGroup .estado-opt").forEach(b=>b.classList.toggle("active",b.dataset.estado===estado));
+    }
+    function abrirEditarCita(id) {
+        const cita=citas.find(c=>c.id===id);
+        if (!cita) return;
+        document.getElementById("editCitaId").value=cita.id;
+        document.getElementById("editCitaNombre").value=cita.nombre_cliente||"";
+        document.getElementById("editCitaTelefono").value=cita.telefono||"";
+        document.getElementById("editCitaFecha").value=cita.fecha||"";
+        document.getElementById("editCitaHora").value=cita.hora||"";
+        setEditEstado(cita.estado||"pendiente");
+        document.getElementById("editCitaModal").classList.add("show");
+    }
+    function closeEditCita() { document.getElementById("editCitaModal").classList.remove("show"); }
+    document.getElementById("editCitaModal").addEventListener("click",e=>{ if(e.target.id==="editCitaModal") closeEditCita(); });
+    document.querySelectorAll("#editEstadoGroup .estado-opt").forEach(b=>b.addEventListener("click",()=>setEditEstado(b.dataset.estado)));
+
+    async function confirmarEliminarCita() {
+        const id=parseInt(document.getElementById("editCitaId").value,10);
+        const ok=await askConfirm("Eliminar cita","Esta cita se eliminará definitivamente.");
+        if (!ok) return;
+        try { await sb.from("citas").delete().eq("id",id); toast("Cita eliminada","success"); closeEditCita(); cargarDatosAdmin(); }
+        catch(e) { toast("No se pudo eliminar","error"); }
+    }
+
+    async function guardarEdicionCita() {
+        const id=parseInt(document.getElementById("editCitaId").value,10);
+        const nuevoEstado=document.getElementById("editCitaEstado").value||"pendiente";
+        const previa=citas.find(c=>c.id===id);
+        const estadoAnterior=previa?(previa.estado||"pendiente"):"pendiente";
+        const payload={
+            nombre_cliente:document.getElementById("editCitaNombre").value.trim(),
+            telefono:document.getElementById("editCitaTelefono").value.trim(),
+            fecha:document.getElementById("editCitaFecha").value,
+            hora:document.getElementById("editCitaHora").value,
+            estado:nuevoEstado,
+            duracion_minutos:previa?(parseInt(previa.duracion_minutos,10)||30):30,
+            servicio:previa?(previa.servicio||""):""
+        };
+        if (!payload.nombre_cliente||!payload.telefono||!payload.fecha||!payload.hora) return toast("Completa todos los campos","error");
+        setBtnLoading("btnGuardarEdicion",true);
+        try {
+            const { error }=await sb.from("citas").update(payload).eq("id",id);
+            if (error) { toast("No se pudo actualizar: "+error.message,"error"); return; }
+            if (estadoAnterior!=="completada"&&nuevoEstado==="completada") {
+                const cl=clientas.find(c=>(c.telefono||"").trim()===payload.telefono);
+                if (cl&&(cl.visitas||0)<10) await sb.from("clientas").update({visitas:(cl.visitas||0)+1}).eq("id",cl.id);
             }
-        }
+            toast("Cita actualizada","success"); closeEditCita(); cargarDatosAdmin();
+        } catch(e) { toast("Error al guardar","error"); }
+        finally { setBtnLoading("btnGuardarEdicion",false); }
+    }
 
-        async function completarCita(idCita) {
-            const cita = citas.find(c => c.id === idCita);
-            if (!cita) return;
-            try {
-                await sb.from('citas').update({ estado: 'completada' }).eq('id', idCita);
-                // auto-add stamp to matching client
-                const cl = clientas.find(c => (c.telefono || '').trim() === (cita.telefono || '').trim());
-                if (cl && (cl.visitas || 0) < 10) {
-                    await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
-                    if ((cl.visitas || 0) + 1 === 10) {
-                        toast('¡Tarjeta completa! Servicio gratis disponible.', 'success', 'Recompensa');
-                    } else {
-                        toast('Cita completada · sello sumado', 'success');
-                    }
-                } else {
-                    toast('Cita marcada como completada', 'success');
-                }
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('No se pudo completar la cita', 'error');
-            }
-        }
+    // ── Clientas acciones ──────────────────────────────────
+    async function sumarVisita(id,actual) {
+        if (actual<10) { try { await sb.from("clientas").update({visitas:actual+1}).eq("id",id); if(actual+1===10) toast("¡Tarjeta completa!","success","Recompensa"); cargarDatosAdmin(); } catch(e){ toast("No se pudo añadir sello","error"); } }
+        else toast("Esta tarjeta ya está completa","info");
+    }
+    async function reiniciarVisitas(id) {
+        const ok=await askConfirm("Reiniciar tarjeta","Se pondrán los sellos a 0.");
+        if (!ok) return;
+        try { await sb.from("clientas").update({visitas:0}).eq("id",id); toast("Tarjeta reiniciada","success"); cargarDatosAdmin(); } catch(e){ toast("No se pudo reiniciar","error"); }
+    }
+    async function borrarCliente(id) {
+        const ok=await askConfirm("Eliminar clienta","Esta acción no se puede deshacer.");
+        if (!ok) return;
+        try { await sb.from("clientas").delete().eq("id",id); toast("Clienta eliminada","success"); cargarDatosAdmin(); } catch(e){ toast("No se pudo eliminar","error"); }
+    }
+    async function registrarNuevoCliente() {
+        const n=(document.getElementById("regNombre")?.value||"").trim();
+        const t=(document.getElementById("regTelef")?.value||"").trim();
+        if (!n||!t) return toast("Introduce nombre y teléfono","error");
+        setBtnLoading("btnRegistrar",true);
+        try {
+            const { error }=await sb.from("clientas").insert([{nombre:n,telefono:t,visitas:0}]);
+            if (!error) { toast("Clienta registrada","success"); document.getElementById("regNombre").value=""; document.getElementById("regTelef").value=""; cargarDatosAdmin(); }
+            else toast("No se pudo registrar: "+error.message,"error");
+        } catch(e){ toast("Error de conexión","error"); }
+        finally{ setBtnLoading("btnRegistrar",false); }
+    }
 
-        async function eliminarCita(idCita) {
-            const ok = await askConfirm('Eliminar cita', 'Esta acción no se puede deshacer.');
-            if (!ok) return;
-            try {
-                await sb.from('citas').delete().eq('id', idCita);
-                toast('Cita eliminada', 'success');
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo eliminar', 'error'); }
+    // ── Días disponibles ───────────────────────────────────
+    function renderDCalendar() {
+        const monthEl=document.getElementById("dCalMonth");
+        const grid=document.getElementById("dCalGrid");
+        if(!monthEl||!grid) return;
+        monthEl.textContent=`${MONTHS_ES[dCalCursor.getMonth()]} ${dCalCursor.getFullYear()}`;
+        grid.innerHTML="";
+        DOW_ES.forEach(d=>grid.innerHTML+=`<div class="cal-dow">${d}</div>`);
+        const y=dCalCursor.getFullYear(), m=dCalCursor.getMonth();
+        const offset=(new Date(y,m,1).getDay()+6)%7;
+        const dim=new Date(y,m+1,0).getDate();
+        const prevDim=new Date(y,m,0).getDate();
+        for(let i=offset-1;i>=0;i--) grid.innerHTML+=`<div class="cal-day muted">${prevDim-i}</div>`;
+        for(let d=1;d<=dim;d++){
+            const iso=`${y}-${pad2(m+1)}-${pad2(d)}`;
+            const mes=`${y}-${pad2(m+1)}`;
+            const mesDisp=diasDisponibles.some(b=>b.tipo==="mes"&&b.valor===mes);
+            const excl=diasDisponibles.some(b=>b.tipo==="excluido"&&b.valor===iso);
+            const diaDisp=diasDisponibles.some(b=>b.tipo==="dia"&&b.valor===iso);
+            const isToday=new Date(y,m,d).getTime()===today.getTime();
+            let cls="cal-day";
+            if(isToday) cls+=" today";
+            if((mesDisp||diaDisp)&&!excl) cls+=" disponible";
+            if(excl) cls+=" excluido-admin";
+            grid.innerHTML+=`<div class="${cls}" data-iso="${iso}" data-mes-disp="${mesDisp}">${d}</div>`;
         }
-
-        function setEditEstado(estado) {
-            document.getElementById('editCitaEstado').value = estado;
-            document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
-                b.classList.toggle('active', b.dataset.estado === estado);
-            });
-        }
-
-        function abrirEditarCita(idCita) {
-            const cita = citas.find(c => c.id === idCita);
-            if (!cita) return;
-            document.getElementById('editCitaId').value = cita.id;
-            document.getElementById('editCitaNombre').value = cita.nombre_cliente || '';
-            document.getElementById('editCitaTelefono').value = cita.telefono || '';
-            document.getElementById('editCitaFecha').value = cita.fecha || '';
-            document.getElementById('editCitaHora').value = cita.hora || '';
-            setEditEstado(cita.estado || 'pendiente');
-            document.getElementById('editCitaModal').classList.add('show');
-        }
-
-        function closeEditCita() {
-            document.getElementById('editCitaModal').classList.remove('show');
-        }
-
-        document.getElementById('editCitaModal').addEventListener('click', e => {
-            if (e.target.id === 'editCitaModal') closeEditCita();
+        const trail=(7-((offset+dim)%7))%7;
+        for(let i=1;i<=trail;i++) grid.innerHTML+=`<div class="cal-day muted">${i}</div>`;
+        grid.querySelectorAll(".cal-day:not(.muted)").forEach(el=>{
+            el.addEventListener("click",()=>toggleDisponible("dia",el.dataset.iso,el.dataset.mesDisp));
         });
-
-        document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
-            b.addEventListener('click', () => setEditEstado(b.dataset.estado));
+    }
+    function renderDispDiaItems() {
+        const el=document.getElementById("dispDiaItems"); if(!el) return;
+        const dias=diasDisponibles.filter(b=>b.tipo==="dia").sort((a,b)=>a.valor.localeCompare(b.valor));
+        if(!dias.length){ el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div>`; return; }
+        el.innerHTML=dias.map(b=>{ const dt=new Date(b.valor+"T00:00:00"); return `<div class="disp-item"><span><i class="fa-regular fa-calendar-check" style="margin-right:8px;color:#4A7C59;"></i>${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}</span><button onclick="toggleDisponible('dia','${b.valor}')"><i class="fa-solid fa-xmark"></i></button></div>`; }).join("");
+    }
+    function renderMesesGrid() {
+        const grid=document.getElementById("mesesGrid"); if(!grid) return;
+        grid.innerHTML="";
+        [today.getFullYear(), today.getFullYear()+1].forEach((year,yi)=>{
+            for(let m=0;m<12;m++){
+                const valor=`${year}-${pad2(m+1)}`;
+                const disp=diasDisponibles.some(b=>b.tipo==="mes"&&b.valor===valor);
+                grid.innerHTML+=`<button type="button" class="mes-chip ${disp?"disponible":""}" onclick="toggleDisponible('mes','${valor}')" style="${yi>0?"opacity:.75":""}">${MONTHS_ES[m]}${yi>0?` '${String(year).slice(2)}`:""}</button>`;
+            }
         });
-
-        async function confirmarEliminarCita() {
-            const id = parseInt(document.getElementById('editCitaId').value, 10);
-            const ok = await askConfirm('Eliminar cita', 'Esta cita se eliminará definitivamente.');
-            if (!ok) return;
-            try {
-                await sb.from('citas').delete().eq('id', id);
-                toast('Cita eliminada', 'success');
-                closeEditCita();
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo eliminar', 'error'); }
+    }
+    async function toggleDisponible(tipo,valor,mesDisp){
+        if(tipo==="dia"&&mesDisp==="true"){
+            const excl=diasDisponibles.find(b=>b.tipo==="excluido"&&b.valor===valor);
+            if(excl){ await sb.from("dias_disponibles").delete().eq("id",excl.id); toast("Día reactivado","success"); }
+            else { await sb.from("dias_disponibles").insert([{tipo:"excluido",valor}]); toast("Día excluido","info"); }
+        } else {
+            const ex=diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
+            if(ex){ await sb.from("dias_disponibles").delete().eq("id",ex.id); toast(tipo==="mes"?"Mes deshabilitado":"Día deshabilitado","info"); }
+            else { await sb.from("dias_disponibles").insert([{tipo,valor}]); toast(tipo==="mes"?"Mes habilitado":"Día habilitado","success"); }
         }
-
-        async function guardarEdicionCita() {
-            const id = parseInt(document.getElementById('editCitaId').value, 10);
-            const nuevoEstado = document.getElementById('editCitaEstado').value || 'pendiente';
-            const previa = citas.find(c => c.id === id);
-            const estadoAnterior = previa ? (previa.estado || 'pendiente') : 'pendiente';
-
-            const payload = {
-                nombre_cliente: document.getElementById('editCitaNombre').value.trim(),
-                telefono: document.getElementById('editCitaTelefono').value.trim(),
-                fecha: document.getElementById('editCitaFecha').value,
-                hora: document.getElementById('editCitaHora').value,
-                estado: nuevoEstado,
-                // preservar duracion_minutos y servicio de la cita original
-                duracion_minutos: previa ? (parseInt(previa.duracion_minutos, 10) || 30) : 30,
-                servicio: previa ? (previa.servicio || '') : ''
-            };
-            if (!payload.nombre_cliente || !payload.telefono || !payload.fecha || !payload.hora) {
-                return toast('Completa todos los campos', 'error');
-            }
-            setBtnLoading('btnGuardarEdicion', true);
-            try {
-                const { error } = await sb.from('citas').update(payload).eq('id', id);
-                if (error) { toast('No se pudo actualizar', 'error'); return; }
-
-                // pasar de pendiente a confirmada → registrar clienta si no existe
-                if (estadoAnterior === 'pendiente' && nuevoEstado === 'confirmada') {
-                    const ya = clientas.some(c => (c.telefono||'').trim() === payload.telefono);
-                    if (!ya) await sb.from('clientas').insert([{ nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
-                }
-                // pasar a completada → sumar sello
-                if (estadoAnterior !== 'completada' && nuevoEstado === 'completada') {
-                    const cl = clientas.find(c => (c.telefono||'').trim() === payload.telefono);
-                    if (cl && (cl.visitas||0) < 10) {
-                        await sb.from('clientas').update({ visitas: (cl.visitas||0) + 1 }).eq('id', cl.id);
-                    }
-                }
-
-                toast('Cita actualizada', 'success');
-                closeEditCita();
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('Error al guardar', 'error');
-            } finally {
-                setBtnLoading('btnGuardarEdicion', false);
-            }
-        }
-
-        async function rechazarCita(idCita) {
-            const ok = await askConfirm('Rechazar solicitud', '¿Quieres descartar esta solicitud de cita?');
-            if (!ok) return;
-            try {
-                await sb.from('citas').delete().eq('id', idCita);
-                toast('Solicitud descartada', 'success');
-                cargarDatosAdmin();
-            } catch (e) {
-                toast('No se pudo descartar', 'error');
-            }
-        }
-
-        async function sumarVisita(id, actual) {
-            if (actual < 10) {
-                try {
-                    await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
-                    if (actual + 1 === 10) toast('¡Tarjeta completada! Servicio gratis desbloqueado.', 'success', 'Recompensa');
-                    cargarDatosAdmin();
-                } catch (e) { toast('No se pudo añadir el sello', 'error'); }
-            } else {
-                toast('Esta tarjeta ya está completa', 'info');
-            }
-        }
-
-        async function reiniciarVisitas(id) {
-            const ok = await askConfirm('Reiniciar tarjeta', 'Se pondrán los sellos a 0 (tras canjear la recompensa).');
-            if (!ok) return;
-            try {
-                await sb.from('clientas').update({ visitas: 0 }).eq('id', id);
-                toast('Tarjeta reiniciada', 'success');
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo reiniciar', 'error'); }
-        }
-
-        async function borrarCliente(id) {
-            const ok = await askConfirm('Eliminar clienta', 'Esta acción no se puede deshacer.');
-            if (!ok) return;
-            try {
-                await sb.from('clientas').delete().eq('id', id);
-                toast('Clienta eliminada', 'success');
-                cargarDatosAdmin();
-            } catch (e) { toast('No se pudo eliminar', 'error'); }
-        }
-
-        async function registrarNuevoCliente() {
-            const n = document.getElementById('regNombre').value.trim();
-            const t = document.getElementById('regTelef').value.trim();
-            if (!n || !t) return toast('Introduce nombre y teléfono', 'error');
-
-            setBtnLoading('btnRegistrar', true);
-            try {
-                const { error } = await sb.from('clientas').insert([{ nombre: n, telefono: t, visitas: 0 }]);
-                if (!error) {
-                    toast('Clienta registrada', 'success');
-                    document.getElementById('regNombre').value = '';
-                    document.getElementById('regTelef').value = '';
-                    cargarDatosAdmin();
-                } else { toast('No se pudo registrar', 'error'); }
-            } catch (e) { toast('Error de conexión', 'error'); }
-            finally { setBtnLoading('btnRegistrar', false); }
-        }
-
-
-        /* ---------- DÍAS DISPONIBLES ---------- */
-        let diasDisponibles = []; // [{id, tipo:'dia'|'mes', valor:'2025-06-15'|'2025-06'}]
-        let dCalCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-
-        function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
-
-        // Devuelve true si el slot `t` está ocupado teniendo en cuenta
-        // la duración de las citas ya guardadas y la duración del nuevo servicio
-        function slotBloqueado(t, citasDelDia, durNueva) {
-            const toMin = s => { const [h,m] = (s||'00:00').split(':').map(Number); return h*60+m; };
-            const tMin = toMin(t);
-            const durN = parseInt(durNueva, 10) || 30;
-            for (const c of citasDelDia) {
-                if ((c.estado||'pendiente') === 'cancelada') continue;
-                const inicio  = toMin((c.hora||'00:00').slice(0,5));
-                const durCita = parseInt(c.duracion_minutos, 10) || 30;
-                const fin     = inicio + durCita;
-                // Solapamiento: [tMin, tMin+durN) ∩ [inicio, fin) ≠ ∅
-                if (tMin < fin && tMin + durN > inicio) return true;
-            }
-            return false;
-        }
-
-        // Último slot de inicio válido: el servicio debe acabar antes de las 14h (mañana) o 21h (tarde)
-        function slotFueraDeHorario(t, durNueva) {
-            const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
-            const tMin = toMin(t);
-            const fin = tMin + durNueva;
-            if (tMin < 14*60) return fin > 14*60;   // mañana: no pasar de las 14:00
-            return fin > 21*60;                      // tarde:  no pasar de las 21:00
-        }
-
-        function isDiaDisponible(iso){
-            // Si no hay configuración, todos los días están disponibles (no bloquear reservas)
-            if(diasDisponibles.length === 0) return true;
-            const mes = iso.substring(0,7);
-            // Si está explícitamente excluido, nunca disponible
-            if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
-            return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
-        }
-
-        async function cargarDisponibles(){
-            try {
-                const { data, error } = await sb.from('dias_disponibles').select('*');
-                if (error) { diasDisponibles = []; return; }
-                diasDisponibles = data || [];
-                try { renderDCalendar(); } catch(e) {}
-                try { renderMesesGrid(); } catch(e) {}
-                try { renderDispDiaItems(); } catch(e) {}
-                try { renderCalendar(); } catch(e) {}
-            } catch(e) { console.warn('dias_disponibles tabla no existe aún', e); }
-        }
-
-        function renderDCalendar(){
-            const monthEl = document.getElementById('dCalMonth');
-            const grid = document.getElementById('dCalGrid');
-            if(!monthEl || !grid) return;
-            monthEl.textContent = `${MONTHS_ES[dCalCursor.getMonth()]} ${dCalCursor.getFullYear()}`;
-            grid.innerHTML = '';
-            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
-            const year = dCalCursor.getFullYear();
-            const month = dCalCursor.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const startOffset = (firstDay.getDay()+6)%7;
-            const daysInMonth = new Date(year, month+1, 0).getDate();
-            const prevDays = new Date(year, month, 0).getDate();
-            for(let i=startOffset-1;i>=0;i--) grid.innerHTML += `<div class="cal-day muted">${prevDays-i}</div>`;
-            for(let d=1;d<=daysInMonth;d++){
-                const dt = new Date(year,month,d);
-                const iso = `${year}-${pad2(month+1)}-${pad2(d)}`;
-                const mes = `${year}-${pad2(month+1)}`;
-                const mesDisp = diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===mes);
-                const excluido = diasDisponibles.some(b=>b.tipo==='excluido'&&b.valor===iso);
-                const diaDisp = diasDisponibles.some(b=>b.tipo==='dia'&&b.valor===iso);
-                const isToday = dt.getTime()===today.getTime();
-                let cls='cal-day';
-                if(isToday) cls+=' today';
-                if((mesDisp || diaDisp) && !excluido) cls+=' disponible';
-                if(excluido) cls+=' excluido-admin';
-                grid.innerHTML += `<div class="${cls}" data-iso="${iso}" data-mes-disp="${mesDisp}">${d}</div>`;
-            }
-            const totalCells = startOffset+daysInMonth;
-            const trail = (7-(totalCells%7))%7;
-            for(let i=1;i<=trail;i++) grid.innerHTML+=`<div class="cal-day muted">${i}</div>`;
-            grid.querySelectorAll('.cal-day:not(.muted)').forEach(el=>{
-                el.addEventListener('click', ()=>toggleDisponible('dia', el.dataset.iso, el.dataset.mesDisp));
+        cargarDisponibles();
+    }
+    function initDispPanel(){
+        dCalCursor=new Date(today.getFullYear(),today.getMonth(),1);
+        const dPrev=document.getElementById("dCalPrev");
+        const dNext=document.getElementById("dCalNext");
+        if(dPrev) dPrev.addEventListener("click",()=>{ dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()-1,1); renderDCalendar(); });
+        if(dNext) dNext.addEventListener("click",()=>{ dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()+1,1); renderDCalendar(); });
+        document.querySelectorAll(".disp-tab").forEach(tab=>{
+            tab.addEventListener("click",()=>{
+                document.querySelectorAll(".disp-tab").forEach(t=>t.classList.remove("active"));
+                document.querySelectorAll(".disp-panel").forEach(p=>p.classList.remove("active"));
+                tab.classList.add("active");
+                const target=document.getElementById("dpanel"+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1));
+                if(target) target.classList.add("active");
             });
-        }
+        });
+    }
 
-        function renderDispDiaItems(){
-            const el = document.getElementById('dispDiaItems');
-            if(!el) return;
-            const dias = diasDisponibles.filter(b=>b.tipo==='dia').sort((a,b)=>a.valor.localeCompare(b.valor));
-            if(dias.length===0){
-                el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div>`;
-                return;
-            }
-            el.innerHTML = dias.map(b=>{
-                const dt = new Date(b.valor+'T00:00:00');
-                const label = `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}`;
-                return `<div class="disp-item"><span><i class="fa-regular fa-calendar-check" style="margin-right:8px;color:#4A7C59;"></i>${label}</span><button onclick="toggleDisponible('dia','${b.valor}')" title="Quitar"><i class="fa-solid fa-xmark"></i></button></div>`;
-            }).join('');
-        }
+    // ══════════════════════════════════════════════════════
+    //  INIT
+    // ══════════════════════════════════════════════════════
+    try { initPicker(); }    catch(e){ console.error("initPicker:",e); }
+    try { cargarDisponibles(); } catch(e){ console.error("cargarDisponibles:",e); }
+    try { mostrarVista("login"); } catch(e){ console.error("mostrarVista:",e); }
 
-        function renderMesesGrid(){
-            const grid = document.getElementById('mesesGrid');
-            if(!grid) return;
-            const year = today.getFullYear();
-            grid.innerHTML = '';
-            for(let m=0;m<12;m++){
-                const valor = `${year}-${pad2(m+1)}`;
-                const disp = diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===valor);
-                grid.innerHTML += `<button type="button" class="mes-chip ${disp?'disponible':''}" onclick="toggleDisponible('mes','${valor}')">${MONTHS_ES[m]}</button>`;
-            }
-            const nextYear = year+1;
-            for(let m=0;m<12;m++){
-                const valor=`${nextYear}-${pad2(m+1)}`;
-                const disp=diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===valor);
-                grid.innerHTML+=`<button type="button" class="mes-chip ${disp?'disponible':''}" onclick="toggleDisponible('mes','${valor}')" style="opacity:.75">${MONTHS_ES[m]} '${String(nextYear).slice(2)}</button>`;
-            }
-        }
-
-        async function toggleDisponible(tipo, valor, mesDisp){
-            if(tipo === 'dia' && mesDisp === 'true') {
-                // month is enabled — toggle exclusion for this specific day
-                const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
-                if(excl){
-                    await sb.from('dias_disponibles').delete().eq('id',excl.id);
-                    toast('Día reactivado dentro del mes','success');
-                } else {
-                    await sb.from('dias_disponibles').insert([{tipo:'excluido', valor}]);
-                    toast('Día excluido del mes','info');
-                }
-            } else {
-                const existing = diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
-                if(existing){
-                    await sb.from('dias_disponibles').delete().eq('id',existing.id);
-                    toast(tipo==='mes' ? 'Mes deshabilitado' : 'Día deshabilitado', 'info');
-                } else {
-                    await sb.from('dias_disponibles').insert([{tipo, valor}]);
-                    toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
-                }
-            }
-            cargarDisponibles();
-        }
-
-        function initDispPanel(){
-            const dPrev = document.getElementById('dCalPrev');
-            const dNext = document.getElementById('dCalNext');
-            if (dPrev) dPrev.addEventListener('click',()=>{
-                dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()-1,1);
-                renderDCalendar();
-            });
-            if (dNext) dNext.addEventListener('click',()=>{
-                dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()+1,1);
-                renderDCalendar();
-            });
-            document.querySelectorAll('.disp-tab').forEach(tab=>{
-                tab.addEventListener('click',()=>{
-                    document.querySelectorAll('.disp-tab').forEach(t=>t.classList.remove('active'));
-                    document.querySelectorAll('.disp-panel').forEach(p=>p.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = document.getElementById('dpanel'+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1));
-                    if (target) target.classList.add('active');
-                });
-            });
-        }
-
-        /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
-        let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-        let selectedDate = null;
-        let selectedTime = null;
-        let activePeriod = 'morning';
-
-        function pad2(n){ return String(n).padStart(2,'0'); }
-        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
-        function fmtPretty(d){
-            const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-            return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
-        }
-
-        function renderCalendar(){
-            const monthEl = document.getElementById('calMonth');
-            const grid = document.getElementById('calGrid');
-            if (!monthEl || !grid) return;
-
-            monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
-
-            // limit prev nav: cannot go before current month
-            const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            document.getElementById('calPrev').disabled = calCursor <= minMonth;
-
-            grid.innerHTML = '';
-            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
-
-            const year = calCursor.getFullYear();
-            const month = calCursor.getMonth();
-            const firstDay = new Date(year, month, 1);
-            // mon=0 .. sun=6
-            let startOffset = (firstDay.getDay() + 6) % 7;
-            const daysInMonth = new Date(year, month+1, 0).getDate();
-            const prevDays = new Date(year, month, 0).getDate();
-
-            // leading days from prev month
-            for (let i = startOffset - 1; i >= 0; i--) {
-                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
-            }
-            // current month
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dt = new Date(year, month, d);
-                const iso = fmtISO(dt);
-                const past = dt < today;
-                const isToday = dt.getTime() === today.getTime();
-                const isSelected = selectedDate && fmtISO(selectedDate) === iso;
-                const disponible = isDiaDisponible(iso);
-
-                let cls = 'cal-day';
-                if (past) cls += ' disabled';
-                else if (!disponible) cls += ' no-disponible';
-                if (isToday) cls += ' today';
-                if (isSelected) cls += ' selected';
-                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
-            }
-            // trailing fill to multiple of 7
-            const totalCells = startOffset + daysInMonth;
-            const trail = (7 - (totalCells % 7)) % 7;
-            for (let i = 1; i <= trail; i++) {
-                grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
-            }
-
-            grid.querySelectorAll('.cal-day:not(.disabled):not(.muted):not(.no-disponible)').forEach(el => {
-                el.addEventListener('click', async () => {
-                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
-                    selectedDate = new Date(y, m-1, d);
-                    document.getElementById('citaFecha').value = el.dataset.iso;
-                    const lbl = document.getElementById('pickedDateLabel');
-                    lbl.textContent = fmtPretty(selectedDate);
-                    lbl.classList.remove('empty');
-                    // Reset selected time when date changes
-                    selectedTime = null;
-                    document.getElementById('citaHora').value = '';
-                    const tLbl = document.getElementById('pickedTimeLabel');
-                    tLbl.textContent = 'Sin elegir';
-                    tLbl.classList.add('empty');
-                    // Reload citas for fresh slot occupancy
-                    try {
-                        const { data } = await sb.from('citas').select('id,fecha,hora,estado,duracion_minutos').eq('fecha', el.dataset.iso);
-                        // Reemplazar/añadir citas de este día en el array local
-                        if (data) {
-                            // Quitar las que ya tenemos de este día (pueden estar desactualizadas)
-                            const iso = el.dataset.iso;
-                            citas = citas.filter(c => c.fecha !== iso);
-                            data.forEach(nc => citas.push(nc));
-                        }
-                    } catch(e) { /* sin conexión, usar datos en memoria */ }
-                    renderCalendar();
-                    renderTimeSlots();
-                });
-            });
-        }
-
-        function renderTimeSlots(){
-            const wrap = document.getElementById('timeSlots');
-            if (!wrap) return;
-            const slots = SLOTS[activePeriod];
-            wrap.innerHTML = '';
-
-            if (!selectedDate) {
-                wrap.innerHTML = `<div class="time-empty">Elige primero una fecha</div>`;
-                return;
-            }
-            if (!selectedDuracion) {
-                wrap.innerHTML = `<div class="time-empty">Elige primero el servicio</div>`;
-                return;
-            }
-
-            const isoSel = fmtISO(selectedDate);
-            const citasDelDia = citas.filter(c => c.fecha === isoSel);
-            const now = new Date();
-            const esHoy = isoSel === fmtISO(today);
-
-            slots.forEach(t => {
-                const [hh, mm] = t.split(':').map(Number);
-                const pasado = esHoy && (hh * 60 + mm) <= (now.getHours() * 60 + now.getMinutes());
-                const fueraHorario = slotFueraDeHorario(t, selectedDuracion);
-                const bloqueado = slotBloqueado(t, citasDelDia, selectedDuracion);
-                const noDisp = pasado || fueraHorario || bloqueado;
-                const isSel = selectedTime === t && !noDisp;
-                const motivo = bloqueado ? '<span style="font-size:8px;display:block;opacity:.65;line-height:1.2;">ocupado</span>'
-                             : fueraHorario ? '<span style="font-size:8px;display:block;opacity:.65;line-height:1.2;">no cabe</span>'
-                             : '';
-                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''} ${noDisp ? 'disabled' : ''}" data-time="${t}" ${noDisp ? 'disabled' : ''}>${t}${motivo}</button>`;
-            });
-            wrap.querySelectorAll('.time-slot:not([disabled])').forEach(el => {
-                el.addEventListener('click', () => {
-                    selectedTime = el.dataset.time;
-                    document.getElementById('citaHora').value = selectedTime;
-                    const lbl = document.getElementById('pickedTimeLabel');
-                    lbl.textContent = `${selectedTime} h`;
-                    lbl.classList.remove('empty');
-                    renderTimeSlots();
-                });
-            });
-        }
-
-        function initPicker(){
-            renderCalendar();
-            renderTimeSlots();
-
-            // Servicio selector
-            document.querySelectorAll('#servicioGrid .servicio-opcion').forEach(label => {
-                label.addEventListener('click', () => {
-                    const radio = label.querySelector('input[type=radio]');
-                    radio.checked = true;
-                    document.querySelectorAll('#servicioGrid .servicio-opcion').forEach(l => l.classList.remove('selected'));
-                    label.classList.add('selected');
-                    selectedDuracion = parseInt(radio.dataset.dur, 10);
-                    document.getElementById('citaServicio').value = radio.value;
-                    document.getElementById('citaDuracion').value = selectedDuracion;
-                    const lbl = document.getElementById('pickedServiceLabel');
-                    lbl.textContent = radio.value.split(' · ')[1] || radio.value;
-                    lbl.classList.remove('empty');
-                    // Info de duración
-                    const h = Math.floor(selectedDuracion / 60);
-                    const m = selectedDuracion % 60;
-                    const durStr = h > 0 ? (m > 0 ? `${h} h ${m} min` : `${h} h`) : `${m} min`;
-                    const info = document.getElementById('servicioDurInfo');
-                    info.textContent = `Duración: ${durStr} — se bloquearán los horarios que ocupen este tiempo`;
-                    info.classList.add('show');
-                    // Reset hora si ya no es válida con la nueva duración
-                    if (selectedTime && selectedDate) {
-                        const citasDelDia = citas.filter(c => c.fecha === fmtISO(selectedDate));
-                        if (slotBloqueado(selectedTime, citasDelDia, selectedDuracion) || slotFueraDeHorario(selectedTime, selectedDuracion)) {
-                            selectedTime = null;
-                            document.getElementById('citaHora').value = '';
-                            document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
-                            document.getElementById('pickedTimeLabel').classList.add('empty');
-                        }
-                    }
-                    renderTimeSlots();
-                });
-            });
-
-            const cPrev = document.getElementById('calPrev');
-            const cNext = document.getElementById('calNext');
-            if (cPrev) cPrev.addEventListener('click', () => {
-                const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                const candidate = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1);
-                if (candidate >= minMonth) { calCursor = candidate; renderCalendar(); }
-            });
-            if (cNext) cNext.addEventListener('click', () => {
-                calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1);
-                renderCalendar();
-            });
-            document.querySelectorAll('.time-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    activePeriod = tab.dataset.period;
-                    renderTimeSlots();
-                });
-            });
-        }
-
-        function resetPicker(){
-            selectedDate = null;
-            selectedTime = null;
-            selectedDuracion = 30;
-            activePeriod = 'morning';
-            calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
-            document.getElementById('citaFecha').value = '';
-            document.getElementById('citaHora').value = '';
-            document.getElementById('citaServicio').value = '';
-            document.getElementById('citaDuracion').value = '';
-            document.getElementById('pickedDateLabel').textContent = 'Sin elegir';
-            document.getElementById('pickedDateLabel').classList.add('empty');
-            document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
-            document.getElementById('pickedTimeLabel').classList.add('empty');
-            document.getElementById('pickedServiceLabel').textContent = 'Sin elegir';
-            document.getElementById('pickedServiceLabel').classList.add('empty');
-            document.querySelectorAll('#servicioGrid .servicio-opcion').forEach(l => l.classList.remove('selected'));
-            document.querySelectorAll('#servicioGrid input[type=radio]').forEach(r => r.checked = false);
-            const info = document.getElementById('servicioDurInfo');
-            if (info) info.classList.remove('show');
-            document.querySelectorAll('.time-tab').forEach(t => t.classList.toggle('active', t.dataset.period === 'morning'));
-            renderCalendar();
-            renderTimeSlots();
-        }
-
-        /* ---------- INIT ---------- */
-        let agendaInitialized = false;
-
-        try { initPicker(); } catch (e) { console.error('initPicker falló:', e); }
-        try { initAgenda(); agendaInitialized = true; } catch (e) { console.error('initAgenda falló:', e); }
-        try { cargarDisponibles(); } catch(e) { console.error('cargarDisponibles falló:', e); }
-        try { mostrarVista('login'); } catch (e) { console.error('mostrarVista falló:', e); }
-    </script>
+</script>
 </body>
 </html>
