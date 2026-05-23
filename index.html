@@ -990,7 +990,7 @@
                         <div class="time-slots" id="timeSlots"></div>
                         <input type="hidden" id="citaHora">
 
-                        <button type="submit" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;"><span>Enviar Solicitud</span><span class="spinner"></span></button>
+                        <button type="button" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;" onclick="enviarSolicitudCita()"><span>Enviar Solicitud</span><span class="spinner"></span></button>
                     </form>
 
                     <button class="link-soft" onclick="mostrarVista('login')">
@@ -1630,97 +1630,81 @@
 
         /* ---------- APPOINTMENT REQUEST ---------- */
         async function enviarSolicitudCita() {
-            const nombre   = document.getElementById('citaNombre').value.trim();
-            const telefono = document.getElementById('citaTelefono').value.trim();
-            const usuario  = document.getElementById('citaUsuario').value.trim().toLowerCase();
-            const clave    = document.getElementById('citaClave').value;
-            const claveC   = document.getElementById('citaClaveConfirm').value;
-            const fecha    = document.getElementById('citaFecha').value;
-            const hora     = document.getElementById('citaHora').value;
-            const servicio = document.getElementById('citaServicio').value;
-            const duracion = parseInt(document.getElementById('citaDuracion').value, 10) || 30;
+            console.log('[cita] enviarSolicitudCita iniciado');
+            // ── Leer campos ───────────────────────────────────────────────
+            const nombre   = (document.getElementById('citaNombre')?.value || '').trim();
+            const telefono = (document.getElementById('citaTelefono')?.value || '').trim();
+            const usuario  = (document.getElementById('citaUsuario')?.value || '').trim().toLowerCase();
+            const clave    = document.getElementById('citaClave')?.value || '';
+            const claveC   = document.getElementById('citaClaveConfirm')?.value || '';
+            const fecha    = document.getElementById('citaFecha')?.value || '';
+            const hora     = document.getElementById('citaHora')?.value || '';
+            const servicio = document.getElementById('citaServicio')?.value || '';
+            const duracion = parseInt(document.getElementById('citaDuracion')?.value, 10) || 30;
 
-            // ── Validaciones ──────────────────────────────────────────────
-            if (!nombre || !telefono) return toast('Introduce tu nombre y teléfono', 'error');
-            if (!usuario) return toast('Elige un nombre de usuario para tu cuenta', 'error');
-            if (!/^[a-z0-9._]{3,}$/.test(usuario)) return toast('El usuario solo puede contener letras, números, puntos y guión bajo (mín. 3 caracteres)', 'error');
-            if (!clave || clave.length < 6) return toast('La contraseña debe tener al menos 6 caracteres', 'error');
-            if (clave !== claveC) return toast('Las contraseñas no coinciden', 'error');
-            if (!servicio) return toast('Selecciona el servicio que quieres reservar', 'error');
-            if (!fecha || !hora) return toast('Selecciona fecha y hora', 'error');
-
+            // ── Validaciones (antes de bloquear botón) ────────────────────
+            if (!nombre || !telefono) { toast('Introduce tu nombre y teléfono', 'error'); return; }
+            if (!usuario) { toast('Elige un nombre de usuario para tu cuenta', 'error'); return; }
+            if (!/^[a-z0-9._]{3,}$/.test(usuario)) { toast('Usuario: solo letras, números, punto o guión bajo. Mín. 3 caracteres.', 'error'); return; }
+            if (!clave || clave.length < 6) { toast('La contraseña debe tener al menos 6 caracteres', 'error'); return; }
+            if (clave !== claveC) { toast('Las contraseñas no coinciden', 'error'); return; }
+            if (!servicio) { toast('Selecciona el servicio', 'error'); return; }
+            if (!fecha) { toast('Selecciona una fecha', 'error'); return; }
+            if (!hora) { toast('Selecciona una hora', 'error'); return; }
             const fechaDt = new Date(fecha + 'T00:00:00');
-            if (fechaDt < today) return toast('La fecha seleccionada ya ha pasado. Por favor elige otra.', 'error');
+            if (fechaDt < today) { toast('La fecha ya ha pasado, elige otra.', 'error'); return; }
 
+            // ── Bloquear botón ────────────────────────────────────────────
             setBtnLoading('btnEnviarCita', true);
 
             try {
-                // ── Comprobar usuario único ────────────────────────────────
-                const { data: uCheck } = await sb.from('clientas').select('id').eq('usuario', usuario).maybeSingle();
-                if (uCheck) {
-                    toast('Ese nombre de usuario ya está en uso. Elige otro.', 'error');
+                // 1. Usuario único
+                const resU = await sb.from('clientas').select('id').eq('usuario', usuario).maybeSingle();
+                if (resU.error) { toast('Error comprobando usuario: ' + resU.error.message, 'error'); return; }
+                if (resU.data)  { toast('Ese usuario ya existe, elige otro.', 'error'); return; }
+
+                // 2. Conflicto de horario
+                const resC = await sb.from('citas').select('hora,duracion_minutos,estado').eq('fecha', fecha).neq('estado', 'cancelada');
+                if (!resC.error && slotBloqueado(hora, resC.data || [], duracion)) {
+                    toast('Ese horario se solapa con otra cita. Elige otra hora.', 'error');
                     return;
                 }
 
-                // ── Comprobar conflicto de horario (considera duraciones) ──
-                const { data: citasExistentes } = await sb.from('citas')
-                    .select('hora,duracion_minutos,estado')
-                    .eq('fecha', fecha)
-                    .neq('estado', 'cancelada');
-                if (slotBloqueado(hora, citasExistentes || [], duracion)) {
-                    toast('Ese horario ya está ocupado (otra cita se solapa). Por favor elige otra hora.', 'error');
-                    return;
-                }
+                // 3. Crear perfil
+                const resP = await sb.from('clientas').insert([{ nombre, telefono, usuario, clave, visitas: 0 }]).select().single();
+                if (resP.error) { toast('No se pudo crear tu perfil: ' + resP.error.message, 'error'); return; }
 
-                // ── Crear perfil de clienta ────────────────────────────────
-                const { data: nuevaClienta, error: errClienta } = await sb.from('clientas')
-                    .insert([{ nombre, telefono, usuario, clave, visitas: 0 }])
-                    .select()
-                    .single();
-
-                if (errClienta) {
-                    console.error('Error creando perfil:', errClienta);
-                    toast('No se pudo crear tu perfil: ' + errClienta.message, 'error');
-                    return;
-                }
-
-                // ── Guardar cita ───────────────────────────────────────────
-                const citaPayload = {
+                // 4. Guardar cita
+                const resA = await sb.from('citas').insert([{
                     nombre_cliente: nombre, telefono, fecha, hora,
                     servicio, duracion_minutos: duracion, estado: 'pendiente'
-                };
-                const { data: citaData, error: errCita } = await sb.from('citas').insert([citaPayload]).select();
+                }]).select();
+                if (resA.error) { toast('Perfil creado, pero error al guardar la cita: ' + resA.error.message, 'error'); return; }
 
-                if (errCita) {
-                    console.error('Error guardando cita:', errCita);
-                    toast('Perfil creado pero no se pudo guardar la cita. Contacta con el salón.', 'error');
-                    return;
-                }
+                // ── Éxito ─────────────────────────────────────────────────
+                if (resA.data && resA.data.length > 0) citas.push(resA.data[0]);
+                toast('¡Solicitud enviada! Te avisaremos cuando esté confirmada.', 'success', '¡Bienvenida!');
 
-                // ── Éxito ──────────────────────────────────────────────────
-                toast('¡Todo listo! Tu cuenta y solicitud están creadas.', 'success', 'Bienvenida');
-                if (citaData && citaData.length > 0) citas.push(citaData[0]);
-                if (typeof renderAdmin === 'function') renderAdmin();
-
-                document.getElementById('citaNombre').value = '';
-                document.getElementById('citaTelefono').value = '';
-                document.getElementById('citaUsuario').value = '';
-                document.getElementById('citaClave').value = '';
-                document.getElementById('citaClaveConfirm').value = '';
-                document.getElementById('usuarioFeedback').textContent = '';
+                // Limpiar form
+                ['citaNombre','citaTelefono','citaUsuario','citaClave','citaClaveConfirm'].forEach(id => {
+                    const el = document.getElementById(id); if (el) el.value = '';
+                });
+                const fb = document.getElementById('usuarioFeedback'); if (fb) fb.textContent = '';
                 evalPassStrength('');
                 resetPicker();
 
-                // Pre-rellenar login con el usuario recién creado
-                document.getElementById('loginUsuario').value = usuario;
+                // Pre-rellenar login
+                const loginU = document.getElementById('loginUsuario');
+                if (loginU) loginU.value = usuario;
+
                 setTimeout(() => {
                     mostrarVista('login');
-                    toast('Inicia sesión con tu nuevo usuario', 'info');
-                }, 900);
+                    setTimeout(() => toast('Usa tu usuario y contraseña para entrar', 'info'), 400);
+                }, 800);
 
             } catch (e) {
-                console.error('Error en enviarSolicitudCita:', e);
-                toast('Problema de red: ' + (e.message || 'Inténtalo de nuevo'), 'error');
+                console.error('enviarSolicitudCita excepción:', e);
+                toast('Error inesperado: ' + (e.message || String(e)), 'error');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
