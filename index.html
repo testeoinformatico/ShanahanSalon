@@ -142,6 +142,38 @@
         .btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
         .link-soft { background: none; border: none; color: var(--muted); font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; cursor: pointer; padding: 14px 0 0; display: block; width: 100%; text-align: center; transition: color .3s var(--ease); }
         .time-slot.disabled { opacity: .38; cursor: not-allowed; background: var(--cream-deep); color: var(--muted); border-color: var(--line); transform: none !important; box-shadow: none !important; }
+
+        /* ---------- SERVICIO SELECTOR ---------- */
+        .servicio-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+        .servicio-grupo { margin-bottom: 2px; }
+        .servicio-grupo-titulo {
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--accent); font-weight: 600; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .servicio-grupo-titulo::after { content:''; flex:1; height:1px; background:rgba(201,167,77,.25); }
+        .servicio-opcion {
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid var(--line); background: #fff; padding: 11px 14px;
+            cursor: pointer; transition: all .25s var(--ease); gap: 10px;
+        }
+        .servicio-opcion:hover { border-color: var(--accent); background: var(--cream); }
+        .servicio-opcion.selected { border-color: var(--burgundy); background: var(--burgundy-soft); }
+        .servicio-opcion input[type=radio] { display: none; }
+        .servicio-opcion-nombre { font-size: 12.5px; color: var(--dark-text); font-weight: 500; flex: 1; }
+        .servicio-opcion-dur {
+            font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--muted); background: var(--cream-deep); padding: 3px 8px;
+            white-space: nowrap; font-weight: 600;
+        }
+        .servicio-opcion.selected .servicio-opcion-dur { background: var(--burgundy); color: #fff; }
+        .servicio-duracion-info {
+            display: none; text-align: center; padding: 10px 14px;
+            background: rgba(201,167,77,.10); border-left: 2px solid var(--accent);
+            font-size: 12px; color: #8a6f25; font-weight: 500; margin-top: 2px; margin-bottom: 16px;
+        }
+        .servicio-duracion-info.show { display: block; }
+        .no-disponible { background: var(--cream-deep) !important; color: #C8BDB6 !important; cursor: not-allowed !important; border-color: transparent !important; }
         .divider-soft { display: flex; align-items: center; gap: 12px; margin: 24px 0 18px; color: var(--line); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
         .divider-soft::before, .divider-soft::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
@@ -839,6 +871,45 @@
                             <label>Teléfono</label>
                             <i class="fa-solid fa-phone field-icon"></i>
                         </div>
+                        <div class="picker-label" style="margin-top:8px;">
+                            <span><i class="fa-solid fa-spa" style="margin-right:8px; color:var(--accent);"></i>Selecciona un servicio</span>
+                            <span class="picked empty" id="pickedServiceLabel">Sin elegir</span>
+                        </div>
+                        <div class="servicio-grid" id="servicioGrid">
+
+                            <div class="servicio-grupo">
+                                <div class="servicio-grupo-titulo">Manicura Rusa</div>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Nivelación + Color Liso" data-dur="75"><span class="servicio-opcion-nombre">Nivelación + Color Liso</span><span class="servicio-opcion-dur">1 h 15 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Nivelación + Decoración Sencilla" data-dur="105"><span class="servicio-opcion-nombre">Nivelación + Decoración Sencilla</span><span class="servicio-opcion-dur">1 h 45 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Nivelación + Decoración Elaborada" data-dur="135"><span class="servicio-opcion-nombre">Nivelación + Decoración Elaborada</span><span class="servicio-opcion-dur">2 h 15 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Extensión Gel + Color Liso" data-dur="120"><span class="servicio-opcion-nombre">Extensión de Gel + Color Liso</span><span class="servicio-opcion-dur">2 h</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Extensión Gel + Decoración Sencilla" data-dur="150"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Sencilla</span><span class="servicio-opcion-dur">2 h 30 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Mani Rusa · Extensión Gel + Decoración Elaborada" data-dur="180"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Elaborada</span><span class="servicio-opcion-dur">3 h</span></label>
+                            </div>
+
+                            <div class="servicio-grupo">
+                                <div class="servicio-grupo-titulo">Pedicura Macro</div>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Pedi Macro · Esmalte Semipermanente" data-dur="60"><span class="servicio-opcion-nombre">Con Esmalte Semipermanente</span><span class="servicio-opcion-dur">1 h</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Pedi Macro · Semipermanente + Tratamiento Durezas" data-dur="80"><span class="servicio-opcion-nombre">Semipermanente + Tratamiento Durezas</span><span class="servicio-opcion-dur">1 h 20 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Pedi Macro · Solo Limpieza" data-dur="40"><span class="servicio-opcion-nombre">Solo Limpieza</span><span class="servicio-opcion-dur">40 min</span></label>
+                            </div>
+
+                            <div class="servicio-grupo">
+                                <div class="servicio-grupo-titulo">Combos Mani + Pedi</div>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente" data-dur="135"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">2 h 15 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente" data-dur="195"><span class="servicio-opcion-nombre">Mani Rusa Extensión Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">3 h 15 min</span></label>
+                            </div>
+
+                            <div class="servicio-grupo">
+                                <div class="servicio-grupo-titulo">Extras de Decoración</div>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Extra · Decoración Sencilla" data-dur="20"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-dur">+ 20 min</span></label>
+                                <label class="servicio-opcion"><input type="radio" name="servicio" value="Extra · Decoración Elaborada" data-dur="40"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-dur">+ 40 min</span></label>
+                            </div>
+                        </div>
+                        <div class="servicio-duracion-info" id="servicioDurInfo"></div>
+                        <input type="hidden" id="citaServicio">
+                        <input type="hidden" id="citaDuracion">
+
                         <div class="picker-label">
                             <span><i class="fa-regular fa-calendar" style="margin-right:8px; color:var(--accent);"></i>Selecciona una fecha</span>
                             <span class="picked empty" id="pickedDateLabel">Sin elegir</span>
@@ -1145,10 +1216,15 @@
         /* ---------- SHARED DATE CONSTANTS ---------- */
         const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
         const DOW_ES = ['L','M','X','J','V','S','D'];
+        // Todos los slots de inicio posibles (intervalos 30 min)
+        const ALL_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30',
+                           '16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30'];
         const SLOTS = {
             morning:   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30'],
             afternoon: ['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30']
         };
+        // Duración seleccionada en minutos (se actualiza al elegir servicio)
+        let selectedDuracion = 30;
         const today = new Date(); today.setHours(0,0,0,0);
 
         /* ---------- TOASTS ---------- */
@@ -1463,12 +1539,17 @@
                 telefono: document.getElementById('citaTelefono').value.trim(),
                 fecha: document.getElementById('citaFecha').value,
                 hora: document.getElementById('citaHora').value,
+                servicio: document.getElementById('citaServicio').value,
+                duracion_minutos: parseInt(document.getElementById('citaDuracion').value, 10) || 30,
                 estado: 'pendiente'
             };
 
             // 1. Validar campos vacíos
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
-                return toast('Completa todos los campos: nombre, teléfono, fecha y hora', 'error');
+                return toast('Completa todos los campos: nombre, teléfono, servicio, fecha y hora', 'error');
+            }
+            if (!cita.servicio) {
+                return toast('Selecciona el servicio que quieres reservar', 'error');
             }
 
             // 2. Validar que la fecha no sea pasada
@@ -1622,7 +1703,8 @@
                     <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
                     <div class="appt-info">
                         <div class="appt-name">${c.nombre_cliente || '—'}</div>
-                        <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono || '—'}</div>
+                        ${c.servicio ? `<div style="font-size:10.5px;color:var(--accent);letter-spacing:.8px;font-weight:600;margin-bottom:2px;">${c.servicio}</div>` : ''}
+                        <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono || '—'}${c.duracion_minutos ? ` · <span style="color:var(--muted)">${c.duracion_minutos} min</span>` : ''}</div>
                         <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
                     </div>
                     <div class="appt-actions">
@@ -1735,9 +1817,10 @@
                     const fecha = cita.fecha ? new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'long' }) : '—';
                     lista.innerHTML += `<div class="cita-card">
                         <div class="cita-name">${cita.nombre_cliente}</div>
+                        ${cita.servicio ? `<div style="font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:600;">${cita.servicio}</div>` : ''}
                         <div class="cita-meta">
                             <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
-                            <span><i class="fa-regular fa-clock"></i>${cita.hora || '—'}</span>
+                            <span><i class="fa-regular fa-clock"></i>${cita.hora || '—'}${cita.duracion_minutos ? ` · ${cita.duracion_minutos} min` : ''}</span>
                             <span><i class="fa-solid fa-phone"></i>${cita.telefono || '—'}</span>
                         </div>
                         <div class="cita-actions">
@@ -1957,7 +2040,32 @@
 
         function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
 
-        function isDiaDisponible(iso){
+        // Devuelve true si el slot `t` está ocupado teniendo en cuenta
+        // la duración de las citas ya guardadas y la duración del nuevo servicio
+        function slotBloqueado(t, citasDelDia, durNueva) {
+            const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+            const tMin = toMin(t);
+            // El nuevo servicio ocupa [tMin, tMin+durNueva)
+            for (const c of citasDelDia) {
+                if ((c.estado||'pendiente') === 'cancelada') continue;
+                const inicio = toMin((c.hora||'00:00').slice(0,5));
+                const fin    = inicio + (c.duracion_minutos || 30);
+                // Colisión si los intervalos se solapan
+                if (tMin < fin && tMin + durNueva > inicio) return true;
+            }
+            return false;
+        }
+
+        // Último slot de inicio válido: el servicio debe acabar antes de las 14h (mañana) o 21h (tarde)
+        function slotFueraDeHorario(t, durNueva) {
+            const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+            const tMin = toMin(t);
+            const fin = tMin + durNueva;
+            if (tMin < 14*60) return fin > 14*60;   // mañana: no pasar de las 14:00
+            return fin > 21*60;                      // tarde:  no pasar de las 21:00
+        }
+
+                function isDiaDisponible(iso){
             // Si no hay configuración, todos los días están disponibles (no bloquear reservas)
             if(diasDisponibles.length === 0) return true;
             const mes = iso.substring(0,7);
@@ -2192,30 +2300,32 @@
             if (!wrap) return;
             const slots = SLOTS[activePeriod];
             wrap.innerHTML = '';
+
             if (!selectedDate) {
                 wrap.innerHTML = `<div class="time-empty">Elige primero una fecha</div>`;
                 return;
             }
+            if (!selectedDuracion) {
+                wrap.innerHTML = `<div class="time-empty">Elige primero el servicio</div>`;
+                return;
+            }
 
-            // Calcular slots ya ocupados para la fecha seleccionada
             const isoSel = fmtISO(selectedDate);
-            const ocupadas = new Set(
-                citas
-                    .filter(c => c.fecha === isoSel && (c.estado || 'pendiente') !== 'cancelada')
-                    .map(c => (c.hora || '').slice(0, 5))
-            );
-
-            // Si es hoy, también bloquear horas pasadas
+            const citasDelDia = citas.filter(c => c.fecha === isoSel);
             const now = new Date();
             const esHoy = isoSel === fmtISO(today);
 
             slots.forEach(t => {
                 const [hh, mm] = t.split(':').map(Number);
-                const pasado = esHoy && (hh < now.getHours() || (hh === now.getHours() && mm <= now.getMinutes()));
-                const ocupado = ocupadas.has(t);
-                const noDisponible = pasado || ocupado;
-                const isSel = selectedTime === t && !noDisponible;
-                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''} ${noDisponible ? 'disabled' : ''}" data-time="${t}" ${noDisponible ? 'disabled' : ''}>${t}${ocupado ? '<span style="font-size:8px;display:block;opacity:.6;">ocupado</span>' : ''}</button>`;
+                const pasado = esHoy && (hh * 60 + mm) <= (now.getHours() * 60 + now.getMinutes());
+                const fueraHorario = slotFueraDeHorario(t, selectedDuracion);
+                const bloqueado = slotBloqueado(t, citasDelDia, selectedDuracion);
+                const noDisp = pasado || fueraHorario || bloqueado;
+                const isSel = selectedTime === t && !noDisp;
+                const motivo = bloqueado ? '<span style="font-size:8px;display:block;opacity:.65;line-height:1.2;">ocupado</span>'
+                             : fueraHorario ? '<span style="font-size:8px;display:block;opacity:.65;line-height:1.2;">no cabe</span>'
+                             : '';
+                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''} ${noDisp ? 'disabled' : ''}" data-time="${t}" ${noDisp ? 'disabled' : ''}>${t}${motivo}</button>`;
             });
             wrap.querySelectorAll('.time-slot:not([disabled])').forEach(el => {
                 el.addEventListener('click', () => {
@@ -2232,6 +2342,40 @@
         function initPicker(){
             renderCalendar();
             renderTimeSlots();
+
+            // Servicio selector
+            document.querySelectorAll('#servicioGrid .servicio-opcion').forEach(label => {
+                label.addEventListener('click', () => {
+                    const radio = label.querySelector('input[type=radio]');
+                    radio.checked = true;
+                    document.querySelectorAll('#servicioGrid .servicio-opcion').forEach(l => l.classList.remove('selected'));
+                    label.classList.add('selected');
+                    selectedDuracion = parseInt(radio.dataset.dur, 10);
+                    document.getElementById('citaServicio').value = radio.value;
+                    document.getElementById('citaDuracion').value = selectedDuracion;
+                    const lbl = document.getElementById('pickedServiceLabel');
+                    lbl.textContent = radio.value.split(' · ')[1] || radio.value;
+                    lbl.classList.remove('empty');
+                    // Info de duración
+                    const h = Math.floor(selectedDuracion / 60);
+                    const m = selectedDuracion % 60;
+                    const durStr = h > 0 ? (m > 0 ? `${h} h ${m} min` : `${h} h`) : `${m} min`;
+                    const info = document.getElementById('servicioDurInfo');
+                    info.textContent = `Duración: ${durStr} — se bloquearán los horarios que ocupen este tiempo`;
+                    info.classList.add('show');
+                    // Reset hora si ya no es válida con la nueva duración
+                    if (selectedTime && selectedDate) {
+                        const citasDelDia = citas.filter(c => c.fecha === fmtISO(selectedDate));
+                        if (slotBloqueado(selectedTime, citasDelDia, selectedDuracion) || slotFueraDeHorario(selectedTime, selectedDuracion)) {
+                            selectedTime = null;
+                            document.getElementById('citaHora').value = '';
+                            document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
+                            document.getElementById('pickedTimeLabel').classList.add('empty');
+                        }
+                    }
+                    renderTimeSlots();
+                });
+            });
 
             const cPrev = document.getElementById('calPrev');
             const cNext = document.getElementById('calNext');
@@ -2257,14 +2401,23 @@
         function resetPicker(){
             selectedDate = null;
             selectedTime = null;
+            selectedDuracion = 30;
             activePeriod = 'morning';
             calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('citaFecha').value = '';
             document.getElementById('citaHora').value = '';
+            document.getElementById('citaServicio').value = '';
+            document.getElementById('citaDuracion').value = '';
             document.getElementById('pickedDateLabel').textContent = 'Sin elegir';
             document.getElementById('pickedDateLabel').classList.add('empty');
             document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
             document.getElementById('pickedTimeLabel').classList.add('empty');
+            document.getElementById('pickedServiceLabel').textContent = 'Sin elegir';
+            document.getElementById('pickedServiceLabel').classList.add('empty');
+            document.querySelectorAll('#servicioGrid .servicio-opcion').forEach(l => l.classList.remove('selected'));
+            document.querySelectorAll('#servicioGrid input[type=radio]').forEach(r => r.checked = false);
+            const info = document.getElementById('servicioDurInfo');
+            if (info) info.classList.remove('show');
             document.querySelectorAll('.time-tab').forEach(t => t.classList.toggle('active', t.dataset.period === 'morning'));
             renderCalendar();
             renderTimeSlots();
