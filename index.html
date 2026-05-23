@@ -141,7 +141,7 @@
         .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 12px 18px; font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all .3s var(--ease); font-family: 'Poppins', sans-serif; }
         .btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
         .link-soft { background: none; border: none; color: var(--muted); font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; cursor: pointer; padding: 14px 0 0; display: block; width: 100%; text-align: center; transition: color .3s var(--ease); }
-        .link-soft:hover { color: var(--burgundy); }
+        .time-slot.disabled { opacity: .38; cursor: not-allowed; background: var(--cream-deep); color: var(--muted); border-color: var(--line); transform: none !important; box-shadow: none !important; }
         .divider-soft { display: flex; align-items: center; gap: 12px; margin: 24px 0 18px; color: var(--line); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
         .divider-soft::before, .divider-soft::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
@@ -1429,49 +1429,59 @@
                 estado: 'pendiente'
             };
 
-            // 1. Validar que no se envíe vacío y avisar al cliente
+            // 1. Validar campos vacíos
             if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
-                alert("Por favor, selecciona la fecha, la hora y completa tus datos antes de enviar.");
-                return toast('Completa todos los campos', 'error');
+                return toast('Completa todos los campos: nombre, teléfono, fecha y hora', 'error');
+            }
+
+            // 2. Validar que la fecha no sea pasada
+            const fechaDt = new Date(cita.fecha + 'T00:00:00');
+            if (fechaDt < today) {
+                return toast('La fecha seleccionada ya ha pasado. Por favor elige otra.', 'error');
+            }
+
+            // 3. Validar que el slot no esté ya ocupado (doble comprobación)
+            const { data: conflictos } = await sb.from('citas')
+                .select('id')
+                .eq('fecha', cita.fecha)
+                .eq('hora', cita.hora)
+                .neq('estado', 'cancelada');
+            if (conflictos && conflictos.length > 0) {
+                return toast('Ese horario ya está reservado. Por favor elige otra hora.', 'error');
             }
 
             setBtnLoading('btnEnviarCita', true);
             
             try {
-                // 2. Guardar en Supabase y pedir que nos devuelva el registro (.select())
+                // 4. Guardar en Supabase
                 const { data, error } = await sb.from('citas').insert([cita]).select();
 
                 if (!error) {
-                    // 3. ¡El anuncio emergente que pediste!
                     alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
                     toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
 
-                    // 4. Que quede registrado al instante en tu sistema (memoria local)
                     if (data && data.length > 0) {
-                        citas.push(data[0]); // Se añade con el ID real de Supabase
+                        citas.push(data[0]);
                     } else {
-                        cita.id = Date.now(); // Fallback temporal por si Supabase no devuelve ID
+                        cita.id = Date.now();
                         citas.push(cita);
                     }
 
-                    // Actualizar la vista de administrador por detrás
                     if (typeof renderAdmin === 'function') renderAdmin();
 
-                    // 5. Limpiar el formulario
                     document.getElementById('citaNombre').value = '';
                     document.getElementById('citaTelefono').value = '';
                     resetPicker();
 
-                    // 6. Volver a la pantalla de inicio
                     setTimeout(() => mostrarVista('login'), 800);
                     
                 } else {
                     console.error("Error de Supabase:", error);
-                    alert('No se pudo guardar la cita. Revisa los permisos (RLS) de tu tabla "citas" en Supabase.');
+                    toast('No se pudo guardar la cita. Inténtalo de nuevo.', 'error');
                 }
             } catch (e) {
                 console.error("Error de conexión:", e);
-                alert('Hubo un problema de red. Por favor, revisa tu conexión e inténtalo de nuevo.');
+                toast('Problema de red. Revisa tu conexión e inténtalo de nuevo.', 'error');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
@@ -1911,9 +1921,10 @@
         function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
 
         function isDiaDisponible(iso){
-            if(diasDisponibles.length === 0) return false;
+            // Si no hay configuración, todos los días están disponibles (no bloquear reservas)
+            if(diasDisponibles.length === 0) return true;
             const mes = iso.substring(0,7);
-            // if explicitly excluded, never available
+            // Si está explícitamente excluido, nunca disponible
             if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
             return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
         }
@@ -2108,13 +2119,31 @@
             }
 
             grid.querySelectorAll('.cal-day:not(.disabled):not(.muted):not(.no-disponible)').forEach(el => {
-                el.addEventListener('click', () => {
+                el.addEventListener('click', async () => {
                     const [y,m,d] = el.dataset.iso.split('-').map(Number);
                     selectedDate = new Date(y, m-1, d);
                     document.getElementById('citaFecha').value = el.dataset.iso;
                     const lbl = document.getElementById('pickedDateLabel');
                     lbl.textContent = fmtPretty(selectedDate);
                     lbl.classList.remove('empty');
+                    // Reset selected time when date changes
+                    selectedTime = null;
+                    document.getElementById('citaHora').value = '';
+                    const tLbl = document.getElementById('pickedTimeLabel');
+                    tLbl.textContent = 'Sin elegir';
+                    tLbl.classList.add('empty');
+                    // Reload citas for fresh slot occupancy
+                    try {
+                        const { data } = await sb.from('citas').select('fecha,hora,estado').eq('fecha', el.dataset.iso);
+                        // Merge into local citas without duplicating
+                        if (data) {
+                            data.forEach(nc => {
+                                if (!citas.some(c => c.fecha === nc.fecha && c.hora === nc.hora && c.estado === nc.estado)) {
+                                    citas.push(nc);
+                                }
+                            });
+                        }
+                    } catch(e) { /* sin conexión, usar datos en memoria */ }
                     renderCalendar();
                     renderTimeSlots();
                 });
@@ -2130,11 +2159,28 @@
                 wrap.innerHTML = `<div class="time-empty">Elige primero una fecha</div>`;
                 return;
             }
+
+            // Calcular slots ya ocupados para la fecha seleccionada
+            const isoSel = fmtISO(selectedDate);
+            const ocupadas = new Set(
+                citas
+                    .filter(c => c.fecha === isoSel && (c.estado || 'pendiente') !== 'cancelada')
+                    .map(c => (c.hora || '').slice(0, 5))
+            );
+
+            // Si es hoy, también bloquear horas pasadas
+            const now = new Date();
+            const esHoy = isoSel === fmtISO(today);
+
             slots.forEach(t => {
-                const isSel = selectedTime === t;
-                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''}" data-time="${t}">${t}</button>`;
+                const [hh, mm] = t.split(':').map(Number);
+                const pasado = esHoy && (hh < now.getHours() || (hh === now.getHours() && mm <= now.getMinutes()));
+                const ocupado = ocupadas.has(t);
+                const noDisponible = pasado || ocupado;
+                const isSel = selectedTime === t && !noDisponible;
+                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''} ${noDisponible ? 'disabled' : ''}" data-time="${t}" ${noDisponible ? 'disabled' : ''}>${t}${ocupado ? '<span style="font-size:8px;display:block;opacity:.6;">ocupado</span>' : ''}</button>`;
             });
-            wrap.querySelectorAll('.time-slot').forEach(el => {
+            wrap.querySelectorAll('.time-slot:not([disabled])').forEach(el => {
                 el.addEventListener('click', () => {
                     selectedTime = el.dataset.time;
                     document.getElementById('citaHora').value = selectedTime;
