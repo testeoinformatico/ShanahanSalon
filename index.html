@@ -1662,11 +1662,13 @@
                     return;
                 }
 
-                // ── Comprobar conflicto de horario ─────────────────────────
-                const { data: conflictos } = await sb.from('citas')
-                    .select('id').eq('fecha', fecha).eq('hora', hora).neq('estado', 'cancelada');
-                if (conflictos && conflictos.length > 0) {
-                    toast('Ese horario ya está reservado. Por favor elige otra hora.', 'error');
+                // ── Comprobar conflicto de horario (considera duraciones) ──
+                const { data: citasExistentes } = await sb.from('citas')
+                    .select('hora,duracion_minutos,estado')
+                    .eq('fecha', fecha)
+                    .neq('estado', 'cancelada');
+                if (slotBloqueado(hora, citasExistentes || [], duracion)) {
+                    toast('Ese horario ya está ocupado (otra cita se solapa). Por favor elige otra hora.', 'error');
                     return;
                 }
 
@@ -1957,13 +1959,9 @@
             const cita = citas.find(c => c.id === idCita);
             if (!cita) return;
             try {
-                // create client only if not already registered (match by phone)
-                const yaExiste = clientas.some(cl => (cl.telefono || '').trim() === (cita.telefono || '').trim());
-                if (!yaExiste) {
-                    await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
-                }
-                await sb.from('citas').update({ estado: 'confirmada' }).eq('id', idCita);
-                toast(yaExiste ? 'Cita confirmada' : 'Cita confirmada y clienta registrada', 'success');
+                const { error } = await sb.from('citas').update({ estado: 'confirmada' }).eq('id', idCita);
+                if (error) { toast('No se pudo aprobar: ' + error.message, 'error'); return; }
+                toast('Cita confirmada', 'success');
                 cargarDatosAdmin();
             } catch (e) {
                 toast('No se pudo aprobar la cita', 'error');
@@ -2057,7 +2055,10 @@
                 telefono: document.getElementById('editCitaTelefono').value.trim(),
                 fecha: document.getElementById('editCitaFecha').value,
                 hora: document.getElementById('editCitaHora').value,
-                estado: nuevoEstado
+                estado: nuevoEstado,
+                // preservar duracion_minutos y servicio de la cita original
+                duracion_minutos: previa ? (parseInt(previa.duracion_minutos, 10) || 30) : 30,
+                servicio: previa ? (previa.servicio || '') : ''
             };
             if (!payload.nombre_cliente || !payload.telefono || !payload.fecha || !payload.hora) {
                 return toast('Completa todos los campos', 'error');
@@ -2162,15 +2163,16 @@
         // Devuelve true si el slot `t` está ocupado teniendo en cuenta
         // la duración de las citas ya guardadas y la duración del nuevo servicio
         function slotBloqueado(t, citasDelDia, durNueva) {
-            const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+            const toMin = s => { const [h,m] = (s||'00:00').split(':').map(Number); return h*60+m; };
             const tMin = toMin(t);
-            // El nuevo servicio ocupa [tMin, tMin+durNueva)
+            const durN = parseInt(durNueva, 10) || 30;
             for (const c of citasDelDia) {
                 if ((c.estado||'pendiente') === 'cancelada') continue;
-                const inicio = toMin((c.hora||'00:00').slice(0,5));
-                const fin    = inicio + (c.duracion_minutos || 30);
-                // Colisión si los intervalos se solapan
-                if (tMin < fin && tMin + durNueva > inicio) return true;
+                const inicio  = toMin((c.hora||'00:00').slice(0,5));
+                const durCita = parseInt(c.duracion_minutos, 10) || 30;
+                const fin     = inicio + durCita;
+                // Solapamiento: [tMin, tMin+durN) ∩ [inicio, fin) ≠ ∅
+                if (tMin < fin && tMin + durN > inicio) return true;
             }
             return false;
         }
@@ -2184,7 +2186,7 @@
             return fin > 21*60;                      // tarde:  no pasar de las 21:00
         }
 
-                function isDiaDisponible(iso){
+        function isDiaDisponible(iso){
             // Si no hay configuración, todos los días están disponibles (no bloquear reservas)
             if(diasDisponibles.length === 0) return true;
             const mes = iso.substring(0,7);
@@ -2398,14 +2400,13 @@
                     tLbl.classList.add('empty');
                     // Reload citas for fresh slot occupancy
                     try {
-                        const { data } = await sb.from('citas').select('fecha,hora,estado').eq('fecha', el.dataset.iso);
-                        // Merge into local citas without duplicating
+                        const { data } = await sb.from('citas').select('id,fecha,hora,estado,duracion_minutos').eq('fecha', el.dataset.iso);
+                        // Reemplazar/añadir citas de este día en el array local
                         if (data) {
-                            data.forEach(nc => {
-                                if (!citas.some(c => c.fecha === nc.fecha && c.hora === nc.hora && c.estado === nc.estado)) {
-                                    citas.push(nc);
-                                }
-                            });
+                            // Quitar las que ya tenemos de este día (pueden estar desactualizadas)
+                            const iso = el.dataset.iso;
+                            citas = citas.filter(c => c.fecha !== iso);
+                            data.forEach(nc => citas.push(nc));
                         }
                     } catch(e) { /* sin conexión, usar datos en memoria */ }
                     renderCalendar();
