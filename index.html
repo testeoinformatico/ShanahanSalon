@@ -1266,12 +1266,27 @@
         /* ---------- ADMIN DATA ---------- */
         async function cargarDatosAdmin() {
             try {
-                const [{ data: dC }, { data: dCi }] = await Promise.all([
+                const [resC, resCi] = await Promise.all([
                     sb.from('clientas').select('*').order('nombre', { ascending: true }),
                     sb.from('citas').select('*').order('fecha', { ascending: true })
                 ]);
-                clientas = dC || [];
-                citas = dCi || [];
+
+                if (resC.error) {
+                    console.error('Error cargando clientas:', resC.error);
+                    toast('Error cargando clientas: ' + resC.error.message, 'error');
+                    return;
+                }
+                if (resCi.error) {
+                    console.error('Error cargando citas:', resCi.error);
+                    toast('Error cargando citas: ' + resCi.error.message, 'error');
+                    return;
+                }
+
+                clientas = resC.data || [];
+                citas = resCi.data || [];
+
+                console.log(`Supabase: ${clientas.length} clientas, ${citas.length} citas cargadas`);
+
                 if (!agendaInitialized) {
                     try { initAgenda(); } catch (e) { console.error('initAgenda:', e); }
                     agendaInitialized = true;
@@ -1280,7 +1295,8 @@
                 try { await cargarDisponibles(); } catch (e) { console.warn('cargarDisponibles omitido:', e); }
                 renderAdmin();
             } catch (e) {
-                toast('No se pudieron cargar los datos', 'error');
+                console.error('cargarDatosAdmin error:', e);
+                toast('No se pudieron cargar los datos: ' + (e.message || ''), 'error');
             }
         }
 
@@ -1308,14 +1324,30 @@
 
         /* ---------- CLIENT LOGIN ---------- */
         async function iniciarSesionCliente() {
-            const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
-            const telef = document.getElementById('loginPass').value.trim();
-            if (!nombre || !telef) return toast('Introduce tu nombre y teléfono', 'error');
+            const nombreRaw = document.getElementById('loginUsuario').value.trim();
+            const telef = document.getElementById('loginPass').value.trim().replace(/\s/g, '');
+            if (!nombreRaw || !telef) return toast('Introduce tu nombre y teléfono', 'error');
+
+            const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
             setBtnLoading('btnLoginCliente', true);
             try {
-                const { data } = await sb.from('clientas').select('*').eq('telefono', telef);
-                const cliente = (data || []).find(c => (c.nombre || '').toLowerCase() === nombre);
+                // Buscar por teléfono tal como está
+                const { data, error } = await sb.from('clientas').select('*').eq('telefono', telef);
+
+                if (error) {
+                    console.error('Supabase error:', error);
+                    return toast('Error de base de datos: ' + error.message, 'error');
+                }
+
+                // También buscar sin/con prefijo +34
+                const telAlt = telef.startsWith('+34') ? telef.slice(3) :
+                               telef.startsWith('34') && telef.length > 9 ? telef.slice(2) :
+                               '+34' + telef;
+                const { data: data2 } = await sb.from('clientas').select('*').eq('telefono', telAlt);
+
+                const todos = [...(data || []), ...(data2 || [])];
+                const cliente = todos.find(c => normalize(c.nombre) === normalize(nombreRaw));
 
                 if (cliente) {
                     document.getElementById('clienteNombre').innerText = cliente.nombre;
@@ -1344,10 +1376,15 @@
                     await renderMisCitas(cliente);
                     mostrarVista('vistaCliente');
                 } else {
-                    toast('No se encontró el registro. Solicita una cita para registrarte.', 'error');
+                    if (todos.length > 0) {
+                        toast('Teléfono encontrado pero el nombre no coincide. Comprueba cómo estás registrada.', 'error');
+                    } else {
+                        toast('No se encontró ninguna clienta con ese teléfono. Solicita una cita para registrarte.', 'error');
+                    }
                 }
             } catch (e) {
-                toast('Error al consultar tus datos', 'error');
+                console.error('Error en iniciarSesionCliente:', e);
+                toast('Error de conexión: ' + (e.message || 'Revisa tu red'), 'error');
             } finally {
                 setBtnLoading('btnLoginCliente', false);
             }
