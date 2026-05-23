@@ -674,6 +674,56 @@
         .time-empty { grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--muted); font-family: 'Playfair Display', serif; font-style: italic; font-size: 13px; }
 
 
+        /* ── HORAS BLOQUEADAS ───────────────────────────── */
+        .horas-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 768px) { .horas-wrap { grid-template-columns: 1fr; } }
+
+        .horas-cal-wrap { }
+        .horas-slot-wrap { }
+        .horas-slot-titulo {
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--burgundy); font-weight: 700; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .horas-slot-titulo::after { content:''; flex:1; height:1px; background:rgba(146,31,35,.15); }
+
+        .horas-slots-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 18px; }
+        .hora-slot-btn {
+            padding: 10px 4px; border: 1px solid var(--line); background: #fff;
+            font-family: 'Poppins',sans-serif; font-size: 12px; font-weight: 500;
+            color: var(--dark-text); cursor: pointer; text-align: center;
+            transition: all .2s; position: relative;
+        }
+        .hora-slot-btn:hover { border-color: var(--burgundy); color: var(--burgundy); }
+        .hora-slot-btn.bloqueada {
+            background: rgba(146,31,35,.08); border-color: var(--burgundy);
+            color: var(--burgundy); font-weight: 700;
+        }
+        .hora-slot-btn.bloqueada::after {
+            content: '\f00d'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: 3px; right: 5px; font-size: 8px; opacity: .6;
+        }
+        .hora-slot-btn.con-cita {
+            background: var(--cream-deep); color: var(--muted);
+            cursor: not-allowed; border-color: transparent;
+            font-size: 10px;
+        }
+        .horas-lista { margin-top: 4px; }
+        .hora-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 12px; background: rgba(146,31,35,.06);
+            border-left: 3px solid var(--burgundy); margin-bottom: 6px;
+            font-size: 12px; font-weight: 600; color: var(--burgundy);
+        }
+        .hora-item span.fecha { color: var(--muted); font-weight: 400; font-size: 11px; margin-left: 8px; }
+        .hora-item button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 6px; transition: color .2s; }
+        .hora-item button:hover { color: var(--burgundy); }
+        .horas-fecha-sel {
+            font-family: 'Playfair Display', serif; color: var(--burgundy);
+            font-size: 15px; font-weight: 600; margin-bottom: 12px;
+            min-height: 22px;
+        }
+
         /* ── TIMELINE AGENDA ────────────────────────────── */
         .agenda-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 0; }
         .agenda-cal  { border-right: 1px solid var(--line); padding-right: 22px; }
@@ -1266,9 +1316,10 @@
                     </div>
                     <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas <strong>solo podrán reservar</strong> en los días y meses que marques como disponibles.</p>
                     <div class="disp-wrap">
-                        <div class="disp-tabs">
+                        <div class="disp-tabs" style="grid-template-columns:1fr 1fr 1fr;">
                             <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i>Días concretos</button>
                             <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i>Meses enteros</button>
+                            <button type="button" class="disp-tab" data-dtab="horas"><i class="fa-regular fa-clock"></i>Horas bloqueadas</button>
                         </div>
 
                         <div class="disp-panel active" id="dpanelDias">
@@ -1292,6 +1343,38 @@
                         <div class="disp-panel" id="dpanelMeses">
                             <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para habilitarlo o deshabilitarlo entero.</p>
                             <div class="meses-grid" id="mesesGrid"></div>
+                        </div>
+
+                        <div class="disp-panel" id="dpanelHoras">
+                            <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Selecciona un día en el calendario y luego marca las horas que quieres bloquear. Las clientas no podrán reservar esas horas.</p>
+                            <div class="horas-wrap">
+                                <div class="horas-cal-wrap">
+                                    <div class="disp-mini-cal">
+                                        <div class="cal-head">
+                                            <div class="cal-month" id="hCalMonth"></div>
+                                            <div class="cal-nav-group">
+                                                <button type="button" class="cal-nav" id="hCalPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                                                <button type="button" class="cal-nav" id="hCalNext"><i class="fa-solid fa-chevron-right"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="cal-grid" id="hCalGrid"></div>
+                                    </div>
+                                </div>
+                                <div class="horas-slot-wrap">
+                                    <div class="horas-fecha-sel" id="horasFechaSel">Elige un día</div>
+
+                                    <div class="horas-slot-titulo"><i class="fa-solid fa-sun" style="color:var(--accent);"></i>Mañana</div>
+                                    <div class="horas-slots-grid" id="horasSlotsManana"></div>
+
+                                    <div class="horas-slot-titulo"><i class="fa-solid fa-moon" style="color:var(--burgundy);"></i>Tarde</div>
+                                    <div class="horas-slots-grid" id="horasSlotsTarde"></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:14px;">
+                                <div class="disp-lista-title">Horas bloqueadas próximas</div>
+                                <div id="horasListaBloqueadas"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin horas bloqueadas</div></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1428,13 +1511,24 @@
     }
 
     // ── Slot helpers ───────────────────────────────────────
-    function slotBloqueado(t, citasDelDia, durNueva) {
+    function slotBloqueado(t, citasDelDia, durNueva, fechaISO) {
         const tMin = toMin(t), durN = parseInt(durNueva,10)||30;
+        // Comprobar solapamiento con citas existentes
         for (const c of citasDelDia) {
             if ((c.estado||"pendiente") === "cancelada") continue;
             const inicio = toMin((c.hora||"00:00").slice(0,5));
             const fin    = inicio + (parseInt(c.duracion_minutos,10)||30);
             if (tMin < fin && tMin + durN > inicio) return true;
+        }
+        // Comprobar que ningún slot del nuevo servicio caiga en hora bloqueada
+        if (fechaISO) {
+            for (let offset=0; offset<durN; offset+=30) {
+                const slotMin = tMin + offset;
+                const slotH   = String(Math.floor(slotMin/60)).padStart(2,"0");
+                const slotM   = String(slotMin%60).padStart(2,"0");
+                const key     = `${fechaISO}T${slotH}:${slotM}`;
+                if (diasDisponibles.some(b=>b.tipo==="hora_bloqueada"&&b.valor===key)) return true;
+            }
         }
         return false;
     }
@@ -1554,6 +1648,8 @@
         try { renderMesesGrid(); }    catch(e){}
         try { renderDispDiaItems(); } catch(e){}
         try { renderCalendar(); }     catch(e){}
+        try { renderHCalendar(); }    catch(e){}
+        try { renderHorasLista(); }   catch(e){}
     }
 
     // ══════════════════════════════════════════════════════
@@ -1645,7 +1741,7 @@
             const tMin    = toMin(t);
             const pasado  = esHoy && tMin <= now.getHours()*60+now.getMinutes();
             const fuera   = slotFueraDeHorario(t, selectedDuracion);
-            const bloq    = slotBloqueado(t, citasDelDia, selectedDuracion);
+            const bloq    = slotBloqueado(t, citasDelDia, selectedDuracion, iso);
             const noDisp  = pasado || fuera || bloq;
             const isSel   = selectedTime===t && !noDisp;
             const subtext = bloq ? `<span style="font-size:8px;display:block;line-height:1.2;opacity:.6;">ocupado</span>`
@@ -2392,19 +2488,184 @@ Soy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS
         }
         cargarDisponibles();
     }
-    function initDispPanel(){
-        dCalCursor=new Date(today.getFullYear(),today.getMonth(),1);
+    // ══════════════════════════════════════════════════════
+    //  HORAS BLOQUEADAS
+    // ══════════════════════════════════════════════════════
+    let hCalCursor     = null;
+    let hCalSelected   = null; // fecha ISO seleccionada en el mini-cal de horas
+
+    const ALL_SLOTS_H = [
+        "09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30",
+        "16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"
+    ];
+
+    function renderHCalendar() {
+        const monthEl = document.getElementById("hCalMonth");
+        const grid    = document.getElementById("hCalGrid");
+        if (!monthEl || !grid) return;
+        monthEl.textContent = `${MONTHS_ES[hCalCursor.getMonth()]} ${hCalCursor.getFullYear()}`;
+        grid.innerHTML = "";
+        DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+        const y = hCalCursor.getFullYear(), m = hCalCursor.getMonth();
+        const offset  = (new Date(y,m,1).getDay()+6)%7;
+        const dim     = new Date(y,m+1,0).getDate();
+        const prevDim = new Date(y,m,0).getDate();
+        for (let i=offset-1; i>=0; i--) grid.innerHTML += `<div class="cal-day muted">${prevDim-i}</div>`;
+        for (let d=1; d<=dim; d++) {
+            const iso = `${y}-${pad2(m+1)}-${pad2(d)}`;
+            const dt  = new Date(y,m,d);
+            const isSel  = hCalSelected === iso;
+            const isToday = dt.getTime()===today.getTime();
+            // ¿Tiene alguna hora bloqueada?
+            const tieneBloqueo = diasDisponibles.some(b=>b.tipo==="hora_bloqueada"&&b.valor.startsWith(iso));
+            let cls = "cal-day";
+            if (isToday) cls += " today";
+            if (isSel)   cls += " selected";
+            if (tieneBloqueo && !isSel) cls += " has-citas"; // reutilizar estilo de punto
+            grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
+        }
+        const trail = (7-((offset+dim)%7))%7;
+        for (let i=1; i<=trail; i++) grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
+        grid.querySelectorAll(".cal-day:not(.muted)").forEach(el => {
+            el.addEventListener("click", () => {
+                hCalSelected = el.dataset.iso;
+                renderHCalendar();
+                renderHorasSlots();
+            });
+        });
+    }
+
+    function renderHorasSlots() {
+        const mGrid = document.getElementById("horasSlotsManana");
+        const tGrid = document.getElementById("horasSlotsTarde");
+        const titulo = document.getElementById("horasFechaSel");
+        if (!mGrid || !tGrid) return;
+
+        if (!hCalSelected) {
+            titulo.textContent = "Elige un día";
+            mGrid.innerHTML = tGrid.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--muted);padding:8px 0;">Selecciona un día en el calendario</div>`;
+            return;
+        }
+
+        const dt = new Date(hCalSelected+"T00:00:00");
+        const dias = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+        titulo.textContent = `${dias[dt.getDay()]} ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`;
+
+        // Citas existentes ese día (slots con cita no se pueden bloquear manualmente)
+        const citasEseDia = citas.filter(c => c.fecha===hCalSelected && (c.estado||"pendiente")!=="cancelada");
+
+        function renderSlots(slots, container) {
+            container.innerHTML = "";
+            slots.forEach(t => {
+                const key = `${hCalSelected}T${t}`;
+                const bloqueada = diasDisponibles.some(b=>b.tipo==="hora_bloqueada"&&b.valor===key);
+                // ¿Hay cita en ese slot o está cubierto por duración?
+                const tMin = toMin(t);
+                const conCita = citasEseDia.some(c => {
+                    const ini = toMin((c.hora||"").slice(0,5));
+                    const fin = ini + (parseInt(c.duracion_minutos,10)||30);
+                    return tMin >= ini && tMin < fin;
+                });
+                let cls = "hora-slot-btn";
+                if (bloqueada) cls += " bloqueada";
+                if (conCita)   cls += " con-cita";
+                const title = conCita ? "Hay una cita en este horario" : bloqueada ? "Clic para desbloquear" : "Clic para bloquear";
+                container.innerHTML += `<button type="button" class="${cls}" data-key="${key}" data-t="${t}" ${conCita?"disabled":""} title="${title}">${t}${bloqueada?'<br><span style="font-size:8px;letter-spacing:1px;">BLOQUEADA</span>':""}</button>`;
+            });
+            container.querySelectorAll(".hora-slot-btn:not([disabled])").forEach(btn => {
+                btn.addEventListener("click", () => toggleHoraBloqueada(btn.dataset.key, btn.dataset.t));
+            });
+        }
+
+        renderSlots(["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"], mGrid);
+        renderSlots(["16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"], tGrid);
+    }
+
+    async function toggleHoraBloqueada(key, t) {
+        const existing = diasDisponibles.find(b=>b.tipo==="hora_bloqueada"&&b.valor===key);
+        if (existing) {
+            const { error } = await sb.from("dias_disponibles").delete().eq("id",existing.id);
+            if (!error) toast(`Hora ${t} desbloqueada`,"success");
+            else { toast("Error: "+error.message,"error"); return; }
+        } else {
+            const { error } = await sb.from("dias_disponibles").insert([{tipo:"hora_bloqueada", valor:key}]);
+            if (!error) toast(`Hora ${t} bloqueada`,"info");
+            else { toast("Error: "+error.message,"error"); return; }
+        }
+        await cargarDisponibles();
+        renderHorasSlots();
+        renderHCalendar();
+        renderHorasLista();
+    }
+
+    function renderHorasLista() {
+        const el = document.getElementById("horasListaBloqueadas");
+        if (!el) return;
+        const bloqueadas = diasDisponibles
+            .filter(b=>b.tipo==="hora_bloqueada")
+            .sort((a,b)=>a.valor.localeCompare(b.valor));
+        if (!bloqueadas.length) {
+            el.innerHTML = `<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin horas bloqueadas</div>`;
+            return;
+        }
+        // Agrupar por fecha
+        const porFecha = {};
+        bloqueadas.forEach(b => {
+            const [fecha, hora] = b.valor.split("T");
+            if (!porFecha[fecha]) porFecha[fecha] = [];
+            porFecha[fecha].push({hora, id:b.id, key:b.valor});
+        });
+        el.innerHTML = Object.entries(porFecha).map(([fecha, horas]) => {
+            const dt = new Date(fecha+"T00:00:00");
+            const label = `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}`;
+            const pills = horas.map(h =>
+                `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(146,31,35,.08);border:1px solid rgba(146,31,35,.2);color:var(--burgundy);padding:3px 9px;font-size:11px;font-weight:600;margin:2px;">
+                    ${h.hora}
+                    <button onclick="desbloquearHora('${h.key}','${h.hora}')" style="background:none;border:none;cursor:pointer;color:var(--burgundy);font-size:10px;padding:0;line-height:1;"><i class="fa-solid fa-xmark"></i></button>
+                </span>`
+            ).join("");
+            return `<div style="margin-bottom:10px;">
+                <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:5px;">${label}</div>
+                <div>${pills}</div>
+            </div>`;
+        }).join("");
+    }
+
+    async function desbloquearHora(key, hora) {
+        const existing = diasDisponibles.find(b=>b.tipo==="hora_bloqueada"&&b.valor===key);
+        if (!existing) return;
+        const { error } = await sb.from("dias_disponibles").delete().eq("id",existing.id);
+        if (!error) { toast(`Hora ${hora} desbloqueada`,"success"); await cargarDisponibles(); renderHorasLista(); renderHorasSlots(); renderHCalendar(); }
+        else toast("Error: "+error.message,"error");
+    }
+
+        function initDispPanel(){
+        dCalCursor = new Date(today.getFullYear(),today.getMonth(),1);
+        hCalCursor = new Date(today.getFullYear(),today.getMonth(),1);
+
         const dPrev=document.getElementById("dCalPrev");
         const dNext=document.getElementById("dCalNext");
         if(dPrev) dPrev.addEventListener("click",()=>{ dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()-1,1); renderDCalendar(); });
         if(dNext) dNext.addEventListener("click",()=>{ dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()+1,1); renderDCalendar(); });
+
+        const hPrev=document.getElementById("hCalPrev");
+        const hNext=document.getElementById("hCalNext");
+        if(hPrev) hPrev.addEventListener("click",()=>{ hCalCursor=new Date(hCalCursor.getFullYear(),hCalCursor.getMonth()-1,1); renderHCalendar(); });
+        if(hNext) hNext.addEventListener("click",()=>{ hCalCursor=new Date(hCalCursor.getFullYear(),hCalCursor.getMonth()+1,1); renderHCalendar(); });
+
         document.querySelectorAll(".disp-tab").forEach(tab=>{
             tab.addEventListener("click",()=>{
                 document.querySelectorAll(".disp-tab").forEach(t=>t.classList.remove("active"));
                 document.querySelectorAll(".disp-panel").forEach(p=>p.classList.remove("active"));
                 tab.classList.add("active");
-                const target=document.getElementById("dpanel"+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1));
+                const id = "dpanel"+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1);
+                const target=document.getElementById(id);
                 if(target) target.classList.add("active");
+                if(tab.dataset.dtab==="horas") {
+                    renderHCalendar();
+                    renderHorasSlots();
+                    renderHorasLista();
+                }
             });
         });
     }
