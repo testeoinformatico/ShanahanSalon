@@ -141,6 +141,37 @@
         .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 12px 18px; font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all .3s var(--ease); font-family: 'Poppins', sans-serif; }
         .btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
         .link-soft { background: none; border: none; color: var(--muted); font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; cursor: pointer; padding: 14px 0 0; display: block; width: 100%; text-align: center; transition: color .3s var(--ease); }
+        .link-soft:hover { color: var(--burgundy); }
+
+        /* --- Cuenta nueva (formulario cita) --- */
+        .cuenta-nueva-box {
+            border: 1px solid rgba(201,167,77,.35);
+            background: linear-gradient(135deg,rgba(201,167,77,.06),rgba(248,238,226,.4));
+            padding: 20px 18px 16px;
+            margin-bottom: 18px;
+            position: relative;
+        }
+        .cuenta-nueva-box::before {
+            content: ''; position: absolute; inset: 5px;
+            border: 1px solid rgba(201,167,77,.1); pointer-events: none;
+        }
+        .cuenta-nueva-label {
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--accent); font-weight: 700; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .cuenta-nueva-label i { font-size: 11px; }
+        .field-pass-wrap { position: relative; }
+        .toggle-pass {
+            position: absolute; right: 0; top: 14px;
+            background: none; border: none; cursor: pointer;
+            color: var(--line); font-size: 13px; padding: 0; transition: color .2s;
+        }
+        .toggle-pass:hover { color: var(--burgundy); }
+        .pass-strength { height: 3px; margin-top: 6px; background: var(--line); overflow: hidden; }
+        .pass-strength-bar { height: 100%; width: 0; transition: width .3s, background .3s; }
+        .pass-hint { font-size: 10px; color: var(--muted); margin-top: 5px; letter-spacing: .3px; }
+
         .time-slot.disabled { opacity: .38; cursor: not-allowed; background: var(--cream-deep); color: var(--muted); border-color: var(--line); transform: none !important; box-shadow: none !important; }
 
         /* ---------- SERVICIO SELECTOR ---------- */
@@ -787,14 +818,14 @@
 
                     <form onsubmit="event.preventDefault(); iniciarSesionCliente();">
                         <div class="field">
-                            <input type="text" id="loginUsuario" placeholder=" " autocomplete="name">
-                            <label>Nombre completo</label>
+                            <input type="text" id="loginUsuario" placeholder=" " autocomplete="username">
+                            <label>Usuario</label>
                             <i class="fa-regular fa-user field-icon"></i>
                         </div>
-                        <div class="field">
-                            <input type="tel" id="loginPass" placeholder=" " autocomplete="tel">
-                            <label>Teléfono</label>
-                            <i class="fa-solid fa-phone field-icon"></i>
+                        <div class="field field-pass-wrap">
+                            <input type="password" id="loginPass" placeholder=" " autocomplete="current-password">
+                            <label>Contraseña</label>
+                            <button type="button" class="toggle-pass" onclick="togglePassVis('loginPass',this)" tabindex="-1" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button>
                         </div>
                         <button type="submit" class="btn-luxury" id="btnLoginCliente"><span>Entrar</span><span class="spinner"></span></button>
                     </form>
@@ -870,6 +901,28 @@
                             <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
                             <label>Teléfono</label>
                             <i class="fa-solid fa-phone field-icon"></i>
+                        </div>
+
+                        <div class="cuenta-nueva-box">
+                            <div class="cuenta-nueva-label"><i class="fa-solid fa-key"></i>Crea tu cuenta para consultar tus citas</div>
+                            <div class="field">
+                                <input type="text" id="citaUsuario" placeholder=" " autocomplete="username" oninput="checkUsuarioDisponible(this.value)">
+                                <label>Nombre de usuario</label>
+                                <i class="fa-regular fa-at field-icon"></i>
+                            </div>
+                            <div style="font-size:10.5px; margin-top:-14px; margin-bottom:14px;" id="usuarioFeedback"></div>
+                            <div class="field field-pass-wrap">
+                                <input type="password" id="citaClave" placeholder=" " autocomplete="new-password" oninput="evalPassStrength(this.value)">
+                                <label>Contraseña</label>
+                                <button type="button" class="toggle-pass" onclick="togglePassVis('citaClave',this)" tabindex="-1" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button>
+                            </div>
+                            <div class="pass-strength"><div class="pass-strength-bar" id="passBar"></div></div>
+                            <div class="pass-hint" id="passHint">Mínimo 6 caracteres</div>
+                            <div class="field field-pass-wrap" style="margin-top:18px;">
+                                <input type="password" id="citaClaveConfirm" placeholder=" " autocomplete="new-password">
+                                <label>Repite la contraseña</label>
+                                <button type="button" class="toggle-pass" onclick="togglePassVis('citaClaveConfirm',this)" tabindex="-1" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button>
+                            </div>
                         </div>
                         <div class="picker-label" style="margin-top:8px;">
                             <span><i class="fa-solid fa-spa" style="margin-right:8px; color:var(--accent);"></i>Selecciona un servicio</span>
@@ -1400,70 +1453,113 @@
 
         /* ---------- CLIENT LOGIN ---------- */
         async function iniciarSesionCliente() {
-            const nombreRaw = document.getElementById('loginUsuario').value.trim();
-            const telef = document.getElementById('loginPass').value.trim().replace(/\s/g, '');
-            if (!nombreRaw || !telef) return toast('Introduce tu nombre y teléfono', 'error');
-
-            const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+            const usuario = document.getElementById('loginUsuario').value.trim().toLowerCase();
+            const clave   = document.getElementById('loginPass').value;
+            if (!usuario || !clave) return toast('Introduce tu usuario y contraseña', 'error');
 
             setBtnLoading('btnLoginCliente', true);
             try {
-                // Buscar por teléfono tal como está
-                const { data, error } = await sb.from('clientas').select('*').eq('telefono', telef);
+                const { data, error } = await sb.from('clientas').select('*').eq('usuario', usuario).maybeSingle();
 
                 if (error) {
                     console.error('Supabase error:', error);
                     return toast('Error de base de datos: ' + error.message, 'error');
                 }
-
-                // También buscar sin/con prefijo +34
-                const telAlt = telef.startsWith('+34') ? telef.slice(3) :
-                               telef.startsWith('34') && telef.length > 9 ? telef.slice(2) :
-                               '+34' + telef;
-                const { data: data2 } = await sb.from('clientas').select('*').eq('telefono', telAlt);
-
-                const todos = [...(data || []), ...(data2 || [])];
-                const cliente = todos.find(c => normalize(c.nombre) === normalize(nombreRaw));
-
-                if (cliente) {
-                    document.getElementById('clienteNombre').innerText = cliente.nombre;
-                    document.getElementById('stampCountText').innerText = cliente.visitas;
-                    const grid = document.getElementById('stampsGrid');
-                    grid.innerHTML = "";
-                    for (let i = 1; i <= 10; i++) {
-                        const isReward = i === 10 && cliente.visitas >= 10;
-                        const cls = i <= cliente.visitas ? (isReward ? 'reward' : 'active') : '';
-                        grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward ? '<i class="fa-solid fa-star"></i>' : i}</div>`;
-                    }
-
-                    const estado = document.getElementById('clienteEstado');
-                    if (cliente.visitas >= 10) {
-                        estado.className = 'reward-info gold';
-                        estado.innerHTML = '<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible! Canjea tu tarjeta en tu próxima visita.';
-                    } else if (cliente.visitas === 5) {
-                        estado.className = 'reward-info gold';
-                        estado.innerHTML = '<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
-                    } else {
-                        const restantes = 10 - cliente.visitas;
-                        estado.className = 'reward-info';
-                        estado.innerHTML = `<i class="fa-regular fa-gem"></i>Te ${restantes === 1 ? 'queda' : 'quedan'} <strong>${restantes}</strong> ${restantes === 1 ? 'sello' : 'sellos'} para tu recompensa.`;
-                    }
-
-                    await renderMisCitas(cliente);
-                    mostrarVista('vistaCliente');
-                } else {
-                    if (todos.length > 0) {
-                        toast('Teléfono encontrado pero el nombre no coincide. Comprueba cómo estás registrada.', 'error');
-                    } else {
-                        toast('No se encontró ninguna clienta con ese teléfono. Solicita una cita para registrarte.', 'error');
-                    }
+                if (!data) {
+                    return toast('Usuario no encontrado. ¿Aún no tienes cuenta? Solicita una cita.', 'error');
                 }
+                if (data.clave !== clave) {
+                    return toast('Contraseña incorrecta', 'error');
+                }
+
+                const cliente = data;
+                document.getElementById('clienteNombre').innerText = cliente.nombre;
+                document.getElementById('stampCountText').innerText = cliente.visitas;
+                const grid = document.getElementById('stampsGrid');
+                grid.innerHTML = "";
+                for (let i = 1; i <= 10; i++) {
+                    const isReward = i === 10 && cliente.visitas >= 10;
+                    const cls = i <= cliente.visitas ? (isReward ? 'reward' : 'active') : '';
+                    grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward ? '<i class="fa-solid fa-star"></i>' : i}</div>`;
+                }
+
+                const estado = document.getElementById('clienteEstado');
+                if (cliente.visitas >= 10) {
+                    estado.className = 'reward-info gold';
+                    estado.innerHTML = '<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible! Canjea tu tarjeta en tu próxima visita.';
+                } else if (cliente.visitas === 5) {
+                    estado.className = 'reward-info gold';
+                    estado.innerHTML = '<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
+                } else {
+                    const restantes = 10 - cliente.visitas;
+                    estado.className = 'reward-info';
+                    estado.innerHTML = `<i class="fa-regular fa-gem"></i>Te ${restantes === 1 ? 'queda' : 'quedan'} <strong>${restantes}</strong> ${restantes === 1 ? 'sello' : 'sellos'} para tu recompensa.`;
+                }
+
+                await renderMisCitas(cliente);
+                mostrarVista('vistaCliente');
             } catch (e) {
                 console.error('Error en iniciarSesionCliente:', e);
                 toast('Error de conexión: ' + (e.message || 'Revisa tu red'), 'error');
             } finally {
                 setBtnLoading('btnLoginCliente', false);
             }
+        }
+
+        /* ---------- HELPERS CUENTA ---------- */
+        function togglePassVis(inputId, btn) {
+            const inp = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                inp.type = 'password';
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function evalPassStrength(val) {
+            const bar  = document.getElementById('passBar');
+            const hint = document.getElementById('passHint');
+            if (!bar) return;
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+            const pcts  = ['0%','25%','50%','75%','100%'];
+            const cols  = ['transparent','#e05353','#e0a233','#4A7C59','#2d6a4f'];
+            const hints = ['','Muy débil','Débil','Aceptable','Fuerte','Muy fuerte'];
+            bar.style.width = pcts[score] || '0%';
+            bar.style.background = cols[score] || 'transparent';
+            hint.textContent = hints[score] || 'Mínimo 6 caracteres';
+            hint.style.color = score >= 3 ? '#4A7C59' : score >= 2 ? '#8a6f25' : 'var(--muted)';
+        }
+
+        let usuarioTimer = null;
+        async function checkUsuarioDisponible(val) {
+            const fb = document.getElementById('usuarioFeedback');
+            if (!fb) return;
+            val = val.trim().toLowerCase();
+            if (!val) { fb.textContent = ''; return; }
+            if (!/^[a-z0-9._]{3,}$/.test(val)) {
+                fb.innerHTML = '<span style="color:#e05353"><i class="fa-solid fa-xmark" style="margin-right:4px;"></i>Solo letras, números, puntos y guión bajo. Mín. 3 caracteres.</span>';
+                return;
+            }
+            fb.innerHTML = '<span style="color:var(--muted)"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:4px;"></i>Comprobando…</span>';
+            clearTimeout(usuarioTimer);
+            usuarioTimer = setTimeout(async () => {
+                try {
+                    const { data } = await sb.from('clientas').select('id').eq('usuario', val).maybeSingle();
+                    if (data) {
+                        fb.innerHTML = '<span style="color:#e05353"><i class="fa-solid fa-xmark" style="margin-right:4px;"></i>Ese usuario ya existe, elige otro.</span>';
+                    } else {
+                        fb.innerHTML = '<span style="color:#4A7C59"><i class="fa-solid fa-check" style="margin-right:4px;"></i>¡Disponible!</span>';
+                    }
+                } catch(e) { fb.textContent = ''; }
+            }, 600);
         }
 
         /* ---------- CLIENT APPOINTMENTS VIEW ---------- */
@@ -1534,72 +1630,95 @@
 
         /* ---------- APPOINTMENT REQUEST ---------- */
         async function enviarSolicitudCita() {
-            const cita = {
-                nombre_cliente: document.getElementById('citaNombre').value.trim(),
-                telefono: document.getElementById('citaTelefono').value.trim(),
-                fecha: document.getElementById('citaFecha').value,
-                hora: document.getElementById('citaHora').value,
-                servicio: document.getElementById('citaServicio').value,
-                duracion_minutos: parseInt(document.getElementById('citaDuracion').value, 10) || 30,
-                estado: 'pendiente'
-            };
+            const nombre   = document.getElementById('citaNombre').value.trim();
+            const telefono = document.getElementById('citaTelefono').value.trim();
+            const usuario  = document.getElementById('citaUsuario').value.trim().toLowerCase();
+            const clave    = document.getElementById('citaClave').value;
+            const claveC   = document.getElementById('citaClaveConfirm').value;
+            const fecha    = document.getElementById('citaFecha').value;
+            const hora     = document.getElementById('citaHora').value;
+            const servicio = document.getElementById('citaServicio').value;
+            const duracion = parseInt(document.getElementById('citaDuracion').value, 10) || 30;
 
-            // 1. Validar campos vacíos
-            if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
-                return toast('Completa todos los campos: nombre, teléfono, servicio, fecha y hora', 'error');
-            }
-            if (!cita.servicio) {
-                return toast('Selecciona el servicio que quieres reservar', 'error');
-            }
+            // ── Validaciones ──────────────────────────────────────────────
+            if (!nombre || !telefono) return toast('Introduce tu nombre y teléfono', 'error');
+            if (!usuario) return toast('Elige un nombre de usuario para tu cuenta', 'error');
+            if (!/^[a-z0-9._]{3,}$/.test(usuario)) return toast('El usuario solo puede contener letras, números, puntos y guión bajo (mín. 3 caracteres)', 'error');
+            if (!clave || clave.length < 6) return toast('La contraseña debe tener al menos 6 caracteres', 'error');
+            if (clave !== claveC) return toast('Las contraseñas no coinciden', 'error');
+            if (!servicio) return toast('Selecciona el servicio que quieres reservar', 'error');
+            if (!fecha || !hora) return toast('Selecciona fecha y hora', 'error');
 
-            // 2. Validar que la fecha no sea pasada
-            const fechaDt = new Date(cita.fecha + 'T00:00:00');
-            if (fechaDt < today) {
-                return toast('La fecha seleccionada ya ha pasado. Por favor elige otra.', 'error');
-            }
-
-            // 3. Validar que el slot no esté ya ocupado (doble comprobación)
-            const { data: conflictos } = await sb.from('citas')
-                .select('id')
-                .eq('fecha', cita.fecha)
-                .eq('hora', cita.hora)
-                .neq('estado', 'cancelada');
-            if (conflictos && conflictos.length > 0) {
-                return toast('Ese horario ya está reservado. Por favor elige otra hora.', 'error');
-            }
+            const fechaDt = new Date(fecha + 'T00:00:00');
+            if (fechaDt < today) return toast('La fecha seleccionada ya ha pasado. Por favor elige otra.', 'error');
 
             setBtnLoading('btnEnviarCita', true);
-            
+
             try {
-                // 4. Guardar en Supabase
-                const { data, error } = await sb.from('citas').insert([cita]).select();
-
-                if (!error) {
-                    alert('¡Cita solicitada con éxito! Nos pondremos en contacto contigo para confirmar.');
-                    toast('Solicitud enviada correctamente.', 'success', 'Reserva enviada');
-
-                    if (data && data.length > 0) {
-                        citas.push(data[0]);
-                    } else {
-                        cita.id = Date.now();
-                        citas.push(cita);
-                    }
-
-                    if (typeof renderAdmin === 'function') renderAdmin();
-
-                    document.getElementById('citaNombre').value = '';
-                    document.getElementById('citaTelefono').value = '';
-                    resetPicker();
-
-                    setTimeout(() => mostrarVista('login'), 800);
-                    
-                } else {
-                    console.error("Error de Supabase:", error);
-                    toast('No se pudo guardar la cita. Inténtalo de nuevo.', 'error');
+                // ── Comprobar usuario único ────────────────────────────────
+                const { data: uCheck } = await sb.from('clientas').select('id').eq('usuario', usuario).maybeSingle();
+                if (uCheck) {
+                    toast('Ese nombre de usuario ya está en uso. Elige otro.', 'error');
+                    return;
                 }
+
+                // ── Comprobar conflicto de horario ─────────────────────────
+                const { data: conflictos } = await sb.from('citas')
+                    .select('id').eq('fecha', fecha).eq('hora', hora).neq('estado', 'cancelada');
+                if (conflictos && conflictos.length > 0) {
+                    toast('Ese horario ya está reservado. Por favor elige otra hora.', 'error');
+                    return;
+                }
+
+                // ── Crear perfil de clienta ────────────────────────────────
+                const { data: nuevaClienta, error: errClienta } = await sb.from('clientas')
+                    .insert([{ nombre, telefono, usuario, clave, visitas: 0 }])
+                    .select()
+                    .single();
+
+                if (errClienta) {
+                    console.error('Error creando perfil:', errClienta);
+                    toast('No se pudo crear tu perfil: ' + errClienta.message, 'error');
+                    return;
+                }
+
+                // ── Guardar cita ───────────────────────────────────────────
+                const citaPayload = {
+                    nombre_cliente: nombre, telefono, fecha, hora,
+                    servicio, duracion_minutos: duracion, estado: 'pendiente'
+                };
+                const { data: citaData, error: errCita } = await sb.from('citas').insert([citaPayload]).select();
+
+                if (errCita) {
+                    console.error('Error guardando cita:', errCita);
+                    toast('Perfil creado pero no se pudo guardar la cita. Contacta con el salón.', 'error');
+                    return;
+                }
+
+                // ── Éxito ──────────────────────────────────────────────────
+                toast('¡Todo listo! Tu cuenta y solicitud están creadas.', 'success', 'Bienvenida');
+                if (citaData && citaData.length > 0) citas.push(citaData[0]);
+                if (typeof renderAdmin === 'function') renderAdmin();
+
+                document.getElementById('citaNombre').value = '';
+                document.getElementById('citaTelefono').value = '';
+                document.getElementById('citaUsuario').value = '';
+                document.getElementById('citaClave').value = '';
+                document.getElementById('citaClaveConfirm').value = '';
+                document.getElementById('usuarioFeedback').textContent = '';
+                evalPassStrength('');
+                resetPicker();
+
+                // Pre-rellenar login con el usuario recién creado
+                document.getElementById('loginUsuario').value = usuario;
+                setTimeout(() => {
+                    mostrarVista('login');
+                    toast('Inicia sesión con tu nuevo usuario', 'info');
+                }, 900);
+
             } catch (e) {
-                console.error("Error de conexión:", e);
-                toast('Problema de red. Revisa tu conexión e inténtalo de nuevo.', 'error');
+                console.error('Error en enviarSolicitudCita:', e);
+                toast('Problema de red: ' + (e.message || 'Inténtalo de nuevo'), 'error');
             } finally {
                 setBtnLoading('btnEnviarCita', false);
             }
