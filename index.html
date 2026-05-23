@@ -673,6 +673,102 @@
         .time-slot.disabled { color: var(--line); cursor: not-allowed; text-decoration: line-through; background: var(--cream); }
         .time-empty { grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--muted); font-family: 'Playfair Display', serif; font-style: italic; font-size: 13px; }
 
+
+        /* ── TIMELINE AGENDA ────────────────────────────── */
+        .agenda-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 0; }
+        .agenda-cal  { border-right: 1px solid var(--line); padding-right: 22px; }
+        .agenda-day-panel { padding-left: 24px; min-height: 400px; }
+
+        .timeline-wrap { position: relative; margin-top: 8px; }
+        .timeline-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+        }
+        .timeline-title { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 18px; font-weight: 600; }
+        .timeline-sub   { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+        .tl-tabs { display: flex; gap: 0; border: 1px solid var(--line); margin-bottom: 16px; }
+        .tl-tab  { flex: 1; background: #fff; border: none; padding: 9px; font-family: 'Poppins', sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); cursor: pointer; font-weight: 600; transition: all .25s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .tl-tab.active { background: var(--burgundy); color: #fff; }
+
+        .tl-grid { display: flex; flex-direction: column; gap: 4px; }
+        .tl-slot {
+            display: grid; grid-template-columns: 52px 1fr; gap: 0;
+            min-height: 52px; position: relative;
+        }
+        .tl-slot-time {
+            font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .5px;
+            padding: 6px 10px 0 0; text-align: right; white-space: nowrap;
+            border-right: 2px solid var(--line); position: relative;
+        }
+        .tl-slot-time::after {
+            content: ''; position: absolute; right: -5px; top: 10px;
+            width: 8px; height: 8px; border-radius: 50%; background: var(--line);
+        }
+        .tl-slot-body { padding: 4px 0 4px 12px; display: flex; flex-direction: column; gap: 3px; }
+
+        /* Cita card dentro del timeline */
+        .tl-cita {
+            border-left: 3px solid var(--burgundy);
+            background: rgba(146,31,35,.06);
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+        }
+        .tl-cita:hover { background: rgba(146,31,35,.11); transform: translateX(2px); }
+        .tl-cita.confirmada { border-left-color: var(--burgundy); background: rgba(146,31,35,.07); }
+        .tl-cita.pendiente  { border-left-color: var(--accent); background: rgba(201,167,77,.09); }
+        .tl-cita.completada { border-left-color: #4A7C59; background: rgba(74,124,89,.07); }
+        .tl-cita.cancelada  { border-left-color: var(--line); background: transparent; opacity: .5; }
+
+        .tl-cita-name    { font-size: 13px; font-weight: 600; color: var(--dark-text); }
+        .tl-cita-servicio { font-size: 10.5px; color: var(--accent); font-weight: 600; letter-spacing: .5px; }
+        .tl-cita-meta    { font-size: 11px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+        .tl-cita-dur     {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--muted); font-weight: 700; background: var(--cream-deep); padding: 2px 7px;
+        }
+
+        /* Bloqueo visual de slots ocupados */
+        .tl-bloqueado {
+            background: repeating-linear-gradient(
+                45deg, transparent, transparent 4px,
+                rgba(201,167,77,.07) 4px, rgba(201,167,77,.07) 8px
+            );
+            border: 1px dashed rgba(201,167,77,.25);
+            padding: 4px 10px;
+            font-size: 10px; color: #C9A74D; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 6px;
+            font-weight: 600; opacity: .7;
+        }
+
+        .tl-libre {
+            padding: 4px 10px; font-size: 10.5px; color: #4A7C59;
+            font-weight: 500; display: flex; align-items: center; gap: 6px;
+        }
+
+        .tl-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+        .tl-btn { padding: 5px 12px; font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; border: none; cursor: pointer; font-family: 'Poppins',sans-serif; transition: all .2s; }
+        .tl-btn.approve { background: var(--burgundy); color: #fff; }
+        .tl-btn.approve:hover { background: var(--burgundy-dark); }
+        .tl-btn.done    { background: #4A7C59; color: #fff; }
+        .tl-btn.done:hover { background: #3a6347; }
+        .tl-btn.edit    { background: #fff; color: var(--muted); border: 1px solid var(--line); }
+        .tl-btn.edit:hover { color: var(--burgundy); border-color: var(--burgundy); }
+        .tl-btn.del     { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+        .tl-btn.del:hover { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+
+        .tl-empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+        .tl-empty i { font-size: 32px; display: block; margin-bottom: 12px; opacity: .4; }
+        .tl-empty .lbl { font-size: 13px; font-family: 'Playfair Display',serif; font-style: italic; }
+
+        .tl-leyenda { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+        .tl-leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+        .tl-leyenda-dot  { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
         @media (max-width: 991px) {
             .stat-row { grid-template-columns: repeat(3, 1fr); }
             .agenda-wrap { grid-template-columns: 1fr; }
@@ -1075,28 +1171,36 @@
                             <div class="cal-head">
                                 <div class="cal-month" id="agendaMonth"></div>
                                 <div class="cal-nav-group">
-                                    <button type="button" class="cal-nav" id="agendaPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
-                                    <button type="button" class="cal-nav" id="agendaToday" aria-label="Hoy" title="Ir a hoy"><i class="fa-solid fa-circle-dot"></i></button>
-                                    <button type="button" class="cal-nav" id="agendaNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaToday" title="Hoy"><i class="fa-solid fa-circle-dot"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaNext"><i class="fa-solid fa-chevron-right"></i></button>
                                 </div>
                             </div>
                             <div class="cal-grid" id="agendaGrid"></div>
-                            <div class="agenda-legend">
-                                <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span>Pendientes</div>
-                                <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span>Confirmadas</div>
-                                <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span>Completadas</div>
+                            <div class="tl-leyenda" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);">
+                                <div class="tl-leyenda-item"><span class="tl-leyenda-dot" style="background:var(--accent);"></span>Pendiente</div>
+                                <div class="tl-leyenda-item"><span class="tl-leyenda-dot" style="background:var(--burgundy);"></span>Confirmada</div>
+                                <div class="tl-leyenda-item"><span class="tl-leyenda-dot" style="background:#4A7C59;"></span>Completada</div>
+                                <div class="tl-leyenda-item"><span class="tl-leyenda-dot" style="background:var(--line);border:1px dashed var(--accent);"></span>Bloqueado</div>
+                                <div class="tl-leyenda-item"><span class="tl-leyenda-dot" style="background:rgba(74,124,89,.2);"></span>Libre</div>
                             </div>
                         </div>
 
                         <div class="agenda-day-panel">
-                            <div class="agenda-day-header">
+                            <div class="timeline-header">
                                 <div>
-                                    <div class="day-title" id="dayTitle">—</div>
-                                    <div class="day-sub" id="daySub"></div>
+                                    <div class="timeline-title" id="dayTitle">—</div>
+                                    <div class="timeline-sub" id="daySub"></div>
                                 </div>
-                                <div class="day-count" id="dayCount"></div>
+                                <div id="dayCount" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
                             </div>
-                            <div class="agenda-day-list" id="dayList"></div>
+                            <div class="tl-tabs">
+                                <button type="button" class="tl-tab active" data-tperiod="morning"><i class="fa-solid fa-sun"></i>Mañana</button>
+                                <button type="button" class="tl-tab" data-tperiod="afternoon"><i class="fa-solid fa-moon"></i>Tarde</button>
+                            </div>
+                            <div class="timeline-wrap">
+                                <div class="tl-grid" id="timelineGrid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1901,41 +2005,108 @@ Soy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS
         });
     }
 
+    // Período activo del timeline admin
+    let tlPeriod = "morning";
+
     function renderAgendaDay() {
-        const iso=fmtISO(agendaSelected);
-        const dayCitas=citasOfDay(iso).slice().sort((a,b)=>(a.hora||"").localeCompare(b.hora||""));
-        document.getElementById("dayTitle").textContent=fmtDayLong(agendaSelected);
-        document.getElementById("daySub").textContent=iso===fmtISO(today)?"Hoy":"";
-        const counts={pendiente:0,confirmada:0,completada:0,cancelada:0};
-        dayCitas.forEach(c=>counts[c.estado||"pendiente"]=(counts[c.estado||"pendiente"]||0)+1);
-        const cntEl=document.getElementById("dayCount");
-        cntEl.innerHTML="";
-        Object.entries(counts).forEach(([k,v])=>{ if(v>0) cntEl.innerHTML+=`<span class="estado-pill ${k}">${v} ${k}</span>`; });
-        const list=document.getElementById("dayList");
-        if (!dayCitas.length) {
-            list.innerHTML=`<div class="agenda-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="label">Sin citas para este día</div></div>`;
-            return;
+        const iso = fmtISO(agendaSelected);
+        const todasCitas = citas.filter(c => c.fecha === iso);
+        const dayCitas   = citasOfDay(iso); // filtradas por agendaFilter
+
+        document.getElementById("dayTitle").textContent = fmtDayLong(agendaSelected);
+        document.getElementById("daySub").textContent   = iso === fmtISO(today) ? "Hoy" : "";
+
+        // Badges de estado
+        const counts = {pendiente:0, confirmada:0, completada:0, cancelada:0};
+        todasCitas.forEach(c => { const k=c.estado||"pendiente"; counts[k]=(counts[k]||0)+1; });
+        const cntEl = document.getElementById("dayCount");
+        cntEl.innerHTML = "";
+        Object.entries(counts).forEach(([k,v]) => {
+            if (v>0) cntEl.innerHTML += `<span class="estado-pill ${k}">${v} ${k}</span>`;
+        });
+
+        const grid = document.getElementById("timelineGrid");
+        if (!grid) return;
+
+        const slots = {
+            morning:   ["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"],
+            afternoon: ["16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"]
+        }[tlPeriod];
+
+        // Precalcular qué slots están bloqueados por citas existentes (todas, no filtradas)
+        const toCitas = todasCitas.filter(c => (c.estado||"pendiente") !== "cancelada");
+
+        grid.innerHTML = "";
+
+        if (!slots.length) return;
+
+        let hayAlgo = false;
+
+        slots.forEach(t => {
+            const tMin = toMin(t);
+
+            // ¿Hay una cita que empieza en este slot?
+            const citaAqui = toCitas.find(c => (c.hora||"").slice(0,5) === t);
+
+            // ¿Este slot está bloqueado por una cita que empezó antes?
+            const bloqueadoPor = !citaAqui ? toCitas.find(c => {
+                const inicio = toMin((c.hora||"").slice(0,5));
+                const fin    = inicio + (parseInt(c.duracion_minutos,10)||30);
+                return tMin > inicio && tMin < fin;
+            }) : null;
+
+            const libre = !citaAqui && !bloqueadoPor;
+
+            // Filtro de admin: si hay filtro activo solo mostrar slots con citas del filtro
+            const citaFiltrada = dayCitas.find(c => (c.hora||"").slice(0,5) === t);
+            const mostrarSlot  = agendaFilter === "all" || citaAqui || bloqueadoPor;
+            if (!mostrarSlot && libre) {
+                // Slot libre y no coincide con filtro — mostrar igual pero tenue
+            }
+
+            hayAlgo = true;
+
+            let bodyHTML = "";
+
+            if (citaAqui) {
+                const estado = citaAqui.estado || "pendiente";
+                const durMin = parseInt(citaAqui.duracion_minutos,10)||30;
+                bodyHTML = `
+                    <div class="tl-cita ${estado}" onclick="abrirEditarCita(${citaAqui.id})">
+                        <div class="tl-cita-name">${citaAqui.nombre_cliente||"—"}</div>
+                        ${citaAqui.servicio?`<div class="tl-cita-servicio">${citaAqui.servicio}</div>`:""}
+                        <div class="tl-cita-meta">
+                            <span><i class="fa-solid fa-phone" style="margin-right:4px;font-size:9px;"></i>${citaAqui.telefono||"—"}</span>
+                            <span class="estado-pill ${estado}" style="font-size:9px;padding:1px 7px;">${estado}</span>
+                        </div>
+                        <span class="tl-cita-dur">${durStr(durMin)}</span>
+                        <div class="tl-actions" onclick="event.stopPropagation()">
+                            ${estado==="pendiente"?`<button class="tl-btn approve" onclick="aprobarCita(${citaAqui.id})"><i class="fa-solid fa-check"></i> Aprobar</button>`:""}
+                            ${estado==="confirmada"?`<button class="tl-btn done" onclick="completarCita(${citaAqui.id})"><i class="fa-solid fa-circle-check"></i> Completar</button>`:""}
+                            <button class="tl-btn edit" onclick="abrirEditarCita(${citaAqui.id})"><i class="fa-solid fa-pen"></i></button>
+                            <button class="tl-btn del"  onclick="eliminarCita(${citaAqui.id})"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>`;
+            } else if (bloqueadoPor) {
+                const durMin = parseInt(bloqueadoPor.duracion_minutos,10)||30;
+                const inicioB = toMin((bloqueadoPor.hora||"").slice(0,5));
+                const finB    = inicioB + durMin;
+                const restMin = finB - tMin;
+                bodyHTML = `<div class="tl-bloqueado"><i class="fa-solid fa-lock" style="font-size:10px;"></i>Bloqueado — ${bloqueadoPor.nombre_cliente||""} (${durStr(restMin)} restantes)</div>`;
+            } else {
+                bodyHTML = `<div class="tl-libre"><i class="fa-regular fa-circle" style="font-size:10px;color:#4A7C59;"></i>Libre</div>`;
+            }
+
+            grid.innerHTML += `
+                <div class="tl-slot">
+                    <div class="tl-slot-time">${t}</div>
+                    <div class="tl-slot-body">${bodyHTML}</div>
+                </div>`;
+        });
+
+        if (!hayAlgo) {
+            grid.innerHTML = `<div class="tl-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="lbl">Sin citas para este día</div></div>`;
         }
-        list.innerHTML=dayCitas.map(c=>{
-            const estado=c.estado||"pendiente";
-            const [hh,mm]=(c.hora||"00:00").split(":");
-            const period=parseInt(hh,10)<14?"mañana":"tarde";
-            return `<div class="appt-row">
-                <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
-                <div class="appt-info">
-                    <div class="appt-name">${c.nombre_cliente||"—"}</div>
-                    ${c.servicio?`<div style="font-size:10.5px;color:var(--accent);font-weight:600;margin-bottom:2px;">${c.servicio}</div>`:""}
-                    <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono||"—"}${c.duracion_minutos?` · <span style="color:var(--muted)">${durStr(c.duracion_minutos)}</span>`:""}</div>
-                    <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
-                </div>
-                <div class="appt-actions">
-                    ${estado==="pendiente"?`<button class="action-icon success" onclick="aprobarCita(${c.id})" title="Aprobar"><i class="fa-solid fa-check"></i></button>`:""}
-                    ${estado==="confirmada"?`<button class="action-icon success" onclick="completarCita(${c.id})" title="Completada"><i class="fa-solid fa-circle-check"></i></button>`:""}
-                    <button class="action-icon" onclick="abrirEditarCita(${c.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="action-icon danger" onclick="eliminarCita(${c.id})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </div>`;
-        }).join("");
     }
 
     function initAgenda() {
@@ -1953,6 +2124,15 @@ Soy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS
                 chip.classList.add("active");
                 agendaFilter=chip.dataset.filter;
                 renderAgenda(); renderAgendaDay();
+            });
+        });
+        // Tabs mañana/tarde del timeline
+        document.querySelectorAll(".tl-tab").forEach(tab=>{
+            tab.addEventListener("click",()=>{
+                document.querySelectorAll(".tl-tab").forEach(t=>t.classList.remove("active"));
+                tab.classList.add("active");
+                tlPeriod=tab.dataset.tperiod;
+                renderAgendaDay();
             });
         });
     }
