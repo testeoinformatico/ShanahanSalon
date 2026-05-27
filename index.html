@@ -6,1465 +6,2040 @@
     <meta name="description" content="Shanahan Nails — Salón de manicura de lujo. Reserva tu cita y consulta tus puntos de fidelización.">
     <title>Shanahan Nails · Luxury Loyalty & Citas</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        :root {
-            /* Colors inspired by the logo */
-            --burgundy: #8B181A;
-            --burgundy-dark: #630D0F;
-            --burgundy-soft: rgba(139, 24, 26, 0.08);
-            --cream: #FDF9F3;
-            --cream-deep: #F1E5D5;
-            --dark-text: #2C2424;
-            --muted: #8A7E76;
-            --line: #E8D9C7;
-            
-            /* Accents */
-            --accent: #C5A152; /* Gold */
-            --accent-light: #E0C885;
-            
-            /* Shadows & Effects */
-            --shadow-sm: 0 4px 18px rgba(139, 24, 26, 0.05);
-            --shadow-md: 0 18px 50px rgba(139, 24, 26, 0.08);
-            --shadow-lg: 0 30px 80px rgba(139, 24, 26, 0.12);
-            --glass-bg: rgba(253, 249, 243, 0.85);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-            --ease: cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Typography */
-            --font-heading: 'Playfair Display', serif;
-            --font-script: 'Great Vibes', cursive;
-            --font-ui: 'Poppins', sans-serif;
-        }
-
-        /* =========================================================
-           BASE RESET & TYPOGRAPHY
-           ========================================================= */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--cream);
-            background-image: 
-                radial-gradient(circle at top right, rgba(197, 161, 82, 0.05), transparent 40%),
-                radial-gradient(circle at bottom left, rgba(139, 24, 26, 0.05), transparent 40%);
-            background-attachment: fixed;
-            color: var(--dark-text);
-            font-family: var(--font-ui);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-heading);
-            color: var(--burgundy);
-            font-weight: 500;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        button {
-            border: none;
-            background: none;
-            font-family: var(--font-ui);
-            cursor: pointer;
-        }
-
-        input, select {
-            font-family: var(--font-ui);
-        }
-
-        /* =========================================================
-           LAYOUT & CONTAINERS
-           ========================================================= */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* =========================================================
-           NAVIGATION (NAVBAR)
-           ========================================================= */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: var(--glass-border);
-            transition: all 0.3s var(--ease);
-        }
-
-        .navbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 80px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .nav-logo img {
-            height: 40px; 
-            object-fit: contain;
-            transition: transform 0.3s var(--ease);
-        }
-
-        .nav-logo:hover img {
-            transform: scale(1.05);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
-
-        .nav-link {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--burgundy);
-            position: relative;
-            padding: 8px 0;
-            transition: color 0.3s var(--ease);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 1px;
-            background: var(--accent);
-            transition: width 0.3s var(--ease);
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .nav-btn {
-            background: var(--burgundy);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.3s var(--ease);
-        }
-
-        .nav-btn:hover {
-            background: var(--burgundy-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Mobile Menu Toggle */
-        .menu-toggle {
-            display: none;
-            font-size: 24px;
-            color: var(--burgundy);
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                position: absolute;
-                top: 80px;
-                left: 0;
-                width: 100%;
-                background: var(--cream);
-                flex-direction: column;
-                padding: 24px;
-                gap: 20px;
-                border-bottom: 1px solid var(--line);
-                box-shadow: var(--shadow-sm);
-                transform: translateY(-10px);
-                opacity: 0;
-                pointer-events: none;
-                transition: all 0.3s var(--ease);
-            }
-            .nav-links.active {
-                transform: translateY(0);
-                opacity: 1;
-                pointer-events: auto;
-            }
-            .menu-toggle {
-                display: block;
-            }
-        }
-
-        /* =========================================================
-           UI COMPONENTS (CARDS, BUTTONS)
-           ========================================================= */
-        .luxury-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: var(--glass-border);
-            box-shadow: var(--shadow-md);
-            border-radius: 2px;
-            padding: 48px 40px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
-        }
-
-        .luxury-card::before {
-            content: '';
-            position: absolute;
-            inset: 8px;
-            border: 1px solid rgba(197, 161, 82, 0.2);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .luxury-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: var(--burgundy);
-            color: #fff;
-            padding: 16px 32px;
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.4s var(--ease);
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s var(--ease);
-        }
-
-        .btn-primary:hover {
-            background: var(--burgundy-dark);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .btn-ghost {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: transparent;
-            color: var(--burgundy);
-            border: 1px solid var(--burgundy);
-            padding: 14px 28px;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.3s var(--ease);
-        }
-
-        .btn-ghost:hover {
-            background: var(--burgundy);
-            color: #fff;
-        }
-
-        /* =========================================================
-           FORM FIELDS
-           ========================================================= */
-        .field {
-            position: relative;
-            margin-bottom: 24px;
-        }
-
-        .field input, .field select {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--line);
-            padding: 16px 0 8px;
-            font-size: 16px;
-            color: var(--dark-text);
-            outline: none;
-            transition: border-color 0.3s var(--ease);
-        }
-
-        .field input:focus, .field select:focus {
-            border-bottom-color: var(--burgundy);
-        }
-
-        .field label {
-            position: absolute;
-            top: 16px;
-            left: 0;
-            font-size: 14px;
-            color: var(--muted);
-            pointer-events: none;
-            transition: all 0.3s var(--ease);
-        }
-
-        .field input:focus ~ label,
-        .field input:not(:placeholder-shown) ~ label {
-            top: -8px;
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-
-        .field-icon {
-            position: absolute;
-            right: 0;
-            top: 20px;
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* =========================================================
-           VIEWS (SPA LOGIC)
-           ========================================================= */
-        .view-section {
-            display: none;
-            padding-top: 120px;
-            min-height: calc(100vh - 80px);
-            animation: fadeIn 0.5s var(--ease) forwards;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* =========================================================
-           LANDING PAGE (HERO)
-           ========================================================= */
-        .hero-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 60px 0 100px;
-        }
-
-        .hero-ornament {
-            font-family: var(--font-ui);
-            font-size: 11px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .hero-ornament::before, .hero-ornament::after {
-            content: '';
-            width: 40px;
-            height: 1px;
-            background: var(--accent);
-        }
-
-        .hero-title {
-            font-size: 5vw;
-            line-height: 1.1;
-            margin-bottom: 16px;
-            color: var(--burgundy);
-        }
-
-        .hero-title .script {
-            font-family: var(--font-script);
-            font-size: 1.5em;
-            font-weight: 400;
-            color: var(--accent);
-            display: block;
-            margin-top: -0.2em;
-        }
-
-        .hero-subtitle {
-            font-size: 18px;
-            color: var(--muted);
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-
-        /* =========================================================
-           SERVICES GRID (LANDING)
-           ========================================================= */
-        .services-preview {
-            padding: 80px 0;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 32px;
-        }
-
-        .service-card {
-            background: #fff;
-            border: 1px solid var(--line);
-            padding: 40px 32px;
-            text-align: center;
-            transition: all 0.4s var(--ease);
-        }
-
-        .service-card:hover {
-            border-color: var(--accent);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-5px);
-        }
-
-        .service-icon {
-            font-size: 32px;
-            color: var(--burgundy);
-            margin-bottom: 24px;
-        }
-
-        .service-title {
-            font-size: 20px;
-            margin-bottom: 12px;
-        }
-
-        /* =========================================================
-           CALENDAR & BOOKING
-           ========================================================= */
-        .booking-flow {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            position: relative;
-        }
-
-        .step-indicator::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: var(--line);
-            z-index: 0;
-        }
-
-        .step {
-            background: var(--cream);
-            padding: 0 16px;
-            z-index: 1;
-            font-size: 12px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--muted);
-        }
-
-        .step.active {
-            color: var(--burgundy);
-            font-weight: 600;
-        }
-
-        .service-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .service-opt {
-            border: 1px solid var(--line);
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s var(--ease);
-            background: #fff;
-        }
-
-        .service-opt:hover, .service-opt.selected {
-            border-color: var(--burgundy);
-            background: var(--burgundy-soft);
-            color: var(--burgundy);
-        }
-
-        .calendar-widget {
-            background: #fff;
-            border: 1px solid var(--line);
-            padding: 24px;
-        }
-
-        .cal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-        }
-
-        .cal-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-
-        .cal-day:hover:not(.disabled) {
-            border-color: var(--accent);
-            color: var(--burgundy);
-        }
-
-        .cal-day.selected {
-            background: var(--burgundy);
-            color: #fff;
-        }
-
-        .cal-day.disabled {
-            color: #ccc;
-            cursor: not-allowed;
-            text-decoration: line-through;
-        }
-
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .time-slot {
-            padding: 10px;
-            border: 1px solid var(--line);
-            text-align: center;
-            font-size: 13px;
-            cursor: pointer;
-            background: #fff;
-            transition: all 0.2s;
-        }
-
-        .time-slot:hover, .time-slot.selected {
-            border-color: var(--burgundy);
-            background: var(--burgundy);
-            color: #fff;
-        }
-
-        /* =========================================================
-           TOASTS & NOTIFICATIONS
-           ========================================================= */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 9999;
-        }
-
-        .toast {
-            background: var(--glass-bg);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--line);
-            border-left: 4px solid var(--accent);
-            padding: 16px 24px;
-            border-radius: 4px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideInRight 0.4s var(--ease) forwards;
-        }
-
-        .toast.error { border-left-color: #d32f2f; }
-        .toast.success { border-left-color: #388e3c; }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        /* =========================================================
-           RESPONSIVE OVERRIDES
-           ========================================================= */
-        @media (max-width: 768px) {
-            .hero-title { font-size: 42px; }
-            .hero-title .script { font-size: 48px; }
-            .luxury-card { padding: 32px 24px; }
-            .service-selector { grid-template-columns: 1fr; }
-            .time-slots { grid-template-columns: repeat(3, 1fr); }
-        }
-    </style>
+:root {
+    --burgundy: #6E1A24;
+    --burgundy-dark: #4A1118;
+    --burgundy-soft: rgba(110, 26, 36, 0.08);
+    --cream: #FAF6F0;
+    --cream-deep: #EBE1D5;
+    --dark-text: #2C2424;
+    --muted: #8A7E76;
+    --line: #E8D9C7;
+    --accent: #C5A152;
+    --accent-light: #E0C885;
+    --shadow-sm: 0 8px 24px rgba(110, 26, 36, 0.05);
+    --shadow-md: 0 20px 40px rgba(110, 26, 36, 0.08);
+    --shadow-lg: 0 40px 80px rgba(110, 26, 36, 0.12);
+    --glass-bg: rgba(250, 246, 240, 0.9);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+    --ease: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+    background-color: var(--cream);
+    color: var(--dark-text);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background-image: 
+        radial-gradient(circle at top right, rgba(197, 161, 82, 0.04), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(110, 26, 36, 0.04), transparent 40%);
+    background-attachment: fixed;
+}
+
+::selection { background: var(--burgundy); color: #fff; }
+
+/* LAYOUT: SIDEBAR + CONTENT */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 320px;
+    background: #fff;
+    border-right: 1px solid var(--line);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 30px;
+    box-shadow: var(--shadow-sm);
+    z-index: 1000;
+    animation: slideInLeft 0.8s var(--ease) forwards;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.sidebar-logo {
+    margin-bottom: 60px;
+    cursor: pointer;
+    transition: transform 0.4s var(--ease);
+}
+.sidebar-logo:hover {
+    transform: scale(1.05);
+}
+.sidebar-logo img {
+    height: 140px;
+    width: auto;
+    object-fit: contain;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.sidebar-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--burgundy);
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 24px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.4s var(--ease);
+    text-align: center;
+}
+
+.sidebar-btn:hover {
+    background: var(--burgundy-soft);
+    border-color: var(--burgundy);
+    transform: translateY(-2px);
+}
+
+.sidebar-btn.solid {
+    background: var(--burgundy);
+    color: #fff;
+    border-color: var(--burgundy);
+    box-shadow: 0 4px 12px rgba(110, 26, 36, 0.2);
+}
+
+.sidebar-btn.solid:hover {
+    background: var(--burgundy-dark);
+    box-shadow: 0 8px 24px rgba(110, 26, 36, 0.3);
+}
+
+.app-content {
+    flex: 1;
+    margin-left: 320px;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* BRANDING */
+.brand-container {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+}
+.brand-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.brand-ornament::before,
+.brand-ornament::after {
+    content: '';
+    height: 1px;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.brand-main {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 6vw, 64px);
+    color: var(--burgundy);
+    text-transform: uppercase;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 4px;
+}
+.brand-sub {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(56px, 7vw, 82px);
+    color: var(--accent);
+    margin-top: -16px;
+    display: block;
+    font-weight: 400;
+}
+
+/* CARDS */
+.luxury-card {
+    background: var(--glass-bg);
+    padding: 50px 48px;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    border: var(--glass-border);
+    border-radius: 4px;
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.luxury-card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(197, 161, 82, 0.2);
+    pointer-events: none;
+}
+.luxury-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--burgundy);
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.card-subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 36px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+/* ANIMATIONS FOR VIEWS */
+.view-anim {
+    animation: fadeScaleUp 0.8s var(--ease) forwards;
+    opacity: 0;
+    transform-origin: center bottom;
+}
+@keyframes fadeScaleUp {
+    0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* FORMS */
+.field { position: relative; margin-bottom: 28px; }
+.field input, .field select {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    padding: 16px 0 8px;
+    font-size: 16px;
+    color: var(--dark-text);
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: all .3s var(--ease);
+}
+.field input::placeholder { color: transparent; }
+.field label {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+    transition: all .3s var(--ease);
+    letter-spacing: 0.5px;
+}
+.field input:focus, .field select:focus { border-bottom-color: var(--burgundy); }
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field select:focus + label,
+.field select.has-value + label {
+    top: -8px;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.field-icon {
+    position: absolute;
+    right: 0;
+    top: 18px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* BUTTONS */
+.btn-luxury {
+    background: var(--burgundy);
+    color: #fff;
+    border: none;
+    padding: 18px 24px;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    width: 100%;
+    margin-top: 16px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all .4s var(--ease);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+}
+.btn-luxury::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s var(--ease);
+}
+.btn-luxury:hover {
+    background: var(--burgundy-dark);
+    box-shadow: 0 12px 30px rgba(110, 26, 36, 0.25);
+}
+.btn-luxury:hover::before {
+    left: 100%;
+}
+.btn-luxury:disabled { opacity: .55; cursor: not-allowed; }
+.btn-luxury .spinner {
+    display: none;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    margin-left: 10px;
+}
+.btn-luxury.loading .spinner { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 14px 22px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .3s var(--ease);
+    font-family: 'Poppins', sans-serif;
+    border-radius: 2px;
+}
+.btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
+
+.link-soft {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 16px 0 0;
+    display: block;
+    width: 100%;
+    text-align: center;
+    transition: color .3s var(--ease);
+}
+.link-soft:hover { color: var(--burgundy); }
+
+.divider-soft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0 24px;
+    color: var(--line);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+.divider-soft::before,
+.divider-soft::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+/* BIG CTA PEDIR CITA */
+.btn-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    color: #fff;
+    border: none;
+    padding: 22px 28px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(197, 161, 82, 0.3);
+    transition: all .4s var(--ease);
+    margin-top: 8px;
+    border-radius: 4px;
+}
+.btn-cta::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent);
+    transform: skewX(-20deg);
+    animation: shine 3s ease-in-out infinite;
+}
+@keyframes shine {
+    0%, 60% { left: -100%; }
+    100% { left: 150%; }
+}
+.btn-cta:hover { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(197, 161, 82, 0.4); }
+.btn-cta .cta-text { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.btn-cta .cta-sub { font-size: 10px; font-weight: 500; letter-spacing: 3px; opacity: .9; text-transform: uppercase; }
+.btn-cta .cta-main { font-family: 'Playfair Display', serif; font-style: italic; font-size: 22px; font-weight: 600; letter-spacing: 1.5px; text-transform: none; }
+.btn-cta .cta-arrow { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 16px; transition: transform .35s var(--ease); }
+.btn-cta:hover .cta-arrow { transform: translateX(6px); background: rgba(255,255,255,.3); }
+
+/* SOCIAL BAR */
+.social-section { margin-top: 36px; text-align: center; }
+.social-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: var(--muted); margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 14px; }
+.social-title::before, .social-title::after { content: ''; height: 1px; width: 40px; background: var(--line); }
+.social-icons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.social-link { width: 50px; height: 50px; border: 1px solid var(--line); background: #fff; color: var(--burgundy); display: inline-flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; transition: all .4s var(--ease); }
+.social-link:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(110, 26, 36, .15); background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+
+/* CALENDAR & PICKERS */
+.calendar { background: #fff; border: 1px solid var(--line); padding: 24px; margin-bottom: 12px; border-radius: 4px; box-shadow: var(--shadow-sm); }
+.cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.cal-month { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 19px; font-weight: 600; text-transform: capitalize; }
+.cal-nav { width: 36px; height: 36px; border: 1px solid var(--line); background: transparent; color: var(--burgundy); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; transition: all .3s var(--ease); border-radius: 4px; }
+.cal-nav:hover:not(:disabled) { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+.cal-nav-group { display: flex; gap: 8px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-dow { text-align: center; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 8px 0 10px; font-weight: 600; }
+.cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--dark-text); cursor: pointer; transition: all .3s var(--ease); border-radius: 4px; border: 1px solid transparent; }
+.cal-day:hover:not(.disabled):not(.selected) { border-color: var(--accent); color: var(--burgundy); background: var(--cream); }
+.cal-day.disabled { color: var(--line); cursor: not-allowed; text-decoration: line-through; }
+.cal-day.selected { background: var(--burgundy); color: #fff; border-color: var(--burgundy); box-shadow: 0 6px 16px rgba(110, 26, 36, .25); font-weight: 600; }
+
+.picker-label { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--burgundy); font-weight: 600; margin: 24px 0 16px; }
+.picker-label .picked { font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; text-transform: none; letter-spacing: 1px; color: var(--accent); font-weight: 500; }
+
+.time-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 16px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.time-tab { background: #fff; border: none; padding: 14px; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); cursor: pointer; font-weight: 600; transition: all .3s var(--ease); }
+.time-tab.active { background: var(--burgundy); color: #fff; }
+.time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.time-slot { background: #fff; border: 1px solid var(--line); padding: 12px 6px; font-size: 13px; color: var(--dark-text); cursor: pointer; font-weight: 500; transition: all .3s var(--ease); text-align: center; border-radius: 4px; }
+.time-slot:hover:not(.selected):not(.disabled) { border-color: var(--accent); color: var(--burgundy); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.time-slot.selected { background: var(--burgundy); color: #fff; border-color: var(--burgundy); box-shadow: 0 6px 16px rgba(110, 26, 36, .25); }
+.time-slot.disabled { color: var(--line); cursor: not-allowed; text-decoration: line-through; background: transparent; }
+
+/* STAMPS */
+.stamps-wrap { background: #fff; border: 1px solid var(--line); padding: 36px 30px; margin: 32px 0 28px; border-radius: 4px; box-shadow: var(--shadow-sm); }
+.stamps-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
+.stamps-header .label { font-family: 'Playfair Display', serif; color: var(--burgundy); font-style: italic; font-size: 16px; }
+.stamps-header .count { color: var(--muted); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+.stamps-header .count strong { color: var(--burgundy); font-weight: 600; font-size: 14px; }
+.stamps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.stamp-circle { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: var(--line); background: transparent; font-size: 18px; transition: all .5s var(--ease); position: relative; }
+.stamp-circle.active { background: var(--burgundy); color: #fff; border-color: var(--burgundy); box-shadow: 0 8px 20px rgba(110, 26, 36, .25); animation: popStamp 0.5s var(--ease); }
+@keyframes popStamp { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.stamp-circle.reward { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; border-color: var(--accent); box-shadow: 0 10px 26px rgba(197, 161, 82, .35); }
+
+/* ADMIN */
+.admin-menu {
+    position: fixed;
+    bottom: 0; left: 320px; right: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border-top: var(--glass-border);
+    display: flex; justify-content: space-around; padding: 12px 24px;
+    z-index: 900; box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+}
+.admin-menu-item { background: none; border: none; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; cursor: pointer; transition: all .3s var(--ease); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.admin-menu-item i { font-size: 16px; }
+.admin-menu-item.active { color: var(--burgundy); transform: translateY(-2px); }
+.admin-menu-item:hover { color: var(--burgundy); }
+
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; width: 100%; max-width: 1000px; }
+.stat { background: #fff; border: 1px solid var(--line); padding: 24px; border-radius: 4px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: transform 0.4s var(--ease); }
+.stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.stat::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--burgundy); }
+.stat .num { font-family: 'Playfair Display', serif; font-size: 40px; color: var(--burgundy); font-weight: 600; line-height: 1; }
+.stat .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-top: 8px; font-weight: 500; }
+
+.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.admin-header h5 { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 26px; font-weight: 600; display: flex; align-items: center; gap: 14px; margin: 0; }
+.admin-search { flex: 0 1 300px; position: relative; }
+.admin-search input { width: 100%; border: 1px solid var(--line); background: var(--cream); padding: 12px 16px 12px 42px; font-size: 13px; font-family: 'Poppins', sans-serif; border-radius: 4px; transition: all .3s var(--ease); }
+.admin-search input:focus { border-color: var(--burgundy); background: #fff; box-shadow: var(--shadow-sm); }
+.admin-search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; }
+
+/* TOASTS */
+.toast-stack { position: fixed; bottom: 40px; right: 40px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
+.toast { background: var(--glass-bg); backdrop-filter: blur(12px); border: var(--glass-border); padding: 16px 24px; border-radius: 4px; box-shadow: var(--shadow-lg); border-left: 4px solid var(--burgundy); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 12px; animation: slideInRight 0.5s var(--ease) forwards; }
+@keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .sidebar { width: 280px; padding: 40px 20px; }
+    .app-content { margin-left: 280px; padding: 40px 24px; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .admin-menu { left: 280px; }
+}
+
+@media (max-width: 768px) {
+    .app-layout { flex-direction: column; }
+    
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 30px 20px;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        animation: fadeScaleUp 0.6s var(--ease) forwards;
+    }
+    
+    .sidebar-logo { margin-bottom: 24px; }
+    .sidebar-logo img { height: 80px; }
+    
+    .sidebar-nav {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .sidebar-btn { width: auto; padding: 10px 18px; font-size: 10px; }
+    
+    .app-content { margin-left: 0; padding: 30px 16px; }
+    
+    .brand-main { font-size: 38px; }
+    .brand-sub { font-size: 52px; margin-top: -10px; }
+    
+    .luxury-card { padding: 32px 24px; }
+    
+    .admin-menu { left: 0; padding: 10px 12px; }
+    .admin-menu-item { font-size: 8px; }
+    
+    .toast-stack { right: 16px; left: 16px; bottom: 16px; }
+}
+</style>
 </head>
 <body>
-
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="#" class="nav-logo" onclick="app.showView('vistaLanding')">
-                <img src="assets/img/logo.png" alt="Shanahan Nails">
-            </a>
-            
-            <!-- Mobile Toggle -->
-            <button class="menu-toggle" onclick="app.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
-
-            <div class="nav-links" id="navLinks">
-                <a href="#" class="nav-link" onclick="app.showView('vistaLanding')">Inicio</a>
-                <a href="#" class="nav-link" onclick="app.showView('vistaServicios')">Servicios</a>
-                <a href="#" class="nav-link" onclick="app.showView('vistaLogin')">Fidelización</a>
-                <button class="nav-btn" onclick="app.showView('vistaPedirCita')">Reserva tu Cita</button>
-            </div>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo" onclick="mostrarVista('login')" title="Inicio">
+            <img src="logo.png" alt="Shanahan Nails">
         </div>
+        <nav class="sidebar-nav">
+            <button class="sidebar-btn solid" onclick="mostrarVista('vistaPedirCita')">Reservar Cita</button>
+            <button class="sidebar-btn" onclick="mostrarVista('login')">FidelizaciÃ³n</button>
+            <button class="sidebar-btn" onclick="mostrarVista('vistaAccesoAdmin')">Personal</button>
+        </nav>
+    </aside>
+    <main class="app-content">
+
+
+    <!-- ADMIN NAV MENU -->
+    <nav class="admin-menu" id="adminMenu" style="display:none;">
+        <button class="admin-menu-item active" data-section="agenda" onclick="switchAdminSection('agenda')">
+            <i class="fa-regular fa-calendar"></i>Agenda
+        </button>
+        <button class="admin-menu-item" data-section="solicitudes" onclick="switchAdminSection('solicitudes')">
+            <i class="fa-regular fa-calendar-check"></i>Solicitudes
+            <span id="menuBadgePendientes" style="background:var(--accent);color:#2D1011;border-radius:100px;padding:1px 7px;font-size:9px;margin-left:2px;display:none;"></span>
+        </button>
+        <button class="admin-menu-item" data-section="fidelizacion" onclick="switchAdminSection('fidelizacion')">
+            <i class="fa-solid fa-gem"></i>Fidelización
+        </button>
+        <button class="admin-menu-item" data-section="disponibilidad" onclick="switchAdminSection('disponibilidad')">
+            <i class="fa-solid fa-calendar-days"></i>Disponibilidad
+        </button>
+        <div class="admin-menu-sep"></div>
+        <button class="admin-menu-item admin-menu-end" onclick="mostrarVista('login')" style="color:rgba(255,255,255,.35);">
+            <i class="fa-solid fa-right-from-bracket"></i>Salir
+        </button>
     </nav>
 
-    <!-- MAIN CONTAINER -->
-    <main class="container">
+    <!-- WELCOME MODAL -->
+    <div class="welcome-modal" id="welcomeModal" style="display:none;">
+        <div class="welcome-box">
+            <span class="welcome-crown">👑</span>
+            <div class="welcome-title">Bienvenida de vuelta</div>
+            <div class="welcome-name">mi culona</div>
+            <div class="welcome-msg">El salón te espera. Tienes <strong id="welcomePendientes">0</strong> solicitudes pendientes y <strong id="welcomeHoy">0</strong> citas hoy.</div>
+            <button class="welcome-close" onclick="closeWelcome()">Entrar al panel ✨</button>
+        </div>
+    </div>
 
-        <!-- VISTA: LANDING PAGE -->
-        <section id="vistaLanding" class="view-section active">
-            <div class="hero-section">
-                <div class="hero-ornament">Estudio de Uñas Premium</div>
-                <h1 class="hero-title">
-                    Eleva tu estilo con<br>
-                    <span class="script">Shanahan Nails</span>
-                </h1>
-                <p class="hero-subtitle">
-                    Descubre una experiencia de manicura y pedicura de lujo, donde cada detalle está diseñado para resaltar tu belleza natural.
-                </p>
-                <div style="display: flex; gap: 16px;">
-                    <button class="btn-primary" onclick="app.showView('vistaPedirCita')">Reservar Cita</button>
-                    <button class="btn-ghost" onclick="app.showView('vistaLogin')">Consultar Puntos</button>
-                </div>
-            </div>
+    <div class="container py-5" style="width: 100%; max-width: 1000px;">
 
-            <div class="services-preview">
-                <div class="section-header">
-                    <h2>Nuestros Servicios Destacados</h2>
+        <!-- LOGIN CLIENTE -->
+        <section id="login" class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Luxury Nail Salon</span></div>
+                    <span class="brand-main">Shanahan</span>
+                    <span class="brand-sub">Nails</span>
                 </div>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <i class="fa-solid fa-hand-sparkles service-icon"></i>
-                        <h3 class="service-title">Manicura Rusa</h3>
-                        <p class="muted">Limpieza profunda y esmaltado perfecto bajo la cutícula para una duración prolongada.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fa-solid fa-paintbrush service-icon"></i>
-                        <h3 class="service-title">Acrílico & Gel</h3>
-                        <p class="muted">Extensiones y estructuras impecables para lucir unas manos estilizadas y elegantes.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fa-solid fa-spa service-icon"></i>
-                        <h3 class="service-title">Pedicura Spa</h3>
-                        <p class="muted">Tratamiento completo de relajación, exfoliación y esmaltado para el cuidado de tus pies.</p>
+                <div class="luxury-card view-anim">
+                    <h5 class="card-title">Consultar Puntos</h5>
+                    <p class="card-subtitle">Accede a tu programa de fidelización</p>
+
+                    <form onsubmit="event.preventDefault(); iniciarSesionCliente();">
+                        <div class="field">
+                            <input type="text" id="loginUsuario" placeholder=" " autocomplete="name">
+                            <label>Nombre completo</label>
+                            <i class="fa-regular fa-user field-icon"></i>
+                        </div>
+                        <div class="field">
+                            <input type="tel" id="loginPass" placeholder=" " autocomplete="tel">
+                            <label>Teléfono</label>
+                            <i class="fa-solid fa-phone field-icon"></i>
+                        </div>
+                        <button type="submit" class="btn-luxury" id="btnLoginCliente"><span>Entrar</span><span class="spinner"></span></button>
+                    </form>
+
+                    <div class="divider-soft">¿Eres nueva?</div>
+
+                    <button class="btn-cta" onclick="mostrarVista('vistaPedirCita')">
+                        <span class="cta-text">
+                            <span class="cta-sub">Reserva ahora</span>
+                            <span class="cta-main">Pide tu cita</span>
+                        </span>
+                        <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                    </button>
+                </div>
+
+                <div class="social-section view-anim">
+                    <div class="social-title">Síguenos</div>
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@shanahanails" target="_blank" rel="noopener" class="social-link tiktok" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://wa.me/34621303635" target="_blank" rel="noopener" class="social-link whatsapp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VISTA: SERVICIOS (Listado completo) -->
-        <section id="vistaServicios" class="view-section">
-            <div class="section-header" style="margin-top: 40px;">
-                <h2>Menú de Servicios</h2>
-                <p class="muted">Selecciona el tratamiento ideal para ti.</p>
-            </div>
-            <!-- Contenido dinámico o estático de servicios -->
-            <div class="luxury-card" style="max-width: 800px; margin: 0 auto; text-align: center;">
-                <p style="margin-bottom: 24px;">En Shanahan Nails ofrecemos una amplia gama de tratamientos. Puedes explorar y reservar directamente.</p>
-                <button class="btn-primary" onclick="app.showView('vistaPedirCita')">Reservar Ahora</button>
-            </div>
-        </section>
+        <!-- VISTA CLIENTE -->
+        <section id="vistaCliente" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-7 col-lg-6">
+                <div class="luxury-card view-anim text-center">
+                    <div class="brand-ornament"><span>Bienvenida</span></div>
+                    <h2 id="clienteNombre" style="font-family:'Playfair Display',serif; color:var(--burgundy); font-size:34px; margin:0 0 4px;">Cliente</h2>
+                    <p class="card-subtitle" style="margin-bottom:0;">Tu tarjeta de fidelización</p>
 
-        <!-- VISTA: LOGIN / FIDELIZACIÓN CLIENTA -->
-        <section id="vistaLogin" class="view-section">
-            <div class="luxury-card" style="max-width: 500px; margin: 40px auto;">
-                <h3 style="margin-bottom: 8px; text-align: center;">Consultar Puntos</h3>
-                <p class="muted" style="margin-bottom: 32px; text-align: center; font-size: 14px;">Accede a tu programa de fidelización.</p>
-                
-                <form onsubmit="event.preventDefault(); clientApp.login();">
-                    <div class="field">
-                        <input type="text" id="loginUsuario" placeholder=" " required>
-                        <label>Nombre completo</label>
-                        <i class="fa-regular fa-user field-icon"></i>
+                    <div class="stamps-wrap">
+                        <div class="stamps-header">
+                            <span class="label">Sellos acumulados</span>
+                            <span class="count"><strong id="stampCountText">0</strong> / 10</span>
+                        </div>
+                        <div class="stamps-container" id="stampsGrid"></div>
                     </div>
-                    <div class="field">
-                        <input type="tel" id="loginPass" placeholder=" " required>
-                        <label>Teléfono</label>
-                        <i class="fa-solid fa-phone field-icon"></i>
-                    </div>
-                    <button type="submit" class="btn-primary" id="btnLoginCliente">Entrar</button>
-                </form>
 
-                <div style="margin-top: 32px; text-align: center; font-size: 14px; color: var(--muted);">
-                    ¿Eres nueva? <a href="#" onclick="app.showView('vistaPedirCita')" style="color: var(--burgundy); font-weight: 500; border-bottom: 1px solid var(--burgundy);">Pide tu primera cita</a>
+                    <div id="clienteEstado" class="reward-info"></div>
+
+                    <div class="mis-citas-section" id="misCitasSection">
+                        <div class="mis-citas-title">Mis Citas</div>
+                        <div class="mis-citas-list" id="misCitasList"></div>
+                    </div>
+
+                    <button class="btn-ghost mt-auto-link" onclick="mostrarVista('login')" style="margin-top:24px;">
+                        <i class="fa-solid fa-arrow-left-long" style="margin-right:8px;"></i> Cerrar Sesión
+                    </button>
                 </div>
             </div>
-            <!-- Vista de los sellos se inyectará aquí cuando el cliente haga login -->
-            <div id="clienteDashboard" style="display: none; max-width: 600px; margin: 0 auto;"></div>
         </section>
 
-        <!-- VISTA: PEDIR CITA (Booking Flow) -->
-        <section id="vistaPedirCita" class="view-section">
-            <div class="luxury-card" style="max-width: 600px; margin: 40px auto;">
-                <h3 style="margin-bottom: 8px; text-align: center;">Solicitar Cita</h3>
-                <p class="muted" style="margin-bottom: 32px; text-align: center; font-size: 14px;">Te contactaremos para confirmar disponibilidad</p>
+        <!-- VISTA PEDIR CITA -->
+        <section id="vistaPedirCita" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Reservar</span></div>
+                    <span class="brand-main">Solicitar</span>
+                    <span class="brand-sub">Cita</span>
+                </div>
+                <div class="luxury-card view-anim">
+                    <p class="card-subtitle">Te contactaremos para confirmar disponibilidad</p>
 
-                <div class="booking-flow">
-                    <!-- Steps Indicator -->
-                    <div class="step-indicator">
-                        <div class="step active" id="step1-ind">1. Servicio</div>
-                        <div class="step" id="step2-ind">2. Fecha</div>
-                        <div class="step" id="step3-ind">3. Datos</div>
-                    </div>
-
-                    <!-- Step 1: Services -->
-                    <div id="step1">
-                        <h4 style="margin-bottom: 16px; font-size: 16px;">¿Qué servicio necesitas?</h4>
-                        <div class="service-selector" id="serviceOptions">
-                            <div class="service-opt" onclick="clientApp.selectService('Manicura Rusa')">Manicura Rusa</div>
-                            <div class="service-opt" onclick="clientApp.selectService('Acrílico')">Acrílico</div>
-                            <div class="service-opt" onclick="clientApp.selectService('Pedicura Spa')">Pedicura Spa</div>
-                            <div class="service-opt" onclick="clientApp.selectService('Retirada / Mantenimiento')">Retirada / Mant.</div>
+                    <form onsubmit="event.preventDefault(); enviarSolicitudCita();">
+                        <div class="field">
+                            <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
+                            <label>Nombre completo</label>
+                            <i class="fa-regular fa-user field-icon"></i>
                         </div>
-                        <div style="text-align: right;">
-                            <button class="btn-primary" style="width: auto; padding: 12px 24px;" onclick="clientApp.nextStep(2)">Siguiente <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i></button>
+                        <div class="field">
+                            <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
+                            <label>Teléfono</label>
+                            <i class="fa-solid fa-phone field-icon"></i>
                         </div>
-                    </div>
-
-                    <!-- Step 2: Date & Time -->
-                    <div id="step2" style="display: none;">
-                        <h4 style="margin-bottom: 16px; font-size: 16px;">Elige la fecha y hora</h4>
-                        
-                        <div class="calendar-widget">
-                            <div class="cal-header">
-                                <button class="btn-ghost" style="padding: 4px 12px;" onclick="clientApp.changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-                                <span id="calMonthDisplay" style="font-family: var(--font-heading); font-weight: 600; color: var(--burgundy);">Mes Año</span>
-                                <button class="btn-ghost" style="padding: 4px 12px;" onclick="clientApp.changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div class="picker-label">
+                            <span><i class="fa-regular fa-calendar" style="margin-right:8px; color:var(--accent);"></i>Selecciona una fecha</span>
+                            <span class="picked empty" id="pickedDateLabel">Sin elegir</span>
+                        </div>
+                        <div class="calendar" id="calendar">
+                            <div class="cal-head">
+                                <div class="cal-month" id="calMonth"></div>
+                                <div class="cal-nav-group">
+                                    <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="cal-nav" id="calNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
                             </div>
-                            <div class="cal-grid" id="calGrid">
-                                <!-- Calendar JS injection -->
-                            </div>
+                            <div class="cal-grid" id="calGrid"></div>
                         </div>
+                        <input type="hidden" id="citaFecha">
 
-                        <div id="timeSelectorWrap" style="display: none; margin-top: 24px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 16px;">
-                                <h4 style="font-size: 14px; margin: 0;">Horas disponibles</h4>
-                                <span id="selectedDateLabel" style="font-size: 12px; color: var(--muted);"></span>
-                            </div>
-                            <div class="time-slots" id="timeSlots"></div>
+                        <div class="picker-label">
+                            <span><i class="fa-regular fa-clock" style="margin-right:8px; color:var(--accent);"></i>Selecciona la hora</span>
+                            <span class="picked empty" id="pickedTimeLabel">Sin elegir</span>
                         </div>
+                        <div class="time-tabs">
+                            <button type="button" class="time-tab active" data-period="morning"><i class="fa-solid fa-sun"></i>Mañana</button>
+                            <button type="button" class="time-tab" data-period="afternoon"><i class="fa-solid fa-moon"></i>Tarde</button>
+                        </div>
+                        <div class="time-slots" id="timeSlots"></div>
+                        <input type="hidden" id="citaHora">
 
-                        <div style="display: flex; justify-content: space-between; margin-top: 24px;">
-                            <button class="btn-ghost" style="width: auto; padding: 12px 24px;" onclick="clientApp.nextStep(1)"><i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i> Volver</button>
-                            <button class="btn-primary" style="width: auto; padding: 12px 24px;" onclick="clientApp.nextStep(3)">Siguiente <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i></button>
-                        </div>
+                        <button type="submit" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;"><span>Enviar Solicitud</span><span class="spinner"></span></button>
+                    </form>
+
+                    <button class="link-soft" onclick="mostrarVista('login')">
+                        <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA ACCESO ADMIN -->
+        <section id="vistaAccesoAdmin" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-7 col-lg-5">
+                <div class="luxury-card access-card view-anim">
+                    <div class="access-hero">
+                        <div class="access-icon"><i class="fa-solid fa-key"></i></div>
+                        <div class="ornament"><span>Área Privada</span></div>
+                        <h2>Acceso</h2>
+                        <span class="accent-italic">Salón</span>
+                        <p>Panel exclusivo del personal Shanahan Nails</p>
                     </div>
-
-                    <!-- Step 3: Client Details -->
-                    <div id="step3" style="display: none;">
-                        <h4 style="margin-bottom: 16px; font-size: 16px;">Tus datos</h4>
-                        <form onsubmit="event.preventDefault(); clientApp.submitBooking();">
+                    <div class="access-form">
+                        <form onsubmit="event.preventDefault(); loginAdmin();">
                             <div class="field">
-                                <input type="text" id="citaNombre" placeholder=" " required>
-                                <label>Nombre completo</label>
+                                <input type="text" id="adminUser" placeholder=" " autocomplete="username">
+                                <label>Usuario</label>
                                 <i class="fa-regular fa-user field-icon"></i>
                             </div>
                             <div class="field">
-                                <input type="tel" id="citaTelefono" placeholder=" " required>
-                                <label>Teléfono</label>
-                                <i class="fa-solid fa-phone field-icon"></i>
+                                <input type="password" id="adminPass" placeholder=" " autocomplete="current-password">
+                                <label>Contraseña</label>
+                                <i class="fa-solid fa-lock field-icon"></i>
                             </div>
-                            
-                            <div style="background: var(--cream); padding: 16px; border-radius: 4px; margin-bottom: 24px; font-size: 13px;">
-                                <strong>Resumen:</strong><br>
-                                Servicio: <span id="summaryService" style="color: var(--burgundy);">Ninguno</span><br>
-                                Fecha: <span id="summaryDate" style="color: var(--burgundy);">Ninguna</span><br>
-                                Hora: <span id="summaryTime" style="color: var(--burgundy);">Ninguna</span>
-                            </div>
-
-                            <div style="display: flex; justify-content: space-between;">
-                                <button type="button" class="btn-ghost" style="width: auto; padding: 12px 24px;" onclick="clientApp.nextStep(2)"><i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i> Volver</button>
-                                <button type="submit" class="btn-primary" style="width: auto; padding: 12px 24px;" id="btnConfirmBooking">Confirmar Reserva</button>
-                            </div>
+                            <button type="submit" class="btn-luxury" id="btnLoginAdmin"><span>Entrar al Salón</span><span class="spinner"></span></button>
                         </form>
-                    </div>
 
-                </div>
-            </div>
-        </section>
-        
-        <!-- VISTA: ACCESO ADMIN -->
-        <section id="vistaAccesoAdmin" class="view-section">
-            <div class="luxury-card" style="max-width: 450px; margin: 40px auto; text-align: center;">
-                <i class="fa-solid fa-key" style="font-size: 32px; color: var(--accent); margin-bottom: 16px;"></i>
-                <h3 style="margin-bottom: 24px;">Área Privada</h3>
-                <form onsubmit="event.preventDefault(); adminApp.login();">
-                    <div class="field text-left">
-                        <input type="text" id="adminUser" placeholder=" " required autocomplete="username">
-                        <label>Usuario</label>
-                    </div>
-                    <div class="field text-left">
-                        <input type="password" id="adminPass" placeholder=" " required autocomplete="current-password">
-                        <label>Contraseña</label>
-                    </div>
-                    <button type="submit" class="btn-primary">Entrar al Panel</button>
-                </form>
-            </div>
-        </section>
+                        <div class="access-features">
+                            <div class="access-feature"><i class="fa-solid fa-gem"></i>Fidelización</div>
+                            <div class="access-feature"><i class="fa-regular fa-calendar-check"></i>Citas</div>
+                            <div class="access-feature"><i class="fa-solid fa-users"></i>Clientas</div>
+                        </div>
 
-        <!-- VISTA: PANEL ADMIN -->
-        <section id="vistaAdmin" class="view-section">
-            <div id="adminContainer">
-                <div class="section-header">
-                    <h2>Panel de Administración</h2>
-                </div>
-                <div style="display: flex; gap: 24px; justify-content: center; margin-bottom: 40px;">
-                    <button class="btn-ghost active" onclick="adminApp.switchTab('agenda')">Agenda</button>
-                    <button class="btn-ghost" onclick="adminApp.switchTab('solicitudes')">Solicitudes</button>
-                    <button class="btn-ghost" onclick="adminApp.switchTab('fidelizacion')">Fidelización</button>
-                    <button class="btn-ghost" onclick="adminApp.switchTab('disponibilidad')">Disponibilidad</button>
-                </div>
-                <div class="luxury-card" id="adminContent">
-                    Cargando panel...
+                        <button class="access-back" onclick="mostrarVista('login')">
+                            <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver al inicio
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
 
-    </main>
+        <!-- VISTA ADMIN -->
+        <section id="vistaAdmin" class="row g-4" style="display:none;">
+            <div class="col-12">
+                <div class="brand-container view-anim" style="margin-bottom:18px;">
+                    <div class="brand-ornament"><span>Panel del Salón</span></div>
+                    <span class="brand-main" style="font-size:38px;">Shanahan</span>
+                    <span class="brand-sub" style="font-size:46px;">Dashboard</span>
+                </div>
+                <div class="stat-row view-anim">
+                    <div class="stat"><div class="num" id="statClientas">0</div><div class="lbl">Clientas Activas</div></div>
+                    <div class="stat"><div class="num" id="statPendientes">0</div><div class="lbl">Solicitudes</div></div>
+                    <div class="stat"><div class="num" id="statHoy">0</div><div class="lbl">Citas Hoy</div></div>
+                    <div class="stat"><div class="num" id="statSemana">0</div><div class="lbl">Esta Semana</div></div>
+                </div>
+            </div>
 
-    <!-- FOOTER -->
-    <footer style="text-align: center; padding: 60px 24px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); margin-top: 40px;">
-        <div style="margin-bottom: 16px; font-size: 18px;">
-            <a href="https://www.instagram.com/shanahanails" target="_blank" style="margin: 0 8px; color: var(--burgundy);"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@shanahanails" target="_blank" style="margin: 0 8px; color: var(--burgundy);"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://wa.me/34621303635" target="_blank" style="margin: 0 8px; color: var(--burgundy);"><i class="fa-brands fa-whatsapp"></i></a>
-        </div>
-        &copy; 2026 Shanahan Nails. Luxury Loyalty & Booking.
-        <div style="margin-top: 8px;">
-            <a href="#" onclick="app.showView('vistaAccesoAdmin')" style="color: var(--accent);">Acceso Salón</a>
-        </div>
-    </footer>
+            <!-- AGENDA VISUAL -->
+            <div class="admin-section active" id="asecAgenda" style="display:contents;">
+            <div class="col-12">
+                <div class="luxury-card view-anim" style="padding:30px;">
+                    <div class="admin-header">
+                        <h5><i class="fa-regular fa-calendar"></i> Agenda</h5>
+                        <div class="agenda-filters">
+                            <button type="button" class="filter-chip active" data-filter="all">Todas</button>
+                            <button type="button" class="filter-chip" data-filter="pendiente">Pendientes</button>
+                            <button type="button" class="filter-chip" data-filter="confirmada">Confirmadas</button>
+                            <button type="button" class="filter-chip" data-filter="completada">Completadas</button>
+                        </div>
+                    </div>
 
-    <!-- TOAST CONTAINER -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // ==========================================
-        // app.js - Core application logic
-        // ==========================================
-        const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
-
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const app = {
-            currentView: 'vistaLanding',
-            
-            init() {
-                window.addEventListener('popstate', (event) => {
-                    if (event.state && event.state.view) {
-                        this._renderView(event.state.view);
-                    } else {
-                        this._renderView('vistaLanding');
-                    }
-                });
-
-                const initialView = window.location.hash ? window.location.hash.substring(1) : 'vistaLanding';
-                this.showView(initialView, true);
-            },
-
-            showView(viewId, replaceState = false) {
-                if (this.currentView === viewId && !replaceState) return;
-                
-                this._renderView(viewId);
-                
-                if (replaceState) {
-                    window.history.replaceState({ view: viewId }, '', `#${viewId}`);
-                } else {
-                    window.history.pushState({ view: viewId }, '', `#${viewId}`);
-                }
-                
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                const navLinks = document.getElementById('navLinks');
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                }
-            },
-
-            _renderView(viewId) {
-                document.querySelectorAll('.view-section').forEach(el => {
-                    el.classList.remove('active');
-                });
-                
-                const target = document.getElementById(viewId);
-                if (target) {
-                    target.classList.add('active');
-                    this.currentView = viewId;
-                }
-
-                if (viewId === 'vistaAdmin' && typeof adminApp !== 'undefined') {
-                    adminApp.init();
-                }
-            },
-
-            toggleMobileMenu() {
-                document.getElementById('navLinks').classList.toggle('active');
-            },
-
-            toast(message, type = 'info') {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                
-                let icon = 'fa-circle-info';
-                if (type === 'success') icon = 'fa-circle-check';
-                if (type === 'error') icon = 'fa-circle-exclamation';
-
-                toast.innerHTML = `<i class="fa-solid ${icon}" style="font-size: 20px; color: ${type === 'error' ? '#d32f2f' : (type === 'success' ? '#388e3c' : 'var(--accent)')}"></i> <div>${message}</div>`;
-                
-                container.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.style.animation = 'slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-                    setTimeout(() => toast.remove(), 400);
-                }, 4000);
-            }
-        };
-
-        // ==========================================
-        // client.js - Booking and Loyalty Logic
-        // ==========================================
-        const clientApp = {
-            bookingData: {
-                servicio: '',
-                fecha: '',
-                hora: '',
-                nombre: '',
-                telefono: ''
-            },
-            currentMonth: new Date(),
-            availableDays: [],
-            
-            init() {
-                this.currentMonth.setDate(1);
-                this.fetchAvailableDays();
-            },
-
-            selectService(serviceName) {
-                this.bookingData.servicio = serviceName;
-                document.querySelectorAll('.service-opt').forEach(el => {
-                    if (el.innerText === serviceName) el.classList.add('selected');
-                    else el.classList.remove('selected');
-                });
-                document.getElementById('summaryService').innerText = serviceName;
-            },
-
-            nextStep(stepNum) {
-                if (stepNum === 2 && !this.bookingData.servicio) {
-                    app.toast('Por favor, selecciona un servicio primero.', 'error');
-                    return;
-                }
-                if (stepNum === 3 && (!this.bookingData.fecha || !this.bookingData.hora)) {
-                    app.toast('Por favor, selecciona fecha y hora.', 'error');
-                    return;
-                }
-
-                document.getElementById('step1').style.display = stepNum === 1 ? 'block' : 'none';
-                document.getElementById('step2').style.display = stepNum === 2 ? 'block' : 'none';
-                document.getElementById('step3').style.display = stepNum === 3 ? 'block' : 'none';
-
-                document.getElementById('step1-ind').className = `step ${stepNum >= 1 ? 'active' : ''}`;
-                document.getElementById('step2-ind').className = `step ${stepNum >= 2 ? 'active' : ''}`;
-                document.getElementById('step3-ind').className = `step ${stepNum >= 3 ? 'active' : ''}`;
-
-                if (stepNum === 2) this.renderCalendar();
-            },
-
-            async fetchAvailableDays() {
-                try {
-                    const { data, error } = await sb.from('dias_disponibles').select('*');
-                    if (!error && data) this.availableDays = data;
-                } catch (e) {
-                    console.warn("No se pudo cargar disponibilidad.");
-                }
-            },
-
-            changeMonth(delta) {
-                this.currentMonth.setMonth(this.currentMonth.getMonth() + delta);
-                this.renderCalendar();
-            },
-
-            renderCalendar() {
-                const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-                document.getElementById('calMonthDisplay').innerText = `${monthNames[this.currentMonth.getMonth()]} ${this.currentMonth.getFullYear()}`;
-                
-                const grid = document.getElementById('calGrid');
-                grid.innerHTML = '';
-                
-                ['L','M','X','J','V','S','D'].forEach(d => {
-                    grid.innerHTML += `<div style="text-align:center; font-size:12px; color:var(--muted); font-weight:600; padding-bottom:8px;">${d}</div>`;
-                });
-
-                const year = this.currentMonth.getFullYear();
-                const month = this.currentMonth.getMonth();
-                const firstDay = new Date(year, month, 1);
-                const startOffset = (firstDay.getDay() + 6) % 7;
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                const today = new Date();
-                today.setHours(0,0,0,0);
-
-                for (let i = 0; i < startOffset; i++) grid.innerHTML += `<div></div>`;
-
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const dateObj = new Date(year, month, d);
-                    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                    const mesIso = `${year}-${String(month + 1).padStart(2, '0')}`;
-                    
-                    const past = dateObj < today;
-                    const isSelected = this.bookingData.fecha === iso;
-                    
-                    const mesDisp = this.availableDays.some(b => b.tipo === 'mes' && b.valor === mesIso);
-                    const diaDisp = this.availableDays.some(b => b.tipo === 'dia' && b.valor === iso);
-                    const excluido = this.availableDays.some(b => b.tipo === 'excluido' && b.valor === iso);
-                    
-                    const isAvailable = this.availableDays.length === 0 ? !past : (!past && (mesDisp || diaDisp) && !excluido);
-
-                    let cls = 'cal-day';
-                    if (!isAvailable) cls += ' disabled';
-                    if (isSelected) cls += ' selected';
-
-                    grid.innerHTML += `<div class="${cls}" onclick="clientApp.selectDate('${iso}', ${isAvailable})">${d}</div>`;
-                }
-            },
-
-            selectDate(iso, isAvailable) {
-                if (!isAvailable) return;
-                this.bookingData.fecha = iso;
-                document.getElementById('summaryDate').innerText = iso;
-                
-                const dt = new Date(iso + 'T00:00:00');
-                const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-                document.getElementById('selectedDateLabel').innerText = `${dt.getDate()} de ${monthNames[dt.getMonth()]}`;
-                
-                this.renderCalendar();
-                this.renderTimeSlots();
-            },
-
-            renderTimeSlots() {
-                document.getElementById('timeSelectorWrap').style.display = 'block';
-                const slotsWrap = document.getElementById('timeSlots');
-                slotsWrap.innerHTML = '';
-                
-                const slots = ['09:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'];
-                
-                slots.forEach(t => {
-                    const isSelected = this.bookingData.hora === t;
-                    slotsWrap.innerHTML += `<div class="time-slot ${isSelected ? 'selected' : ''}" onclick="clientApp.selectTime('${t}')">${t}</div>`;
-                });
-            },
-
-            selectTime(time) {
-                this.bookingData.hora = time;
-                document.getElementById('summaryTime').innerText = `${time} h`;
-                this.renderTimeSlots();
-            },
-
-            async submitBooking() {
-                this.bookingData.nombre = document.getElementById('citaNombre').value.trim();
-                this.bookingData.telefono = document.getElementById('citaTelefono').value.trim();
-                
-                const btn = document.getElementById('btnConfirmBooking');
-                btn.innerText = 'Enviando...';
-                btn.disabled = true;
-
-                try {
-                    const { error } = await sb.from('citas').insert([{
-                        nombre_cliente: this.bookingData.nombre,
-                        telefono: this.bookingData.telefono,
-                        fecha: this.bookingData.fecha,
-                        hora: this.bookingData.hora,
-                        estado: 'pendiente'
-                    }]);
-
-                    if (!error) {
-                        app.toast('¡Tu solicitud ha sido enviada con éxito!', 'success');
-                        setTimeout(() => window.location.reload(), 2000);
-                    } else {
-                        app.toast('Hubo un problema al enviar la solicitud.', 'error');
-                    }
-                } catch(e) {
-                    app.toast('Error de red. Inténtalo de nuevo.', 'error');
-                } finally {
-                    btn.innerText = 'Confirmar Reserva';
-                    btn.disabled = false;
-                }
-            },
-
-            async login() {
-                const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
-                const telefono = document.getElementById('loginPass').value.trim();
-                
-                const btn = document.getElementById('btnLoginCliente');
-                btn.innerText = 'Cargando...';
-                btn.disabled = true;
-
-                try {
-                    const { data } = await sb.from('clientas').select('*').eq('telefono', telefono);
-                    const cliente = (data || []).find(c => (c.nombre || '').toLowerCase() === nombre);
-
-                    if (cliente) this.renderLoyaltyDashboard(cliente);
-                    else app.toast('No hemos encontrado tu ficha. Si eres nueva, pide tu primera cita.', 'error');
-                } catch(e) {
-                    app.toast('Error al consultar datos.', 'error');
-                } finally {
-                    btn.innerText = 'Entrar';
-                    btn.disabled = false;
-                }
-            },
-
-            renderLoyaltyDashboard(cliente) {
-                const wrap = document.getElementById('vistaLogin');
-                wrap.innerHTML = `
-                    <div class="luxury-card" style="max-width: 600px; margin: 40px auto; text-align: center;">
-                        <div style="font-family: var(--font-heading); font-size: 14px; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px;">BIENVENIDA</div>
-                        <h2 style="font-size: 32px; margin-bottom: 24px;">${cliente.nombre}</h2>
-                        
-                        <div style="background: var(--cream); border-radius: 4px; padding: 24px; margin-bottom: 32px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                                <span style="font-weight: 500;">Sellos Acumulados</span>
-                                <span style="color: var(--burgundy); font-weight: 600;">${cliente.visitas || 0} / 10</span>
+                    <div class="agenda-wrap">
+                        <div class="agenda-cal">
+                            <div class="cal-head">
+                                <div class="cal-month" id="agendaMonth"></div>
+                                <div class="cal-nav-group">
+                                    <button type="button" class="cal-nav" id="agendaPrev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaToday" aria-label="Hoy" title="Ir a hoy"><i class="fa-solid fa-circle-dot"></i></button>
+                                    <button type="button" class="cal-nav" id="agendaNext" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
                             </div>
-                            
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
-                                ${Array.from({length: 10}).map((_, i) => {
-                                    const active = i < (cliente.visitas || 0);
-                                    const reward = i === 9;
-                                    return \`<div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; 
-                                        border: 1px solid \${active ? 'var(--burgundy)' : 'var(--line)'};
-                                        background: \${active ? (reward ? 'var(--accent)' : 'var(--burgundy)') : 'transparent'};
-                                        color: \${active ? '#fff' : 'var(--muted)'};
-                                        transition: all 0.3s;
-                                    ">
-                                        \${reward && active ? '<i class="fa-solid fa-star"></i>' : (i + 1)}
-                                    </div>\`;
-                                }).join('')}
+                            <div class="cal-grid" id="agendaGrid"></div>
+                            <div class="agenda-legend">
+                                <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span>Pendientes</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:var(--burgundy);"></span>Confirmadas</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#4A7C59;"></span>Completadas</div>
                             </div>
                         </div>
 
-                        ${(cliente.visitas || 0) >= 10 
-                            ? \`<div style="background: rgba(197, 161, 82, 0.1); border: 1px solid var(--accent); padding: 16px; color: #8A6D22; margin-bottom: 32px; border-radius: 4px;">
-                                <i class="fa-solid fa-crown" style="margin-right: 8px;"></i> ¡Servicio gratis disponible! Canjéalo en tu próxima visita.
-                               </div>\` 
-                            : \`<p class="muted" style="margin-bottom: 32px;">Te quedan <strong>\${10 - (cliente.visitas || 0)}</strong> sellos para tu recompensa.</p>\`
-                        }
-
-                        <button class="btn-ghost" onclick="window.location.reload()"><i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i> Cerrar Sesión</button>
+                        <div class="agenda-day-panel">
+                            <div class="agenda-day-header">
+                                <div>
+                                    <div class="day-title" id="dayTitle">—</div>
+                                    <div class="day-sub" id="daySub"></div>
+                                </div>
+                                <div class="day-count" id="dayCount"></div>
+                            </div>
+                            <div class="agenda-day-list" id="dayList"></div>
+                        </div>
                     </div>
-                `;
-            }
+                </div>
+            </div>
+
+            </div><!-- /asecAgenda -->
+
+            <!-- SOLICITUDES + NUEVA CLIENTA -->
+            <div class="admin-section" id="asecSolicitudes" style="display:none;">
+            <div class="col-12 col-lg-5">
+                <div class="luxury-card view-anim">
+                    <div class="admin-header" style="margin-bottom:16px;">
+                        <h5><i class="fa-solid fa-user-plus"></i> Nueva Clienta</h5>
+                    </div>
+                    <form onsubmit="event.preventDefault(); registrarNuevoCliente();">
+                        <div class="field">
+                            <input type="text" id="regNombre" placeholder=" ">
+                            <label>Nombre</label>
+                        </div>
+                        <div class="field">
+                            <input type="tel" id="regTelef" placeholder=" ">
+                            <label>Teléfono</label>
+                        </div>
+                        <button type="submit" class="btn-luxury" id="btnRegistrar"><span>Registrar</span><span class="spinner"></span></button>
+                    </form>
+
+                    <hr style="border:none; border-top:1px solid var(--line); margin:36px 0 24px;">
+
+                    <div class="admin-header" style="margin-bottom:16px;">
+                        <h5><i class="fa-regular fa-calendar-check"></i> Solicitudes</h5>
+                    </div>
+                    <div id="listaCitasPendientes"></div>
+                </div>
+            </div>
+
+            </div><!-- /asecSolicitudes -->
+
+            <!-- FIDELIZACIÓN -->
+            <div class="admin-section" id="asecFidelizacion" style="display:none;">
+            <div class="col-12 col-lg-7">
+                <div class="luxury-card view-anim">
+                    <div class="admin-header">
+                        <h5><i class="fa-solid fa-gem"></i> Fidelización</h5>
+                        <div class="admin-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="adminSearch" placeholder="Buscar clienta…" oninput="renderAdmin()">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="tablaClientes">
+                            <thead>
+                                <tr>
+                                    <th>Clienta</th>
+                                    <th>Sellos</th>
+                                    <th style="text-align:right;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            </div><!-- /asecFidelizacion -->
+
+            <!-- DISPONIBILIDAD -->
+            <div class="admin-section" id="asecDisponibilidad" style="display:none;">
+            <!-- GESTIÓN DÍAS DISPONIBLES -->
+            <div class="col-12">
+                <div class="luxury-card view-anim" style="padding:30px;">
+                    <div class="admin-header" style="margin-bottom:20px;">
+                        <h5><i class="fa-regular fa-calendar-check"></i> Días disponibles para reserva</h5>
+                    </div>
+                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas <strong>solo podrán reservar</strong> en los días y meses que marques como disponibles.</p>
+                    <div class="disp-wrap">
+                        <div class="disp-tabs">
+                            <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i>Días concretos</button>
+                            <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i>Meses enteros</button>
+                        </div>
+
+                        <!-- Panel días -->
+                        <div class="disp-panel active" id="dpanelDias">
+                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un día para marcarlo disponible o quitarlo.</p>
+                            <div class="disp-mini-cal">
+                                <div class="cal-head">
+                                    <div class="cal-month" id="dCalMonth"></div>
+                                    <div class="cal-nav-group">
+                                        <button type="button" class="cal-nav" id="dCalPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                                        <button type="button" class="cal-nav" id="dCalNext"><i class="fa-solid fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div class="cal-grid" id="dCalGrid"></div>
+                            </div>
+                            <div class="disp-lista">
+                                <div class="disp-lista-title">Días habilitados</div>
+                                <div id="dispDiaItems"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div></div>
+                            </div>
+                        </div>
+
+                        <!-- Panel meses -->
+                        <div class="disp-panel" id="dpanelMeses">
+                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para habilitarlo o deshabilitarlo entero.</p>
+                            <div class="meses-grid" id="mesesGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Panel meses -->
+                        <div class="bloqueo-panel" id="bpanelMeses">
+                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para bloquearlo o desbloquearlo completamente.</p>
+                            <div class="meses-grid" id="mesesGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /asecDisponibilidad -->
+        </section>
+
+    </div>
+
+    <!-- TOAST STACK -->
+    <div class="toast-stack" id="toastStack"></div>
+
+    <!-- MODAL EDITAR CITA -->
+    <div class="modal-backdrop-x" id="editCitaModal">
+        <div class="modal-x wide">
+            <div class="edit-modal-header">
+                <h4>Editar cita</h4>
+                <p>Modifica los datos antes de aprobar o guarda los cambios</p>
+            </div>
+            <input type="hidden" id="editCitaId">
+            <div class="field">
+                <input type="text" id="editCitaNombre" placeholder=" ">
+                <label>Nombre</label>
+                <i class="fa-regular fa-user field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="tel" id="editCitaTelefono" placeholder=" ">
+                <label>Teléfono</label>
+                <i class="fa-solid fa-phone field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="date" id="editCitaFecha" placeholder=" ">
+                <label>Fecha</label>
+                <i class="fa-regular fa-calendar field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="time" id="editCitaHora" placeholder=" ">
+                <label>Hora</label>
+                <i class="fa-regular fa-clock field-icon"></i>
+            </div>
+
+            <div class="picker-label" style="margin:18px 0 4px;"><span><i class="fa-solid fa-circle-dot" style="margin-right:8px; color:var(--accent);"></i>Estado de la cita</span></div>
+            <div class="estado-select-group" id="editEstadoGroup">
+                <button type="button" class="estado-opt pendiente" data-estado="pendiente">Pendiente</button>
+                <button type="button" class="estado-opt confirmada" data-estado="confirmada">Confirmada</button>
+                <button type="button" class="estado-opt completada" data-estado="completada">Completada</button>
+                <button type="button" class="estado-opt cancelada" data-estado="cancelada">Cancelada</button>
+            </div>
+            <input type="hidden" id="editCitaEstado">
+
+            <div class="modal-actions" style="margin-top:24px;">
+                <button class="btn-ghost" onclick="confirmarEliminarCita()" style="color:#b03030; border-color:#e8c5c5;"><i class="fa-solid fa-trash" style="margin-right:6px;"></i>Eliminar</button>
+                <button class="btn-luxury" style="margin-top:0;" onclick="guardarEdicionCita()" id="btnGuardarEdicion"><span>Guardar cambios</span><span class="spinner"></span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM -->
+    <div class="modal-backdrop-x" id="confirmModal">
+        <div class="modal-x">
+            <h4 id="confirmTitle">¿Estás segura?</h4>
+            <p id="confirmMsg">Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeConfirm(false)">Cancelar</button>
+                <button class="btn-luxury" style="margin-top:0;" onclick="closeConfirm(true)"><span>Confirmar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://lofgjkrcgkqufqpybddn.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const SALON_WHATSAPP = '34621303635';
+        const SALON_INSTAGRAM = 'https://www.instagram.com/shanahanails?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
+        const SALON_TIKTOK = 'https://www.tiktok.com/@shanahanails';
+
+        let clientas = [];
+        let citas = [];
+
+        /* ---------- SHARED DATE CONSTANTS ---------- */
+        const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        const DOW_ES = ['L','M','X','J','V','S','D'];
+        const SLOTS = {
+            morning:   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30'],
+            afternoon: ['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30']
         };
+        const today = new Date(); today.setHours(0,0,0,0);
 
-        // ==========================================
-        // admin.js - Admin Dashboard Logic
-        // ==========================================
-        const adminApp = {
-            isLoggedIn: false,
-            currentTab: 'agenda',
-            clientas: [],
-            citas: [],
-            
-            init() {
-                if (!this.isLoggedIn) {
-                    document.getElementById('adminContainer').style.display = 'none';
-                }
-            },
+        /* ---------- TOASTS ---------- */
+        function toast(message, type = 'info', title = '') {
+            const stack = document.getElementById('toastStack');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
+            const titles = { success: title || 'Hecho', error: title || 'Atención', info: title || 'Aviso' };
+            t.innerHTML = `<i class="fa-solid ${icons[type]}"></i><div><div class="msg-title">${titles[type]}</div><div class="msg-body">${message}</div></div>`;
+            stack.appendChild(t);
+            setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 3800);
+        }
 
-            async login() {
-                const user = document.getElementById('adminUser').value.trim();
-                const pass = document.getElementById('adminPass').value.trim();
-                
-                try {
-                    const { data } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
-                    if (data) {
-                        this.isLoggedIn = true;
-                        app.toast('Bienvenida al panel', 'success');
-                        
-                        document.getElementById('vistaAccesoAdmin').innerHTML = '';
-                        document.getElementById('adminContainer').style.display = 'block';
-                        
-                        await this.loadData();
-                        this.switchTab('agenda');
-                    } else {
-                        app.toast('Credenciales incorrectas', 'error');
-                    }
-                } catch (e) {
-                    app.toast('Error al conectar con la base de datos', 'error');
-                }
-            },
+        /* ---------- CONFIRM MODAL ---------- */
+        let confirmResolver = null;
+        function askConfirm(title, msg) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMsg').textContent = msg;
+            modal.classList.add('show');
+            return new Promise(resolve => { confirmResolver = resolve; });
+        }
+        function closeConfirm(result) {
+            document.getElementById('confirmModal').classList.remove('show');
+            if (confirmResolver) confirmResolver(result);
+        }
+        document.getElementById('confirmModal').addEventListener('click', e => {
+            if (e.target.id === 'confirmModal') closeConfirm(false);
+        });
 
-            async loadData() {
-                try {
-                    const [{ data: dC }, { data: dCi }] = await Promise.all([
-                        sb.from('clientas').select('*').order('nombre', { ascending: true }),
-                        sb.from('citas').select('*').order('fecha', { ascending: true })
-                    ]);
-                    this.clientas = dC || [];
-                    this.citas = dCi || [];
-                } catch (e) {
-                    app.toast('Error al cargar datos del dashboard', 'error');
-                }
-            },
+        /* ---------- BUTTON LOADING ---------- */
+        function setBtnLoading(id, on) {
+            const b = document.getElementById(id);
+            if (!b) return;
+            b.classList.toggle('loading', on);
+            b.disabled = on;
+        }
 
-            switchTab(tab) {
-                this.currentTab = tab;
-                
-                document.querySelectorAll('#adminContainer .btn-ghost').forEach(btn => {
-                    if (btn.innerText.toLowerCase() === tab) btn.classList.add('active');
-                    else btn.classList.remove('active');
+        /* ---------- VIEW SWITCH ---------- */
+        function mostrarVista(idVista) {
+            ['login', 'vistaCliente', 'vistaPedirCita', 'vistaAccesoAdmin', 'vistaAdmin'].forEach(v => {
+                const el = document.getElementById(v);
+                if (el) el.style.display = 'none';
+            });
+            // ocultar menú y welcome al cambiar de vista (defensivo)
+            const adminMenuEl = document.getElementById('adminMenu');
+            if (adminMenuEl) adminMenuEl.style.display = 'none';
+            const welcomeEl = document.getElementById('welcomeModal');
+            if (welcomeEl) welcomeEl.style.display = 'none';
+
+            const vistaActiva = document.getElementById(idVista);
+            if (vistaActiva) {
+                vistaActiva.style.display = idVista === 'vistaAdmin' ? 'block' : 'flex';
+                vistaActiva.querySelectorAll('.view-anim').forEach(el => {
+                    el.style.animation = 'none';
+                    el.offsetHeight;
+                    el.style.animation = '';
                 });
+                if (idVista === 'vistaAdmin') {
+                    if (adminMenuEl) adminMenuEl.style.display = 'flex';
+                    cargarDatosAdmin().then(() => { try { showWelcome(); } catch (e) {} });
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
 
-                const content = document.getElementById('adminContent');
-                content.innerHTML = '';
 
-                if (tab === 'agenda') this.renderAgenda(content);
-                else if (tab === 'solicitudes') this.renderSolicitudes(content);
-                else if (tab === 'fidelizacion') this.renderFidelizacion(content);
-                else if (tab === 'disponibilidad') content.innerHTML = '<p class="muted" style="text-align:center;">Módulo de disponibilidad en construcción (se gestiona desde base de datos temporalmente).</p>';
-            },
+        /* ---------- ADMIN NAV SECTIONS ---------- */
+        const ADMIN_SECTIONS = ['agenda','solicitudes','fidelizacion','disponibilidad'];
 
-            renderAgenda(container) {
-                const hoyIso = new Date().toISOString().split('T')[0];
-                const proximas = this.citas.filter(c => c.fecha >= hoyIso && c.estado === 'confirmada');
+        function switchAdminSection(name) {
+            ADMIN_SECTIONS.forEach(s => {
+                const el = document.getElementById('asec' + s.charAt(0).toUpperCase() + s.slice(1));
+                if (el) el.style.display = s === name ? 'contents' : 'none';
+            });
+            document.querySelectorAll('.admin-menu-item[data-section]').forEach(b => {
+                b.classList.toggle('active', b.dataset.section === name);
+            });
+        }
 
-                let html = '<h3 style="margin-bottom: 24px;">Próximas Citas Confirmadas</h3>';
-                
-                if (proximas.length === 0) {
-                    html += '<p class="muted">No hay citas próximas confirmadas.</p>';
+        /* ---------- WELCOME MODAL ---------- */
+        function showWelcome() {
+            const pend = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
+            const todayIso = fmtIso(today);
+            const hoy = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
+            document.getElementById('welcomePendientes').textContent = pend;
+            document.getElementById('welcomeHoy').textContent = hoy;
+            document.getElementById('welcomeModal').style.display = 'flex';
+        }
+        function closeWelcome() {
+            document.getElementById('welcomeModal').style.display = 'none';
+        }
+
+        /* ---------- ADMIN DATA ---------- */
+        async function cargarDatosAdmin() {
+            try {
+                const [{ data: dC }, { data: dCi }] = await Promise.all([
+                    sb.from('clientas').select('*').order('nombre', { ascending: true }),
+                    sb.from('citas').select('*').order('fecha', { ascending: true })
+                ]);
+                clientas = dC || [];
+                citas = dCi || [];
+                if (!agendaInitialized) {
+                    try { initAgenda(); } catch (e) { console.error('initAgenda:', e); }
+                    agendaInitialized = true;
+                }
+                try { initDispPanel(); } catch (e) { console.warn('initDispPanel omitido:', e); }
+                try { await cargarDisponibles(); } catch (e) { console.warn('cargarDisponibles omitido:', e); }
+                renderAdmin();
+            } catch (e) {
+                toast('No se pudieron cargar los datos', 'error');
+            }
+        }
+
+        /* ---------- ADMIN LOGIN ---------- */
+        async function loginAdmin() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            if (!user || !pass) return toast('Completa usuario y contraseña', 'error');
+
+            setBtnLoading('btnLoginAdmin', true);
+            try {
+                const { data } = await sb.from('admins').select('*').eq('usuario', user).eq('password', pass).maybeSingle();
+                if (data) {
+                    toast('Bienvenida al panel', 'success');
+                    mostrarVista('vistaAdmin');
                 } else {
-                    proximas.forEach(c => {
-                        html += \`
-                            <div style="border: 1px solid var(--line); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="font-weight: 600;">\${c.nombre_cliente}</div>
-                                    <div style="font-size: 13px; color: var(--muted);"><i class="fa-solid fa-phone"></i> \${c.telefono}</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="color: var(--burgundy); font-weight: 500;">\${c.fecha}</div>
-                                    <div>\${c.hora} h</div>
-                                </div>
-                                <button class="btn-ghost" style="padding: 8px 16px;" onclick="adminApp.completarCita(\${c.id})"><i class="fa-solid fa-check"></i> Marcar Completada</button>
-                            </div>
-                        \`;
-                    });
+                    toast('Credenciales incorrectas', 'error');
                 }
-                container.innerHTML = html;
-            },
+            } catch (e) {
+                toast('Error al iniciar sesión', 'error');
+            } finally {
+                setBtnLoading('btnLoginAdmin', false);
+            }
+        }
 
-            renderSolicitudes(container) {
-                const pendientes = this.citas.filter(c => c.estado === 'pendiente');
+        /* ---------- CLIENT LOGIN ---------- */
+        async function iniciarSesionCliente() {
+            const nombre = document.getElementById('loginUsuario').value.trim().toLowerCase();
+            const telef = document.getElementById('loginPass').value.trim();
+            if (!nombre || !telef) return toast('Introduce tu nombre y teléfono', 'error');
 
-                let html = '<h3 style="margin-bottom: 24px;">Solicitudes Pendientes</h3>';
-                
-                if (pendientes.length === 0) {
-                    html += '<p class="muted">No hay solicitudes pendientes.</p>';
-                } else {
-                    pendientes.forEach(c => {
-                        html += \`
-                            <div style="border: 1px solid var(--line); border-left: 4px solid var(--accent); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="font-weight: 600;">\${c.nombre_cliente}</div>
-                                    <div style="font-size: 13px; color: var(--muted);"><i class="fa-solid fa-phone"></i> \${c.telefono}</div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div style="color: var(--burgundy); font-weight: 500;">\${c.fecha}</div>
-                                    <div>\${c.hora} h</div>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <button class="btn-primary" style="padding: 8px 16px;" onclick="adminApp.aprobarCita(\${c.id})">Aprobar</button>
-                                    <button class="btn-ghost" style="padding: 8px 16px; border-color: #d32f2f; color: #d32f2f;" onclick="adminApp.rechazarCita(\${c.id})">Rechazar</button>
-                                </div>
-                            </div>
-                        \`;
-                    });
-                }
-                container.innerHTML = html;
-            },
+            setBtnLoading('btnLoginCliente', true);
+            try {
+                const { data } = await sb.from('clientas').select('*').eq('telefono', telef);
+                const cliente = (data || []).find(c => (c.nombre || '').toLowerCase() === nombre);
 
-            renderFidelizacion(container) {
-                let html = '<h3 style="margin-bottom: 24px;">Clientas Registradas</h3>';
-                
-                if (this.clientas.length === 0) {
-                    html += '<p class="muted">No hay clientas registradas.</p>';
-                } else {
-                    this.clientas.forEach(c => {
-                        html += \`
-                            <div style="border: 1px solid var(--line); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="font-weight: 600;">\${c.nombre}</div>
-                                    <div style="font-size: 13px; color: var(--muted);"><i class="fa-solid fa-phone"></i> \${c.telefono}</div>
-                                </div>
-                                <div>
-                                    <span style="background: var(--cream-deep); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--burgundy);">
-                                        Sellos: \${c.visitas || 0} / 10
-                                    </span>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <button class="btn-ghost" style="padding: 8px 12px;" onclick="adminApp.sumarVisita(\${c.id}, \${c.visitas || 0})" title="Sumar Sello"><i class="fa-solid fa-plus"></i></button>
-                                    <button class="btn-ghost" style="padding: 8px 12px;" onclick="adminApp.reiniciarVisitas(\${c.id})" title="Reiniciar Sellos"><i class="fa-solid fa-rotate-left"></i></button>
-                                </div>
-                            </div>
-                        \`;
-                    });
-                }
-                container.innerHTML = html;
-            },
-            
-            async aprobarCita(id) {
-                try {
-                    const cita = this.citas.find(c => c.id === id);
-                    const exists = this.clientas.some(c => c.telefono === cita.telefono);
-                    if (!exists) {
-                        await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
-                    }
-                    await sb.from('citas').update({ estado: 'confirmada' }).eq('id', id);
-                    app.toast('Cita aprobada', 'success');
-                    await this.loadData();
-                    this.switchTab('solicitudes');
-                } catch(e) {
-                    app.toast('Error al aprobar', 'error');
-                }
-            },
-
-            async rechazarCita(id) {
-                if (!confirm('¿Seguro que deseas rechazar y eliminar esta solicitud?')) return;
-                try {
-                    await sb.from('citas').delete().eq('id', id);
-                    app.toast('Cita rechazada', 'info');
-                    await this.loadData();
-                    this.switchTab('solicitudes');
-                } catch(e) {
-                    app.toast('Error al rechazar', 'error');
-                }
-            },
-
-            async completarCita(id) {
-                try {
-                    const cita = this.citas.find(c => c.id === id);
-                    await sb.from('citas').update({ estado: 'completada' }).eq('id', id);
-                    
-                    const cl = this.clientas.find(c => c.telefono === cita.telefono);
-                    if (cl && (cl.visitas || 0) < 10) {
-                        await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
+                if (cliente) {
+                    document.getElementById('clienteNombre').innerText = cliente.nombre;
+                    document.getElementById('stampCountText').innerText = cliente.visitas;
+                    const grid = document.getElementById('stampsGrid');
+                    grid.innerHTML = "";
+                    for (let i = 1; i <= 10; i++) {
+                        const isReward = i === 10 && cliente.visitas >= 10;
+                        const cls = i <= cliente.visitas ? (isReward ? 'reward' : 'active') : '';
+                        grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward ? '<i class="fa-solid fa-star"></i>' : i}</div>`;
                     }
 
-                    app.toast('Cita completada y sello añadido', 'success');
-                    await this.loadData();
-                    this.switchTab('agenda');
-                } catch(e) {
-                    app.toast('Error al completar', 'error');
-                }
-            },
+                    const estado = document.getElementById('clienteEstado');
+                    if (cliente.visitas >= 10) {
+                        estado.className = 'reward-info gold';
+                        estado.innerHTML = '<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible! Canjea tu tarjeta en tu próxima visita.';
+                    } else if (cliente.visitas === 5) {
+                        estado.className = 'reward-info gold';
+                        estado.innerHTML = '<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
+                    } else {
+                        const restantes = 10 - cliente.visitas;
+                        estado.className = 'reward-info';
+                        estado.innerHTML = `<i class="fa-regular fa-gem"></i>Te ${restantes === 1 ? 'queda' : 'quedan'} <strong>${restantes}</strong> ${restantes === 1 ? 'sello' : 'sellos'} para tu recompensa.`;
+                    }
 
-            async sumarVisita(id, actual) {
-                if (actual >= 10) {
-                    app.toast('La tarjeta ya está completa', 'info');
+                    await renderMisCitas(cliente);
+                    mostrarVista('vistaCliente');
+                } else {
+                    toast('No se encontró el registro. Solicita una cita para registrarte.', 'error');
+                }
+            } catch (e) {
+                toast('Error al consultar tus datos', 'error');
+            } finally {
+                setBtnLoading('btnLoginCliente', false);
+            }
+        }
+
+        /* ---------- CLIENT APPOINTMENTS VIEW ---------- */
+        async function renderMisCitas(cliente) {
+            const list = document.getElementById('misCitasList');
+            if (!list) return;
+            list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-hourglass-half"></i><div class="label">Cargando…</div></div>`;
+
+            try {
+                const { data } = await sb.from('citas')
+                    .select('*')
+                    .eq('telefono', cliente.telefono)
+                    .order('fecha', { ascending: true })
+                    .order('hora', { ascending: true });
+
+                const todayIso = fmtIso(today);
+                const upcoming = (data || []).filter(c => (c.fecha >= todayIso) && (c.estado || 'pendiente') !== 'cancelada');
+
+                if (upcoming.length === 0) {
+                    list.innerHTML = `<div class="mis-citas-empty">
+                        <i class="fa-regular fa-calendar"></i>
+                        <div class="label">No tienes citas próximas</div>
+                        <div style="margin-top:10px; font-size:11.5px;">Reserva una nueva desde el inicio</div>
+                    </div>`;
                     return;
                 }
+
+                list.innerHTML = upcoming.map(c => {
+                    const dt = new Date((c.fecha || todayIso) + 'T00:00:00');
+                    const day = dt.getDate();
+                    const monthShort = MONTHS_ES[dt.getMonth()].substring(0,3);
+                    const weekdays = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+                    const weekday = weekdays[dt.getDay()];
+                    const fullDay = weekdays[dt.getDay()] + ', ' + day + ' de ' + MONTHS_ES[dt.getMonth()].toLowerCase();
+                    const hora = (c.hora || '').slice(0,5);
+                    const estado = c.estado || 'pendiente';
+
+                    return `<div class="mi-cita-card ${estado}">
+                        <div class="mi-cita-date">
+                            <span class="day">${day}</span>
+                            <span class="month">${monthShort}</span>
+                        </div>
+                        <div class="mi-cita-info">
+                            <span class="weekday">${fullDay}</span>
+                            <span class="hora">${hora} h</span>
+                            <span class="estado-pill ${estado}">${estado}</span>
+                        </div>
+                        <div class="mi-cita-actions">
+                            <a href="${whatsappCambioCita(cliente.nombre, c.fecha, hora)}" target="_blank" rel="noopener" class="btn-whatsapp">
+                                <i class="fa-brands fa-whatsapp"></i> Cambiar fecha u hora
+                            </a>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar tus citas</div></div>`;
+            }
+        }
+
+        function whatsappCambioCita(nombre, fecha, hora) {
+            const dt = fecha ? new Date(fecha + 'T00:00:00') : null;
+            const fechaTexto = dt
+                ? `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`
+                : 'mi cita';
+            const msg = `Hola Shanahan Nails ✨\nSoy ${nombre}, quería modificar mi cita del ${fechaTexto} a las ${hora} h. ¿Podríamos cambiar la fecha o la hora? ¡Gracias!`;
+            return `https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+        }
+
+        /* ---------- APPOINTMENT REQUEST ---------- */
+        async function enviarSolicitudCita() {
+            const cita = {
+                nombre_cliente: document.getElementById('citaNombre').value.trim(),
+                telefono: document.getElementById('citaTelefono').value.trim(),
+                fecha: document.getElementById('citaFecha').value,
+                hora: document.getElementById('citaHora').value,
+                estado: 'pendiente'
+            };
+            if (!cita.nombre_cliente || !cita.telefono || !cita.fecha || !cita.hora) {
+                return toast('Completa todos los campos', 'error');
+            }
+
+            setBtnLoading('btnEnviarCita', true);
+            try {
+                const { error } = await sb.from('citas').insert([cita]);
+                if (!error) {
+                    toast('Solicitud enviada. Te contactaremos para confirmar.', 'success', 'Reserva enviada');
+                    document.querySelectorAll('#vistaPedirCita input[type="text"], #vistaPedirCita input[type="tel"]').forEach(i => i.value = '');
+                    resetPicker();
+                    setTimeout(() => mostrarVista('login'), 800);
+                } else {
+                    toast('No se pudo enviar la solicitud', 'error');
+                }
+            } catch (e) {
+                toast('Error de conexión', 'error');
+            } finally {
+                setBtnLoading('btnEnviarCita', false);
+            }
+        }
+
+        /* ---------- AGENDA STATE ---------- */
+        let agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+        let agendaSelected = new Date(today);
+        let agendaFilter = 'all';
+
+        function citasOfDay(iso) {
+            return citas.filter(c => c.fecha === iso && (agendaFilter === 'all' || (c.estado || 'pendiente') === agendaFilter));
+        }
+        function fmtIso(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+        function fmtDayLong(d){
+            const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+            return `${days[d.getDay()]}, ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
+        }
+
+        function renderAgenda() {
+            const monthEl = document.getElementById('agendaMonth');
+            const grid = document.getElementById('agendaGrid');
+            if (!monthEl || !grid) return;
+
+            monthEl.textContent = `${MONTHS_ES[agendaCursor.getMonth()]} ${agendaCursor.getFullYear()}`;
+
+            grid.innerHTML = '';
+            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+
+            const year = agendaCursor.getFullYear();
+            const month = agendaCursor.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const startOffset = (firstDay.getDay() + 6) % 7;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const prevDays = new Date(year, month, 0).getDate();
+
+            for (let i = startOffset - 1; i >= 0; i--) {
+                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dt = new Date(year, month, d);
+                const iso = fmtIso(dt);
+                const dayCitas = citasOfDay(iso);
+                const total = dayCitas.length;
+                const pendCount = dayCitas.filter(c => (c.estado||'pendiente') === 'pendiente').length;
+                const isToday = dt.getTime() === today.getTime();
+                const isSelected = fmtIso(agendaSelected) === iso;
+                let cls = 'cal-day';
+                if (isToday) cls += ' today';
+                if (isSelected) cls += ' selected';
+                if (total > 0) cls += ' has-citas';
+                const badge = total > 0
+                    ? `<span class="cnt ${pendCount > 0 ? 'pendiente' : ''}">${total}</span>` : '';
+                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}${badge}</div>`;
+            }
+            const totalCells = startOffset + daysInMonth;
+            const trail = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= trail; i++) grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
+
+            grid.querySelectorAll('.cal-day:not(.muted)').forEach(el => {
+                el.addEventListener('click', () => {
+                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
+                    agendaSelected = new Date(y, m-1, d);
+                    renderAgenda();
+                    renderAgendaDay();
+                });
+            });
+        }
+
+        function renderAgendaDay() {
+            const iso = fmtIso(agendaSelected);
+            const dayCitas = citasOfDay(iso).slice().sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
+
+            document.getElementById('dayTitle').textContent = fmtDayLong(agendaSelected);
+            const isToday = fmtIso(agendaSelected) === fmtIso(today);
+            document.getElementById('daySub').textContent = isToday ? 'Hoy' : '';
+
+            const counts = {
+                pendiente: dayCitas.filter(c => (c.estado||'pendiente')==='pendiente').length,
+                confirmada: dayCitas.filter(c => c.estado==='confirmada').length,
+                completada: dayCitas.filter(c => c.estado==='completada').length,
+                cancelada: dayCitas.filter(c => c.estado==='cancelada').length
+            };
+            const cntEl = document.getElementById('dayCount');
+            cntEl.innerHTML = '';
+            ['pendiente','confirmada','completada','cancelada'].forEach(k => {
+                if (counts[k] > 0) cntEl.innerHTML += `<span class="estado-pill ${k}">${counts[k]} ${k}</span>`;
+            });
+
+            const list = document.getElementById('dayList');
+            if (dayCitas.length === 0) {
+                list.innerHTML = `<div class="agenda-empty"><i class="fa-regular fa-calendar-xmark"></i><div class="label">Sin citas para este día</div></div>`;
+                return;
+            }
+
+            list.innerHTML = dayCitas.map(c => {
+                const estado = c.estado || 'pendiente';
+                const [hh, mm] = (c.hora || '00:00').split(':');
+                const period = parseInt(hh,10) < 14 ? 'mañana' : 'tarde';
+                return `<div class="appt-row">
+                    <div class="appt-time">${hh}:${mm}<span class="ampm">${period}</span></div>
+                    <div class="appt-info">
+                        <div class="appt-name">${c.nombre_cliente || '—'}</div>
+                        <div class="appt-phone"><i class="fa-solid fa-phone"></i>${c.telefono || '—'}</div>
+                        <div style="margin-top:6px;"><span class="estado-pill ${estado}">${estado}</span></div>
+                    </div>
+                    <div class="appt-actions">
+                        ${estado === 'pendiente' ? `<button class="action-icon success" title="Aprobar" onclick="aprobarCita(${c.id})"><i class="fa-solid fa-check"></i></button>` : ''}
+                        ${estado === 'confirmada' ? `<button class="action-icon success" title="Marcar completada" onclick="completarCita(${c.id})"><i class="fa-solid fa-circle-check"></i></button>` : ''}
+                        <button class="action-icon" title="Editar" onclick="abrirEditarCita(${c.id})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="action-icon danger" title="Eliminar" onclick="eliminarCita(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function initAgenda() {
+            const aPrev = document.getElementById('agendaPrev');
+            const aNext = document.getElementById('agendaNext');
+            const aToday = document.getElementById('agendaToday');
+            if (aPrev) aPrev.addEventListener('click', () => {
+                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()-1, 1);
+                renderAgenda();
+            });
+            if (aNext) aNext.addEventListener('click', () => {
+                agendaCursor = new Date(agendaCursor.getFullYear(), agendaCursor.getMonth()+1, 1);
+                renderAgenda();
+            });
+            if (aToday) aToday.addEventListener('click', () => {
+                agendaCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+                agendaSelected = new Date(today);
+                renderAgenda();
+                renderAgendaDay();
+            });
+            document.querySelectorAll('.agenda-filters .filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.agenda-filters .filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    agendaFilter = chip.dataset.filter;
+                    renderAgenda();
+                    renderAgendaDay();
+                });
+            });
+        }
+
+        /* ---------- ADMIN RENDER ---------- */
+        function renderAdmin() {
+            const search = (document.getElementById('adminSearch')?.value || '').trim().toLowerCase();
+            const filtered = search
+                ? clientas.filter(c => (c.nombre || '').toLowerCase().includes(search) || (c.telefono || '').includes(search))
+                : clientas;
+
+            // stats
+            const todayIso = fmtIso(today);
+            const startWeek = new Date(today); startWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
+            const endWeek = new Date(startWeek); endWeek.setDate(startWeek.getDate()+6);
+            const pendCount = citas.filter(c => (c.estado||'pendiente')==='pendiente').length;
+            const todayCount = citas.filter(c => c.fecha === todayIso && (c.estado||'pendiente') !== 'cancelada').length;
+            const weekCount = citas.filter(c => {
+                if (!c.fecha) return false;
+                const d = new Date(c.fecha + 'T00:00:00');
+                return d >= startWeek && d <= endWeek && (c.estado||'pendiente') !== 'cancelada';
+            }).length;
+
+            document.getElementById('statClientas').textContent = clientas.length;
+            document.getElementById('statPendientes').textContent = pendCount;
+            const badge = document.getElementById('menuBadgePendientes');
+            if (badge) { badge.textContent = pendCount; badge.style.display = pendCount > 0 ? 'inline' : 'none'; }
+            document.getElementById('statHoy').textContent = todayCount;
+            document.getElementById('statSemana').textContent = weekCount;
+
+            // refresh agenda views
+            renderAgenda();
+            renderAgendaDay();
+
+            // table
+            const tb = document.querySelector('#tablaClientes tbody');
+            tb.innerHTML = "";
+            if (filtered.length === 0) {
+                tb.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search ? 'Sin resultados' : 'Todavía no hay clientas registradas'}</div></div></td></tr>`;
+            } else {
+                filtered.forEach(c => {
+                    const v = c.visitas || 0;
+                    const pct = Math.min(v, 10) * 10;
+                    const fullClass = v >= 10 ? 'full' : '';
+                    tb.innerHTML += `<tr>
+                        <td>
+                            <div class="client-name">${c.nombre}</div>
+                            <div class="client-phone">${c.telefono || '—'}</div>
+                        </td>
+                        <td>
+                            <span class="stamps-pill ${fullClass}">
+                                <span>${v}/10</span>
+                                <span class="bar" style="--p:${pct}%"></span>
+                            </span>
+                        </td>
+                        <td style="text-align:right;">
+                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id}, ${v})"><i class="fa-solid fa-plus"></i></button>
+                            <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${c.id})"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            }
+
+            // appointments — only pending
+            const pendientes = citas.filter(c => (c.estado||'pendiente') === 'pendiente');
+            const lista = document.getElementById('listaCitasPendientes');
+            lista.innerHTML = "";
+            if (pendientes.length === 0) {
+                lista.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar"></i><div class="label">Sin solicitudes pendientes</div></div>`;
+            } else {
+                pendientes.forEach(cita => {
+                    const fecha = cita.fecha ? new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'long' }) : '—';
+                    lista.innerHTML += `<div class="cita-card">
+                        <div class="cita-name">${cita.nombre_cliente}</div>
+                        <div class="cita-meta">
+                            <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
+                            <span><i class="fa-regular fa-clock"></i>${cita.hora || '—'}</span>
+                            <span><i class="fa-solid fa-phone"></i>${cita.telefono || '—'}</span>
+                        </div>
+                        <div class="cita-actions">
+                            <button class="cita-btn approve" onclick="aprobarCita(${cita.id})"><i class="fa-solid fa-check" style="margin-right:5px;"></i>Aprobar</button>
+                            <button class="cita-btn reject" onclick="abrirEditarCita(${cita.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                            <button class="cita-btn reject" onclick="rechazarCita(${cita.id})" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>`;
+                });
+            }
+        }
+
+        /* ---------- ADMIN ACTIONS ---------- */
+        async function aprobarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (!cita) return;
+            try {
+                // create client only if not already registered (match by phone)
+                const yaExiste = clientas.some(cl => (cl.telefono || '').trim() === (cita.telefono || '').trim());
+                if (!yaExiste) {
+                    await sb.from('clientas').insert([{ nombre: cita.nombre_cliente, telefono: cita.telefono, visitas: 0 }]);
+                }
+                await sb.from('citas').update({ estado: 'confirmada' }).eq('id', idCita);
+                toast(yaExiste ? 'Cita confirmada' : 'Cita confirmada y clienta registrada', 'success');
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('No se pudo aprobar la cita', 'error');
+            }
+        }
+
+        async function completarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (!cita) return;
+            try {
+                await sb.from('citas').update({ estado: 'completada' }).eq('id', idCita);
+                // auto-add stamp to matching client
+                const cl = clientas.find(c => (c.telefono || '').trim() === (cita.telefono || '').trim());
+                if (cl && (cl.visitas || 0) < 10) {
+                    await sb.from('clientas').update({ visitas: (cl.visitas || 0) + 1 }).eq('id', cl.id);
+                    if ((cl.visitas || 0) + 1 === 10) {
+                        toast('¡Tarjeta completa! Servicio gratis disponible.', 'success', 'Recompensa');
+                    } else {
+                        toast('Cita completada · sello sumado', 'success');
+                    }
+                } else {
+                    toast('Cita marcada como completada', 'success');
+                }
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('No se pudo completar la cita', 'error');
+            }
+        }
+
+        async function eliminarCita(idCita) {
+            const ok = await askConfirm('Eliminar cita', 'Esta acción no se puede deshacer.');
+            if (!ok) return;
+            try {
+                await sb.from('citas').delete().eq('id', idCita);
+                toast('Cita eliminada', 'success');
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo eliminar', 'error'); }
+        }
+
+        function setEditEstado(estado) {
+            document.getElementById('editCitaEstado').value = estado;
+            document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
+                b.classList.toggle('active', b.dataset.estado === estado);
+            });
+        }
+
+        function abrirEditarCita(idCita) {
+            const cita = citas.find(c => c.id === idCita);
+            if (!cita) return;
+            document.getElementById('editCitaId').value = cita.id;
+            document.getElementById('editCitaNombre').value = cita.nombre_cliente || '';
+            document.getElementById('editCitaTelefono').value = cita.telefono || '';
+            document.getElementById('editCitaFecha').value = cita.fecha || '';
+            document.getElementById('editCitaHora').value = cita.hora || '';
+            setEditEstado(cita.estado || 'pendiente');
+            document.getElementById('editCitaModal').classList.add('show');
+        }
+
+        function closeEditCita() {
+            document.getElementById('editCitaModal').classList.remove('show');
+        }
+
+        document.getElementById('editCitaModal').addEventListener('click', e => {
+            if (e.target.id === 'editCitaModal') closeEditCita();
+        });
+
+        document.querySelectorAll('#editEstadoGroup .estado-opt').forEach(b => {
+            b.addEventListener('click', () => setEditEstado(b.dataset.estado));
+        });
+
+        async function confirmarEliminarCita() {
+            const id = parseInt(document.getElementById('editCitaId').value, 10);
+            const ok = await askConfirm('Eliminar cita', 'Esta cita se eliminará definitivamente.');
+            if (!ok) return;
+            try {
+                await sb.from('citas').delete().eq('id', id);
+                toast('Cita eliminada', 'success');
+                closeEditCita();
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo eliminar', 'error'); }
+        }
+
+        async function guardarEdicionCita() {
+            const id = parseInt(document.getElementById('editCitaId').value, 10);
+            const nuevoEstado = document.getElementById('editCitaEstado').value || 'pendiente';
+            const previa = citas.find(c => c.id === id);
+            const estadoAnterior = previa ? (previa.estado || 'pendiente') : 'pendiente';
+
+            const payload = {
+                nombre_cliente: document.getElementById('editCitaNombre').value.trim(),
+                telefono: document.getElementById('editCitaTelefono').value.trim(),
+                fecha: document.getElementById('editCitaFecha').value,
+                hora: document.getElementById('editCitaHora').value,
+                estado: nuevoEstado
+            };
+            if (!payload.nombre_cliente || !payload.telefono || !payload.fecha || !payload.hora) {
+                return toast('Completa todos los campos', 'error');
+            }
+            setBtnLoading('btnGuardarEdicion', true);
+            try {
+                const { error } = await sb.from('citas').update(payload).eq('id', id);
+                if (error) { toast('No se pudo actualizar', 'error'); return; }
+
+                // pasar de pendiente a confirmada → registrar clienta si no existe
+                if (estadoAnterior === 'pendiente' && nuevoEstado === 'confirmada') {
+                    const ya = clientas.some(c => (c.telefono||'').trim() === payload.telefono);
+                    if (!ya) await sb.from('clientas').insert([{ nombre: payload.nombre_cliente, telefono: payload.telefono, visitas: 0 }]);
+                }
+                // pasar a completada → sumar sello
+                if (estadoAnterior !== 'completada' && nuevoEstado === 'completada') {
+                    const cl = clientas.find(c => (c.telefono||'').trim() === payload.telefono);
+                    if (cl && (cl.visitas||0) < 10) {
+                        await sb.from('clientas').update({ visitas: (cl.visitas||0) + 1 }).eq('id', cl.id);
+                    }
+                }
+
+                toast('Cita actualizada', 'success');
+                closeEditCita();
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('Error al guardar', 'error');
+            } finally {
+                setBtnLoading('btnGuardarEdicion', false);
+            }
+        }
+
+        async function rechazarCita(idCita) {
+            const ok = await askConfirm('Rechazar solicitud', '¿Quieres descartar esta solicitud de cita?');
+            if (!ok) return;
+            try {
+                await sb.from('citas').delete().eq('id', idCita);
+                toast('Solicitud descartada', 'success');
+                cargarDatosAdmin();
+            } catch (e) {
+                toast('No se pudo descartar', 'error');
+            }
+        }
+
+        async function sumarVisita(id, actual) {
+            if (actual < 10) {
                 try {
                     await sb.from('clientas').update({ visitas: actual + 1 }).eq('id', id);
-                    app.toast('Sello añadido', 'success');
-                    await this.loadData();
-                    this.switchTab('fidelizacion');
-                } catch(e) {
-                    app.toast('Error', 'error');
-                }
-            },
+                    if (actual + 1 === 10) toast('¡Tarjeta completada! Servicio gratis desbloqueado.', 'success', 'Recompensa');
+                    cargarDatosAdmin();
+                } catch (e) { toast('No se pudo añadir el sello', 'error'); }
+            } else {
+                toast('Esta tarjeta ya está completa', 'info');
+            }
+        }
 
-            async reiniciarVisitas(id) {
-                if (!confirm('¿Reiniciar los sellos de esta clienta a 0?')) return;
-                try {
-                    await sb.from('clientas').update({ visitas: 0 }).eq('id', id);
-                    app.toast('Tarjeta reiniciada', 'success');
-                    await this.loadData();
-                    this.switchTab('fidelizacion');
-                } catch(e) {
-                    app.toast('Error', 'error');
+        async function reiniciarVisitas(id) {
+            const ok = await askConfirm('Reiniciar tarjeta', 'Se pondrán los sellos a 0 (tras canjear la recompensa).');
+            if (!ok) return;
+            try {
+                await sb.from('clientas').update({ visitas: 0 }).eq('id', id);
+                toast('Tarjeta reiniciada', 'success');
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo reiniciar', 'error'); }
+        }
+
+        async function borrarCliente(id) {
+            const ok = await askConfirm('Eliminar clienta', 'Esta acción no se puede deshacer.');
+            if (!ok) return;
+            try {
+                await sb.from('clientas').delete().eq('id', id);
+                toast('Clienta eliminada', 'success');
+                cargarDatosAdmin();
+            } catch (e) { toast('No se pudo eliminar', 'error'); }
+        }
+
+        async function registrarNuevoCliente() {
+            const n = document.getElementById('regNombre').value.trim();
+            const t = document.getElementById('regTelef').value.trim();
+            if (!n || !t) return toast('Introduce nombre y teléfono', 'error');
+
+            setBtnLoading('btnRegistrar', true);
+            try {
+                const { error } = await sb.from('clientas').insert([{ nombre: n, telefono: t, visitas: 0 }]);
+                if (!error) {
+                    toast('Clienta registrada', 'success');
+                    document.getElementById('regNombre').value = '';
+                    document.getElementById('regTelef').value = '';
+                    cargarDatosAdmin();
+                } else { toast('No se pudo registrar', 'error'); }
+            } catch (e) { toast('Error de conexión', 'error'); }
+            finally { setBtnLoading('btnRegistrar', false); }
+        }
+
+
+        /* ---------- DÍAS DISPONIBLES ---------- */
+        let diasDisponibles = []; // [{id, tipo:'dia'|'mes', valor:'2025-06-15'|'2025-06'}]
+        let dCalCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        function fmtMes(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
+
+        function isDiaDisponible(iso){
+            if(diasDisponibles.length === 0) return false;
+            const mes = iso.substring(0,7);
+            // if explicitly excluded, never available
+            if(diasDisponibles.some(b => b.tipo==='excluido' && b.valor===iso)) return false;
+            return diasDisponibles.some(b => (b.tipo==='dia' && b.valor===iso) || (b.tipo==='mes' && b.valor===mes));
+        }
+
+        async function cargarDisponibles(){
+            try {
+                const { data, error } = await sb.from('dias_disponibles').select('*');
+                if (error) { diasDisponibles = []; return; }
+                diasDisponibles = data || [];
+                try { renderDCalendar(); } catch(e) {}
+                try { renderMesesGrid(); } catch(e) {}
+                try { renderDispDiaItems(); } catch(e) {}
+            } catch(e) { console.warn('dias_disponibles tabla no existe aún', e); }
+        }
+
+        function renderDCalendar(){
+            const monthEl = document.getElementById('dCalMonth');
+            const grid = document.getElementById('dCalGrid');
+            if(!monthEl || !grid) return;
+            monthEl.textContent = `${MONTHS_ES[dCalCursor.getMonth()]} ${dCalCursor.getFullYear()}`;
+            grid.innerHTML = '';
+            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+            const year = dCalCursor.getFullYear();
+            const month = dCalCursor.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const startOffset = (firstDay.getDay()+6)%7;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const prevDays = new Date(year, month, 0).getDate();
+            for(let i=startOffset-1;i>=0;i--) grid.innerHTML += `<div class="cal-day muted">${prevDays-i}</div>`;
+            for(let d=1;d<=daysInMonth;d++){
+                const dt = new Date(year,month,d);
+                const iso = `${year}-${pad2(month+1)}-${pad2(d)}`;
+                const mes = `${year}-${pad2(month+1)}`;
+                const mesDisp = diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===mes);
+                const excluido = diasDisponibles.some(b=>b.tipo==='excluido'&&b.valor===iso);
+                const diaDisp = diasDisponibles.some(b=>b.tipo==='dia'&&b.valor===iso);
+                const isToday = dt.getTime()===today.getTime();
+                let cls='cal-day';
+                if(isToday) cls+=' today';
+                if((mesDisp || diaDisp) && !excluido) cls+=' disponible';
+                if(excluido) cls+=' excluido-admin';
+                grid.innerHTML += `<div class="${cls}" data-iso="${iso}" data-mes-disp="${mesDisp}">${d}</div>`;
+            }
+            const totalCells = startOffset+daysInMonth;
+            const trail = (7-(totalCells%7))%7;
+            for(let i=1;i<=trail;i++) grid.innerHTML+=`<div class="cal-day muted">${i}</div>`;
+            grid.querySelectorAll('.cal-day:not(.muted)').forEach(el=>{
+                el.addEventListener('click', ()=>toggleDisponible('dia', el.dataset.iso, el.dataset.mesDisp));
+            });
+        }
+
+        function renderDispDiaItems(){
+            const el = document.getElementById('dispDiaItems');
+            if(!el) return;
+            const dias = diasDisponibles.filter(b=>b.tipo==='dia').sort((a,b)=>a.valor.localeCompare(b.valor));
+            if(dias.length===0){
+                el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div>`;
+                return;
+            }
+            el.innerHTML = dias.map(b=>{
+                const dt = new Date(b.valor+'T00:00:00');
+                const label = `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}`;
+                return `<div class="disp-item"><span><i class="fa-regular fa-calendar-check" style="margin-right:8px;color:#4A7C59;"></i>${label}</span><button onclick="toggleDisponible('dia','${b.valor}')" title="Quitar"><i class="fa-solid fa-xmark"></i></button></div>`;
+            }).join('');
+        }
+
+        function renderMesesGrid(){
+            const grid = document.getElementById('mesesGrid');
+            if(!grid) return;
+            const year = today.getFullYear();
+            grid.innerHTML = '';
+            for(let m=0;m<12;m++){
+                const valor = `${year}-${pad2(m+1)}`;
+                const disp = diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===valor);
+                grid.innerHTML += `<button type="button" class="mes-chip ${disp?'disponible':''}" onclick="toggleDisponible('mes','${valor}')">${MONTHS_ES[m]}</button>`;
+            }
+            const nextYear = year+1;
+            for(let m=0;m<12;m++){
+                const valor=`${nextYear}-${pad2(m+1)}`;
+                const disp=diasDisponibles.some(b=>b.tipo==='mes'&&b.valor===valor);
+                grid.innerHTML+=`<button type="button" class="mes-chip ${disp?'disponible':''}" onclick="toggleDisponible('mes','${valor}')" style="opacity:.75">${MONTHS_ES[m]} '${String(nextYear).slice(2)}</button>`;
+            }
+        }
+
+        async function toggleDisponible(tipo, valor, mesDisp){
+            if(tipo === 'dia' && mesDisp === 'true') {
+                // month is enabled — toggle exclusion for this specific day
+                const excl = diasDisponibles.find(b=>b.tipo==='excluido'&&b.valor===valor);
+                if(excl){
+                    await sb.from('dias_disponibles').delete().eq('id',excl.id);
+                    toast('Día reactivado dentro del mes','success');
+                } else {
+                    await sb.from('dias_disponibles').insert([{tipo:'excluido', valor}]);
+                    toast('Día excluido del mes','info');
+                }
+            } else {
+                const existing = diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
+                if(existing){
+                    await sb.from('dias_disponibles').delete().eq('id',existing.id);
+                    toast(tipo==='mes' ? 'Mes deshabilitado' : 'Día deshabilitado', 'info');
+                } else {
+                    await sb.from('dias_disponibles').insert([{tipo, valor}]);
+                    toast(tipo==='mes' ? 'Mes habilitado' : 'Día habilitado', 'success');
                 }
             }
-        };
+            cargarDisponibles();
+        }
 
-        // Initialize app when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            app.init();
-            if (typeof clientApp !== 'undefined') clientApp.init();
-        });
+        function initDispPanel(){
+            const dPrev = document.getElementById('dCalPrev');
+            const dNext = document.getElementById('dCalNext');
+            if (dPrev) dPrev.addEventListener('click',()=>{
+                dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()-1,1);
+                renderDCalendar();
+            });
+            if (dNext) dNext.addEventListener('click',()=>{
+                dCalCursor=new Date(dCalCursor.getFullYear(),dCalCursor.getMonth()+1,1);
+                renderDCalendar();
+            });
+            document.querySelectorAll('.disp-tab').forEach(tab=>{
+                tab.addEventListener('click',()=>{
+                    document.querySelectorAll('.disp-tab').forEach(t=>t.classList.remove('active'));
+                    document.querySelectorAll('.disp-panel').forEach(p=>p.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = document.getElementById('dpanel'+tab.dataset.dtab.charAt(0).toUpperCase()+tab.dataset.dtab.slice(1));
+                    if (target) target.classList.add('active');
+                });
+            });
+        }
+
+        /* ---------- CUSTOM CALENDAR & TIME PICKER ---------- */
+        let calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+        let selectedDate = null;
+        let selectedTime = null;
+        let activePeriod = 'morning';
+
+        function pad2(n){ return String(n).padStart(2,'0'); }
+        function fmtISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+        function fmtPretty(d){
+            const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+            return `${days[d.getDay()]} ${d.getDate()} de ${MONTHS_ES[d.getMonth()].toLowerCase()}`;
+        }
+
+        function renderCalendar(){
+            const monthEl = document.getElementById('calMonth');
+            const grid = document.getElementById('calGrid');
+            if (!monthEl || !grid) return;
+
+            monthEl.textContent = `${MONTHS_ES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
+
+            // limit prev nav: cannot go before current month
+            const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('calPrev').disabled = calCursor <= minMonth;
+
+            grid.innerHTML = '';
+            DOW_ES.forEach(d => grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+
+            const year = calCursor.getFullYear();
+            const month = calCursor.getMonth();
+            const firstDay = new Date(year, month, 1);
+            // mon=0 .. sun=6
+            let startOffset = (firstDay.getDay() + 6) % 7;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const prevDays = new Date(year, month, 0).getDate();
+
+            // leading days from prev month
+            for (let i = startOffset - 1; i >= 0; i--) {
+                grid.innerHTML += `<div class="cal-day muted">${prevDays - i}</div>`;
+            }
+            // current month
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dt = new Date(year, month, d);
+                const iso = fmtISO(dt);
+                const past = dt < today;
+                const isToday = dt.getTime() === today.getTime();
+                const isSelected = selectedDate && fmtISO(selectedDate) === iso;
+                let cls = 'cal-day';
+                if (past) cls += ' disabled';
+                if (isToday) cls += ' today';
+                if (isSelected) cls += ' selected';
+                grid.innerHTML += `<div class="${cls}" data-iso="${iso}">${d}</div>`;
+            }
+            // trailing fill to multiple of 7
+            const totalCells = startOffset + daysInMonth;
+            const trail = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= trail; i++) {
+                grid.innerHTML += `<div class="cal-day muted">${i}</div>`;
+            }
+
+            grid.querySelectorAll('.cal-day:not(.disabled):not(.muted)').forEach(el => {
+                el.addEventListener('click', () => {
+                    const [y,m,d] = el.dataset.iso.split('-').map(Number);
+                    selectedDate = new Date(y, m-1, d);
+                    document.getElementById('citaFecha').value = el.dataset.iso;
+                    const lbl = document.getElementById('pickedDateLabel');
+                    lbl.textContent = fmtPretty(selectedDate);
+                    lbl.classList.remove('empty');
+                    renderCalendar();
+                    renderTimeSlots();
+                });
+            });
+        }
+
+        function renderTimeSlots(){
+            const wrap = document.getElementById('timeSlots');
+            if (!wrap) return;
+            const slots = SLOTS[activePeriod];
+            wrap.innerHTML = '';
+            if (!selectedDate) {
+                wrap.innerHTML = `<div class="time-empty">Elige primero una fecha</div>`;
+                return;
+            }
+            slots.forEach(t => {
+                const isSel = selectedTime === t;
+                wrap.innerHTML += `<button type="button" class="time-slot ${isSel ? 'selected' : ''}" data-time="${t}">${t}</button>`;
+            });
+            wrap.querySelectorAll('.time-slot').forEach(el => {
+                el.addEventListener('click', () => {
+                    selectedTime = el.dataset.time;
+                    document.getElementById('citaHora').value = selectedTime;
+                    const lbl = document.getElementById('pickedTimeLabel');
+                    lbl.textContent = `${selectedTime} h`;
+                    lbl.classList.remove('empty');
+                    renderTimeSlots();
+                });
+            });
+        }
+
+        function initPicker(){
+            renderCalendar();
+            renderTimeSlots();
+
+            const cPrev = document.getElementById('calPrev');
+            const cNext = document.getElementById('calNext');
+            if (cPrev) cPrev.addEventListener('click', () => {
+                const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const candidate = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1);
+                if (candidate >= minMonth) { calCursor = candidate; renderCalendar(); }
+            });
+            if (cNext) cNext.addEventListener('click', () => {
+                calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1);
+                renderCalendar();
+            });
+            document.querySelectorAll('.time-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    activePeriod = tab.dataset.period;
+                    renderTimeSlots();
+                });
+            });
+        }
+
+        function resetPicker(){
+            selectedDate = null;
+            selectedTime = null;
+            activePeriod = 'morning';
+            calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('citaFecha').value = '';
+            document.getElementById('citaHora').value = '';
+            document.getElementById('pickedDateLabel').textContent = 'Sin elegir';
+            document.getElementById('pickedDateLabel').classList.add('empty');
+            document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
+            document.getElementById('pickedTimeLabel').classList.add('empty');
+            document.querySelectorAll('.time-tab').forEach(t => t.classList.toggle('active', t.dataset.period === 'morning'));
+            renderCalendar();
+            renderTimeSlots();
+        }
+
+        /* ---------- INIT ---------- */
+        let agendaInitialized = false;
+
+        try { initPicker(); } catch (e) { console.error('initPicker falló:', e); }
+        try { initAgenda(); agendaInitialized = true; } catch (e) { console.error('initAgenda falló:', e); }
+        try { mostrarVista('login'); } catch (e) { console.error('mostrarVista falló:', e); }
     </script>
+</div>
+</div>
 </body>
 </html>
+
