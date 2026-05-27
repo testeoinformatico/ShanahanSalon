@@ -1211,6 +1211,8 @@
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                         </div>
 
                         <button type="button" class="btn-luxury" id="btnLoginVerificarOTP" onclick="loginVerificarOTP()">
@@ -1355,6 +1357,8 @@
                         </div>
                         <div class="otp-inputs" id="regOTPInputs">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
@@ -2343,7 +2347,7 @@
     }
 
     // ══════════════════════════════════════════════════════
-    //  HELPERS OTP — inputs de 6 dígitos
+    //  HELPERS OTP — inputs de 8 dígitos
     // ══════════════════════════════════════════════════════
     function initOTPInputs(containerId, onComplete) {
         const container = document.getElementById(containerId);
@@ -2363,20 +2367,20 @@
                 inp.classList.toggle("filled", !!inp.value);
                 if (inp.value && i < inputs.length-1) inputs[i+1].focus();
                 const code = inputs.map(x=>x.value).join("");
-                if (code.length === 6 && onComplete) onComplete(code);
+                if (code.length === 8 && onComplete) onComplete(code);
             });
             inp.addEventListener("keydown", e => {
                 if (e.key==="Backspace" && !inp.value && i>0) inputs[i-1].focus();
             });
             inp.addEventListener("paste", e => {
                 e.preventDefault();
-                const pasted = (e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,6);
+                const pasted = (e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,8);
                 pasted.split("").forEach((ch,j) => {
                     if (inputs[j]) { inputs[j].value=ch; inputs[j].classList.add("filled"); }
                 });
                 inputs[Math.min(pasted.length, inputs.length-1)]?.focus();
                 const code = inputs.map(x=>x.value).join("");
-                if (code.length===6 && onComplete) onComplete(code);
+                if (code.length===8 && onComplete) onComplete(code);
             });
         });
         setTimeout(() => inputs[0]?.focus(), 120);
@@ -2501,7 +2505,7 @@
         if (!_loginClientaData) return;
         const email = _loginClientaData.email;
         const code  = autoCode || getOTPCode("loginOTPInputs");
-        if (code.length!==6) return toast("Introduce los 6 dígitos","error");
+        if (code.length!==8) return toast("Introduce los 8 dígitos","error");
 
         setBtnLoading("btnLoginVerificarOTP",true);
         try {
@@ -2638,8 +2642,8 @@
         const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
         const code  = (typeof autoCode === "string" && autoCode) ? autoCode : getOTPCode("regOTPInputs");
         
-        if (code.length !== 6) {
-            toast("Introduce los 6 dígitos", "error");
+        if (code.length !== 8) {
+            toast("Introduce los 8 dígitos", "error");
             return;
         }
 
