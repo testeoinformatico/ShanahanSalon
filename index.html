@@ -2640,21 +2640,29 @@
 
     async function regVerificarOTP(autoCode) {
         const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
-        const code  = autoCode || getOTPCode("regOTPInputs");
-        if (code.length!==8) return toast("Introduce los 8 dígitos","error");
+        const code  = (typeof autoCode === "string" && autoCode) ? autoCode : getOTPCode("regOTPInputs");
+        
+        if (code.length !== 8) {
+            toast("Introduce los 8 dígitos", "error");
+            return;
+        }
 
-        setBtnLoading("btnRegVerificarOTP",true);
+        setBtnLoading("btnRegVerificarOTP", true);
         try {
             const { error } = await sb.auth.verifyOtp({ email, token:code, type:"email" });
-            if (error) { toast("Código incorrecto o expirado","error"); return; }
+            if (error) { 
+                toast("Código incorrecto o expirado", "error"); 
+                return; 
+            }
             regEmailVerificado = true;
             document.getElementById("regEmailVerificado").style.display = "block";
             document.getElementById("btnRegVerificarOTP").style.display = "none";
-            toast("¡Correo verificado! Elige tu cita","success");
+            toast("¡Correo verificado! Puedes crear tu cuenta.", "success");
         } catch(e) {
-            toast("Error al verificar","error");
+            console.error("regVerificarOTP error:", e);
+            toast("Error al verificar", "error");
         } finally {
-            setBtnLoading("btnRegVerificarOTP",false);
+            setBtnLoading("btnRegVerificarOTP", false);
         }
     }
 
