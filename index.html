@@ -1889,6 +1889,18 @@
         </div>
     </div>
 
+    <!-- Alert Modal (Errores) -->
+    <div class="modal-backdrop-x" id="alertModal">
+        <div class="modal-x" style="max-width:320px; text-align:center;">
+            <div class="modal-title" id="alertTitle" style="justify-content:center; color:var(--burgundy);">Atención</div>
+            <p id="alertMsg" style="color:var(--text-soft); font-size:14px; margin-bottom:24px; line-height:1.5;"></p>
+            <div style="display:flex; justify-content:center;">
+                <button type="button" class="btn-luxury" style="margin-top:0;" onclick="document.getElementById('alertModal').classList.remove('show')"><span>Entendido</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
     <div class="modal-backdrop-x" id="confirmModal">
         <div class="modal-x">
             <h4 id="confirmTitle">¿Estás segura?</h4>
@@ -1999,6 +2011,15 @@
 
     // ── Toast ──────────────────────────────────────────────
     function toast(message, type="info", title="") {
+        if (type === "error") {
+            const am = document.getElementById("alertModal");
+            if(am) {
+                document.getElementById("alertTitle").textContent = title || "Atención";
+                document.getElementById("alertMsg").textContent = message;
+                am.classList.add("show");
+                return;
+            }
+        }
         const stack = document.getElementById("toastStack");
         if (!stack) return;
         const t = document.createElement("div");
