@@ -473,7 +473,66 @@
         body.admin-mode .fab-nueva-cita { display: flex; align-items: center; justify-content: center; }
         @media (min-width: 769px) { body.admin-mode .fab-nueva-cita { display: none; } }
 
-        /* WELCOME MODAL Lujoso */
+        /* ── OTP / Email verification ─────────────────────── */
+        .otp-step { display: none; }
+        .otp-step.active { display: block; }
+
+        .otp-email-display {
+            font-size: 13px; font-weight: 600; color: var(--burgundy);
+            background: var(--burgundy-soft); padding: 10px 14px;
+            margin-bottom: 18px; text-align: center; letter-spacing: .3px;
+        }
+        .otp-email-display i { margin-right: 8px; color: var(--accent); }
+
+        .otp-inputs {
+            display: flex; gap: 10px; justify-content: center;
+            margin: 20px 0;
+        }
+        .otp-digit {
+            width: 48px; height: 60px; border: 1px solid var(--line);
+            background: #fff; text-align: center; font-size: 26px;
+            font-family: 'Playfair Display', serif; font-weight: 700;
+            color: var(--burgundy); outline: none;
+            transition: all .25s var(--ease); caret-color: var(--burgundy);
+        }
+        .otp-digit:focus { border-color: var(--burgundy); box-shadow: 0 0 0 3px rgba(146,31,35,.1); }
+        .otp-digit.filled { border-color: var(--accent); background: var(--cream); }
+
+        .otp-resend {
+            text-align: center; font-size: 12px; color: var(--muted);
+            margin-top: 14px;
+        }
+        .otp-resend button {
+            background: none; border: none; color: var(--burgundy);
+            font-size: 12px; cursor: pointer; font-weight: 600;
+            font-family: 'Poppins', sans-serif; padding: 0;
+            text-decoration: underline; text-underline-offset: 3px;
+        }
+        .otp-resend button:disabled { color: var(--muted); text-decoration: none; cursor: default; }
+
+        .otp-countdown {
+            display: inline-block; font-weight: 600; color: var(--burgundy);
+            min-width: 28px;
+        }
+
+        .step-indicator {
+            display: flex; gap: 6px; justify-content: center;
+            margin-bottom: 20px;
+        }
+        .step-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--line); transition: all .3s var(--ease);
+        }
+        .step-dot.active { background: var(--burgundy); width: 22px; border-radius: 4px; }
+        .step-dot.done { background: var(--accent); }
+
+        .back-step {
+            background: none; border: none; color: var(--muted); font-size: 12px;
+            cursor: pointer; font-family: 'Poppins', sans-serif; padding: 0;
+            display: flex; align-items: center; gap: 6px; margin-bottom: 16px;
+            transition: color .2s;
+        }
+        .back-step:hover { color: var(--burgundy); }
         .welcome-modal {
             position: fixed; inset: 0;
             background: rgba(18, 5, 6, 0.9);
@@ -1103,22 +1162,65 @@
                     <span class="brand-sub">Nails</span>
                 </div>
                 <div class="luxury-card view-anim">
-                    <h5 class="card-title">Consultar Puntos</h5>
-                    <p class="card-subtitle">Accede a tu programa de fidelización</p>
+                    <!-- Paso A: email -->
+                    <div class="otp-step active" id="loginStepEmail">
+                        <h5 class="card-title">Accede a tu cuenta</h5>
+                        <p class="card-subtitle">Te enviamos un código de 6 dígitos a tu correo</p>
 
-                    <form onsubmit="event.preventDefault(); iniciarSesionCliente();">
-                        <div class="field">
-                            <input type="text" id="loginUsuario" placeholder=" " autocomplete="username">
-                            <label>Usuario</label>
-                            <i class="fa-regular fa-user field-icon"></i>
+                        <div class="step-indicator">
+                            <div class="step-dot active" id="lsDot1"></div>
+                            <div class="step-dot" id="lsDot2"></div>
                         </div>
-                        <div class="field field-pass-wrap">
-                            <input type="password" id="loginPass" placeholder=" " autocomplete="current-password">
-                            <label>Contraseña</label>
-                            <button type="button" class="toggle-pass" onclick="togglePassVis('loginPass',this)" tabindex="-1" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button>
+
+                        <form onsubmit="event.preventDefault(); loginSolicitarOTP();">
+                            <div class="field">
+                                <input type="email" id="loginEmail" placeholder=" " autocomplete="email" inputmode="email">
+                                <label>Correo electrónico</label>
+                                <i class="fa-regular fa-envelope field-icon"></i>
+                            </div>
+                            <button type="submit" class="btn-luxury" id="btnLoginSolicitarOTP">
+                                <span>Enviar código</span><span class="spinner"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Paso B: OTP -->
+                    <div class="otp-step" id="loginStepOTP">
+                        <h5 class="card-title">Código de verificación</h5>
+                        <p class="card-subtitle">Revisa tu bandeja de entrada</p>
+
+                        <div class="step-indicator">
+                            <div class="step-dot done"></div>
+                            <div class="step-dot active"></div>
                         </div>
-                        <button type="submit" class="btn-luxury" id="btnLoginCliente"><span>Entrar</span><span class="spinner"></span></button>
-                    </form>
+
+                        <div class="otp-email-display">
+                            <i class="fa-regular fa-envelope"></i><span id="loginEmailDisplay"></span>
+                        </div>
+
+                        <div class="otp-inputs" id="loginOTPInputs">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                        </div>
+
+                        <button type="button" class="btn-luxury" id="btnLoginVerificarOTP" onclick="loginVerificarOTP()">
+                            <span>Verificar y entrar</span><span class="spinner"></span>
+                        </button>
+
+                        <div class="otp-resend">
+                            ¿No llegó? <button id="btnLoginReenviar" onclick="loginReenviarOTP()" disabled>
+                                Reenviar (<span class="otp-countdown" id="loginCountdown">60</span>s)
+                            </button>
+                        </div>
+
+                        <button class="back-step" onclick="loginVolverEmail()">
+                            <i class="fa-solid fa-arrow-left"></i> Cambiar correo
+                        </button>
+                    </div>
 
                     <div class="divider-soft">¿Eres nueva?</div>
 
@@ -1181,40 +1283,61 @@
                 <div class="luxury-card view-anim">
                     <p class="card-subtitle">Rellena el formulario y te confirmamos la cita</p>
 
-                    <!-- PASO 1: Datos personales -->
+                    <!-- PASO 1: Datos personales + correo -->
                     <div class="picker-label" style="margin-top:0;">
                         <span><i class="fa-regular fa-user" style="margin-right:8px;color:var(--accent);"></i>Tus datos</span>
                     </div>
-                    <div class="field">
-                        <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
-                        <label>Nombre completo</label>
-                        <i class="fa-regular fa-user field-icon"></i>
-                    </div>
-                    <div class="field">
-                        <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
-                        <label>Teléfono</label>
-                        <i class="fa-solid fa-phone field-icon"></i>
+
+                    <!-- Sub-paso 1a: datos + email -->
+                    <div id="regStepDatos">
+                        <div class="field">
+                            <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
+                            <label>Nombre completo</label>
+                            <i class="fa-regular fa-user field-icon"></i>
+                        </div>
+                        <div class="field">
+                            <input type="tel" id="citaTelefono" placeholder=" " autocomplete="tel">
+                            <label>Teléfono</label>
+                            <i class="fa-solid fa-phone field-icon"></i>
+                        </div>
+                        <div class="field">
+                            <input type="email" id="citaEmail" placeholder=" " autocomplete="email" inputmode="email">
+                            <label>Correo electrónico</label>
+                            <i class="fa-regular fa-envelope field-icon"></i>
+                        </div>
+                        <button type="button" class="btn-luxury" id="btnRegSolicitarOTP" onclick="regSolicitarOTP()" style="margin-bottom:18px;">
+                            <span>Enviar código de verificación</span><span class="spinner"></span>
+                        </button>
                     </div>
 
-                    <!-- PASO 2: Cuenta -->
-                    <div class="picker-label">
-                        <span><i class="fa-solid fa-key" style="margin-right:8px;color:var(--accent);"></i>Crea tu cuenta</span>
-                    </div>
-                    <div class="field">
-                        <input type="text" id="citaUsuario" placeholder=" " autocomplete="off">
-                        <label>Nombre de usuario</label>
-                        <i class="fa-regular fa-at field-icon"></i>
-                    </div>
-                    <div id="usuarioFeedback" style="font-size:11px;min-height:18px;margin-top:-16px;margin-bottom:12px;"></div>
-                    <div class="field" style="position:relative;">
-                        <input type="password" id="citaClave" placeholder=" " autocomplete="new-password">
-                        <label>Contraseña</label>
-                        <button type="button" style="position:absolute;right:0;top:14px;background:none;border:none;cursor:pointer;color:var(--line);font-size:13px;padding:0;" onclick="this.previousElementSibling.previousElementSibling.type=this.previousElementSibling.previousElementSibling.type==='password'?'text':'password'"><i class="fa-regular fa-eye"></i></button>
-                    </div>
-                    <div class="field" style="position:relative;">
-                        <input type="password" id="citaClaveConfirm" placeholder=" " autocomplete="new-password">
-                        <label>Repite la contraseña</label>
-                        <button type="button" style="position:absolute;right:0;top:14px;background:none;border:none;cursor:pointer;color:var(--line);font-size:13px;padding:0;" onclick="this.previousElementSibling.previousElementSibling.type=this.previousElementSibling.previousElementSibling.type==='password'?'text':'password'"><i class="fa-regular fa-eye"></i></button>
+                    <!-- Sub-paso 1b: verificar OTP -->
+                    <div id="regStepOTP" style="display:none; margin-bottom:18px;">
+                        <div class="otp-email-display">
+                            <i class="fa-regular fa-envelope"></i>Código enviado a <span id="regEmailDisplay"></span>
+                        </div>
+                        <div class="otp-inputs" id="regOTPInputs">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                        </div>
+                        <button type="button" class="btn-luxury" id="btnRegVerificarOTP" onclick="regVerificarOTP()">
+                            <span>Verificar correo</span><span class="spinner"></span>
+                        </button>
+                        <div class="otp-resend">
+                            ¿No llegó? <button id="btnRegReenviar" onclick="regReenviarOTP()" disabled>
+                                Reenviar (<span class="otp-countdown" id="regCountdown">60</span>s)
+                            </button>
+                        </div>
+                        <button class="back-step" onclick="regVolverDatos()">
+                            <i class="fa-solid fa-arrow-left"></i> Cambiar datos
+                        </button>
+                        <!-- Badge confirmación -->
+                        <div id="regEmailVerificado" style="display:none; background:rgba(74,124,89,.1); border:1px solid rgba(74,124,89,.3); color:#4A7C59; padding:10px 14px; font-size:12px; font-weight:600; margin-top:8px;">
+                            <i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>Correo verificado ✓
+                        </div>
                     </div>
 
                     <!-- PASO 3: Servicio -->
@@ -2090,10 +2213,7 @@
             });
         });
 
-        // Check usuario disponible
-        document.getElementById("citaUsuario")?.addEventListener("input", () => {
-            checkUsuarioDisponible(document.getElementById("citaUsuario").value);
-        });
+        // Verificación de correo ya gestionada por regSolicitarOTP
     }
 
     function resetPicker() {
@@ -2111,39 +2231,291 @@
         renderTimeSlots();
     }
 
-    // ── Usuario check ──────────────────────────────────────
-    let usuarioTimer = null;
-    async function checkUsuarioDisponible(val) {
-        const fb = document.getElementById("usuarioFeedback");
-        if (!fb) return;
-        val = (val||"").trim().toLowerCase();
-        if (!val) { fb.textContent=""; return; }
-        if (!/^[a-z0-9._]{3,20}$/.test(val)) {
-            fb.innerHTML = `<span style="color:#c0392b">✗ Solo letras/números/punto/guión bajo, 3-20 caracteres</span>`;
-            return;
-        }
-        fb.innerHTML = `<span style="color:var(--muted)">Comprobando…</span>`;
-        clearTimeout(usuarioTimer);
-        usuarioTimer = setTimeout(async () => {
-            try {
-                const { data } = await sb.from("clientas").select("id").eq("usuario",val).maybeSingle();
-                fb.innerHTML = data
-                    ? `<span style="color:#c0392b">✗ Ese usuario ya existe</span>`
-                    : `<span style="color:#27ae60">✓ Disponible</span>`;
-            } catch(e) { fb.textContent=""; }
-        }, 600);
+    // ── Usuario check (ya no se usa — mantenido por compatibilidad) ──
+    function checkUsuarioDisponible() {}
+
+    // ══════════════════════════════════════════════════════
+    //  HELPERS OTP — inputs de 6 dígitos
+    // ══════════════════════════════════════════════════════
+    function initOTPInputs(containerId, onComplete) {
+        const inputs = document.querySelectorAll(`#${containerId} .otp-digit`);
+        inputs.forEach((inp, i) => {
+            inp.value = "";
+            inp.classList.remove("filled");
+            inp.addEventListener("input", e => {
+                // Aceptar solo dígitos
+                inp.value = inp.value.replace(/\D/g, "").slice(-1);
+                inp.classList.toggle("filled", inp.value !== "");
+                if (inp.value && i < inputs.length - 1) inputs[i+1].focus();
+                // Auto-submit si todos rellenos
+                const code = [...inputs].map(x => x.value).join("");
+                if (code.length === 6 && onComplete) onComplete(code);
+            });
+            inp.addEventListener("keydown", e => {
+                if (e.key === "Backspace" && !inp.value && i > 0) inputs[i-1].focus();
+            });
+            inp.addEventListener("paste", e => {
+                e.preventDefault();
+                const paste = (e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,6);
+                paste.split("").forEach((ch, j) => {
+                    if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add("filled"); }
+                });
+                if (inputs[Math.min(paste.length, inputs.length-1)]) inputs[Math.min(paste.length, inputs.length-1)].focus();
+                const code = [...inputs].map(x=>x.value).join("");
+                if (code.length === 6 && onComplete) onComplete(code);
+            });
+        });
+        // Focus primer input
+        setTimeout(() => inputs[0]?.focus(), 100);
+    }
+
+    function getOTPCode(containerId) {
+        return [...document.querySelectorAll(`#${containerId} .otp-digit`)].map(x=>x.value).join("");
+    }
+
+    function clearOTPInputs(containerId) {
+        document.querySelectorAll(`#${containerId} .otp-digit`).forEach(inp => {
+            inp.value = ""; inp.classList.remove("filled");
+        });
+    }
+
+    // Countdown reutilizable
+    function startCountdown(spanId, btnId, segundos = 60) {
+        const span = document.getElementById(spanId);
+        const btn  = document.getElementById(btnId);
+        if (!span || !btn) return;
+        btn.disabled = true;
+        let s = segundos;
+        span.textContent = s;
+        const iv = setInterval(() => {
+            s--;
+            span.textContent = s;
+            if (s <= 0) {
+                clearInterval(iv);
+                btn.disabled = false;
+                btn.innerHTML = "Reenviar código";
+            }
+        }, 1000);
+        return iv;
     }
 
     // ══════════════════════════════════════════════════════
-    //  ENVIAR CITA — función principal
+    //  LOGIN CLIENTE — Flujo OTP
     // ══════════════════════════════════════════════════════
-    async function enviarCita() {
-        // Leer valores
+    let loginOTPCountdownIv = null;
+
+    function loginMostrarPaso(paso) {
+        document.getElementById("loginStepEmail").classList.toggle("active", paso === "email");
+        document.getElementById("loginStepOTP").classList.toggle("active", paso === "otp");
+    }
+
+    async function loginSolicitarOTP() {
+        const email = (document.getElementById("loginEmail")?.value||"").trim().toLowerCase();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+            return toast("Introduce un correo válido","error");
+
+        setBtnLoading("btnLoginSolicitarOTP", true);
+        try {
+            const { error } = await sb.auth.signInWithOtp({
+                email,
+                options: { shouldCreateUser: false }   // solo usuarios ya registrados
+            });
+            if (error) {
+                // Si el usuario no existe, Supabase devuelve error — lo capturamos limpiamente
+                if (error.message.toLowerCase().includes("not found") ||
+                    error.message.toLowerCase().includes("signup") ||
+                    error.status === 400) {
+                    toast("No encontramos una cuenta con ese correo. ¿Quieres pedir tu primera cita?","error","Sin cuenta");
+                } else {
+                    toast("Error: "+error.message,"error");
+                }
+                return;
+            }
+            document.getElementById("loginEmailDisplay").textContent = email;
+            loginMostrarPaso("otp");
+            initOTPInputs("loginOTPInputs", code => loginVerificarOTP(code));
+            clearInterval(loginOTPCountdownIv);
+            loginOTPCountdownIv = startCountdown("loginCountdown","btnLoginReenviar",60);
+            toast("Código enviado — revisa tu bandeja de entrada","success","Código enviado");
+        } catch(e) {
+            toast("Error de conexión","error");
+        } finally {
+            setBtnLoading("btnLoginSolicitarOTP", false);
+        }
+    }
+
+    async function loginVerificarOTP(autoCode) {
+        const email = (document.getElementById("loginEmail")?.value||"").trim().toLowerCase();
+        const code  = autoCode || getOTPCode("loginOTPInputs");
+        if (code.length !== 6) return toast("Introduce los 6 dígitos del código","error");
+
+        setBtnLoading("btnLoginVerificarOTP", true);
+        try {
+            const { data, error } = await sb.auth.verifyOtp({
+                email, token: code, type: "email"
+            });
+            if (error) { toast("Código incorrecto o expirado","error"); return; }
+
+            // Buscar la clienta por email
+            const { data: clientaData, error: cErr } = await sb.from("clientas")
+                .select("*").eq("email", email).maybeSingle();
+            if (cErr || !clientaData) {
+                toast("Correo verificado pero no encontramos tu perfil. Contacta con el salón.","error");
+                return;
+            }
+            await mostrarPerfilCliente(clientaData);
+        } catch(e) {
+            toast("Error al verificar","error");
+        } finally {
+            setBtnLoading("btnLoginVerificarOTP", false);
+        }
+    }
+
+    async function loginReenviarOTP() {
+        const email = (document.getElementById("loginEmail")?.value||"").trim().toLowerCase();
+        if (!email) return;
+        setBtnLoading("btnLoginReenviar", true);
+        try {
+            await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+            toast("Código reenviado","success");
+            clearInterval(loginOTPCountdownIv);
+            loginOTPCountdownIv = startCountdown("loginCountdown","btnLoginReenviar",60);
+            clearOTPInputs("loginOTPInputs");
+            initOTPInputs("loginOTPInputs", code => loginVerificarOTP(code));
+        } catch(e) { toast("Error al reenviar","error"); }
+        finally { setBtnLoading("btnLoginReenviar", false); }
+    }
+
+    function loginVolverEmail() {
+        loginMostrarPaso("email");
+        clearInterval(loginOTPCountdownIv);
+        clearOTPInputs("loginOTPInputs");
+    }
+
+    // Mostrar perfil cliente (reutilizado por login y registro)
+    async function mostrarPerfilCliente(data) {
+        document.getElementById("clienteNombre").innerText = data.nombre;
+        document.getElementById("stampCountText").innerText = data.visitas;
+        const grid = document.getElementById("stampsGrid");
+        grid.innerHTML = "";
+        for (let i=1; i<=10; i++) {
+            const isReward = i===10 && data.visitas>=10;
+            const cls = i<=data.visitas ? (isReward?"reward":"active") : "";
+            grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward?'<i class="fa-solid fa-star"></i>':i}</div>`;
+        }
+        const estado = document.getElementById("clienteEstado");
+        if (data.visitas>=10) {
+            estado.className="reward-info gold";
+            estado.innerHTML='<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible!';
+        } else if (data.visitas===5) {
+            estado.className="reward-info gold";
+            estado.innerHTML='<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
+        } else {
+            const r=10-data.visitas;
+            estado.className="reward-info";
+            estado.innerHTML=`<i class="fa-regular fa-gem"></i>Te ${r===1?"queda":"quedan"} <strong>${r}</strong> ${r===1?"sello":"sellos"} para tu recompensa.`;
+        }
+        await renderMisCitas(data);
+        mostrarVista("vistaCliente");
+        loginMostrarPaso("email");  // resetear para próxima vez
+        clearOTPInputs("loginOTPInputs");
+        if (document.getElementById("loginEmail")) document.getElementById("loginEmail").value = "";
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  REGISTRO (PEDIR CITA) — Flujo OTP
+    // ══════════════════════════════════════════════════════
+    let regEmailVerificado = false;
+    let regOTPCountdownIv  = null;
+
+    async function regSolicitarOTP() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
-        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
-        const clave    = document.getElementById("citaClave")?.value||"";
-        const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
+        const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
+
+        if (!nombre)   return toast("Introduce tu nombre completo","error");
+        if (!telefono) return toast("Introduce tu teléfono","error");
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+            return toast("Introduce un correo válido","error");
+
+        setBtnLoading("btnRegSolicitarOTP", true);
+        try {
+            const { error } = await sb.auth.signInWithOtp({
+                email,
+                options: {
+                    shouldCreateUser: true,
+                    data: { nombre, telefono }
+                }
+            });
+            if (error) { toast("Error enviando código: "+error.message,"error"); return; }
+
+            document.getElementById("regEmailDisplay").textContent = email;
+            document.getElementById("regStepDatos").style.display = "none";
+            document.getElementById("regStepOTP").style.display = "block";
+            document.getElementById("regEmailVerificado").style.display = "none";
+            regEmailVerificado = false;
+            initOTPInputs("regOTPInputs", code => regVerificarOTP(code));
+            clearInterval(regOTPCountdownIv);
+            regOTPCountdownIv = startCountdown("regCountdown","btnRegReenviar",60);
+            toast("Código enviado — revisa tu correo","success","Código enviado");
+        } catch(e) {
+            toast("Error de conexión","error");
+        } finally {
+            setBtnLoading("btnRegSolicitarOTP", false);
+        }
+    }
+
+    async function regVerificarOTP(autoCode) {
+        const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
+        const code  = autoCode || getOTPCode("regOTPInputs");
+        if (code.length !== 6) return toast("Introduce los 6 dígitos","error");
+
+        setBtnLoading("btnRegVerificarOTP", true);
+        try {
+            const { data, error } = await sb.auth.verifyOtp({
+                email, token: code, type: "email"
+            });
+            if (error) { toast("Código incorrecto o expirado","error"); return; }
+
+            regEmailVerificado = true;
+            document.getElementById("regEmailVerificado").style.display = "block";
+            document.getElementById("btnRegVerificarOTP").style.display = "none";
+            toast("¡Correo verificado!","success");
+        } catch(e) {
+            toast("Error al verificar","error");
+        } finally {
+            setBtnLoading("btnRegVerificarOTP", false);
+        }
+    }
+
+    async function regReenviarOTP() {
+        const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
+        if (!email) return;
+        try {
+            await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+            toast("Código reenviado","success");
+            clearInterval(regOTPCountdownIv);
+            regOTPCountdownIv = startCountdown("regCountdown","btnRegReenviar",60);
+            clearOTPInputs("regOTPInputs");
+            initOTPInputs("regOTPInputs", code => regVerificarOTP(code));
+        } catch(e) { toast("Error al reenviar","error"); }
+    }
+
+    function regVolverDatos() {
+        document.getElementById("regStepDatos").style.display = "block";
+        document.getElementById("regStepOTP").style.display = "none";
+        clearOTPInputs("regOTPInputs");
+        regEmailVerificado = false;
+        clearInterval(regOTPCountdownIv);
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  ENVIAR CITA — nueva versión con OTP
+    // ══════════════════════════════════════════════════════
+    async function enviarCita() {
+        const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
+        const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
+        const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
 
         function showErr(msg) {
             const el = document.getElementById("citaErrorMsg");
@@ -2156,65 +2528,48 @@
         }
         hideErr();
 
-        // Validar
-        if (!nombre)            return showErr("Introduce tu nombre completo");
-        if (!telefono)          return showErr("Introduce tu teléfono");
-        if (!usuario)           return showErr("Elige un nombre de usuario");
-        if (!/^[a-z0-9._]{3,20}$/.test(usuario)) return showErr("Usuario inválido (3-20 caracteres, sin espacios)");
-        if (clave.length < 6)   return showErr("La contraseña debe tener al menos 6 caracteres");
-        if (clave !== claveC)   return showErr("Las contraseñas no coinciden");
-        if (!selectedServicio)  return showErr("Selecciona un servicio");
-        if (!selectedDate)      return showErr("Selecciona una fecha");
-        if (!selectedTime)      return showErr("Selecciona una hora");
+        if (!nombre)           return showErr("Introduce tu nombre completo");
+        if (!telefono)         return showErr("Introduce tu teléfono");
+        if (!email)            return showErr("Introduce tu correo electrónico");
+        if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de continuar");
+        if (!selectedServicio) return showErr("Selecciona un servicio");
+        if (!selectedDate)     return showErr("Selecciona una fecha");
+        if (!selectedTime)     return showErr("Selecciona una hora");
 
         setBtnLoading("btnEnviarCita", true);
-
         try {
-            // 1. Usuario único
-            const { data: uExiste, error: uErr } = await sb.from("clientas").select("id").eq("usuario",usuario).maybeSingle();
-            if (uErr) { showErr("Error comprobando usuario: "+uErr.message); return; }
-            if (uExiste) { showErr("Ese usuario ya está en uso, elige otro"); return; }
+            // Buscar si ya existe clienta con ese email
+            let { data: clientaExiste } = await sb.from("clientas").select("id").eq("email",email).maybeSingle();
 
-            // 2. Crear clienta con usuario+clave
-            const { data: nuevaClienta, error: cErr } = await sb.from("clientas")
-                .insert([{ nombre, telefono, usuario, clave, visitas:0 }])
-                .select().single();
-            if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
+            if (!clientaExiste) {
+                // Crear la clienta vinculada al email verificado
+                const { error: cErr } = await sb.from("clientas")
+                    .insert([{ nombre, telefono, email, visitas:0 }]);
+                if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
+            }
 
-            // 3. Guardar cita
-            const fechaISO = fmtISO(selectedDate);
-            const { data: nuevaCita, error: aErr } = await sb.from("citas")
-                .insert([{
-                    nombre_cliente: nombre,
-                    telefono,
-                    servicio: selectedServicio,
-                    duracion_minutos: selectedDuracion,
-                    fecha: fechaISO,
-                    hora: selectedTime,
-                    estado: "pendiente"
-                }])
-                .select().single();
-            if (aErr) { showErr("Cuenta creada, pero error al guardar la cita: "+aErr.message); return; }
+            // Guardar la cita
+            const { error: aErr } = await sb.from("citas").insert([{
+                nombre_cliente: nombre,
+                telefono,
+                servicio: selectedServicio,
+                duracion_minutos: selectedDuracion,
+                fecha: fmtISO(selectedDate),
+                hora: selectedTime,
+                estado: "pendiente"
+            }]);
+            if (aErr) { showErr("Error al guardar la cita: "+aErr.message); return; }
 
-            // Éxito
-            toast("¡Solicitud enviada! Te confirmaremos la cita pronto.", "success", "¡Bienvenida!");
-            if (nuevaCita) citas.push(nuevaCita);
-
-            // Limpiar
-            ["citaNombre","citaTelefono","citaUsuario","citaClave","citaClaveConfirm"].forEach(id => {
+            toast("¡Solicitud enviada! Te confirmaremos pronto.", "success", "¡Bienvenida!");
+            resetPicker();
+            regEmailVerificado = false;
+            ["citaNombre","citaTelefono","citaEmail"].forEach(id => {
                 const el=document.getElementById(id); if(el) el.value="";
             });
-            const fb=document.getElementById("usuarioFeedback"); if(fb) fb.textContent="";
-            resetPicker();
+            document.getElementById("regStepDatos").style.display = "block";
+            document.getElementById("regStepOTP").style.display = "none";
             hideErr();
-
-            // Pre-rellenar login y redirigir
-            const lu=document.getElementById("loginUsuario"); if(lu) lu.value=usuario;
-            setTimeout(()=>{
-                mostrarVista("login");
-                setTimeout(()=>toast("Inicia sesión con tu usuario y contraseña","info"),500);
-            }, 1200);
-
+            setTimeout(() => mostrarVista("login"), 1200);
         } catch(e) {
             showErr("Error inesperado: "+(e.message||String(e)));
         } finally {
@@ -2223,58 +2578,18 @@
     }
 
     // ══════════════════════════════════════════════════════
-    //  LOGIN CLIENTE
+    //  LOGIN CLIENTE — alias (el flujo real es OTP arriba)
     // ══════════════════════════════════════════════════════
-    async function iniciarSesionCliente() {
-        const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
-        const clave   = document.getElementById("loginPass")?.value||"";
-        if (!usuario||!clave) return toast("Introduce usuario y contraseña","error");
-
-        setBtnLoading("btnLoginCliente", true);
-        try {
-            const { data, error } = await sb.from("clientas").select("*").eq("usuario",usuario).maybeSingle();
-            if (error) { toast("Error: "+error.message,"error"); return; }
-            if (!data)  { toast("Usuario no encontrado","error"); return; }
-            if (data.clave !== clave) { toast("Contraseña incorrecta","error"); return; }
-
-            // Mostrar perfil
-            document.getElementById("clienteNombre").innerText = data.nombre;
-            document.getElementById("stampCountText").innerText = data.visitas;
-            const grid = document.getElementById("stampsGrid");
-            grid.innerHTML = "";
-            for (let i=1; i<=10; i++) {
-                const isReward = i===10 && data.visitas>=10;
-                const cls = i<=data.visitas ? (isReward?"reward":"active") : "";
-                grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward?'<i class="fa-solid fa-star"></i>':i}</div>`;
-            }
-            const estado = document.getElementById("clienteEstado");
-            if (data.visitas>=10) {
-                estado.className="reward-info gold";
-                estado.innerHTML='<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible!';
-            } else if (data.visitas===5) {
-                estado.className="reward-info gold";
-                estado.innerHTML='<i class="fa-solid fa-gift"></i>¡Tienes un 20% de descuento hoy!';
-            } else {
-                const r=10-data.visitas;
-                estado.className="reward-info";
-                estado.innerHTML=`<i class="fa-regular fa-gem"></i>Te ${r===1?"queda":"quedan"} <strong>${r}</strong> ${r===1?"sello":"sellos"} para tu recompensa.`;
-            }
-            await renderMisCitas(data);
-            mostrarVista("vistaCliente");
-        } catch(e) {
-            toast("Error de conexión: "+(e.message||""),"error");
-        } finally {
-            setBtnLoading("btnLoginCliente", false);
-        }
-    }
+    function iniciarSesionCliente() { loginSolicitarOTP(); }
 
     async function renderMisCitas(cliente) {
         const list = document.getElementById("misCitasList");
         if (!list) return;
         list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-hourglass-half"></i><div class="label">Cargando…</div></div>`;
         try {
+            // Buscar por teléfono (campo común) — el email es para auth
             const { data } = await sb.from("citas")
-                .select("*").eq("telefono",cliente.telefono)
+                .select("*").eq("telefono", cliente.telefono)
                 .order("fecha",{ascending:true}).order("hora",{ascending:true});
             const upcoming = (data||[]).filter(c=>c.fecha>=fmtISO(today) && (c.estado||"pendiente")!=="cancelada");
             if (!upcoming.length) {
@@ -2287,8 +2602,7 @@
                 const fullDay=`${dias[dt.getDay()]}, ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`;
                 const hora=(c.hora||"").slice(0,5);
                 const estado=c.estado||"pendiente";
-                const msg=`Hola Shanahan Nails ✨
-Soy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} a las ${hora}h. ¿Podríamos cambiar?`;
+                const msg=`Hola Shanahan Nails ✨\nSoy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} a las ${hora}h. ¿Podríamos cambiar?`;
                 return `<div class="mi-cita-card ${estado}">
                     <div class="mi-cita-date"><span class="day">${dt.getDate()}</span><span class="month">${MONTHS_ES[dt.getMonth()].slice(0,3)}</span></div>
                     <div class="mi-cita-info">
