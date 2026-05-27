@@ -1162,32 +1162,38 @@
                     <span class="brand-sub">Nails</span>
                 </div>
                 <div class="luxury-card view-anim">
-                    <!-- Paso A: email -->
-                    <div class="otp-step active" id="loginStepEmail">
-                        <h5 class="card-title">Accede a tu cuenta</h5>
-                        <p class="card-subtitle">Te enviamos un código de 6 dígitos a tu correo</p>
+
+                    <!-- PASO 1: Usuario + Contraseña -->
+                    <div class="otp-step active" id="loginStepCredenciales">
+                        <h5 class="card-title">Consultar Puntos</h5>
+                        <p class="card-subtitle">Accede a tu programa de fidelización</p>
 
                         <div class="step-indicator">
-                            <div class="step-dot active" id="lsDot1"></div>
-                            <div class="step-dot" id="lsDot2"></div>
+                            <div class="step-dot active"></div>
+                            <div class="step-dot"></div>
                         </div>
 
-                        <form onsubmit="event.preventDefault(); loginSolicitarOTP();">
+                        <form onsubmit="event.preventDefault(); iniciarSesionCliente();">
                             <div class="field">
-                                <input type="email" id="loginEmail" placeholder=" " autocomplete="email" inputmode="email">
-                                <label>Correo electrónico</label>
-                                <i class="fa-regular fa-envelope field-icon"></i>
+                                <input type="text" id="loginUsuario" placeholder=" " autocomplete="username">
+                                <label>Usuario</label>
+                                <i class="fa-regular fa-user field-icon"></i>
                             </div>
-                            <button type="submit" class="btn-luxury" id="btnLoginSolicitarOTP">
-                                <span>Enviar código</span><span class="spinner"></span>
+                            <div class="field field-pass-wrap">
+                                <input type="password" id="loginPass" placeholder=" " autocomplete="current-password">
+                                <label>Contraseña</label>
+                                <button type="button" class="toggle-pass" onclick="togglePassVis('loginPass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+                            </div>
+                            <button type="submit" class="btn-luxury" id="btnLoginCliente">
+                                <span>Entrar</span><span class="spinner"></span>
                             </button>
                         </form>
                     </div>
 
-                    <!-- Paso B: OTP -->
+                    <!-- PASO 2: OTP (solo dispositivo nuevo) -->
                     <div class="otp-step" id="loginStepOTP">
-                        <h5 class="card-title">Código de verificación</h5>
-                        <p class="card-subtitle">Revisa tu bandeja de entrada</p>
+                        <h5 class="card-title">Verificación</h5>
+                        <p class="card-subtitle">Nuevo dispositivo detectado — enviamos un código a tu correo</p>
 
                         <div class="step-indicator">
                             <div class="step-dot done"></div>
@@ -1217,8 +1223,8 @@
                             </button>
                         </div>
 
-                        <button class="back-step" onclick="loginVolverEmail()">
-                            <i class="fa-solid fa-arrow-left"></i> Cambiar correo
+                        <button class="back-step" onclick="loginVolverCredenciales()">
+                            <i class="fa-solid fa-arrow-left"></i> Volver
                         </button>
                     </div>
 
@@ -1283,12 +1289,12 @@
                 <div class="luxury-card view-anim">
                     <p class="card-subtitle">Rellena el formulario y te confirmamos la cita</p>
 
-                    <!-- PASO 1: Datos personales + correo -->
+                    <!-- PASO 1: Datos personales + cuenta + email -->
                     <div class="picker-label" style="margin-top:0;">
                         <span><i class="fa-regular fa-user" style="margin-right:8px;color:var(--accent);"></i>Tus datos</span>
                     </div>
 
-                    <!-- Sub-paso 1a: datos + email -->
+                    <!-- Sub-paso 1a: datos -->
                     <div id="regStepDatos">
                         <div class="field">
                             <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
@@ -1300,6 +1306,30 @@
                             <label>Teléfono</label>
                             <i class="fa-solid fa-phone field-icon"></i>
                         </div>
+
+                        <div class="picker-label" style="margin-top:8px;">
+                            <span><i class="fa-solid fa-key" style="margin-right:8px;color:var(--accent);"></i>Crea tu acceso</span>
+                        </div>
+                        <div class="field">
+                            <input type="text" id="citaUsuario" placeholder=" " autocomplete="username" spellcheck="false">
+                            <label>Nombre de usuario</label>
+                            <i class="fa-regular fa-at field-icon"></i>
+                        </div>
+                        <div id="usuarioFeedback" style="font-size:11px;min-height:16px;margin-top:-14px;margin-bottom:10px;padding-left:2px;"></div>
+                        <div class="field field-pass-wrap">
+                            <input type="password" id="citaClave" placeholder=" " autocomplete="new-password">
+                            <label>Contraseña</label>
+                            <button type="button" class="toggle-pass" onclick="togglePassVis('citaClave',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+                        </div>
+                        <div class="field field-pass-wrap">
+                            <input type="password" id="citaClaveConfirm" placeholder=" " autocomplete="new-password">
+                            <label>Repite la contraseña</label>
+                            <button type="button" class="toggle-pass" onclick="togglePassVis('citaClaveConfirm',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+                        </div>
+
+                        <div class="picker-label" style="margin-top:8px;">
+                            <span><i class="fa-regular fa-envelope" style="margin-right:8px;color:var(--accent);"></i>Correo para verificación</span>
+                        </div>
                         <div class="field">
                             <input type="email" id="citaEmail" placeholder=" " autocomplete="email" inputmode="email">
                             <label>Correo electrónico</label>
@@ -1310,10 +1340,10 @@
                         </button>
                     </div>
 
-                    <!-- Sub-paso 1b: verificar OTP -->
+                    <!-- Sub-paso 1b: OTP -->
                     <div id="regStepOTP" style="display:none; margin-bottom:18px;">
                         <div class="otp-email-display">
-                            <i class="fa-regular fa-envelope"></i>Código enviado a <span id="regEmailDisplay"></span>
+                            <i class="fa-regular fa-envelope"></i>Código enviado a <strong id="regEmailDisplay"></strong>
                         </div>
                         <div class="otp-inputs" id="regOTPInputs">
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
@@ -1324,7 +1354,7 @@
                             <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
                         </div>
                         <button type="button" class="btn-luxury" id="btnRegVerificarOTP" onclick="regVerificarOTP()">
-                            <span>Verificar correo</span><span class="spinner"></span>
+                            <span>Verificar y continuar</span><span class="spinner"></span>
                         </button>
                         <div class="otp-resend">
                             ¿No llegó? <button id="btnRegReenviar" onclick="regReenviarOTP()" disabled>
@@ -1334,9 +1364,8 @@
                         <button class="back-step" onclick="regVolverDatos()">
                             <i class="fa-solid fa-arrow-left"></i> Cambiar datos
                         </button>
-                        <!-- Badge confirmación -->
                         <div id="regEmailVerificado" style="display:none; background:rgba(74,124,89,.1); border:1px solid rgba(74,124,89,.3); color:#4A7C59; padding:10px 14px; font-size:12px; font-weight:600; margin-top:8px;">
-                            <i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>Correo verificado ✓
+                            <i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>Correo verificado ✓ — ya puedes elegir tu cita
                         </div>
                     </div>
 
@@ -2213,7 +2242,10 @@
             });
         });
 
-        // Verificación de correo ya gestionada por regSolicitarOTP
+        // Check usuario disponible
+        document.getElementById("citaUsuario")?.addEventListener("input", () => {
+            checkUsuarioDisponible(document.getElementById("citaUsuario").value);
+        });
     }
 
     function resetPicker() {
@@ -2231,179 +2263,226 @@
         renderTimeSlots();
     }
 
-    // ── Usuario check (ya no se usa — mantenido por compatibilidad) ──
-    function checkUsuarioDisponible() {}
+    // ── Usuario check ──────────────────────────────────────
+    let usuarioTimer = null;
+    async function checkUsuarioDisponible(val) {
+        const fb = document.getElementById("usuarioFeedback");
+        if (!fb) return;
+        val = (val||"").trim().toLowerCase();
+        if (!val) { fb.textContent=""; return; }
+        if (!/^[a-z0-9._]{3,20}$/.test(val)) {
+            fb.innerHTML = `<span style="color:#c0392b">✗ Solo letras/números/punto/guión bajo, 3-20 car.</span>`;
+            return;
+        }
+        fb.innerHTML = `<span style="color:var(--muted)">Comprobando…</span>`;
+        clearTimeout(usuarioTimer);
+        usuarioTimer = setTimeout(async () => {
+            try {
+                const { data } = await sb.from("clientas").select("id").eq("usuario",val).maybeSingle();
+                fb.innerHTML = data
+                    ? `<span style="color:#c0392b">✗ Ese usuario ya existe</span>`
+                    : `<span style="color:#27ae60">✓ Disponible</span>`;
+            } catch(e) { fb.textContent=""; }
+        }, 600);
+    }
 
     // ══════════════════════════════════════════════════════
     //  HELPERS OTP — inputs de 6 dígitos
     // ══════════════════════════════════════════════════════
     function initOTPInputs(containerId, onComplete) {
-        const inputs = document.querySelectorAll(`#${containerId} .otp-digit`);
+        const inputs = [...document.querySelectorAll(`#${containerId} .otp-digit`)];
+        inputs.forEach(inp => { inp.value = ""; inp.classList.remove("filled"); });
         inputs.forEach((inp, i) => {
-            inp.value = "";
-            inp.classList.remove("filled");
-            inp.addEventListener("input", e => {
-                // Aceptar solo dígitos
-                inp.value = inp.value.replace(/\D/g, "").slice(-1);
-                inp.classList.toggle("filled", inp.value !== "");
-                if (inp.value && i < inputs.length - 1) inputs[i+1].focus();
-                // Auto-submit si todos rellenos
-                const code = [...inputs].map(x => x.value).join("");
+            inp.addEventListener("input", () => {
+                inp.value = inp.value.replace(/\D/g,"").slice(-1);
+                inp.classList.toggle("filled", !!inp.value);
+                if (inp.value && i < inputs.length-1) inputs[i+1].focus();
+                const code = inputs.map(x=>x.value).join("");
                 if (code.length === 6 && onComplete) onComplete(code);
             });
             inp.addEventListener("keydown", e => {
-                if (e.key === "Backspace" && !inp.value && i > 0) inputs[i-1].focus();
+                if (e.key==="Backspace" && !inp.value && i>0) inputs[i-1].focus();
             });
             inp.addEventListener("paste", e => {
                 e.preventDefault();
-                const paste = (e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,6);
-                paste.split("").forEach((ch, j) => {
-                    if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add("filled"); }
+                const pasted = (e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,6);
+                pasted.split("").forEach((ch,j) => {
+                    if (inputs[j]) { inputs[j].value=ch; inputs[j].classList.add("filled"); }
                 });
-                if (inputs[Math.min(paste.length, inputs.length-1)]) inputs[Math.min(paste.length, inputs.length-1)].focus();
-                const code = [...inputs].map(x=>x.value).join("");
-                if (code.length === 6 && onComplete) onComplete(code);
+                inputs[Math.min(pasted.length, inputs.length-1)]?.focus();
+                const code = inputs.map(x=>x.value).join("");
+                if (code.length===6 && onComplete) onComplete(code);
             });
         });
-        // Focus primer input
-        setTimeout(() => inputs[0]?.focus(), 100);
+        setTimeout(() => inputs[0]?.focus(), 120);
     }
-
     function getOTPCode(containerId) {
         return [...document.querySelectorAll(`#${containerId} .otp-digit`)].map(x=>x.value).join("");
     }
-
     function clearOTPInputs(containerId) {
-        document.querySelectorAll(`#${containerId} .otp-digit`).forEach(inp => {
-            inp.value = ""; inp.classList.remove("filled");
-        });
+        document.querySelectorAll(`#${containerId} .otp-digit`).forEach(i=>{ i.value=""; i.classList.remove("filled"); });
     }
 
-    // Countdown reutilizable
-    function startCountdown(spanId, btnId, segundos = 60) {
-        const span = document.getElementById(spanId);
-        const btn  = document.getElementById(btnId);
-        if (!span || !btn) return;
-        btn.disabled = true;
-        let s = segundos;
-        span.textContent = s;
-        const iv = setInterval(() => {
-            s--;
-            span.textContent = s;
-            if (s <= 0) {
-                clearInterval(iv);
-                btn.disabled = false;
-                btn.innerHTML = "Reenviar código";
+    // Countdown reusable
+    let _cdIntervals = {};
+    function startCountdown(spanId, btnId, seg=60) {
+        clearInterval(_cdIntervals[btnId]);
+        const span=document.getElementById(spanId), btn=document.getElementById(btnId);
+        if (!span||!btn) return;
+        btn.disabled=true; let s=seg; span.textContent=s;
+        _cdIntervals[btnId] = setInterval(()=>{
+            s--; span.textContent=s;
+            if (s<=0) {
+                clearInterval(_cdIntervals[btnId]);
+                btn.disabled=false;
+                btn.innerHTML="Reenviar código";
             }
-        }, 1000);
-        return iv;
+        },1000);
     }
 
     // ══════════════════════════════════════════════════════
-    //  LOGIN CLIENTE — Flujo OTP
+    //  CLAVE DE DISPOSITIVO CONFIABLE (localStorage)
+    //  Guardamos una clave por usuario cuando verifica OTP
     // ══════════════════════════════════════════════════════
-    let loginOTPCountdownIv = null;
+    const TRUSTED_KEY = "shn_trusted_devices";
+    function getDeviceId() {
+        let id = localStorage.getItem("shn_device_id");
+        if (!id) { id = crypto.randomUUID(); localStorage.setItem("shn_device_id", id); }
+        return id;
+    }
+    function isDeviceTrusted(usuario) {
+        try {
+            const map = JSON.parse(localStorage.getItem(TRUSTED_KEY)||"{}");
+            return map[usuario] === getDeviceId();
+        } catch(e) { return false; }
+    }
+    function trustDevice(usuario) {
+        try {
+            const map = JSON.parse(localStorage.getItem(TRUSTED_KEY)||"{}");
+            map[usuario] = getDeviceId();
+            localStorage.setItem(TRUSTED_KEY, JSON.stringify(map));
+        } catch(e) {}
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  LOGIN CLIENTE — usuario + contraseña → OTP si nuevo dispositivo
+    // ══════════════════════════════════════════════════════
+    let _loginClientaData = null;  // datos de la clienta tras validar credenciales
+    let _loginCountdownIv = null;
 
     function loginMostrarPaso(paso) {
-        document.getElementById("loginStepEmail").classList.toggle("active", paso === "email");
-        document.getElementById("loginStepOTP").classList.toggle("active", paso === "otp");
+        // paso: "credenciales" | "otp"
+        document.getElementById("loginStepCredenciales").classList.toggle("active", paso==="credenciales");
+        document.getElementById("loginStepOTP").classList.toggle("active", paso==="otp");
     }
 
-    async function loginSolicitarOTP() {
-        const email = (document.getElementById("loginEmail")?.value||"").trim().toLowerCase();
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-            return toast("Introduce un correo válido","error");
+    async function iniciarSesionCliente() {
+        const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
+        const clave   = document.getElementById("loginPass")?.value||"";
+        if (!usuario||!clave) return toast("Introduce usuario y contraseña","error");
 
-        setBtnLoading("btnLoginSolicitarOTP", true);
+        setBtnLoading("btnLoginCliente",true);
         try {
-            const { error } = await sb.auth.signInWithOtp({
-                email,
-                options: { shouldCreateUser: false }   // solo usuarios ya registrados
-            });
-            if (error) {
-                // Si el usuario no existe, Supabase devuelve error — lo capturamos limpiamente
-                if (error.message.toLowerCase().includes("not found") ||
-                    error.message.toLowerCase().includes("signup") ||
-                    error.status === 400) {
-                    toast("No encontramos una cuenta con ese correo. ¿Quieres pedir tu primera cita?","error","Sin cuenta");
-                } else {
-                    toast("Error: "+error.message,"error");
-                }
+            const { data, error } = await sb.from("clientas").select("*").eq("usuario",usuario).maybeSingle();
+            if (error) { toast("Error: "+error.message,"error"); return; }
+            if (!data)  { toast("Usuario no encontrado","error"); return; }
+            if (data.clave !== clave) { toast("Contraseña incorrecta","error"); return; }
+
+            _loginClientaData = data;
+
+            // ¿Dispositivo de confianza?
+            if (isDeviceTrusted(usuario)) {
+                // Acceso directo sin OTP
+                await mostrarPerfilCliente(data);
                 return;
             }
-            document.getElementById("loginEmailDisplay").textContent = email;
+
+            // Dispositivo nuevo → pedir OTP al correo
+            if (!data.email) {
+                // Sin email registrado — acceso directo (clientas antiguas sin email)
+                toast("Bienvenida de nuevo","success");
+                await mostrarPerfilCliente(data);
+                return;
+            }
+
+            // Enviar OTP via Supabase Auth
+            const { error: otpErr } = await sb.auth.signInWithOtp({
+                email: data.email,
+                options: { shouldCreateUser: false }
+            });
+            if (otpErr) {
+                // Si Supabase no tiene ese email en Auth, dejamos pasar (clientas sin Auth)
+                toast("No se pudo enviar OTP, accediendo sin verificación","info");
+                await mostrarPerfilCliente(data);
+                return;
+            }
+
+            // Mostrar pantalla OTP
+            const masked = data.email.replace(/(.{2}).*(@.*)/, "$1***$2");
+            document.getElementById("loginEmailDisplay").textContent = masked;
             loginMostrarPaso("otp");
             initOTPInputs("loginOTPInputs", code => loginVerificarOTP(code));
-            clearInterval(loginOTPCountdownIv);
-            loginOTPCountdownIv = startCountdown("loginCountdown","btnLoginReenviar",60);
-            toast("Código enviado — revisa tu bandeja de entrada","success","Código enviado");
+            startCountdown("loginCountdown","btnLoginReenviar",60);
+            toast("Código enviado a tu correo","success");
+
         } catch(e) {
             toast("Error de conexión","error");
         } finally {
-            setBtnLoading("btnLoginSolicitarOTP", false);
+            setBtnLoading("btnLoginCliente",false);
         }
     }
 
     async function loginVerificarOTP(autoCode) {
-        const email = (document.getElementById("loginEmail")?.value||"").trim().toLowerCase();
+        if (!_loginClientaData) return;
+        const email = _loginClientaData.email;
         const code  = autoCode || getOTPCode("loginOTPInputs");
-        if (code.length !== 6) return toast("Introduce los 6 dígitos del código","error");
+        if (code.length!==6) return toast("Introduce los 6 dígitos","error");
 
-        setBtnLoading("btnLoginVerificarOTP", true);
+        setBtnLoading("btnLoginVerificarOTP",true);
         try {
-            const { data, error } = await sb.auth.verifyOtp({
-                email, token: code, type: "email"
-            });
+            const { error } = await sb.auth.verifyOtp({ email, token:code, type:"email" });
             if (error) { toast("Código incorrecto o expirado","error"); return; }
 
-            // Buscar la clienta por email
-            const { data: clientaData, error: cErr } = await sb.from("clientas")
-                .select("*").eq("email", email).maybeSingle();
-            if (cErr || !clientaData) {
-                toast("Correo verificado pero no encontramos tu perfil. Contacta con el salón.","error");
-                return;
-            }
-            await mostrarPerfilCliente(clientaData);
+            // Marcar dispositivo como confiable
+            trustDevice(_loginClientaData.usuario);
+            toast("Verificación correcta","success");
+            await mostrarPerfilCliente(_loginClientaData);
         } catch(e) {
             toast("Error al verificar","error");
         } finally {
-            setBtnLoading("btnLoginVerificarOTP", false);
+            setBtnLoading("btnLoginVerificarOTP",false);
         }
     }
 
     async function loginReenviarOTP() {
-        const email = (document.getElementById("loginEmail")?.value||"").trim().toLowerCase();
-        if (!email) return;
-        setBtnLoading("btnLoginReenviar", true);
+        if (!_loginClientaData?.email) return;
         try {
-            await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+            await sb.auth.signInWithOtp({ email:_loginClientaData.email, options:{shouldCreateUser:false} });
             toast("Código reenviado","success");
-            clearInterval(loginOTPCountdownIv);
-            loginOTPCountdownIv = startCountdown("loginCountdown","btnLoginReenviar",60);
+            startCountdown("loginCountdown","btnLoginReenviar",60);
             clearOTPInputs("loginOTPInputs");
             initOTPInputs("loginOTPInputs", code => loginVerificarOTP(code));
         } catch(e) { toast("Error al reenviar","error"); }
-        finally { setBtnLoading("btnLoginReenviar", false); }
     }
 
-    function loginVolverEmail() {
-        loginMostrarPaso("email");
-        clearInterval(loginOTPCountdownIv);
+    function loginVolverCredenciales() {
+        _loginClientaData = null;
+        loginMostrarPaso("credenciales");
         clearOTPInputs("loginOTPInputs");
     }
 
-    // Mostrar perfil cliente (reutilizado por login y registro)
+    // Mostrar perfil cliente
     async function mostrarPerfilCliente(data) {
         document.getElementById("clienteNombre").innerText = data.nombre;
         document.getElementById("stampCountText").innerText = data.visitas;
         const grid = document.getElementById("stampsGrid");
         grid.innerHTML = "";
-        for (let i=1; i<=10; i++) {
-            const isReward = i===10 && data.visitas>=10;
-            const cls = i<=data.visitas ? (isReward?"reward":"active") : "";
-            grid.innerHTML += `<div class="stamp-circle ${cls}">${isReward?'<i class="fa-solid fa-star"></i>':i}</div>`;
+        for (let i=1;i<=10;i++) {
+            const isReward=i===10&&data.visitas>=10;
+            const cls=i<=data.visitas?(isReward?"reward":"active"):"";
+            grid.innerHTML+=`<div class="stamp-circle ${cls}">${isReward?'<i class="fa-solid fa-star"></i>':i}</div>`;
         }
-        const estado = document.getElementById("clienteEstado");
+        const estado=document.getElementById("clienteEstado");
         if (data.visitas>=10) {
             estado.className="reward-info gold";
             estado.innerHTML='<i class="fa-solid fa-crown"></i>¡Servicio gratis disponible!';
@@ -2417,35 +2496,51 @@
         }
         await renderMisCitas(data);
         mostrarVista("vistaCliente");
-        loginMostrarPaso("email");  // resetear para próxima vez
+        // Reset login para próxima vez
+        loginMostrarPaso("credenciales");
         clearOTPInputs("loginOTPInputs");
-        if (document.getElementById("loginEmail")) document.getElementById("loginEmail").value = "";
+        _loginClientaData = null;
+        const lu=document.getElementById("loginUsuario"); if(lu) lu.value="";
+        const lp=document.getElementById("loginPass"); if(lp) lp.value="";
     }
 
     // ══════════════════════════════════════════════════════
-    //  REGISTRO (PEDIR CITA) — Flujo OTP
+    //  REGISTRO — datos + usuario + contraseña + OTP email
     // ══════════════════════════════════════════════════════
     let regEmailVerificado = false;
-    let regOTPCountdownIv  = null;
+    let _regOTPCountdownIv = null;
 
     async function regSolicitarOTP() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
+        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
+        const clave    = document.getElementById("citaClave")?.value||"";
+        const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
 
         if (!nombre)   return toast("Introduce tu nombre completo","error");
         if (!telefono) return toast("Introduce tu teléfono","error");
+        if (!usuario || !/^[a-z0-9._]{3,20}$/.test(usuario))
+            return toast("Usuario inválido (3-20 car., sin espacios)","error");
+        if (clave.length<6) return toast("La contraseña debe tener al menos 6 caracteres","error");
+        if (clave!==claveC) return toast("Las contraseñas no coinciden","error");
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
             return toast("Introduce un correo válido","error");
 
-        setBtnLoading("btnRegSolicitarOTP", true);
+        setBtnLoading("btnRegSolicitarOTP",true);
         try {
+            // Verificar usuario único
+            const { data: uEx } = await sb.from("clientas").select("id").eq("usuario",usuario).maybeSingle();
+            if (uEx) { toast("Ese usuario ya existe, elige otro","error"); return; }
+
+            // Verificar email único
+            const { data: eEx } = await sb.from("clientas").select("id").eq("email",email).maybeSingle();
+            if (eEx) { toast("Ese correo ya tiene una cuenta. Inicia sesión.","error"); return; }
+
+            // Enviar OTP
             const { error } = await sb.auth.signInWithOtp({
                 email,
-                options: {
-                    shouldCreateUser: true,
-                    data: { nombre, telefono }
-                }
+                options: { shouldCreateUser: true }
             });
             if (error) { toast("Error enviando código: "+error.message,"error"); return; }
 
@@ -2453,102 +2548,94 @@
             document.getElementById("regStepDatos").style.display = "none";
             document.getElementById("regStepOTP").style.display = "block";
             document.getElementById("regEmailVerificado").style.display = "none";
+            document.getElementById("btnRegVerificarOTP").style.display = "";
             regEmailVerificado = false;
             initOTPInputs("regOTPInputs", code => regVerificarOTP(code));
-            clearInterval(regOTPCountdownIv);
-            regOTPCountdownIv = startCountdown("regCountdown","btnRegReenviar",60);
-            toast("Código enviado — revisa tu correo","success","Código enviado");
+            startCountdown("regCountdown","btnRegReenviar",60);
+            toast("Código enviado — revisa tu correo","success");
         } catch(e) {
             toast("Error de conexión","error");
         } finally {
-            setBtnLoading("btnRegSolicitarOTP", false);
+            setBtnLoading("btnRegSolicitarOTP",false);
         }
     }
 
     async function regVerificarOTP(autoCode) {
         const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
         const code  = autoCode || getOTPCode("regOTPInputs");
-        if (code.length !== 6) return toast("Introduce los 6 dígitos","error");
+        if (code.length!==6) return toast("Introduce los 6 dígitos","error");
 
-        setBtnLoading("btnRegVerificarOTP", true);
+        setBtnLoading("btnRegVerificarOTP",true);
         try {
-            const { data, error } = await sb.auth.verifyOtp({
-                email, token: code, type: "email"
-            });
+            const { error } = await sb.auth.verifyOtp({ email, token:code, type:"email" });
             if (error) { toast("Código incorrecto o expirado","error"); return; }
-
             regEmailVerificado = true;
             document.getElementById("regEmailVerificado").style.display = "block";
             document.getElementById("btnRegVerificarOTP").style.display = "none";
-            toast("¡Correo verificado!","success");
+            toast("¡Correo verificado! Elige tu cita","success");
         } catch(e) {
             toast("Error al verificar","error");
         } finally {
-            setBtnLoading("btnRegVerificarOTP", false);
+            setBtnLoading("btnRegVerificarOTP",false);
         }
     }
 
     async function regReenviarOTP() {
-        const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
+        const email=(document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
         if (!email) return;
         try {
-            await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+            await sb.auth.signInWithOtp({email, options:{shouldCreateUser:true}});
             toast("Código reenviado","success");
-            clearInterval(regOTPCountdownIv);
-            regOTPCountdownIv = startCountdown("regCountdown","btnRegReenviar",60);
+            startCountdown("regCountdown","btnRegReenviar",60);
             clearOTPInputs("regOTPInputs");
             initOTPInputs("regOTPInputs", code => regVerificarOTP(code));
         } catch(e) { toast("Error al reenviar","error"); }
     }
 
     function regVolverDatos() {
-        document.getElementById("regStepDatos").style.display = "block";
-        document.getElementById("regStepOTP").style.display = "none";
+        document.getElementById("regStepDatos").style.display="block";
+        document.getElementById("regStepOTP").style.display="none";
         clearOTPInputs("regOTPInputs");
-        regEmailVerificado = false;
-        clearInterval(regOTPCountdownIv);
+        regEmailVerificado=false;
     }
 
     // ══════════════════════════════════════════════════════
-    //  ENVIAR CITA — nueva versión con OTP
+    //  ENVIAR CITA (registro)
     // ══════════════════════════════════════════════════════
     async function enviarCita() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
+        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
+        const clave    = document.getElementById("citaClave")?.value||"";
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
 
         function showErr(msg) {
-            const el = document.getElementById("citaErrorMsg");
-            if (el) { el.textContent=msg; el.style.display="block"; }
+            const el=document.getElementById("citaErrorMsg");
+            if(el){el.textContent=msg;el.style.display="block";}
             toast(msg,"error");
         }
         function hideErr() {
-            const el = document.getElementById("citaErrorMsg");
-            if (el) el.style.display="none";
+            const el=document.getElementById("citaErrorMsg"); if(el) el.style.display="none";
         }
         hideErr();
 
         if (!nombre)           return showErr("Introduce tu nombre completo");
         if (!telefono)         return showErr("Introduce tu teléfono");
-        if (!email)            return showErr("Introduce tu correo electrónico");
-        if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de continuar");
+        if (!usuario)          return showErr("Elige un nombre de usuario");
+        if (clave.length<6)    return showErr("La contraseña debe tener al menos 6 caracteres");
+        if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de enviar la solicitud");
         if (!selectedServicio) return showErr("Selecciona un servicio");
         if (!selectedDate)     return showErr("Selecciona una fecha");
         if (!selectedTime)     return showErr("Selecciona una hora");
 
-        setBtnLoading("btnEnviarCita", true);
+        setBtnLoading("btnEnviarCita",true);
         try {
-            // Buscar si ya existe clienta con ese email
-            let { data: clientaExiste } = await sb.from("clientas").select("id").eq("email",email).maybeSingle();
+            // Crear clienta
+            const { error: cErr } = await sb.from("clientas")
+                .insert([{ nombre, telefono, usuario, clave, email, visitas:0 }]);
+            if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
 
-            if (!clientaExiste) {
-                // Crear la clienta vinculada al email verificado
-                const { error: cErr } = await sb.from("clientas")
-                    .insert([{ nombre, telefono, email, visitas:0 }]);
-                if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
-            }
-
-            // Guardar la cita
+            // Guardar cita
             const { error: aErr } = await sb.from("citas").insert([{
                 nombre_cliente: nombre,
                 telefono,
@@ -2558,29 +2645,33 @@
                 hora: selectedTime,
                 estado: "pendiente"
             }]);
-            if (aErr) { showErr("Error al guardar la cita: "+aErr.message); return; }
+            if (aErr) { showErr("Cuenta creada, pero error al guardar la cita: "+aErr.message); return; }
 
-            toast("¡Solicitud enviada! Te confirmaremos pronto.", "success", "¡Bienvenida!");
+            // Marcar este dispositivo como confiable desde el primer acceso
+            trustDevice(usuario);
+
+            toast("¡Solicitud enviada! Te confirmaremos pronto.", "success","¡Bienvenida!");
             resetPicker();
-            regEmailVerificado = false;
-            ["citaNombre","citaTelefono","citaEmail"].forEach(id => {
-                const el=document.getElementById(id); if(el) el.value="";
-            });
-            document.getElementById("regStepDatos").style.display = "block";
-            document.getElementById("regStepOTP").style.display = "none";
+            regEmailVerificado=false;
+            ["citaNombre","citaTelefono","citaUsuario","citaClave","citaClaveConfirm","citaEmail"]
+                .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+            document.getElementById("usuarioFeedback").textContent="";
+            document.getElementById("regStepDatos").style.display="block";
+            document.getElementById("regStepOTP").style.display="none";
             hideErr();
-            setTimeout(() => mostrarVista("login"), 1200);
+
+            // Pre-rellenar login
+            const lu=document.getElementById("loginUsuario"); if(lu) lu.value=usuario;
+            setTimeout(()=>{
+                mostrarVista("login");
+                setTimeout(()=>toast("Inicia sesión con tu usuario y contraseña","info"),500);
+            },1200);
         } catch(e) {
             showErr("Error inesperado: "+(e.message||String(e)));
         } finally {
-            setBtnLoading("btnEnviarCita", false);
+            setBtnLoading("btnEnviarCita",false);
         }
     }
-
-    // ══════════════════════════════════════════════════════
-    //  LOGIN CLIENTE — alias (el flujo real es OTP arriba)
-    // ══════════════════════════════════════════════════════
-    function iniciarSesionCliente() { loginSolicitarOTP(); }
 
     async function renderMisCitas(cliente) {
         const list = document.getElementById("misCitasList");
