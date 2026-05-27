@@ -2611,6 +2611,10 @@
             const { data: eEx } = await sb.from("clientas").select("id").eq("email",email).maybeSingle();
             if (eEx) { toast("Ese correo ya tiene una cuenta. Inicia sesión.","error"); return; }
 
+            // Verificar teléfono único
+            const { data: tEx } = await sb.from("clientas").select("id").eq("telefono",telefono).maybeSingle();
+            if (tEx) { toast("Ese teléfono ya está registrado en otra cuenta.","error"); return; }
+
             // Enviar OTP
             const { error } = await sb.auth.signInWithOtp({
                 email,
