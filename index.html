@@ -1049,7 +1049,7 @@
             .cita-card { padding: 14px; }
             .access-hero { padding: 32px 24px 22px; }
             .access-form { padding: 26px 24px 28px; }
-            .toast-stack { right: 12px; left: 12px; bottom: 12px; max-width: none; }
+            .toast-stack { right: 12px; left: 12px; top: 12px; bottom: auto; max-width: none; }
             .modal-backdrop-x { padding: 12px; align-items: flex-end; }
             .modal-x, .modal-x.wide { max-width: 100%; width: 100%; padding: 28px 22px; max-height: calc(100vh - 24px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
             .modal-backdrop-x.show .modal-x { animation: slideUp .35s var(--ease); }
@@ -2362,10 +2362,19 @@
         });
         const inputs = [...container.querySelectorAll('.otp-digit')];
         inputs.forEach((inp, i) => {
+            inp.removeAttribute("maxlength"); // Permitir autocompletado en móviles
             inp.addEventListener("input", () => {
-                inp.value = inp.value.replace(/\D/g,"").slice(-1);
-                inp.classList.toggle("filled", !!inp.value);
-                if (inp.value && i < inputs.length-1) inputs[i+1].focus();
+                let val = inp.value.replace(/\D/g,"");
+                if (val.length > 1) {
+                    val.slice(0,8).split("").forEach((ch,j) => {
+                        if (inputs[i+j]) { inputs[i+j].value=ch; inputs[i+j].classList.add("filled"); }
+                    });
+                    inputs[Math.min(i+val.length, inputs.length-1)]?.focus();
+                } else {
+                    inp.value = val.slice(-1);
+                    inp.classList.toggle("filled", !!inp.value);
+                    if (inp.value && i < inputs.length-1) inputs[i+1].focus();
+                }
                 const code = inputs.map(x=>x.value).join("");
                 if (code.length === 8 && onComplete) onComplete(code);
             });
