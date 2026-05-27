@@ -1232,8 +1232,8 @@
 
                     <button class="btn-cta" onclick="mostrarVista('vistaPedirCita')">
                         <span class="cta-text">
-                            <span class="cta-sub">Reserva ahora</span>
-                            <span class="cta-main">Pide tu cita</span>
+                            <span class="cta-sub">Primera vez</span>
+                            <span class="cta-main">Crea tu cuenta</span>
                         </span>
                         <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
                     </button>
@@ -1272,7 +1272,15 @@
                         <div class="mis-citas-list" id="misCitasList"></div>
                     </div>
 
-                    <button class="btn-ghost mt-auto-link" onclick="mostrarVista('login')" style="margin-top:24px;">
+                    <button class="btn-cta" onclick="mostrarVista('vistaReservar')" style="margin-top:24px;">
+                        <span class="cta-text">
+                            <span class="cta-sub">Reserva ahora</span>
+                            <span class="cta-main">Pide tu cita</span>
+                        </span>
+                        <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                    </button>
+
+                    <button class="btn-ghost mt-auto-link" onclick="cerrarSesionCliente()" style="margin-top:14px;">
                         <i class="fa-solid fa-arrow-left-long" style="margin-right:8px;"></i> Cerrar Sesión
                     </button>
                 </div>
@@ -1282,12 +1290,12 @@
         <section id="vistaPedirCita" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="brand-container view-anim">
-                    <div class="brand-ornament"><span>Reservar</span></div>
-                    <span class="brand-main">Solicitar</span>
-                    <span class="brand-sub">Cita</span>
+                    <div class="brand-ornament"><span>Registro</span></div>
+                    <span class="brand-main">Crear</span>
+                    <span class="brand-sub">Cuenta</span>
                 </div>
                 <div class="luxury-card view-anim">
-                    <p class="card-subtitle">Rellena el formulario y te confirmamos la cita</p>
+                    <p class="card-subtitle">Crea tu cuenta para poder reservar citas</p>
 
                     <!-- PASO 1: Datos personales + cuenta + email -->
                     <div class="picker-label" style="margin-top:0;">
@@ -1369,8 +1377,32 @@
                         </div>
                     </div>
 
-                    <!-- PASO 3: Servicio -->
-                    <div class="picker-label">
+                    <div id="regErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
+
+                    <button type="button" class="btn-luxury" id="btnCrearCuenta" style="margin-top:24px;" onclick="crearCuenta()">
+                        <span>Crear Cuenta</span>
+                        <span class="spinner"></span>
+                    </button>
+
+                    <button type="button" class="link-soft" onclick="mostrarVista('login')" style="margin-top:12px;">
+                        <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="vistaReservar" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Reservar</span></div>
+                    <span class="brand-main">Solicitar</span>
+                    <span class="brand-sub">Cita</span>
+                </div>
+                <div class="luxury-card view-anim">
+                    <p class="card-subtitle">Elige tu servicio, fecha y hora preferida</p>
+
+                    <!-- Servicio -->
+                    <div class="picker-label" style="margin-top:0;">
                         <span><i class="fa-solid fa-spa" style="margin-right:8px;color:var(--accent);"></i>Servicio</span>
                         <span class="picked empty" id="pickedServiceLabel">Sin elegir</span>
                     </div>
@@ -1402,7 +1434,7 @@
                         </div>
                     </div>
 
-                    <!-- PASO 4: Fecha -->
+                    <!-- Fecha -->
                     <div class="picker-label">
                         <span><i class="fa-regular fa-calendar" style="margin-right:8px;color:var(--accent);"></i>Fecha</span>
                         <span class="picked empty" id="pickedDateLabel">Sin elegir</span>
@@ -1418,7 +1450,7 @@
                         <div class="cal-grid" id="calGrid"></div>
                     </div>
 
-                    <!-- PASO 5: Hora -->
+                    <!-- Hora -->
                     <div class="picker-label">
                         <span><i class="fa-regular fa-clock" style="margin-right:8px;color:var(--accent);"></i>Hora</span>
                         <span class="picked empty" id="pickedTimeLabel">Sin elegir</span>
@@ -1429,21 +1461,20 @@
                     </div>
                     <div class="time-slots" id="timeSlots"></div>
 
-                    <div id="citaErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
+                    <div id="reservaErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
 
-                    <button type="button" class="btn-luxury" id="btnEnviarCita" style="margin-top:24px;" onclick="enviarCita()">
+                    <button type="button" class="btn-luxury" id="btnEnviarReserva" style="margin-top:24px;" onclick="enviarReserva()">
                         <span>Enviar Solicitud</span>
                         <span class="spinner"></span>
                     </button>
 
-                    <button type="button" class="link-soft" onclick="mostrarVista('login')" style="margin-top:12px;">
-                        <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
+                    <button type="button" class="link-soft" onclick="mostrarVista('vistaCliente')" style="margin-top:12px;">
+                        <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver a mi perfil
                     </button>
                 </div>
             </div>
         </section>
 
-        </section>
 
         <section id="vistaAccesoAdmin" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-7 col-lg-5">
@@ -1889,6 +1920,7 @@
     let citas          = [];
     let diasDisponibles = [];
     let agendaInitialized = false;
+    let _clienteLogueado = null;  // datos del cliente logueado
 
     // Picker estado
     let calCursor    = null;   // se inicializa en initPicker
@@ -2010,7 +2042,7 @@
 
     // ── Vista switch ───────────────────────────────────────
     function mostrarVista(id) {
-        ["login","vistaCliente","vistaPedirCita","vistaAccesoAdmin","vistaAdmin"].forEach(v => {
+        ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin"].forEach(v => {
             const el = document.getElementById(v);
             if (el) el.style.display = "none";
         });
@@ -2032,7 +2064,31 @@
             body.classList.remove("admin-mode");
             document.getElementById("vistaAdmin")?.classList.remove("active-layout");
         }
+
+        // Al entrar a la vista de reservar, inicializar picker
+        if (id === "vistaReservar") {
+            if (!_clienteLogueado) {
+                toast("Debes iniciar sesión para reservar","error");
+                mostrarVista("login");
+                return;
+            }
+            try { initPicker(); } catch(e){}
+            try { cargarDisponibles(); } catch(e){}
+        }
+
+        // Al volver al perfil del cliente, refrescar datos
+        if (id === "vistaCliente" && _clienteLogueado && !_renderingPerfil) {
+            _renderingPerfil = true;
+            mostrarPerfilCliente(_clienteLogueado).finally(() => { _renderingPerfil = false; });
+        }
+
         window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    // Cerrar sesión de cliente
+    function cerrarSesionCliente() {
+        _clienteLogueado = null;
+        mostrarVista('login');
     }
 
     // ── Admin sections ─────────────────────────────────────
@@ -2197,10 +2253,14 @@
         });
     }
 
+    let _pickerInitialized = false;
     function initPicker() {
         calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         renderCalendar();
         renderTimeSlots();
+
+        if (_pickerInitialized) return;  // evitar duplicar listeners
+        _pickerInitialized = true;
 
         document.getElementById("calPrev").addEventListener("click", () => {
             const min = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -2211,9 +2271,9 @@
             calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1);
             renderCalendar();
         });
-        document.querySelectorAll(".time-tab").forEach(tab => {
+        document.querySelectorAll("#vistaReservar .time-tab").forEach(tab => {
             tab.addEventListener("click", () => {
-                document.querySelectorAll(".time-tab").forEach(t=>t.classList.remove("active"));
+                document.querySelectorAll("#vistaReservar .time-tab").forEach(t=>t.classList.remove("active"));
                 tab.classList.add("active");
                 activePeriod = tab.dataset.period;
                 renderTimeSlots();
@@ -2242,10 +2302,6 @@
             });
         });
 
-        // Check usuario disponible
-        document.getElementById("citaUsuario")?.addEventListener("input", () => {
-            checkUsuarioDisponible(document.getElementById("citaUsuario").value);
-        });
     }
 
     function resetPicker() {
@@ -2258,7 +2314,7 @@
             if (el) { el.textContent="Sin elegir"; el.classList.add("empty"); }
         });
         document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(e=>e.classList.remove("selected"));
-        document.querySelectorAll(".time-tab").forEach(t=>t.classList.toggle("active",t.dataset.period==="morning"));
+        document.querySelectorAll("#vistaReservar .time-tab").forEach(t=>t.classList.toggle("active",t.dataset.period==="morning"));
         renderCalendar();
         renderTimeSlots();
     }
@@ -2290,8 +2346,17 @@
     //  HELPERS OTP — inputs de 6 dígitos
     // ══════════════════════════════════════════════════════
     function initOTPInputs(containerId, onComplete) {
-        const inputs = [...document.querySelectorAll(`#${containerId} .otp-digit`)];
-        inputs.forEach(inp => { inp.value = ""; inp.classList.remove("filled"); });
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        // Clonar cada input para eliminar listeners anteriores
+        const oldInputs = [...container.querySelectorAll('.otp-digit')];
+        oldInputs.forEach(old => {
+            const clone = old.cloneNode(true);
+            clone.value = "";
+            clone.classList.remove("filled");
+            old.parentNode.replaceChild(clone, old);
+        });
+        const inputs = [...container.querySelectorAll('.otp-digit')];
         inputs.forEach((inp, i) => {
             inp.addEventListener("input", () => {
                 inp.value = inp.value.replace(/\D/g,"").slice(-1);
@@ -2471,8 +2536,11 @@
         clearOTPInputs("loginOTPInputs");
     }
 
+    let _renderingPerfil = false;
+
     // Mostrar perfil cliente
-    async function mostrarPerfilCliente(data) {
+    async function mostrarPerfilCliente(data, skipNavigation) {
+        _clienteLogueado = data;  // Guardar datos del cliente logueado
         document.getElementById("clienteNombre").innerText = data.nombre;
         document.getElementById("stampCountText").innerText = data.visitas;
         const grid = document.getElementById("stampsGrid");
@@ -2495,7 +2563,9 @@
             estado.innerHTML=`<i class="fa-regular fa-gem"></i>Te ${r===1?"queda":"quedan"} <strong>${r}</strong> ${r===1?"sello":"sellos"} para tu recompensa.`;
         }
         await renderMisCitas(data);
-        mostrarVista("vistaCliente");
+        if (!_renderingPerfil) {
+            mostrarVista("vistaCliente");
+        }
         // Reset login para próxima vez
         loginMostrarPaso("credenciales");
         clearOTPInputs("loginOTPInputs");
@@ -2600,9 +2670,9 @@
     }
 
     // ══════════════════════════════════════════════════════
-    //  ENVIAR CITA (registro)
+    //  CREAR CUENTA (solo registro, sin cita)
     // ══════════════════════════════════════════════════════
-    async function enviarCita() {
+    async function crearCuenta() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
         const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
@@ -2610,12 +2680,12 @@
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
 
         function showErr(msg) {
-            const el=document.getElementById("citaErrorMsg");
+            const el=document.getElementById("regErrorMsg");
             if(el){el.textContent=msg;el.style.display="block";}
             toast(msg,"error");
         }
         function hideErr() {
-            const el=document.getElementById("citaErrorMsg"); if(el) el.style.display="none";
+            const el=document.getElementById("regErrorMsg"); if(el) el.style.display="none";
         }
         hideErr();
 
@@ -2623,35 +2693,19 @@
         if (!telefono)         return showErr("Introduce tu teléfono");
         if (!usuario)          return showErr("Elige un nombre de usuario");
         if (clave.length<6)    return showErr("La contraseña debe tener al menos 6 caracteres");
-        if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de enviar la solicitud");
-        if (!selectedServicio) return showErr("Selecciona un servicio");
-        if (!selectedDate)     return showErr("Selecciona una fecha");
-        if (!selectedTime)     return showErr("Selecciona una hora");
+        if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de crear la cuenta");
 
-        setBtnLoading("btnEnviarCita",true);
+        setBtnLoading("btnCrearCuenta",true);
         try {
             // Crear clienta
             const { error: cErr } = await sb.from("clientas")
                 .insert([{ nombre, telefono, usuario, clave, email, visitas:0 }]);
             if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
 
-            // Guardar cita
-            const { error: aErr } = await sb.from("citas").insert([{
-                nombre_cliente: nombre,
-                telefono,
-                servicio: selectedServicio,
-                duracion_minutos: selectedDuracion,
-                fecha: fmtISO(selectedDate),
-                hora: selectedTime,
-                estado: "pendiente"
-            }]);
-            if (aErr) { showErr("Cuenta creada, pero error al guardar la cita: "+aErr.message); return; }
-
             // Marcar este dispositivo como confiable desde el primer acceso
             trustDevice(usuario);
 
-            toast("¡Solicitud enviada! Te confirmaremos pronto.", "success","¡Bienvenida!");
-            resetPicker();
+            toast("¡Cuenta creada con éxito!", "success","¡Bienvenida!");
             regEmailVerificado=false;
             ["citaNombre","citaTelefono","citaUsuario","citaClave","citaClaveConfirm","citaEmail"]
                 .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
@@ -2664,12 +2718,70 @@
             const lu=document.getElementById("loginUsuario"); if(lu) lu.value=usuario;
             setTimeout(()=>{
                 mostrarVista("login");
-                setTimeout(()=>toast("Inicia sesión con tu usuario y contraseña","info"),500);
+                setTimeout(()=>toast("Inicia sesión con tu usuario y contraseña para reservar tu cita","info"),500);
             },1200);
         } catch(e) {
             showErr("Error inesperado: "+(e.message||String(e)));
         } finally {
-            setBtnLoading("btnEnviarCita",false);
+            setBtnLoading("btnCrearCuenta",false);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  ENVIAR RESERVA (solo cita, requiere login)
+    // ══════════════════════════════════════════════════════
+    async function enviarReserva() {
+        if (!_clienteLogueado) {
+            toast("Debes iniciar sesión para reservar","error");
+            mostrarVista("login");
+            return;
+        }
+
+        function showErr(msg) {
+            const el=document.getElementById("reservaErrorMsg");
+            if(el){el.textContent=msg;el.style.display="block";}
+            toast(msg,"error");
+        }
+        function hideErr() {
+            const el=document.getElementById("reservaErrorMsg"); if(el) el.style.display="none";
+        }
+        hideErr();
+
+        if (!selectedServicio) return showErr("Selecciona un servicio");
+        if (!selectedDate)     return showErr("Selecciona una fecha");
+        if (!selectedTime)     return showErr("Selecciona una hora");
+
+        setBtnLoading("btnEnviarReserva",true);
+        try {
+            // Guardar cita
+            const { error: aErr } = await sb.from("citas").insert([{
+                nombre_cliente: _clienteLogueado.nombre,
+                telefono: _clienteLogueado.telefono,
+                servicio: selectedServicio,
+                duracion_minutos: selectedDuracion,
+                fecha: fmtISO(selectedDate),
+                hora: selectedTime,
+                estado: "pendiente"
+            }]);
+            if (aErr) { showErr("Error al guardar la cita: "+aErr.message); return; }
+
+            toast("¡Solicitud enviada! Te confirmaremos pronto.", "success","¡Reserva enviada!");
+            resetPicker();
+            hideErr();
+
+            // Refrescar datos del cliente y volver a su perfil
+            try {
+                const { data: freshData } = await sb.from("clientas").select("*").eq("id", _clienteLogueado.id).maybeSingle();
+                if (freshData) _clienteLogueado = freshData;
+            } catch(e) {}
+
+            setTimeout(()=>{
+                mostrarVista("vistaCliente");
+            },1200);
+        } catch(e) {
+            showErr("Error inesperado: "+(e.message||String(e)));
+        } finally {
+            setBtnLoading("btnEnviarReserva",false);
         }
     }
 
@@ -3710,7 +3822,11 @@
     // ══════════════════════════════════════════════════════
     //  INIT
     // ══════════════════════════════════════════════════════
-    try { initPicker(); }    catch(e){ console.error("initPicker:",e); }
+    // initPicker se llama al entrar en vistaReservar
+    // Check usuario disponible (en vista registro)
+    document.getElementById("citaUsuario")?.addEventListener("input", () => {
+        checkUsuarioDisponible(document.getElementById("citaUsuario").value);
+    });
     try { cargarDisponibles(); } catch(e){ console.error("cargarDisponibles:",e); }
     try { mostrarVista("login"); } catch(e){ console.error("mostrarVista:",e); }
 
