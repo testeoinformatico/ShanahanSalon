@@ -1138,6 +1138,11 @@
             <span>Horarios</span>
         </button>
 
+        <button class="admin-menu-item" data-section="historial" onclick="switchAdminSection('historial')">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Historial</span>
+        </button>
+
         <button class="admin-menu-item" data-section="usuarios" onclick="switchAdminSection('usuarios')">
             <i class="fa-solid fa-user-shield"></i>
             <span>Usuarios</span>
@@ -1730,6 +1735,41 @@
                 </div>
             </div>
 
+            </div><div class="admin-section" id="asecHistorial" style="display:none;">
+            <div class="col-12">
+                <div class="luxury-card view-anim" style="padding:30px;">
+                    <div class="admin-header" style="margin-bottom:20px;">
+                        <h5><i class="fa-solid fa-clock-rotate-left"></i> Historial de Citas</h5>
+                        <div class="admin-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="historialSearch" placeholder="Buscar por nombre…" oninput="renderHistorialAdmin()">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;">
+                        <button type="button" class="filter-chip active" data-hfilter="all" onclick="setHistorialFilter('all')">Todas</button>
+                        <button type="button" class="filter-chip" data-hfilter="completada" onclick="setHistorialFilter('completada')">Completadas</button>
+                        <button type="button" class="filter-chip" data-hfilter="cancelada" onclick="setHistorialFilter('cancelada')">Canceladas</button>
+                        <button type="button" class="filter-chip" data-hfilter="confirmada" onclick="setHistorialFilter('confirmada')">Confirmadas</button>
+                        <button type="button" class="filter-chip" data-hfilter="pendiente" onclick="setHistorialFilter('pendiente')">Pendientes</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="tablaHistorial">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Clienta</th>
+                                    <th>Servicio</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="historialEmpty" class="mis-citas-empty" style="display:none;"><i class="fa-solid fa-clock-rotate-left"></i><div class="label">No hay citas en el historial</div></div>
+                </div>
+            </div>
+
             </div><div class="admin-section" id="asecUsuarios" style="display:none;">
             <div class="col-12 col-lg-8">
                 <div class="luxury-card view-anim usuarios-card">
@@ -2153,7 +2193,7 @@
     }
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","usuarios"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -2974,9 +3014,60 @@
             try { await cargarDisponibles(); } catch(e){}
             try { await cargarEmailNotificacion(); } catch(e){}
             renderAdmin();
+            try { renderHistorialAdmin(); } catch(e){}
         } catch(e) {
             toast("Error cargando datos: "+(e.message||""),"error");
         }
+    }
+
+    // ── Historial admin ─────────────────────────────────────
+    let historialFilter = "all";
+    function setHistorialFilter(f) {
+        historialFilter = f;
+        document.querySelectorAll("[data-hfilter]").forEach(b => b.classList.toggle("active", b.dataset.hfilter === f));
+        renderHistorialAdmin();
+    }
+    function renderHistorialAdmin() {
+        const tbody = document.querySelector("#tablaHistorial tbody");
+        const emptyEl = document.getElementById("historialEmpty");
+        if (!tbody) return;
+        const search = (document.getElementById("historialSearch")?.value || "").toLowerCase();
+        const dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+
+        // Todas las citas ordenadas de más reciente a más antigua
+        let filtered = [...citas].sort((a,b) => (b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+
+        // Filtro por estado
+        if (historialFilter !== "all") {
+            filtered = filtered.filter(c => (c.estado||"pendiente") === historialFilter);
+        }
+        // Filtro por búsqueda
+        if (search) {
+            filtered = filtered.filter(c => (c.nombre_cliente||"").toLowerCase().includes(search));
+        }
+
+        if (!filtered.length) {
+            tbody.innerHTML = "";
+            if (emptyEl) { emptyEl.style.display = "block"; }
+            document.getElementById("tablaHistorial").style.display = "none";
+            return;
+        }
+        if (emptyEl) emptyEl.style.display = "none";
+        document.getElementById("tablaHistorial").style.display = "";
+
+        tbody.innerHTML = filtered.map(c => {
+            const dt = new Date(c.fecha+"T00:00:00");
+            const fechaBonita = `${dias[dt.getDay()]}, ${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)} ${dt.getFullYear()}`;
+            const hora = (c.hora||"").slice(0,5);
+            const estado = c.estado||"pendiente";
+            return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
+                <td><span style="font-weight:600;">${fechaBonita}</span></td>
+                <td>${hora} h</td>
+                <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
+                <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"—"}</span></td>
+                <td><span class="estado-pill ${estado}">${estado}</span></td>
+            </tr>`;
+        }).join("");
     }
 
     // ── Correo de notificaciones ─────────────────────────────
