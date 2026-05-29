@@ -1102,15 +1102,15 @@
         /* ---------- CAT LOTTIE ESTÁTICO ---------- */
         .cat-shadow-container {
             position: absolute;
-            bottom: -8px;
-            left: 280px; /* Más a la derecha para no pisar el logo */
+            bottom: -15px; /* Bajado un poco para compensar el tamaño más grande */
+            left: 200px; /* Más pegado al logo */
             opacity: 0.18; /* Sombra sutil pero visible */
             pointer-events: none;
             z-index: 0;
         }
 
         @media (max-width: 768px) {
-            .cat-shadow-container { left: 210px; bottom: -10px; transform: scale(0.8); transform-origin: bottom left; }
+            .cat-shadow-container { left: 140px; bottom: -18px; transform: scale(0.7); transform-origin: bottom left; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1126,7 +1126,7 @@
 
     <nav class="topbar">
         <div class="cat-shadow-container">
-            <lottie-player src="loader-cat.json" background="transparent" speed="1" style="width: 85px; height: 85px;" loop autoplay></lottie-player>
+            <lottie-player src="loader-cat.json" background="transparent" speed="1" style="width: 120px; height: 120px;" loop autoplay></lottie-player>
         </div>
         <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
             <img src="logo.png" alt="Shanahan Nails">
