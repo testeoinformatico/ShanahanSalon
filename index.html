@@ -1113,7 +1113,7 @@
             .cat-shadow-container { left: 95px; bottom: -18px; transform: scale(0.7); transform-origin: bottom left; }
         }
 
-        /* ---------- COOKIE BANNER ---------- */
+        /* ---------- COOKIE BANNER Y LEGAL ---------- */
         .cookie-banner {
             position: fixed;
             bottom: 0;
@@ -1130,12 +1130,10 @@
             transition: transform 0.4s var(--ease);
             border-top: 1px solid var(--line);
         }
-        .cookie-banner.show {
-            transform: translateY(0);
-        }
+        .cookie-banner.show { transform: translateY(0); }
         .cookie-content h4 { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 20px; margin:0 0 5px; }
         .cookie-content p { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.5; }
-        .cookie-content a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .cookie-content a { color: var(--accent); text-decoration: none; font-weight: 600; cursor:pointer; }
         .cookie-actions { display: flex; gap: 10px; justify-content: flex-end; }
         .btn-cookie { padding: 10px 20px; font-size: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s var(--ease); border: none; }
         .btn-cookie-accept { background: var(--burgundy); color: #fff; }
@@ -1143,10 +1141,19 @@
         .btn-cookie-reject { background: transparent; color: var(--muted); border: 1px solid var(--line); }
         .btn-cookie-reject:hover { background: var(--cream); color: var(--dark-text); }
         
+        .legal-footer { position: fixed; bottom: 8px; width: 100%; text-align: center; z-index: 10; font-size: 10px; opacity: 0.6; }
+        .legal-footer a { color: var(--dark-text); text-decoration: none; margin: 0 6px; transition: color 0.3s; cursor:pointer; }
+        .legal-footer a:hover { color: var(--burgundy); }
+
+        .legal-modal-content { overflow-y: auto; padding: 20px 25px; font-size: 13px; color: var(--dark-text); line-height: 1.6; text-align: left; }
+        .legal-modal-content h4 { color: var(--burgundy); margin-top: 15px; margin-bottom: 5px; font-size: 15px; font-weight: 600; }
+        .legal-modal-content p { margin-bottom: 12px; }
+
         @media (min-width: 768px) {
             .cookie-banner { flex-direction: row; justify-content: space-between; align-items: center; padding: 20px 40px; }
             .cookie-content { flex: 1; margin-right: 30px; }
             .cookie-actions { flex-shrink: 0; }
+            .legal-footer { font-size: 11px; bottom: 15px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1526,7 +1533,7 @@
                     <div style="margin-top:20px; display:flex; align-items:flex-start; gap:10px;">
                         <input type="checkbox" id="aceptoPrivacidad" style="margin-top:3px; accent-color:var(--burgundy);">
                         <label for="aceptoPrivacidad" style="font-size:12px; color:var(--muted); line-height:1.4;">
-                            He leído y acepto la <a href="#" style="color:var(--accent); text-decoration:none; font-weight:600;">Política de Privacidad</a> y el tratamiento de mis datos personales según el RGPD (UE).
+                            He leído y acepto la <a onclick="abrirLegal('privacidad')" style="color:var(--accent); text-decoration:none; font-weight:600; cursor:pointer;">Política de Privacidad</a> y el tratamiento de mis datos personales según el RGPD (UE).
                         </label>
                     </div>
 
@@ -2135,12 +2142,30 @@
     <div id="cookieBanner" class="cookie-banner">
         <div class="cookie-content">
             <h4>Privacidad y Cookies</h4>
-            <p>Utilizamos cookies propias y de terceros para garantizar el correcto funcionamiento de nuestro portal web, recoger información sobre su uso y mejorar nuestros servicios. Puedes aceptar todas las cookies o configurar tus preferencias. Lee nuestra <a href="#">Política de Cookies</a> y <a href="#">Política de Privacidad</a>.</p>
+            <p>Utilizamos cookies propias y de terceros para garantizar el correcto funcionamiento de nuestro portal web, recoger información sobre su uso y mejorar nuestros servicios. Puedes aceptar todas las cookies o configurar tus preferencias. Lee nuestra <a onclick="abrirLegal('cookies')">Política de Cookies</a> y <a onclick="abrirLegal('privacidad')">Política de Privacidad</a>.</p>
         </div>
         <div class="cookie-actions">
             <button class="btn-cookie btn-cookie-reject" onclick="rechazarCookies()">Solo Necesarias</button>
             <button class="btn-cookie btn-cookie-accept" onclick="aceptarCookies()">Aceptar Todas</button>
         </div>
+    </div>
+
+    <!-- MODAL TEXTOS LEGALES -->
+    <div id="legalModal" style="display:none; position:fixed; inset:0; background:rgba(45, 16, 17, 0.4); z-index:10001; align-items:center; justify-content:center; backdrop-filter: blur(4px);">
+        <div style="background:#fff; border-radius:16px; width:90%; max-width:600px; display:flex; flex-direction:column; max-height:85vh; animation: modalIn 0.3s var(--ease); box-shadow:0 15px 40px rgba(0,0,0,0.15);">
+            <div style="padding: 20px 25px; border-bottom: 1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+                <h3 id="legalModalTitle" style="font-family:'Playfair Display', serif; color:var(--burgundy); margin:0; font-size:22px;">Legal</h3>
+                <button onclick="document.getElementById('legalModal').style.display='none'" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="legalModalBody" class="legal-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- FOOTER GLOBAL -->
+    <div class="legal-footer">
+        <a onclick="abrirLegal('aviso')">Aviso Legal</a> | 
+        <a onclick="abrirLegal('privacidad')">Política de Privacidad</a> | 
+        <a onclick="abrirLegal('cookies')">Política de Cookies</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -4589,7 +4614,7 @@
     if(gl) renderGL();
 
     // ═══════════════════════════════════════════════════════
-    //  GESTIÓN DE COOKIES (RGPD)
+    //  GESTIÓN DE COOKIES Y TEXTOS LEGALES (RGPD / LSSI-CE)
     // ═══════════════════════════════════════════════════════
     function checkCookies() {
         const banner = document.getElementById("cookieBanner");
@@ -4606,6 +4631,54 @@
     function rechazarCookies() {
         localStorage.setItem("shanahan_cookies_accepted", "essential");
         document.getElementById("cookieBanner").classList.remove("show");
+    }
+
+    const textosLegales = {
+        aviso: {
+            titulo: "Aviso Legal",
+            html: `
+                <p>En cumplimiento de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa que este sitio web es propiedad de <strong>Estudio Shanahan Nails</strong>.</p>
+                <h4>1. Datos Identificativos</h4>
+                <p>Titular: Estudio Shanahan Nails<br>
+                Correo electrónico: contacto@shanahannails.es (Actualiza con tu correo real)<br>
+                Actividad: Salón de manicura y estética.</p>
+                <h4>2. Condiciones de Uso</h4>
+                <p>El acceso y/o uso de este portal atribuye la condición de USUARIO. El usuario asume la responsabilidad del uso del portal y se compromete a hacer un uso adecuado de los contenidos y servicios.</p>
+                <h4>3. Propiedad Intelectual e Industrial</h4>
+                <p>Todos los derechos de propiedad intelectual del contenido de esta página web y su diseño gráfico, son propiedad exclusiva de Estudio Shanahan Nails.</p>
+            `
+        },
+        privacidad: {
+            titulo: "Política de Privacidad",
+            html: `
+                <p>De conformidad con lo dispuesto en el Reglamento (UE) 2016/679 de 27 de abril de 2016 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD), te informamos sobre el tratamiento de tus datos personales.</p>
+                <h4>1. Responsable del Tratamiento</h4>
+                <p>Estudio Shanahan Nails es el Responsable del tratamiento de los datos personales del Usuario.</p>
+                <h4>2. Finalidad del Tratamiento</h4>
+                <p>Tus datos personales (nombre, teléfono, correo) serán utilizados exclusivamente con la finalidad de: gestionar tus reservas, crear tu cuenta de cliente en nuestra plataforma, y enviarte comunicaciones estrictamente necesarias relacionadas con tus citas.</p>
+                <h4>3. Legitimación</h4>
+                <p>La base legal para el tratamiento de tus datos es la ejecución de la prestación del servicio (la reserva) y tu consentimiento expreso otorgado al registrarte.</p>
+                <h4>4. Conservación y Derechos ARCO</h4>
+                <p>Tus datos se conservarán mientras exista un interés mutuo para mantener el fin del tratamiento. Tienes derecho a retirar tu consentimiento en cualquier momento. También puedes ejercer tus derechos de Acceso, Rectificación, Portabilidad y Supresión (derecho al olvido) de tus datos escribiéndonos un correo electrónico a nuestro email de contacto.</p>
+            `
+        },
+        cookies: {
+            titulo: "Política de Cookies",
+            html: `
+                <p>Una cookie es un pequeño fichero que se almacena en el navegador del usuario al acceder a determinadas páginas web.</p>
+                <h4>1. ¿Qué tipo de cookies utiliza esta página web?</h4>
+                <p><strong>Cookies Técnicas / Necesarias:</strong> Son aquellas necesarias para la navegación y el buen funcionamiento de la página web. Nos permiten gestionar el inicio de sesión de tu cuenta y recordar tus preferencias básicas como la aceptación de este aviso. (No se pueden desactivar).</p>
+                <p><strong>Cookies de Terceros:</strong> Podemos utilizar herramientas externas que depositen cookies con fines analíticos básicos para mejorar el servicio.</p>
+                <h4>2. Revocación y eliminación de cookies</h4>
+                <p>Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración de las opciones del navegador instalado en tu ordenador o dispositivo móvil (Chrome, Safari, Firefox, Edge...).</p>
+            `
+        }
+    };
+
+    function abrirLegal(tipo) {
+        document.getElementById('legalModalTitle').innerHTML = textosLegales[tipo].titulo;
+        document.getElementById('legalModalBody').innerHTML = textosLegales[tipo].html;
+        document.getElementById('legalModal').style.display = 'flex';
     }
 
     // Inicializar banners al cargar
