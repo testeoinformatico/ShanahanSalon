@@ -35,7 +35,7 @@
         html, body { margin: 0; padding: 0; }
 
         body {
-            background-color: var(--cream);
+            background-color: transparent;
             color: var(--dark-text);
             font-family: 'Poppins', sans-serif;
             font-weight: 400;
@@ -1117,6 +1117,8 @@
     </style>
 </head>
 <body>
+    <canvas id="gl" style="position:fixed;inset:0;width:100%;height:100%;z-index:-1;cursor:crosshair;"></canvas>
+    <div class="fallback" id="fb" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;color:#8a1c1c;font-family:sans-serif;background:#f6ece2;z-index:5;text-align:center;padding:2rem;">Tu navegador no soporta WebGL.</div>
 
     <nav class="topbar">
         <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
@@ -4254,6 +4256,258 @@
     });
     try { cargarDisponibles(); } catch(e){ console.error("cargarDisponibles:",e); }
     try { mostrarVista("login"); } catch(e){ console.error("mostrarVista:",e); }
+
+    // ══════════════════════════════════════════════════════
+    //  WEBGL BACKGROUND (Agua Caribeña)
+    // ══════════════════════════════════════════════════════
+    const canvasGL = document.getElementById('gl');
+    const gl = canvasGL.getContext('webgl') || canvasGL.getContext('experimental-webgl');
+    if(!gl){ document.getElementById('fb').style.display='flex'; }
+
+    const MAX_RIPPLES = 48;
+
+    const vert = `
+    attribute vec2 a_pos;
+    void main(){ gl_Position = vec4(a_pos, 0.0, 1.0); }
+    `;
+
+    const frag = `
+    precision highp float;
+    uniform vec2  u_res;
+    uniform float u_time;
+    uniform vec2  u_mouse;          
+    uniform float u_mouseOn;        
+    uniform vec3  u_ripples[${MAX_RIPPLES}]; 
+    uniform int   u_rippleCount;
+
+    #define TAU 6.28318530718
+
+    float hash(vec2 p){
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+    float vnoise(vec2 p){
+      vec2 i = floor(p), f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i + vec2(0,0)), hash(i + vec2(1,0)), u.x),
+                 mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), u.x), u.y);
+    }
+    float fbm(vec2 p){
+      float s = 0.0, a = 0.5;
+      for (int i = 0; i < 4; i++){ s += a * vnoise(p); p *= 2.02; a *= 0.5; }
+      return s;
+    }
+    mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
+
+    vec3 caustic(vec2 uv){
+      vec2 p = uv * TAU - 250.0;
+      vec2 i = p;
+      float c = 1.0;
+      float inten = 0.0045;
+      for (int n = 0; n < 5; n++){
+        float t = u_time * 1.5 * (1.0 - (3.5 / float(n + 1)));
+        i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+        c += 1.0 / length(vec2(-250.0 / (sin(i.x + t) / inten),
+                               -250.0 / (cos(i.y + t) / inten)));
+      }
+      c /= 5.0;
+      c = 1.17 - pow(c, 1.4);
+      float col = pow(abs(c), 8.0);
+      col = clamp(col, 0.0, 1.0);
+      return vec3(col);
+    }
+
+    void main(){
+      vec2 fragCoord = gl_FragCoord.xy;
+      vec2 uv = fragCoord / u_res.xy;        
+      float aspect = u_res.x / u_res.y;
+
+      float depth = uv.y;               
+
+      vec2 cuv = vec2(uv.x * aspect, uv.y);
+      
+      cuv *= mix(2.0, 4.0, depth);
+      cuv += vec2(u_time * 0.02, u_time * 0.15);
+
+      float swellX = sin(uv.y * 6.0 + u_time * 1.4 + uv.x * 2.0);
+      float swell = sin(uv.y * 5.0 + u_time * 1.2 - uv.x * 1.0)
+                  + 0.5 * sin(uv.y * 9.0 + u_time * 1.8 + uv.x * 1.5);
+      cuv += vec2(swellX * 0.15, swell * 0.2);   
+
+      vec2 distort = vec2(0.0);
+      float ripWave = 0.0;   
+      for (int k = 0; k < ${MAX_RIPPLES}; k++){
+        if (k >= u_rippleCount) break;
+        vec3 rp = u_ripples[k];
+        vec2 d = fragCoord - rp.xy;
+        float dist = length(d);
+        float radius = rp.z * 400.0;          
+        float band = 80.0;                    
+        float falloff = exp(-rp.z * 1.2);     
+        float ring = exp(-abs(dist - radius) / band) * falloff;
+        distort += normalize(d + 0.001) * sin((radius - dist) * 0.06) * ring * 2.5;
+        ripWave += ring;                      
+      }
+
+      if (u_mouseOn > 0.5){
+        vec2 dm = fragCoord - u_mouse;
+        float dist = length(dm);
+        float h = exp(-dist / 120.0);
+        distort += normalize(dm + 0.001) * h * sin(u_time * 4.0 - dist * 0.08) * 0.6;
+      }
+
+      distort = clamp(distort, -20.0, 20.0);
+      cuv += distort * 0.04;   
+
+      vec2 warp = vec2(
+        fbm(cuv * 0.6 + u_time * 0.05) + 0.5 * fbm(cuv * 1.5 - u_time * 0.08),
+        fbm(cuv * 0.6 + 7.3 - u_time * 0.05) + 0.5 * fbm(cuv * 1.5 + 3.1 + u_time * 0.08)
+      );
+      cuv += (warp - 0.75) * 3.5;
+
+      vec3 ca = caustic(rot(0.618) * cuv * 1.0   + vec2(10.0, u_time * 0.1));
+      vec3 cb = caustic(rot(2.399) * cuv * 1.618 + vec2(40.0, -u_time * 0.15));
+      vec3 cc = caustic(rot(-1.732)* cuv * 0.732 + vec2(-15.0, u_time * 0.2));
+      vec3 cd = caustic(rot(0.9)   * cuv * 1.25  + vec2(20.0, -u_time * 0.12));
+
+      float light = (ca.r + cb.r + cc.r + cd.r) * 0.26;
+      light = pow(light, 1.4) * 1.8;
+      light *= 0.4 + 1.2 * fbm(cuv * 0.2 + u_time * 0.03);
+      light += clamp(ripWave, 0.0, 1.5) * 0.05; 
+      float crest = smoothstep(0.4, 1.0, swell) * (1.0 - smoothstep(0.0, 0.7, depth));
+      light += crest * 0.2;
+      light = max(light, 0.0);   
+      light *= mix(1.0, 0.12, smoothstep(0.35, 1.0, depth));
+
+      vec3 sand    = vec3(1.00, 0.95, 0.88);
+      vec3 shallow = vec3(1.00, 0.92, 0.80);
+      vec3 mid     = vec3(0.90, 0.78, 0.60);
+      vec3 deep    = vec3(0.45, 0.35, 0.22);
+
+      vec3 water = mix(shallow, mid, smoothstep(0.0, 0.55, depth));
+      water = mix(water, deep, smoothstep(0.5, 1.0, depth));
+
+      float sandVisible = 1.0 - smoothstep(0.0, 0.7, depth);
+      vec3 col = mix(water, mix(water, sand, 0.60), sandVisible);
+
+      col += vec3(light) * vec3(1.0, 0.98, 0.92) * (0.8 + sandVisible * 0.8);
+      float sparkle = pow(max(0.0, light - 0.5), 2.0) * smoothstep(0.4,1.0,depth);
+      col += sparkle * 0.4;
+      float vig = smoothstep(1.3, 0.2, length(uv - vec2(0.5, 0.35)));
+      col *= mix(0.82, 1.0, vig);
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+    `;
+
+    function compile(type, src){
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
+        console.error(gl.getShaderInfoLog(s));
+      }
+      return s;
+    }
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const U = {
+      res:        gl.getUniformLocation(prog, 'u_res'),
+      time:       gl.getUniformLocation(prog, 'u_time'),
+      mouse:      gl.getUniformLocation(prog, 'u_mouse'),
+      mouseOn:    gl.getUniformLocation(prog, 'u_mouseOn'),
+      ripples:    gl.getUniformLocation(prog, 'u_ripples'),
+      rippleCount:gl.getUniformLocation(prog, 'u_rippleCount'),
+    };
+
+    let DPR = Math.min(window.devicePixelRatio || 1, 2);
+    function resizeGL(){
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      canvasGL.width  = canvasGL.clientWidth  * DPR;
+      canvasGL.height = canvasGL.clientHeight * DPR;
+      gl.viewport(0,0,canvasGL.width,canvasGL.height);
+    }
+    window.addEventListener('resize', resizeGL);
+    resizeGL();
+
+    let bgMouseX = -999, bgMouseY = -999, bgMouseOn = 0, bgLastX = 0, bgLastY = 0;
+    const bgRipples = []; 
+
+    function addRipple(x, y){
+      bgRipples.push({ x, y, born: performance.now() });
+      if (bgRipples.length > MAX_RIPPLES) bgRipples.shift();
+    }
+
+    window.addEventListener('mousemove', e=>{
+      const r = canvasGL.getBoundingClientRect();
+      bgMouseX = (e.clientX - r.left) * DPR;
+      bgMouseY = (r.height - (e.clientY - r.top)) * DPR; 
+      bgMouseOn = 1;
+      if (Math.hypot(bgMouseX-bgLastX, bgMouseY-bgLastY) > 25*DPR){
+        addRipple(bgMouseX, bgMouseY);
+        bgLastX = bgMouseX; bgLastY = bgMouseY;
+      }
+    });
+    window.addEventListener('mouseleave', ()=> bgMouseOn = 0);
+    window.addEventListener('click', e=>{
+      const r = canvasGL.getBoundingClientRect();
+      addRipple((e.clientX-r.left)*DPR, (r.height-(e.clientY-r.top))*DPR);
+    });
+    window.addEventListener('touchmove', e=>{
+      const r = canvasGL.getBoundingClientRect();
+      const t = e.touches[0];
+      bgMouseX = (t.clientX - r.left) * DPR;
+      bgMouseY = (r.height - (t.clientY - r.top)) * DPR;
+      bgMouseOn = 1;
+      if (Math.hypot(bgMouseX-bgLastX, bgMouseY-bgLastY) > 25*DPR){
+        addRipple(bgMouseX, bgMouseY);
+        bgLastX = bgMouseX; bgLastY = bgMouseY;
+      }
+    }, {passive:true});
+    window.addEventListener('touchend', ()=> bgMouseOn = 0);
+
+    const startGL = performance.now();
+    function renderGL(){
+      const now = performance.now();
+      const time = (now - startGL) / 1000;
+
+      const data = [];
+      let count = 0;
+      for (let i = bgRipples.length-1; i>=0; i--){
+        const age = (now - bgRipples[i].born)/1000;
+        if (age > 3.5){ bgRipples.splice(i,1); continue; }
+      }
+      for (let i=0; i<bgRipples.length && count<MAX_RIPPLES; i++){
+        const age = (now - bgRipples[i].born)/1000;
+        data.push(bgRipples[i].x, bgRipples[i].y, age);
+        count++;
+      }
+      while (data.length < MAX_RIPPLES*3) data.push(0,0,99);
+
+      gl.uniform2f(U.res, canvasGL.width, canvasGL.height);
+      gl.uniform1f(U.time, time);
+      gl.uniform2f(U.mouse, bgMouseX, bgMouseY);
+      gl.uniform1f(U.mouseOn, bgMouseOn);
+      gl.uniform3fv(U.ripples, data);
+      gl.uniform1i(U.rippleCount, count);
+
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(renderGL);
+    }
+    if(gl) renderGL();
 
 </script>
 </body>
