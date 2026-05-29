@@ -2965,6 +2965,7 @@
         
         for (let i=1;i<=10;i++) {
             const isReward = (i===10 && data.visitas>=10);
+            const isHalfReward = (i===5 && data.visitas>=5);
             const isActive = (i<=data.visitas);
             
             // Randomize rotation slightly for each stamp
@@ -2975,8 +2976,8 @@
             
             let stampHTML = "";
             if (isActive) {
-                const markClass = isReward ? "stamp-mark gold" : "stamp-mark";
-                const icon = isReward ? '<i class="fa-solid fa-gift"></i>' : '<i class="fa-solid fa-check"></i>';
+                const markClass = (isReward || isHalfReward) ? "stamp-mark gold" : "stamp-mark";
+                const icon = (isReward || isHalfReward) ? '<i class="fa-solid fa-gift"></i>' : '<i class="fa-solid fa-check"></i>';
                 stampHTML = `<div class="${markClass}" style="--rot: ${rot}; animation-delay: ${delay};">${icon}</div>`;
             }
             
@@ -2992,10 +2993,25 @@
                 <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-crown"></i> ¡Enhorabuena!</div>
                 <div>Tienes un diseño de regalo en tu próxima cita.</div>
             `;
+        } else if (data.visitas===5) {
+            estado.className="reward-info gold";
+            estado.innerHTML=`
+                <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-gift"></i> ¡Premio Desbloqueado!</div>
+                <div>Tienes un <strong>20% de descuento</strong> en esta cita.</div>
+            `;
         } else {
-            const r=10-data.visitas;
+            const r = 10 - data.visitas;
+            const r5 = 5 - data.visitas;
+            let targetText = "";
+            
+            if (data.visitas < 5) {
+                targetText = `Te ${r5===1?"queda":"quedan"} <strong>${r5}</strong> ${r5===1?"sello":"sellos"} para tu 20% de descuento.`;
+            } else {
+                targetText = `Te ${r===1?"queda":"quedan"} <strong>${r}</strong> ${r===1?"sello":"sellos"} para tu diseño de regalo.`;
+            }
+            
             estado.className="reward-info";
-            estado.innerHTML=`<i class="fa-regular fa-heart" style="margin-right:6px;"></i>Te ${r===1?"queda":"quedan"} <strong>${r}</strong> ${r===1?"sello":"sellos"} para tu regalo.`;
+            estado.innerHTML=`<i class="fa-regular fa-star" style="margin-right:6px;"></i> ${targetText}`;
         }
         await renderMisCitas(data);
         if (!_renderingPerfil) {
