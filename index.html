@@ -82,7 +82,8 @@
         @media (max-width: 768px) { .nav-logo img { height: 36px; } }
         @media (max-width: 360px) { .nav-logo img { height: 32px; } }
 
-        .nav-actions { display: flex; gap: 10px; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; color: var(--burgundy); cursor: pointer; padding: 5px; }
+        .nav-actions { display: flex; gap: 10px; transition: all 0.3s ease; }
 
         .nav-btn {
             text-decoration: none;
@@ -140,8 +141,8 @@
 
         .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 12px 18px; font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all .3s var(--ease); font-family: 'Poppins', sans-serif; }
         .btn-ghost:hover { border-color: var(--burgundy); color: var(--burgundy); }
-        .link-soft { background: none; border: none; color: var(--muted); font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; cursor: pointer; padding: 14px 0 0; display: block; width: 100%; text-align: center; transition: color .3s var(--ease); }
-        .link-soft:hover { color: var(--burgundy); }
+        .link-soft { background: none; border: none; color: var(--burgundy); font-size: 11.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; padding: 14px 0 0; display: block; width: 100%; text-align: center; transition: color .3s var(--ease); text-decoration: underline; text-decoration-color: rgba(146,31,35,0.3); text-underline-offset: 4px; }
+        .link-soft:hover { color: var(--accent); text-decoration-color: var(--accent); }
 
         /* --- Cuenta nueva (formulario cita) --- */
         .cuenta-nueva-box {
@@ -215,8 +216,8 @@
         }
         .servicio-duracion-info.show { display: block; }
         .no-disponible { background: var(--cream-deep) !important; color: #C8BDB6 !important; cursor: not-allowed !important; border-color: transparent !important; }
-        .divider-soft { display: flex; align-items: center; gap: 12px; margin: 24px 0 18px; color: var(--line); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
-        .divider-soft::before, .divider-soft::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+        .divider-soft { display: flex; align-items: center; gap: 12px; margin: 24px 0 18px; color: var(--burgundy); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .divider-soft::before, .divider-soft::after { content: ''; flex: 1; height: 1px; background: rgba(146,31,35,0.2); }
 
         /* ---------- BIG CTA ---------- */
         .btn-cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: #fff; border: none; padding: 18px 22px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 3.5px; text-transform: uppercase; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 14px 32px rgba(201, 167, 77, 0.32); transition: all .4s var(--ease); margin-top: 4px; }
@@ -537,12 +538,12 @@
         .step-dot.done { background: var(--accent); }
 
         .back-step {
-            background: none; border: none; color: var(--muted); font-size: 12px;
+            background: none; border: none; color: var(--burgundy); font-size: 13px; font-weight: 600;
             cursor: pointer; font-family: 'Poppins', sans-serif; padding: 0;
             display: flex; align-items: center; gap: 6px; margin-bottom: 16px;
-            transition: color .2s;
+            transition: color .2s; text-decoration: underline; text-decoration-color: rgba(146,31,35,0.3); text-underline-offset: 4px;
         }
-        .back-step:hover { color: var(--burgundy); }
+        .back-step:hover { color: var(--accent); text-decoration-color: var(--accent); }
         .welcome-modal {
             position: fixed; inset: 0;
             background: rgba(18, 5, 6, 0.9);
@@ -1037,7 +1038,18 @@
         @media (max-width: 768px) {
             body { background-image: radial-gradient(ellipse at top left, rgba(201, 167, 77, 0.05), transparent 60%), radial-gradient(ellipse at bottom right, rgba(146, 31, 35, 0.04), transparent 60%); }
             main.container { padding-left: 14px !important; padding-right: 14px !important; padding-top: 24px !important; padding-bottom: 24px !important; }
-            nav.topbar { padding: 12px 16px; }
+            nav.topbar { padding: 12px 16px; position: relative; }
+            .mobile-menu-btn { display: block; }
+            .nav-actions {
+                position: absolute; top: 100%; left: 0; right: 0;
+                background: rgba(249, 244, 240, 0.98); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+                flex-direction: column; padding: 24px; gap: 16px;
+                border-bottom: 1px solid var(--burgundy-soft);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                display: none;
+            }
+            .nav-actions.show-mobile { display: flex; }
+            .nav-btn { width: 100%; padding: 16px; font-size: 11px; text-align: center; }
             .brand-container { margin-bottom: 24px; }
             .luxury-card { padding: 28px 22px; }
             .field input, .field select { font-size: 16px; padding: 14px 0 8px; }
@@ -1110,7 +1122,10 @@
         <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
             <img src="logo.png" alt="Shanahan Nails">
         </button>
-        <div class="nav-actions">
+        <button type="button" class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="nav-actions" id="mainNavActions">
             <button class="nav-btn" onclick="mostrarVista('vistaPrecios')">Precios y Servicios</button>
             <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
             <button class="nav-btn solid" onclick="mostrarVista('login')">Inicio</button>
@@ -2207,7 +2222,15 @@
     }
 
     // ── Vista switch ───────────────────────────────────────
+    function toggleMobileMenu() {
+        const nav = document.getElementById("mainNavActions");
+        if(nav) nav.classList.toggle("show-mobile");
+    }
+
     function mostrarVista(id) {
+        const mainNav = document.getElementById("mainNavActions");
+        if(mainNav) mainNav.classList.remove("show-mobile");
+        
         ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin","vistaPrecios"].forEach(v => {
             const el = document.getElementById(v);
             if (el) el.style.display = "none";
