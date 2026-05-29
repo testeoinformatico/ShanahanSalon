@@ -2977,7 +2977,10 @@
             let stampHTML = "";
             if (isActive) {
                 const markClass = (isReward || isHalfReward) ? "stamp-mark gold" : "stamp-mark";
-                const icon = (isReward || isHalfReward) ? '<i class="fa-solid fa-gift"></i>' : '<i class="fa-solid fa-check"></i>';
+                let icon = '<i class="fa-solid fa-check"></i>';
+                if (isReward) icon = '<i class="fa-solid fa-gift"></i>';
+                if (isHalfReward) icon = '<span style="font-size: 15px; font-weight: 900; letter-spacing: -1px; font-family: Arial, sans-serif;">-20%</span>';
+                
                 stampHTML = `<div class="${markClass}" style="--rot: ${rot}; animation-delay: ${delay};">${icon}</div>`;
             }
             
@@ -2997,7 +3000,7 @@
             estado.className="reward-info gold";
             estado.innerHTML=`
                 <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-gift"></i> ¡Premio Desbloqueado!</div>
-                <div>Tienes un <strong>20% de descuento</strong> en esta cita.</div>
+                <div>Tienes un <strong style="font-size:18px; color:var(--accent);">20% de descuento</strong> en esta cita.</div>
             `;
         } else {
             const r = 10 - data.visitas;
