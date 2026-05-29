@@ -1096,6 +1096,38 @@
             .otp-digit { width: 28px; height: 38px; font-size: 16px; }
         }
 
+        /* ---------- JUGUETON CAT SHADOW ---------- */
+        .cat-shadow-container {
+            position: absolute;
+            bottom: 6px;
+            left: 20vw;
+            font-size: 26px;
+            color: var(--burgundy);
+            opacity: 0.12; /* Sombra sutil */
+            pointer-events: none;
+            z-index: 0;
+        }
+        .cat-shadow-container i {
+            display: block;
+            transform-origin: bottom center;
+            animation: catPlay 7s infinite ease-in-out;
+        }
+        @keyframes catPlay {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            5% { transform: translateY(-8px) rotate(-10deg); } /* Pounce up */
+            10% { transform: translateY(0) rotate(0deg); }
+            15% { transform: translateY(-4px) rotate(15deg); } /* Swat right */
+            20% { transform: translateY(0) rotate(-10deg); } /* Swat left */
+            25% { transform: translateY(0) rotate(0deg); }
+            60% { transform: translateY(0) rotate(0deg); }
+            65% { transform: scaleY(0.8) scaleX(1.1); } /* Crouch */
+            70% { transform: scaleY(1.1) scaleX(0.9) translateY(-6px); } /* Jump */
+            75% { transform: scaleY(1) scaleX(1) translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .cat-shadow-container { left: 45vw; font-size: 22px; bottom: 8px; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
             .btn-cta::after { animation: none; }
@@ -1109,6 +1141,9 @@
     <div class="fallback" id="fb" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;color:#8a1c1c;font-family:sans-serif;background:#f6ece2;z-index:5;text-align:center;padding:2rem;">Tu navegador no soporta WebGL.</div>
 
     <nav class="topbar">
+        <div class="cat-shadow-container">
+            <i class="fa-solid fa-cat"></i>
+        </div>
         <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
             <img src="logo.png" alt="Shanahan Nails">
         </button>
