@@ -57,9 +57,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--burgundy-soft);
-            background: rgba(249, 244, 240, 0.78);
-            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             -webkit-backdrop-filter: blur(14px);
             position: sticky;
             top: 0;
@@ -107,11 +107,11 @@
         .brand-container { text-align: center; margin-bottom: 36px; position: relative; }
         .brand-ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 18px; color: var(--accent); font-size: 11px; letter-spacing: 6px; text-transform: uppercase; font-weight: 500; }
         .brand-ornament::before, .brand-ornament::after { content: ''; height: 1px; width: 50px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
-        .brand-main { font-family: 'Playfair Display', serif; font-size: clamp(38px, 6vw, 52px); color: var(--burgundy); text-transform: uppercase; font-weight: 700; line-height: .95; letter-spacing: 2px; }
-        .brand-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(46px, 7vw, 64px); color: var(--burgundy); margin-top: -12px; display: block; font-weight: 400; }
+        .brand-main { font-family: 'Playfair Display', serif; font-size: clamp(38px, 6vw, 52px); color: var(--burgundy); text-transform: uppercase; font-weight: 700; line-height: .95; letter-spacing: 2px; text-shadow: 0 2px 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.9); }
+        .brand-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(46px, 7vw, 64px); color: var(--burgundy); margin-top: -12px; display: block; font-weight: 400; text-shadow: 0 2px 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.9); }
 
         /* ---------- CARD ---------- */
-        .luxury-card { background: #fff; padding: 44px 40px; box-shadow: var(--shadow-md); position: relative; border: 1px solid rgba(229, 218, 206, 0.6); }
+        .luxury-card { background: #ffffff; padding: 44px 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.12); position: relative; border: 1px solid rgba(229, 218, 206, 0.6); }
         .luxury-card::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(201, 167, 77, 0.18); pointer-events: none; }
         .luxury-card > * { position: relative; z-index: 1; }
         .card-title { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 13px; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 6px; font-weight: 600; }
@@ -1042,7 +1042,7 @@
             .mobile-menu-btn { display: block; }
             .nav-actions {
                 position: absolute; top: 100%; left: 0; right: 0;
-                background: rgba(249, 244, 240, 0.98); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+                background: #ffffff;
                 flex-direction: column; padding: 24px; gap: 16px;
                 border-bottom: 1px solid var(--burgundy-soft);
                 box-shadow: 0 10px 30px rgba(0,0,0,0.08);
