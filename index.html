@@ -708,6 +708,11 @@
         .mis-citas-section { margin-top: 28px; text-align: left; }
         .mis-citas-title { display: flex; align-items: center; justify-content: center; gap: 12px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: var(--muted); margin-bottom: 18px; }
         .mis-citas-title::before, .mis-citas-title::after { content: ''; flex: 1; max-width: 50px; height: 1px; background: var(--line); }
+        .mis-citas-tabs { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+        .mis-citas-tab { flex: 1; padding: 10px 14px; background: #fff; border: none; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all .25s var(--ease); }
+        .mis-citas-tab:not(:last-child) { border-right: 1px solid var(--line); }
+        .mis-citas-tab.active { background: var(--burgundy); color: #fff; }
+        .mis-citas-tab:hover:not(.active) { background: var(--cream); }
         .mis-citas-list { display: flex; flex-direction: column; gap: 12px; }
         .mi-cita-card { display: grid; grid-template-columns: 76px 1fr; gap: 16px; padding: 16px; background: linear-gradient(180deg, #fff, var(--cream)); border: 1px solid rgba(201, 167, 77, 0.25); text-align: left; transition: all .3s var(--ease); position: relative; overflow: hidden; }
         .mi-cita-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--burgundy); transition: width .3s var(--ease); }
@@ -1275,7 +1280,12 @@
 
                     <div class="mis-citas-section" id="misCitasSection">
                         <div class="mis-citas-title">Mis Citas</div>
+                        <div class="mis-citas-tabs">
+                            <button type="button" class="mis-citas-tab active" data-tab="proximas" onclick="switchCitasTab('proximas')"><i class="fa-regular fa-calendar" style="margin-right:5px;"></i>Próximas</button>
+                            <button type="button" class="mis-citas-tab" data-tab="historial" onclick="switchCitasTab('historial')"><i class="fa-solid fa-clock-rotate-left" style="margin-right:5px;"></i>Historial</button>
+                        </div>
                         <div class="mis-citas-list" id="misCitasList"></div>
+                        <div class="mis-citas-list" id="misCitasHistorial" style="display:none;"></div>
                     </div>
 
                     <button class="btn-cta" onclick="mostrarVista('vistaReservar')" style="margin-top:24px;">
@@ -2859,43 +2869,77 @@
 
     async function renderMisCitas(cliente) {
         const list = document.getElementById("misCitasList");
+        const histList = document.getElementById("misCitasHistorial");
         if (!list) return;
         list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-hourglass-half"></i><div class="label">Cargando…</div></div>`;
+        if (histList) histList.innerHTML = list.innerHTML;
         try {
-            // Buscar por teléfono (campo común) — el email es para auth
             const { data } = await sb.from("citas")
                 .select("*").eq("telefono", cliente.telefono)
-                .order("fecha",{ascending:true}).order("hora",{ascending:true});
-            const upcoming = (data||[]).filter(c=>c.fecha>=fmtISO(today) && (c.estado||"pendiente")!=="cancelada");
+                .order("fecha",{ascending:false}).order("hora",{ascending:false});
+            const allCitas = data || [];
+            const todayISO = fmtISO(today);
+
+            // Próximas: fecha >= hoy y no cancelada
+            const upcoming = allCitas
+                .filter(c => c.fecha >= todayISO && (c.estado||"pendiente") !== "cancelada")
+                .sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+
+            // Historial: fecha < hoy O completada/cancelada
+            const history = allCitas
+                .filter(c => c.fecha < todayISO || (c.estado||"pendiente") === "completada" || (c.estado||"pendiente") === "cancelada");
+
+            // Render próximas
             if (!upcoming.length) {
-                list.innerHTML=`<div class="mis-citas-empty"><i class="fa-regular fa-calendar"></i><div class="label">No tienes citas próximas</div></div>`;
-                return;
+                list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-calendar"></i><div class="label">No tienes citas próximas</div></div>`;
+            } else {
+                list.innerHTML = upcoming.map(c => renderCitaCard(c, cliente, false)).join("");
             }
-            list.innerHTML = upcoming.map(c => {
-                const dt = new Date(c.fecha+"T00:00:00");
-                const dias=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-                const fullDay=`${dias[dt.getDay()]}, ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`;
-                const hora=(c.hora||"").slice(0,5);
-                const estado=c.estado||"pendiente";
-                const msg=`Hola Shanahan Nails ✨\nSoy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} a las ${hora}h. ¿Podríamos cambiar?`;
-                return `<div class="mi-cita-card ${estado}">
-                    <div class="mi-cita-date"><span class="day">${dt.getDate()}</span><span class="month">${MONTHS_ES[dt.getMonth()].slice(0,3)}</span></div>
-                    <div class="mi-cita-info">
-                        <span class="weekday">${fullDay}</span>
-                        ${c.servicio?`<span style="font-size:10.5px;color:var(--accent);font-weight:600;">${c.servicio}</span>`:""}
-                        <span class="hora">${hora} h${c.duracion_minutos?` · ${durStr(c.duracion_minutos)}`:""}  </span>
-                        <span class="estado-pill ${estado}">${estado}</span>
-                    </div>
-                    <div class="mi-cita-actions">
-                        <a href="https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}" target="_blank" class="btn-whatsapp">
-                            <i class="fa-brands fa-whatsapp"></i> Cambiar
-                        </a>
-                    </div>
-                </div>`;
-            }).join("");
+
+            // Render historial
+            if (histList) {
+                if (!history.length) {
+                    histList.innerHTML = `<div class="mis-citas-empty"><i class="fa-solid fa-clock-rotate-left"></i><div class="label">Aún no tienes citas anteriores</div></div>`;
+                } else {
+                    histList.innerHTML = history.map(c => renderCitaCard(c, cliente, true)).join("");
+                }
+            }
         } catch(e) {
-            list.innerHTML=`<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar las citas</div></div>`;
+            list.innerHTML = `<div class="mis-citas-empty"><i class="fa-regular fa-circle-xmark"></i><div class="label">No se pudieron cargar las citas</div></div>`;
         }
+    }
+
+    function renderCitaCard(c, cliente, isHistory) {
+        const dt = new Date(c.fecha+"T00:00:00");
+        const dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+        const fullDay = `${dias[dt.getDay()]}, ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`;
+        const hora = (c.hora||"").slice(0,5);
+        const estado = c.estado||"pendiente";
+        const msg = `Hola Shanahan Nails ✨\nSoy ${cliente.nombre}, quería modificar mi cita del ${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} a las ${hora}h. ¿Podríamos cambiar?`;
+        const actions = isHistory ? "" : `
+            <div class="mi-cita-actions">
+                <a href="https://wa.me/${SALON_WHATSAPP}?text=${encodeURIComponent(msg)}" target="_blank" class="btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp"></i> Cambiar
+                </a>
+            </div>`;
+        return `<div class="mi-cita-card ${estado}" ${isHistory ? 'style="opacity:.85;"' : ''}>
+            <div class="mi-cita-date"><span class="day">${dt.getDate()}</span><span class="month">${MONTHS_ES[dt.getMonth()].slice(0,3)}</span></div>
+            <div class="mi-cita-info">
+                <span class="weekday">${fullDay}</span>
+                ${c.servicio ? `<span style="font-size:10.5px;color:var(--accent);font-weight:600;">${c.servicio}</span>` : ""}
+                <span class="hora">${hora} h${c.duracion_minutos ? ` · ${durStr(c.duracion_minutos)}` : ""}  </span>
+                <span class="estado-pill ${estado}">${estado}</span>
+            </div>
+            ${actions}
+        </div>`;
+    }
+
+    function switchCitasTab(tab) {
+        document.querySelectorAll(".mis-citas-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+        const listProx = document.getElementById("misCitasList");
+        const listHist = document.getElementById("misCitasHistorial");
+        if (listProx) listProx.style.display = tab === "proximas" ? "flex" : "none";
+        if (listHist) listHist.style.display = tab === "historial" ? "flex" : "none";
     }
 
     // ══════════════════════════════════════════════════════
