@@ -688,31 +688,18 @@
         @keyframes viewIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ---------- ACCESO SALON ---------- */
-        .access-card { background: linear-gradient(160deg, #2D1011 0%, var(--burgundy) 55%, #5C161A 100%); color: #fff; padding: 0; position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(146, 31, 35, 0.35); border: none; }
-        .access-card::before { content: ''; position: absolute; inset: 14px; border: 1px solid rgba(201, 167, 77, 0.35); pointer-events: none; z-index: 1; }
-        .access-card::after { content: ''; position: absolute; top: -100px; right: -100px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(201, 167, 77, 0.18) 0%, transparent 65%); pointer-events: none; }
-        .access-hero { padding: 38px 38px 28px; text-align: center; position: relative; z-index: 2; }
-        .access-icon { width: 78px; height: 78px; margin: 0 auto 20px; background: linear-gradient(135deg, var(--accent), var(--accent-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #2D1011; box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45); position: relative; animation: pulseGold 3s ease-in-out infinite; }
-        .access-icon::before { content: ''; position: absolute; inset: -6px; border: 1px solid rgba(201, 167, 77, 0.4); border-radius: 50%; }
-        .access-icon::after { content: ''; position: absolute; inset: -14px; border: 1px solid rgba(201, 167, 77, 0.18); border-radius: 50%; }
-        @keyframes pulseGold { 0%,100% { box-shadow: 0 12px 30px rgba(201, 167, 77, 0.45); } 50% { box-shadow: 0 18px 38px rgba(201, 167, 77, 0.65); } }
-        .access-hero .ornament { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent-light); font-weight: 500; margin-bottom: 12px; }
-        .access-hero .ornament::before, .access-hero .ornament::after { content: ''; height: 1px; width: 30px; background: linear-gradient(90deg, transparent, var(--accent-light), transparent); }
-        .access-hero h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: #fff; margin: 0 0 4px; font-weight: 600; }
-        .access-hero .accent-italic { font-family: 'Playfair Display', serif; font-style: italic; color: var(--accent-light); font-size: 36px; display: block; margin-top: -6px; margin-bottom: 8px; }
-        .access-hero p { color: rgba(255,255,255,.65); font-size: 12px; letter-spacing: .8px; margin: 0 0 6px; }
-        .access-form { background: rgba(255,255,255,.04); border-top: 1px solid rgba(201, 167, 77, 0.25); padding: 32px 38px 36px; position: relative; z-index: 2; }
-        .access-form .field input { color: #fff; border-bottom-color: rgba(255,255,255,.18); font-size: 14px; }
-        .access-form .field label { color: rgba(255,255,255,.55); }
-        .access-form .field input:focus { border-bottom-color: var(--accent); }
-        .access-form .field input:focus + label, .access-form .field input:not(:placeholder-shown) + label { color: var(--accent); }
-        .access-form .btn-luxury { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: #2D1011; box-shadow: 0 12px 28px rgba(201, 167, 77, .35); }
-        .access-form .btn-luxury::after { background: linear-gradient(135deg, #B89238, var(--accent)); }
-        .access-form .btn-luxury:hover { box-shadow: 0 18px 36px rgba(201, 167, 77, .5); }
-        .access-back { text-align: center; margin-top: 20px; display: block; background: none; border: none; color: rgba(255,255,255,.5); font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; cursor: pointer; width: 100%; transition: color .3s var(--ease); }
-        .access-back:hover { color: var(--accent-light); }
-        .access-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 22px; padding-top: 22px; border-top: 1px solid rgba(201, 167, 77, 0.18); }
-        .access-feature { text-align: center; color: rgba(255,255,255,.7); font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; }
+        .access-card { background: #ffffff; color: var(--dark-text); padding: 0; position: relative; border: 1px solid rgba(229, 218, 206, 0.6); }
+        .access-hero { padding: 38px 38px 10px; text-align: center; position: relative; z-index: 2; }
+        .access-icon { width: 64px; height: 64px; margin: 0 auto 20px; background: rgba(146, 31, 35, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--burgundy); }
+        .access-hero .ornament { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 12px; }
+        .access-hero .ornament::before, .access-hero .ornament::after { content: ''; height: 1px; width: 30px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+        .access-hero h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--burgundy); margin: 0 0 4px; font-weight: 600; }
+        .access-hero .accent-italic { font-family: 'Playfair Display', serif; font-style: italic; color: var(--burgundy); font-size: 36px; display: block; margin-top: -6px; margin-bottom: 8px; }
+        .access-hero p { color: var(--muted); font-size: 12px; letter-spacing: .8px; margin: 0 0 6px; }
+        .access-form { background: #fff; padding: 10px 38px 36px; position: relative; z-index: 2; }
+        .access-back { text-align: center; margin-top: 20px; display: block; background: none; border: none; color: var(--burgundy); font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; cursor: pointer; width: 100%; transition: color .3s var(--ease); }
+        .access-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line); }
+        .access-feature { text-align: center; color: var(--muted); font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; }
         .access-feature i { display: block; font-size: 16px; color: var(--accent-light); margin-bottom: 6px; }
 
         /* ---------- MIS CITAS (vista cliente) ---------- */
@@ -1115,22 +1102,6 @@
             .access-icon { animation: none; }
         }
 
-        /* ---------- FLOATING FLOWERS ---------- */
-        .floating-flower {
-            position: fixed;
-            color: var(--burgundy);
-            opacity: 0.45;
-            pointer-events: none;
-            z-index: 0;
-            animation: floatFlower linear infinite;
-            filter: drop-shadow(0 4px 6px rgba(146, 31, 35, 0.2));
-        }
-        @keyframes floatFlower {
-            0% { transform: translate(0, 110vh) rotate(0deg) scale(0.8); opacity: 0; }
-            10% { opacity: 0.45; }
-            90% { opacity: 0.45; }
-            100% { transform: translate(150px, -10vh) rotate(360deg) scale(1.1); opacity: 0; }
-        }
     </style>
 </head>
 <body>
@@ -4518,23 +4489,6 @@
       requestAnimationFrame(renderGL);
     }
     if(gl) renderGL();
-
-    // ══════════════════════════════════════════════════════
-    //  FLORES FLOTANTES
-    // ══════════════════════════════════════════════════════
-    function createFlowers() {
-        const numFlowers = 12; // Cantidad de flores
-        for(let i=0; i<numFlowers; i++) {
-            let f = document.createElement('i');
-            f.className = 'fa-solid fa-spa floating-flower';
-            f.style.left = (Math.random() * 100) + 'vw';
-            f.style.animationDuration = (Math.random() * 25 + 20) + 's'; // Entre 20 y 45 seg
-            f.style.animationDelay = (Math.random() * -45) + 's'; // Inician en diferentes puntos
-            f.style.fontSize = (Math.random() * 14 + 16) + 'px'; // Entre 16px y 30px
-            document.body.appendChild(f);
-        }
-    }
-    createFlowers();
 
 </script>
 </body>
