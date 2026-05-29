@@ -1114,6 +1114,23 @@
             .btn-cta::after { animation: none; }
             .access-icon { animation: none; }
         }
+
+        /* ---------- FLOATING FLOWERS ---------- */
+        .floating-flower {
+            position: fixed;
+            color: var(--burgundy);
+            opacity: 0.45;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatFlower linear infinite;
+            filter: drop-shadow(0 4px 6px rgba(146, 31, 35, 0.2));
+        }
+        @keyframes floatFlower {
+            0% { transform: translate(0, 110vh) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.45; }
+            90% { opacity: 0.45; }
+            100% { transform: translate(150px, -10vh) rotate(360deg) scale(1.1); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -4330,10 +4347,11 @@
       cuv *= mix(2.0, 4.0, depth);
       cuv += vec2(u_time * 0.02, u_time * 0.15);
 
-      float swellX = sin(uv.y * 6.0 + u_time * 1.4 + uv.x * 2.0);
-      float swell = sin(uv.y * 5.0 + u_time * 1.2 - uv.x * 1.0)
-                  + 0.5 * sin(uv.y * 9.0 + u_time * 1.8 + uv.x * 1.5);
-      cuv += vec2(swellX * 0.15, swell * 0.2);   
+      cuv += vec2(u_time * 0.02, u_time * 0.15);
+
+      // Eliminadas las olas que van hacia abajo (swellX y swell)
+      float swellX = 0.0;
+      float swell = 0.0;
 
       vec2 distort = vec2(0.0);
       float ripWave = 0.0;   
@@ -4375,8 +4393,7 @@
       light = pow(light, 1.4) * 1.8;
       light *= 0.4 + 1.2 * fbm(cuv * 0.2 + u_time * 0.03);
       light += clamp(ripWave, 0.0, 1.5) * 0.05; 
-      float crest = smoothstep(0.4, 1.0, swell) * (1.0 - smoothstep(0.0, 0.7, depth));
-      light += crest * 0.2;
+      // Eliminadas las crestas de las olas (crest)
       light = max(light, 0.0);   
       light *= mix(1.0, 0.12, smoothstep(0.35, 1.0, depth));
 
@@ -4501,6 +4518,23 @@
       requestAnimationFrame(renderGL);
     }
     if(gl) renderGL();
+
+    // ══════════════════════════════════════════════════════
+    //  FLORES FLOTANTES
+    // ══════════════════════════════════════════════════════
+    function createFlowers() {
+        const numFlowers = 12; // Cantidad de flores
+        for(let i=0; i<numFlowers; i++) {
+            let f = document.createElement('i');
+            f.className = 'fa-solid fa-spa floating-flower';
+            f.style.left = (Math.random() * 100) + 'vw';
+            f.style.animationDuration = (Math.random() * 25 + 20) + 's'; // Entre 20 y 45 seg
+            f.style.animationDelay = (Math.random() * -45) + 's'; // Inician en diferentes puntos
+            f.style.fontSize = (Math.random() * 14 + 16) + 'px'; // Entre 16px y 30px
+            document.body.appendChild(f);
+        }
+    }
+    createFlowers();
 
 </script>
 </body>
