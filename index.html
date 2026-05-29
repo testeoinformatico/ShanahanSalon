@@ -586,15 +586,71 @@
         /* ---------- STAMPS (Cliente) ---------- */
         .stamps-wrap { background: linear-gradient(180deg, #fff, var(--cream)); border: 1px solid rgba(201, 167, 77, 0.25); padding: 30px 26px; margin: 28px 0 24px; }
         .stamps-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; }
-        .stamps-header .label { font-family: 'Playfair Display', serif; color: var(--burgundy); font-style: italic; font-size: 14px; }
-        .stamps-header .count { color: var(--muted); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
-        .stamps-header .count strong { color: var(--burgundy); font-weight: 600; }
-        .stamps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .stamp-circle { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #E5DACE; background: #fff; font-size: 16px; position: relative; transition: all .4s var(--ease); }
-        .stamp-circle.active { background: var(--burgundy); color: #fff; border-color: var(--burgundy); box-shadow: 0 6px 16px rgba(146, 31, 35, .25); transform: scale(1.05); }
-        .stamp-circle.active::after { content: ''; position: absolute; inset: 3px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; }
-        .stamp-circle.reward { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; border-color: var(--accent); box-shadow: 0 8px 22px rgba(201, 167, 77, .35); transform: scale(1.1); }
-        .reward-info { text-align: center; padding: 20px 18px; background: var(--burgundy-soft); border-left: 2px solid var(--burgundy); color: var(--burgundy); font-size: 12.5px; letter-spacing: .8px; font-weight: 500; margin-top: 10px; }
+        /* ---------- 3D LOYALTY CARD ---------- */
+        .loyalty-3d-card {
+            background: #FFFaf2;
+            border-radius: 12px;
+            padding: 30px 20px;
+            position: relative;
+            margin: 20px 10px 30px;
+            border: 1px solid #fff;
+            /* 3D Shadows and perspective */
+            box-shadow: 
+                inset 0 0 20px rgba(200, 180, 160, 0.2),
+                0 15px 35px -5px rgba(146, 31, 35, 0.15),
+                0 5px 15px rgba(0, 0, 0, 0.08);
+            transform: perspective(800px) rotateX(4deg);
+            transition: transform 0.3s ease;
+        }
+        .loyalty-3d-card:hover {
+            transform: perspective(800px) rotateX(0deg) translateY(-5px);
+        }
+        
+        .stamps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 15px; }
+        
+        /* Empty stamp guides (dashed circles on paper) */
+        .stamp-guide { 
+            aspect-ratio: 1; 
+            border: 2px dashed #D0C3B5; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* The actual red rubber stamp */
+        .stamp-mark {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #D32F2F; /* Classic stamp red */
+            border-radius: 50%;
+            color: #D32F2F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            opacity: 0;
+            transform: scale(3) rotate(-20deg);
+            /* Animation for stamping */
+            animation: stamp-drop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        /* The 10th stamp (gold reward) */
+        .stamp-mark.gold {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        @keyframes stamp-drop {
+            0% { transform: scale(3) rotate(-20deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1) rotate(var(--rot, -5deg)); opacity: 0.85; }
+        }
+
+        .reward-info { text-align: center; padding: 20px 18px; background: var(--burgundy-soft); border-left: 2px solid var(--burgundy); color: var(--burgundy); font-size: 12.5px; letter-spacing: .8px; font-weight: 500; margin-top: 20px; }
         .reward-info.gold { background: rgba(201, 167, 77, 0.10); border-left-color: var(--accent); color: #8a6f25; }
 
         /* ---------- ADMIN STATS & TABLES ---------- */
@@ -1400,7 +1456,7 @@
                     <h2 id="clienteNombre" style="font-family:'Playfair Display',serif; color:var(--burgundy); font-size:34px; margin:0 0 4px;">Cliente</h2>
                     <p class="card-subtitle" style="margin-bottom:0;">Tu tarjeta de fidelización</p>
 
-                    <div class="stamps-wrap">
+                    <div class="loyalty-3d-card">
                         <div class="stamps-header">
                             <span class="label">Sellos acumulados</span>
                             <span class="count"><strong id="stampCountText">0</strong> / 10</span>
@@ -2903,12 +2959,28 @@
         document.getElementById("stampCountText").innerText = data.visitas;
         const grid = document.getElementById("stampsGrid");
         grid.innerHTML = "";
+        
+        // Random rotations for a realistic hand-stamped look
+        const rotations = [-12, 5, -8, 14, -5, 8, -15, 3, -4, 10];
+        
         for (let i=1;i<=10;i++) {
             const isReward = (i===10 && data.visitas>=10);
             const isActive = (i<=data.visitas);
-            const cls = isActive ? (isReward ? "reward" : "active") : "";
-            const icon = isReward ? '<i class="fa-solid fa-gift"></i>' : '<i class="fa-solid fa-heart"></i>';
-            grid.innerHTML += `<div class="stamp-circle ${cls}">${icon}</div>`;
+            
+            // Randomize rotation slightly for each stamp
+            const rot = rotations[i-1] + "deg";
+            
+            // Stagger animation delay so they stamp one by one
+            const delay = (i * 0.15) + "s";
+            
+            let stampHTML = "";
+            if (isActive) {
+                const markClass = isReward ? "stamp-mark gold" : "stamp-mark";
+                const icon = isReward ? '<i class="fa-solid fa-gift"></i>' : '<i class="fa-solid fa-check"></i>';
+                stampHTML = `<div class="${markClass}" style="--rot: ${rot}; animation-delay: ${delay};">${icon}</div>`;
+            }
+            
+            grid.innerHTML += `<div class="stamp-guide">${stampHTML}</div>`;
         }
         const estado=document.getElementById("clienteEstado");
         if (data.visitas>=10) {
