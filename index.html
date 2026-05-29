@@ -197,6 +197,11 @@
             color: var(--muted); background: var(--cream-deep); padding: 3px 8px;
             white-space: nowrap; font-weight: 600;
         }
+        .servicio-opcion-precio {
+            font-size: 13px; font-weight: 700; color: var(--burgundy);
+            font-family: 'Playfair Display', serif; white-space: nowrap;
+        }
+        .servicio-opcion.selected .servicio-opcion-precio { color: var(--burgundy); }
         .servicio-opcion.selected .servicio-opcion-dur { background: var(--burgundy); color: #fff; }
         .extra-addon { border-style: dashed !important; border-color: rgba(146,31,35,.25) !important; background: #fff !important; }
         .extra-addon.selected { border-style: solid !important; border-color: var(--burgundy) !important; background: rgba(146,31,35,.06) !important; }
@@ -1436,31 +1441,34 @@
                     </div>
                     <div class="servicio-grid" id="servicioGrid">
                         <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Manicura Rusa</div>
-                            <div class="servicio-opcion" data-val="Mani Rusa · Nivelación + Color Liso" data-dur="75"><span class="servicio-opcion-nombre">Nivelación + Color Liso</span><span class="servicio-opcion-dur">1 h 15 min</span></div>
-                            <div class="servicio-opcion" data-val="Mani Rusa · Nivelación + Decoración Sencilla" data-dur="105"><span class="servicio-opcion-nombre">Nivelación + Decoración Sencilla</span><span class="servicio-opcion-dur">1 h 45 min</span></div>
-                            <div class="servicio-opcion" data-val="Mani Rusa · Nivelación + Decoración Elaborada" data-dur="135"><span class="servicio-opcion-nombre">Nivelación + Decoración Elaborada</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
-                            <div class="servicio-opcion" data-val="Mani Rusa · Extensión Gel + Color Liso" data-dur="120"><span class="servicio-opcion-nombre">Extensión de Gel + Color Liso</span><span class="servicio-opcion-dur">2 h</span></div>
-                            <div class="servicio-opcion" data-val="Mani Rusa · Extensión Gel + Decoración Sencilla" data-dur="150"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Sencilla</span><span class="servicio-opcion-dur">2 h 30 min</span></div>
-                            <div class="servicio-opcion" data-val="Mani Rusa · Extensión Gel + Decoración Elaborada" data-dur="180"><span class="servicio-opcion-nombre">Extensión de Gel + Decoración Elaborada</span><span class="servicio-opcion-dur">3 h</span></div>
+                            <div class="servicio-grupo-titulo">Manicura Rusa · Nivelación</div>
+                            <div class="servicio-opcion" data-val="Mani Rusa Nivelación · Color Liso" data-dur="75"><span class="servicio-opcion-nombre">Color Liso</span><span class="servicio-opcion-precio">22€</span><span class="servicio-opcion-dur">1 h 15 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa Nivelación · Decoración Sencilla" data-dur="105"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-precio">25€</span><span class="servicio-opcion-dur">1 h 45 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa Nivelación · Decoración Elaborada" data-dur="135"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-precio">30€</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
+                        </div>
+                        <div class="servicio-grupo">
+                            <div class="servicio-grupo-titulo">Manicura Rusa · Extensión de Gel</div>
+                            <div class="servicio-opcion" data-val="Mani Rusa Ext. Gel · Color Liso" data-dur="120"><span class="servicio-opcion-nombre">Color Liso</span><span class="servicio-opcion-precio">32€</span><span class="servicio-opcion-dur">2 h</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa Ext. Gel · Decoración Sencilla" data-dur="150"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-precio">35€</span><span class="servicio-opcion-dur">2 h 30 min</span></div>
+                            <div class="servicio-opcion" data-val="Mani Rusa Ext. Gel · Decoración Elaborada" data-dur="180"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-precio">40€</span><span class="servicio-opcion-dur">3 h</span></div>
                         </div>
                         <div class="servicio-grupo">
                             <div class="servicio-grupo-titulo">Pedicura Macro</div>
-                            <div class="servicio-opcion" data-val="Pedi Macro · Esmalte Semipermanente" data-dur="60"><span class="servicio-opcion-nombre">Con Esmalte Semipermanente</span><span class="servicio-opcion-dur">1 h</span></div>
-                            <div class="servicio-opcion" data-val="Pedi Macro · Semipermanente + Tratamiento Durezas" data-dur="80"><span class="servicio-opcion-nombre">Semipermanente + Tratamiento Durezas</span><span class="servicio-opcion-dur">1 h 20 min</span></div>
-                            <div class="servicio-opcion" data-val="Pedi Macro · Solo Limpieza" data-dur="40"><span class="servicio-opcion-nombre">Solo Limpieza</span><span class="servicio-opcion-dur">40 min</span></div>
+                            <div class="servicio-opcion" data-val="Pedicura Macro · Esmalte Semipermanente" data-dur="60"><span class="servicio-opcion-nombre">Con Esmalte Semipermanente</span><span class="servicio-opcion-precio">25€</span><span class="servicio-opcion-dur">1 h</span></div>
+                            <div class="servicio-opcion" data-val="Pedicura Macro · Semipermanente + Trat. Durezas" data-dur="80"><span class="servicio-opcion-nombre">Semipermanente + Trat. Durezas</span><span class="servicio-opcion-precio">30€</span><span class="servicio-opcion-dur">1 h 20 min</span></div>
+                            <div class="servicio-opcion" data-val="Pedicura · Solo Limpieza" data-dur="40"><span class="servicio-opcion-nombre">Solo Limpieza</span><span class="servicio-opcion-precio">17€</span><span class="servicio-opcion-dur">40 min</span></div>
                         </div>
                         <div class="servicio-grupo">
                             <div class="servicio-grupo-titulo">Combos Mani + Pedi</div>
-                            <div class="servicio-opcion" data-val="Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente" data-dur="135"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
-                            <div class="servicio-opcion" data-val="Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente" data-dur="195"><span class="servicio-opcion-nombre">Mani Rusa Extensión Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">3 h 15 min</span></div>
+                            <div class="servicio-opcion" data-val="Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente" data-dur="135"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-precio">45€</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
+                            <div class="servicio-opcion" data-val="Combo · Mani Rusa Ext. Gel + Pedi Macro Semipermanente" data-dur="195"><span class="servicio-opcion-nombre">Mani Rusa Ext. Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-precio">55€</span><span class="servicio-opcion-dur">3 h 15 min</span></div>
                         </div>
                         <div class="servicio-grupo extras-grupo">
                             <div class="servicio-grupo-titulo" style="color:var(--burgundy);">
                                 <i class="fa-solid fa-plus-circle" style="margin-right:4px;"></i>Extras (añadir al servicio)
                             </div>
-                            <div class="servicio-opcion extra-addon" data-extra="Decoración Sencilla" data-extradur="20"><span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>Decoración Sencilla</span><span class="servicio-opcion-dur">+20 min</span></div>
-                            <div class="servicio-opcion extra-addon" data-extra="Decoración Elaborada" data-extradur="40"><span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>Decoración Elaborada</span><span class="servicio-opcion-dur">+40 min</span></div>
+                            <div class="servicio-opcion extra-addon" data-extra="Decoración Sencilla" data-extradur="20"><span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>Decoración Sencilla</span><span class="servicio-opcion-precio">+3€</span><span class="servicio-opcion-dur">+20 min</span></div>
+                            <div class="servicio-opcion extra-addon" data-extra="Decoración Elaborada" data-extradur="40"><span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>Decoración Elaborada</span><span class="servicio-opcion-precio">+8€</span><span class="servicio-opcion-dur">+40 min</span></div>
                         </div>
                     </div>
 
@@ -3779,26 +3787,28 @@
 
     // Lista de servicios para el selector (reutilizamos los que ya existen en el HTML del cliente)
     const NC_SERVICIOS = [
-        { grupo: "Manicura Rusa", items: [
-            { val: "Mani Rusa · Nivelación + Color Liso", nombre: "Nivelación + Color Liso", dur: 75, durTxt: "1 h 15 min" },
-            { val: "Mani Rusa · Nivelación + Decoración Sencilla", nombre: "Nivelación + Deco. Sencilla", dur: 105, durTxt: "1 h 45 min" },
-            { val: "Mani Rusa · Nivelación + Decoración Elaborada", nombre: "Nivelación + Deco. Elaborada", dur: 135, durTxt: "2 h 15 min" },
-            { val: "Mani Rusa · Extensión Gel + Color Liso", nombre: "Ext. Gel + Color Liso", dur: 120, durTxt: "2 h" },
-            { val: "Mani Rusa · Extensión Gel + Decoración Sencilla", nombre: "Ext. Gel + Deco. Sencilla", dur: 150, durTxt: "2 h 30 min" },
-            { val: "Mani Rusa · Extensión Gel + Decoración Elaborada", nombre: "Ext. Gel + Deco. Elaborada", dur: 180, durTxt: "3 h" }
+        { grupo: "Mani Rusa · Nivelación", items: [
+            { val: "Mani Rusa Nivelación · Color Liso", nombre: "Color Liso", dur: 75, durTxt: "1 h 15 min", precio: "22€" },
+            { val: "Mani Rusa Nivelación · Decoración Sencilla", nombre: "Deco. Sencilla", dur: 105, durTxt: "1 h 45 min", precio: "25€" },
+            { val: "Mani Rusa Nivelación · Decoración Elaborada", nombre: "Deco. Elaborada", dur: 135, durTxt: "2 h 15 min", precio: "30€" }
+        ]},
+        { grupo: "Mani Rusa · Ext. Gel", items: [
+            { val: "Mani Rusa Ext. Gel · Color Liso", nombre: "Color Liso", dur: 120, durTxt: "2 h", precio: "32€" },
+            { val: "Mani Rusa Ext. Gel · Decoración Sencilla", nombre: "Deco. Sencilla", dur: 150, durTxt: "2 h 30 min", precio: "35€" },
+            { val: "Mani Rusa Ext. Gel · Decoración Elaborada", nombre: "Deco. Elaborada", dur: 180, durTxt: "3 h", precio: "40€" }
         ]},
         { grupo: "Pedicura Macro", items: [
-            { val: "Pedi Macro · Esmalte Semipermanente", nombre: "Semipermanente", dur: 60, durTxt: "1 h" },
-            { val: "Pedi Macro · Semipermanente + Tratamiento Durezas", nombre: "Semiperm. + Durezas", dur: 80, durTxt: "1 h 20 min" },
-            { val: "Pedi Macro · Solo Limpieza", nombre: "Solo Limpieza", dur: 40, durTxt: "40 min" }
+            { val: "Pedicura Macro · Esmalte Semipermanente", nombre: "Semipermanente", dur: 60, durTxt: "1 h", precio: "25€" },
+            { val: "Pedicura Macro · Semipermanente + Trat. Durezas", nombre: "Semiperm. + Durezas", dur: 80, durTxt: "1 h 20 min", precio: "30€" },
+            { val: "Pedicura · Solo Limpieza", nombre: "Solo Limpieza", dur: 40, durTxt: "40 min", precio: "17€" }
         ]},
         { grupo: "Combos", items: [
-            { val: "Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente", nombre: "Mani Nivel. + Pedi Semip.", dur: 135, durTxt: "2 h 15 min" },
-            { val: "Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente", nombre: "Mani Ext.Gel + Pedi Semip.", dur: 195, durTxt: "3 h 15 min" }
+            { val: "Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente", nombre: "Mani Nivel. + Pedi Semip.", dur: 135, durTxt: "2 h 15 min", precio: "45€" },
+            { val: "Combo · Mani Rusa Ext. Gel + Pedi Macro Semipermanente", nombre: "Mani Ext.Gel + Pedi Semip.", dur: 195, durTxt: "3 h 15 min", precio: "55€" }
         ]},
         { grupo: "Extras", isExtras: true, items: [
-            { val: "Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min" },
-            { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min" }
+            { val: "Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min", precio: "+3€" },
+            { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min", precio: "+8€" }
         ]}
     ];
 
