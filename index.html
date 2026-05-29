@@ -1753,6 +1753,28 @@
                 </div>
             </div>
 
+            <!-- Notificaciones por correo -->
+            <div class="col-12 col-lg-4">
+                <div class="luxury-card view-anim" style="position:sticky;top:20px;">
+                    <div class="admin-header" style="margin-bottom:16px;">
+                        <h5><i class="fa-solid fa-bell"></i> Notificaciones</h5>
+                    </div>
+                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Introduce tu correo para recibir un aviso cada vez que una clienta solicite una cita.</p>
+                    <div class="field">
+                        <input type="email" id="adminNotifEmail" placeholder=" " autocomplete="email">
+                        <label>Correo de notificaciones</label>
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                    </div>
+                    <div id="notifEmailStatus" style="font-size:11px;color:var(--muted);margin:-8px 0 14px 2px;display:none;">
+                        <i class="fa-solid fa-circle-check" style="color:#4A7C59;margin-right:4px;"></i> <span></span>
+                    </div>
+                    <button type="button" class="btn-luxury" onclick="guardarEmailNotificacion()" id="btnGuardarNotifEmail" style="width:100%;">
+                        <span><i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Guardar correo</span>
+                        <span class="spinner"></span>
+                    </button>
+                </div>
+            </div>
+
             </div></section>
 
     </main>
@@ -2906,10 +2928,39 @@
             if (!agendaInitialized) { try{initAgenda();}catch(e){} agendaInitialized=true; }
             try { initDispPanel(); } catch(e){}
             try { await cargarDisponibles(); } catch(e){}
+            try { await cargarEmailNotificacion(); } catch(e){}
             renderAdmin();
         } catch(e) {
             toast("Error cargando datos: "+(e.message||""),"error");
         }
+    }
+
+    // ── Correo de notificaciones ─────────────────────────────
+    async function cargarEmailNotificacion() {
+        const { data } = await sb.from("configuracion").select("valor").eq("clave","notif_email").maybeSingle();
+        const input = document.getElementById("adminNotifEmail");
+        const status = document.getElementById("notifEmailStatus");
+        if (data && data.valor) {
+            if (input) input.value = data.valor;
+            if (status) { status.style.display="block"; status.querySelector("span").textContent = "Guardado: " + data.valor; }
+        } else {
+            if (status) status.style.display = "none";
+        }
+    }
+
+    async function guardarEmailNotificacion() {
+        const email = (document.getElementById("adminNotifEmail")?.value||"").trim();
+        if (!email || !email.includes("@")) return toast("Introduce un correo válido","error");
+        setBtnLoading("btnGuardarNotifEmail", true);
+        try {
+            // Upsert: si ya existe la clave, la actualiza; si no, la crea
+            const { error } = await sb.from("configuracion").upsert({ clave: "notif_email", valor: email }, { onConflict: "clave" });
+            if (error) { toast("No se pudo guardar: "+error.message,"error"); return; }
+            toast("Correo de notificaciones guardado","success");
+            const status = document.getElementById("notifEmailStatus");
+            if (status) { status.style.display="block"; status.querySelector("span").textContent = "Guardado: " + email; }
+        } catch(e) { toast("Error al guardar","error"); }
+        finally { setBtnLoading("btnGuardarNotifEmail", false); }
     }
 
     // ── Agenda admin ───────────────────────────────────────
