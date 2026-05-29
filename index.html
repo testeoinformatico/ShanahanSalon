@@ -1097,35 +1097,80 @@
         }
 
         /* ---------- JUGUETON CAT SHADOW ---------- */
+        .cat-scene {
+            position: absolute;
+            bottom: 0;
+            left: 140px;
+            right: 400px;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
         .cat-shadow-container {
             position: absolute;
             bottom: 6px;
-            left: 20vw;
             font-size: 26px;
             color: var(--burgundy);
-            opacity: 0.12; /* Sombra sutil */
-            pointer-events: none;
-            z-index: 0;
+            opacity: 0.12;
+            animation: moveCat 10s infinite cubic-bezier(0.25, 1, 0.5, 1);
         }
         .cat-shadow-container i {
             display: block;
             transform-origin: bottom center;
-            animation: catPlay 7s infinite ease-in-out;
+            animation: catAction 10s infinite;
         }
-        @keyframes catPlay {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            5% { transform: translateY(-8px) rotate(-10deg); } /* Pounce up */
-            10% { transform: translateY(0) rotate(0deg); }
-            15% { transform: translateY(-4px) rotate(15deg); } /* Swat right */
-            20% { transform: translateY(0) rotate(-10deg); } /* Swat left */
-            25% { transform: translateY(0) rotate(0deg); }
-            60% { transform: translateY(0) rotate(0deg); }
-            65% { transform: scaleY(0.8) scaleX(1.1); } /* Crouch */
-            70% { transform: scaleY(1.1) scaleX(0.9) translateY(-6px); } /* Jump */
-            75% { transform: scaleY(1) scaleX(1) translateY(0); }
+        .fly-shadow {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--burgundy);
+            border-radius: 50%;
+            opacity: 0.25;
+            animation: moveFly 10s infinite linear;
         }
+
+        @keyframes moveCat {
+            0%, 15% { left: 5%; transform: scaleX(1); }
+            25%, 35% { left: 35%; transform: scaleX(1); }
+            40%, 50% { left: 70%; transform: scaleX(1); }
+            55%, 65% { left: 70%; transform: scaleX(-1); }
+            80% { left: 20%; transform: scaleX(-1); }
+            90% { left: 5%; transform: scaleX(-1); }
+            95%, 100% { left: 5%; transform: scaleX(1); }
+        }
+
+        @keyframes catAction {
+            0%, 15% { transform: translateY(0); }
+            18% { transform: scaleY(0.85) scaleX(1.1); }
+            25% { transform: scaleY(0.9) scaleX(1.05); }
+            35% { transform: scaleY(0.8) scaleX(1.1); }
+            38% { transform: translateY(-15px) rotate(15deg) scaleY(1.1) scaleX(0.9); }
+            42% { transform: translateY(0) rotate(0deg); }
+            45% { transform: translateY(-6px) rotate(10deg); }
+            48% { transform: translateY(0) rotate(0deg); }
+            55%, 65% { transform: translateY(0); }
+            72% { transform: rotate(-4deg); }
+            80% { transform: rotate(4deg); }
+            90%, 100% { transform: rotate(0deg); }
+        }
+
+        @keyframes moveFly {
+            0% { left: 40%; bottom: 15px; }
+            10% { left: 45%; bottom: 35px; }
+            20% { left: 40%; bottom: 10px; }
+            30% { left: 50%; bottom: 45px; }
+            38% { left: 75%; bottom: 25px; }
+            45% { left: 85%; bottom: 50px; opacity: 0.25; }
+            50% { left: 110%; bottom: 20px; opacity: 0; }
+            80% { left: -10%; bottom: 20px; opacity: 0; }
+            90% { left: 10%; bottom: 35px; opacity: 0.25; }
+            100% { left: 40%; bottom: 15px; }
+        }
+
         @media (max-width: 768px) {
-            .cat-shadow-container { left: 45vw; font-size: 22px; bottom: 8px; }
+            .cat-scene { left: 60px; right: 50px; }
+            .cat-shadow-container { font-size: 20px; bottom: 8px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1141,8 +1186,9 @@
     <div class="fallback" id="fb" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;color:#8a1c1c;font-family:sans-serif;background:#f6ece2;z-index:5;text-align:center;padding:2rem;">Tu navegador no soporta WebGL.</div>
 
     <nav class="topbar">
-        <div class="cat-shadow-container">
-            <i class="fa-solid fa-cat"></i>
+        <div class="cat-scene">
+            <div class="cat-shadow-container"><i class="fa-solid fa-cat"></i></div>
+            <div class="fly-shadow"></div>
         </div>
         <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
             <img src="logo.png" alt="Shanahan Nails">
