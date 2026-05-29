@@ -634,10 +634,10 @@
 
         /* ---------- SOCIAL BAR ---------- */
         .social-section { margin-top: 28px; text-align: center; }
-        .social-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 13px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .social-title::before, .social-title::after { content: ''; height: 1px; width: 30px; background: var(--line); }
+        .social-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; font-weight: 600; color: var(--burgundy); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 12px; text-shadow: 0 2px 10px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.9); }
+        .social-title::before, .social-title::after { content: ''; height: 1.5px; width: 40px; background: rgba(146,31,35,0.5); box-shadow: 0 0 10px rgba(255,255,255,0.8); }
         .social-icons { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .social-link { width: 44px; height: 44px; border: 1px solid var(--line); background: #fff; color: var(--burgundy); display: inline-flex; align-items: center; justify-content: center; font-size: 16px; text-decoration: none; transition: all .35s var(--ease); position: relative; overflow: hidden; }
+        .social-link { width: 48px; height: 48px; border: 1px solid rgba(146,31,35,0.2); background: #ffffff; box-shadow: 0 8px 25px rgba(0,0,0,0.1); color: var(--burgundy); display: inline-flex; align-items: center; justify-content: center; font-size: 18px; text-decoration: none; transition: all .35s var(--ease); position: relative; overflow: hidden; border-radius: 50%; }
         .social-link::before { content: ''; position: absolute; inset: 0; background: var(--burgundy); transform: translateY(100%); transition: transform .35s var(--ease); }
         .social-link i { position: relative; z-index: 1; transition: color .35s var(--ease); }
         .social-link:hover { transform: translateY(-3px); border-color: var(--burgundy); box-shadow: 0 10px 22px rgba(146, 31, 35, .18); }
