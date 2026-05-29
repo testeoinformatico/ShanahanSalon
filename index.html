@@ -198,6 +198,11 @@
             white-space: nowrap; font-weight: 600;
         }
         .servicio-opcion.selected .servicio-opcion-dur { background: var(--burgundy); color: #fff; }
+        .extra-addon { border-style: dashed !important; border-color: rgba(146,31,35,.25) !important; background: #fff !important; }
+        .extra-addon.selected { border-style: solid !important; border-color: var(--burgundy) !important; background: rgba(146,31,35,.06) !important; }
+        .extra-addon.selected .servicio-opcion-dur { background: var(--burgundy); color: #fff; }
+        .extras-resumen { display: none; text-align: center; padding: 10px 14px; background: rgba(146,31,35,.06); border-left: 2px solid var(--burgundy); font-size: 12px; color: var(--burgundy); font-weight: 500; margin-top: 2px; margin-bottom: 8px; }
+        .extras-resumen.show { display: block; }
         .servicio-duracion-info {
             display: none; text-align: center; padding: 10px 14px;
             background: rgba(201,167,77,.10); border-left: 2px solid var(--accent);
@@ -1450,10 +1455,12 @@
                             <div class="servicio-opcion" data-val="Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente" data-dur="135"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
                             <div class="servicio-opcion" data-val="Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente" data-dur="195"><span class="servicio-opcion-nombre">Mani Rusa Extensión Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-dur">3 h 15 min</span></div>
                         </div>
-                        <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Extras de Decoración</div>
-                            <div class="servicio-opcion" data-val="Extra · Decoración Sencilla" data-dur="20"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-dur">+20 min</span></div>
-                            <div class="servicio-opcion" data-val="Extra · Decoración Elaborada" data-dur="40"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-dur">+40 min</span></div>
+                        <div class="servicio-grupo extras-grupo">
+                            <div class="servicio-grupo-titulo" style="color:var(--burgundy);">
+                                <i class="fa-solid fa-plus-circle" style="margin-right:4px;"></i>Extras (añadir al servicio)
+                            </div>
+                            <div class="servicio-opcion extra-addon" data-extra="Decoración Sencilla" data-extradur="20"><span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>Decoración Sencilla</span><span class="servicio-opcion-dur">+20 min</span></div>
+                            <div class="servicio-opcion extra-addon" data-extra="Decoración Elaborada" data-extradur="40"><span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>Decoración Elaborada</span><span class="servicio-opcion-dur">+40 min</span></div>
                         </div>
                     </div>
 
@@ -2334,8 +2341,9 @@
         SLOTS[activePeriod].forEach(t => {
             const tMin    = toMin(t);
             const pasado  = esHoy && tMin <= now.getHours()*60+now.getMinutes();
-            const fuera   = slotFueraDeHorario(t, selectedDuracion);
-            const bloq    = slotBloqueado(t, citasDelDia, selectedDuracion, iso);
+            const totalDur = getTotalDuracion();
+            const fuera   = slotFueraDeHorario(t, totalDur);
+            const bloq    = slotBloqueado(t, citasDelDia, totalDur, iso);
             const noDisp  = pasado || fuera || bloq;
             const isSel   = selectedTime===t && !noDisp;
             const subtext = bloq ? `<span style="font-size:8px;display:block;line-height:1.2;opacity:.6;">ocupado</span>`
@@ -2381,19 +2389,48 @@
             });
         });
 
-        // Servicio selector (divs, no radio)
-        document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(el => {
+        // Servicio selector (divs, no radio) — solo servicios principales
+        let selectedExtras = []; // [{name, dur}]
+        document.querySelectorAll("#servicioGrid .servicio-opcion:not(.extra-addon)").forEach(el => {
             el.addEventListener("click", () => {
-                document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(e=>e.classList.remove("selected"));
+                document.querySelectorAll("#servicioGrid .servicio-opcion:not(.extra-addon)").forEach(e=>e.classList.remove("selected"));
                 el.classList.add("selected");
                 selectedServicio = el.dataset.val;
                 selectedDuracion = parseInt(el.dataset.dur, 10);
-                document.getElementById("pickedServiceLabel").textContent = el.dataset.val.split(" · ")[1] || el.dataset.val;
-                document.getElementById("pickedServiceLabel").classList.remove("empty");
+                updateExtrasUI();
+                recalcServicioLabel();
                 // Reset hora si ya no encaja
                 if (selectedTime && selectedDate) {
                     const citasDelDia = citas.filter(c=>c.fecha===fmtISO(selectedDate));
-                    if (slotBloqueado(selectedTime,citasDelDia,selectedDuracion)||slotFueraDeHorario(selectedTime,selectedDuracion)) {
+                    if (slotBloqueado(selectedTime,citasDelDia,getTotalDuracion())||slotFueraDeHorario(selectedTime,getTotalDuracion())) {
+                        selectedTime = null;
+                        document.getElementById("pickedTimeLabel").textContent="Sin elegir";
+                        document.getElementById("pickedTimeLabel").classList.add("empty");
+                    }
+                }
+                renderTimeSlots();
+            });
+        });
+
+        // Extras como checkboxes (toggle)
+        document.querySelectorAll("#servicioGrid .extra-addon").forEach(el => {
+            el.addEventListener("click", () => {
+                const extraName = el.dataset.extra;
+                const extraDur = parseInt(el.dataset.extradur, 10);
+                const idx = selectedExtras.findIndex(e => e.name === extraName);
+                if (idx >= 0) {
+                    selectedExtras.splice(idx, 1);
+                    el.classList.remove("selected");
+                    el.querySelector("i").className = "fa-regular fa-square";
+                } else {
+                    selectedExtras.push({ name: extraName, dur: extraDur });
+                    el.classList.add("selected");
+                    el.querySelector("i").className = "fa-solid fa-square-check";
+                }
+                recalcServicioLabel();
+                if (selectedTime && selectedDate) {
+                    const citasDelDia = citas.filter(c=>c.fecha===fmtISO(selectedDate));
+                    if (slotBloqueado(selectedTime,citasDelDia,getTotalDuracion())||slotFueraDeHorario(selectedTime,getTotalDuracion())) {
                         selectedTime = null;
                         document.getElementById("pickedTimeLabel").textContent="Sin elegir";
                         document.getElementById("pickedTimeLabel").classList.add("empty");
@@ -2405,9 +2442,30 @@
 
     }
 
+    function getTotalDuracion() {
+        return selectedDuracion + selectedExtras.reduce((sum, e) => sum + e.dur, 0);
+    }
+
+    function recalcServicioLabel() {
+        const label = document.getElementById("pickedServiceLabel");
+        if (!selectedServicio) { if (label) { label.textContent = "Sin elegir"; label.classList.add("empty"); } return; }
+        let txt = selectedServicio.split(" · ")[1] || selectedServicio;
+        if (selectedExtras.length) txt += " + " + selectedExtras.map(e => e.name).join(" + ");
+        if (label) { label.textContent = txt; label.classList.remove("empty"); }
+    }
+
+    function updateExtrasUI() {
+        document.querySelectorAll("#servicioGrid .extra-addon").forEach(el => {
+            el.classList.remove("selected");
+            el.querySelector("i").className = "fa-regular fa-square";
+        });
+        selectedExtras = [];
+    }
+
     function resetPicker() {
         selectedDate = null; selectedTime = null;
         selectedServicio = null; selectedDuracion = 0;
+        selectedExtras = [];
         activePeriod = "morning";
         calCursor = new Date(today.getFullYear(), today.getMonth(), 1);
         ["pickedDateLabel","pickedTimeLabel","pickedServiceLabel"].forEach(id => {
@@ -2415,6 +2473,7 @@
             if (el) { el.textContent="Sin elegir"; el.classList.add("empty"); }
         });
         document.querySelectorAll("#servicioGrid .servicio-opcion").forEach(e=>e.classList.remove("selected"));
+        document.querySelectorAll("#servicioGrid .extra-addon i").forEach(i => i.className = "fa-regular fa-square");
         document.querySelectorAll("#vistaReservar .time-tab").forEach(t=>t.classList.toggle("active",t.dataset.period==="morning"));
         renderCalendar();
         renderTimeSlots();
@@ -2876,11 +2935,14 @@
         setBtnLoading("btnEnviarReserva",true);
         try {
             // Guardar cita
+            const servicioFinal = selectedExtras.length
+                ? selectedServicio + " + " + selectedExtras.map(e => e.name).join(" + ")
+                : selectedServicio;
             const { error: aErr } = await sb.from("citas").insert([{
                 nombre_cliente: _clienteLogueado.nombre,
                 telefono: _clienteLogueado.telefono,
-                servicio: selectedServicio,
-                duracion_minutos: selectedDuracion,
+                servicio: servicioFinal,
+                duracion_minutos: getTotalDuracion(),
                 fecha: fmtISO(selectedDate),
                 hora: selectedTime,
                 estado: "pendiente"
@@ -3734,30 +3796,57 @@
             { val: "Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente", nombre: "Mani Nivel. + Pedi Semip.", dur: 135, durTxt: "2 h 15 min" },
             { val: "Combo · Mani Rusa Extensión Gel + Pedi Macro Semipermanente", nombre: "Mani Ext.Gel + Pedi Semip.", dur: 195, durTxt: "3 h 15 min" }
         ]},
-        { grupo: "Extras", items: [
-            { val: "Extra · Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min" },
-            { val: "Extra · Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min" }
+        { grupo: "Extras", isExtras: true, items: [
+            { val: "Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min" },
+            { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min" }
         ]}
     ];
+
+    let ncSelectedExtras = []; // [{name, dur}]
 
     function ncRenderServicios() {
         const grid = document.getElementById("ncServicioGrid");
         if (!grid) return;
         grid.innerHTML = "";
         NC_SERVICIOS.forEach(g => {
-            grid.innerHTML += `<div class="nc-servicio-grupo-titulo">${g.grupo}</div>`;
-            g.items.forEach(it => {
-                const isSel = ncSelectedServicio === it.val;
-                grid.innerHTML += `<div class="nc-servicio-opcion${isSel?" selected":""}" data-val="${it.val}" data-dur="${it.dur}">
-                    <span>${it.nombre}</span>
-                    <span class="nc-srv-dur">${it.durTxt}</span>
-                </div>`;
-            });
+            if (g.isExtras) {
+                grid.innerHTML += `<div class="nc-servicio-grupo-titulo" style="color:var(--burgundy);"><i class="fa-solid fa-plus-circle" style="margin-right:4px;"></i>${g.grupo} (añadir al servicio)</div>`;
+                g.items.forEach(it => {
+                    const isSel = ncSelectedExtras.some(e => e.name === it.val);
+                    grid.innerHTML += `<div class="nc-servicio-opcion nc-extra-addon${isSel?" selected":""}" data-extra="${it.val}" data-extradur="${it.dur}" style="border-style:dashed;${isSel?'border-color:var(--burgundy);background:rgba(146,31,35,.06);':'border-color:rgba(146,31,35,.25);'}">
+                        <span><i class="${isSel?'fa-solid fa-square-check':'fa-regular fa-square'}" style="margin-right:6px;font-size:13px;"></i>${it.nombre}</span>
+                        <span class="nc-srv-dur"${isSel?' style="background:var(--burgundy);color:#fff;"':''}>${it.durTxt}</span>
+                    </div>`;
+                });
+            } else {
+                grid.innerHTML += `<div class="nc-servicio-grupo-titulo">${g.grupo}</div>`;
+                g.items.forEach(it => {
+                    const isSel = ncSelectedServicio === it.val;
+                    grid.innerHTML += `<div class="nc-servicio-opcion${isSel?" selected":""}" data-val="${it.val}" data-dur="${it.dur}">
+                        <span>${it.nombre}</span>
+                        <span class="nc-srv-dur">${it.durTxt}</span>
+                    </div>`;
+                });
+            }
         });
-        grid.querySelectorAll(".nc-servicio-opcion").forEach(el => {
+        // Click handler para servicios principales
+        grid.querySelectorAll(".nc-servicio-opcion:not(.nc-extra-addon)").forEach(el => {
             el.addEventListener("click", () => {
                 ncSelectedServicio = el.dataset.val;
                 ncSelectedDuracion = parseInt(el.dataset.dur, 10) || 30;
+                ncSelectedExtras = [];
+                ncRenderServicios();
+                ncValidarSlot();
+            });
+        });
+        // Click handler para extras (toggle)
+        grid.querySelectorAll(".nc-extra-addon").forEach(el => {
+            el.addEventListener("click", () => {
+                const name = el.dataset.extra;
+                const dur = parseInt(el.dataset.extradur, 10);
+                const idx = ncSelectedExtras.findIndex(e => e.name === name);
+                if (idx >= 0) ncSelectedExtras.splice(idx, 1);
+                else ncSelectedExtras.push({ name, dur });
                 ncRenderServicios();
                 ncValidarSlot();
             });
@@ -3870,8 +3959,9 @@
         }
         const horaStr = hora.slice(0,5);
         const citasDelDia = citas.filter(c => c.fecha === fecha);
-        const fuera = slotFueraDeHorario(horaStr, ncSelectedDuracion);
-        const bloq  = slotBloqueado(horaStr, citasDelDia, ncSelectedDuracion, fecha);
+        const ncTotalDur = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
+        const fuera = slotFueraDeHorario(horaStr, ncTotalDur);
+        const bloq  = slotBloqueado(horaStr, citasDelDia, ncTotalDur, fecha);
 
         info.classList.add("show");
         if (fuera) {
@@ -3891,6 +3981,7 @@
         ncSelectedClient = null;
         ncSelectedServicio = null;
         ncSelectedDuracion = 0;
+        ncSelectedExtras = [];
         document.getElementById("ncClientSelected").style.display = "none";
         document.getElementById("ncClientSelector").style.display = "block";
         document.getElementById("ncNewClientForm").style.display = "none";
@@ -3920,18 +4011,23 @@
 
         const horaStr = hora.slice(0,5);
         const citasDelDia = citas.filter(c => c.fecha === fecha);
-        if (slotFueraDeHorario(horaStr, ncSelectedDuracion)) return toast("El servicio no cabe en ese horario","error");
-        if (slotBloqueado(horaStr, citasDelDia, ncSelectedDuracion, fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
+        const ncTotalDurFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
+        if (slotFueraDeHorario(horaStr, ncTotalDurFinal)) return toast("El servicio no cabe en ese horario","error");
+        if (slotBloqueado(horaStr, citasDelDia, ncTotalDurFinal, fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
 
         const estado = document.getElementById("ncEstado").value || "confirmada";
 
         setBtnLoading("btnGuardarNuevaCita", true);
         try {
+            const ncServicioFinal = ncSelectedExtras.length
+                ? ncSelectedServicio + " + " + ncSelectedExtras.map(e => e.name).join(" + ")
+                : ncSelectedServicio;
+            const ncDuracionFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
             const { data, error } = await sb.from("citas").insert([{
                 nombre_cliente: ncSelectedClient.nombre,
                 telefono: ncSelectedClient.telefono,
-                servicio: ncSelectedServicio,
-                duracion_minutos: ncSelectedDuracion,
+                servicio: ncServicioFinal,
+                duracion_minutos: ncDuracionFinal,
                 fecha,
                 hora: horaStr,
                 estado
