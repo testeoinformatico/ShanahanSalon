@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -2175,7 +2175,7 @@
     <div id="reservaSuccessOverlay" style="display:none; position:fixed; inset:0; background:rgba(45, 16, 17, 0.4); z-index:9999; flex-direction:column; align-items:center; justify-content:center; backdrop-filter: blur(4px);">
         <div style="background:#fff; padding:40px; border-radius:24px; box-shadow:0 20px 50px rgba(0,0,0,0.15); border:1px solid rgba(229, 218, 206, 0.8); display:flex; flex-direction:column; align-items:center; text-align:center; max-width:90vw; width:380px; animation: modalIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
             <lottie-player src="reserva-success.json" background="transparent" speed="1" style="width: 200px; height: 200px; margin-bottom: 10px;" autoplay></lottie-player>
-            <h2 style="font-family:'Playfair Display', serif; color:var(--burgundy); font-size:32px; margin:0 0 8px;">Â¡Cita Solicitada!</h2>
+            <h2 style="font-family:'Playfair Display', serif; color:var(--burgundy); font-size:32px; margin:0 0 8px;">Â¡¡Cita Solicitada!
             <p style="color:var(--muted); font-size:15px; margin:0; line-height:1.5;">Tu solicitud ha sido enviada con Ã©xito. Te confirmaremos muy pronto.</p>
         </div>
     </div>
@@ -2217,8 +2217,8 @@
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     //  SHANAHAN NAILS â€” JS principal
     //  Columnas requeridas en Supabase:
-    //  clientas : id, nombre, telefono, usuario, clave, visitas
-    //  citas    : id, nombre_cliente, telefono, servicio,
+    //  clientas : id, nombre, teléfono, usuario, clave, visitas
+    //  citas    : id, nombre_cliente, teléfono, servicio,
     //             duracion_minutos, fecha, hora, estado
     //  admins   : id, usuario, password
     //  dias_disponibles : id, tipo, valor
@@ -2980,13 +2980,13 @@
                 <div style="display:flex; justify-content:center; margin-bottom:10px;">
                     <lottie-player src="reserva-success.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
                 </div>
-                <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-crown"></i> Â¡Enhorabuena!</div>
+                <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-crown"></i> Â¡¡Enhorabuena!
                 <div>Tienes un diseÃ±o de regalo en tu prÃ³xima cita.</div>
             `;
         } else if (data.visitas===5) {
             estado.className="reward-info gold";
             estado.innerHTML=`
-                <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-gift"></i> Â¡Premio Desbloqueado!</div>
+                <div style="font-size:16px; font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-gift"></i> Â¡¡Premio Desbloqueado!
                 <div>Tienes un <strong style="font-size:18px; color:var(--accent);">20% de descuento</strong> en esta cita.</div>
             `;
         } else {
@@ -3023,14 +3023,14 @@
 
     async function regSolicitarOTP() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
-        const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
+        const teléfono = (document.getElementById("citaTelefono")?.value||"").trim();
         const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
         const clave    = document.getElementById("citaClave")?.value||"";
         const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
 
         if (!nombre)   return toast("Introduce tu nombre completo","error");
-        if (!telefono) return toast("Introduce tu telÃ©fono","error");
+        if (!teléfono) return toast("Introduce tu telÃ©fono","error");
         if (!usuario || !/^[a-z0-9._]{3,20}$/.test(usuario))
             return toast("Usuario invÃ¡lido (3-20 car., sin espacios)","error");
         if (clave.length<6) return toast("La contraseÃ±a debe tener al menos 6 caracteres","error");
@@ -3049,7 +3049,7 @@
             if (eEx) { toast("Ese correo ya tiene una cuenta. Inicia sesiÃ³n.","error"); return; }
 
             // Verificar telÃ©fono Ãºnico
-            const { data: tEx } = await sb.from("clientas").select("id").eq("telefono",telefono).maybeSingle();
+            const { data: tEx } = await sb.from("clientas").select("id").eq("teléfono",teléfono).maybeSingle();
             if (tEx) { toast("Ese telÃ©fono ya estÃ¡ registrado en otra cuenta.","error"); return; }
 
             // Enviar OTP
@@ -3127,7 +3127,7 @@
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     async function crearCuenta() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
-        const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
+        const teléfono = (document.getElementById("citaTelefono")?.value||"").trim();
         const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
         const clave    = document.getElementById("citaClave")?.value||"";
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
@@ -3143,7 +3143,7 @@
         hideErr();
 
         if (!nombre)           return showErr("Introduce tu nombre completo");
-        if (!telefono)         return showErr("Introduce tu telÃ©fono");
+        if (!teléfono)         return showErr("Introduce tu telÃ©fono");
         if (!usuario)          return showErr("Elige un nombre de usuario");
         if (clave.length<6)    return showErr("La contraseÃ±a debe tener al menos 6 caracteres");
         if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de crear la cuenta");
@@ -3153,7 +3153,7 @@
         try {
             // Crear clienta
             const { error: cErr } = await sb.from("clientas")
-                .insert([{ nombre, telefono, usuario, clave, email, visitas:0 }]);
+                .insert([{ nombre, teléfono, usuario, clave, email, visitas:0 }]);
             if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
 
             // Marcar este dispositivo como confiable desde el primer acceso
@@ -3213,7 +3213,7 @@
                 : selectedServicio;
             const { error: aErr } = await sb.from("citas").insert([{
                 nombre_cliente: _clienteLogueado.nombre,
-                telefono: _clienteLogueado.telefono,
+                teléfono: _clienteLogueado.teléfono,
                 servicio: servicioFinal,
                 duracion_minutos: getTotalDuracion(),
                 fecha: fmtISO(selectedDate),
@@ -3262,7 +3262,7 @@
         if (histList) histList.innerHTML = list.innerHTML;
         try {
             const { data } = await sb.from("citas")
-                .select("*").eq("telefono", cliente.telefono)
+                .select("*").eq("teléfono", cliente.teléfono)
                 .order("fecha",{ascending:false}).order("hora",{ascending:false});
             const allCitas = data || [];
             const todayISO = fmtISO(today);
@@ -3410,7 +3410,7 @@
             return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
                 <td><span style="font-weight:600;">${fechaBonita}</span></td>
                 <td>${hora} h</td>
-                <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
+                <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.teléfono||""}</span></td>
                 <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"â€”"}</span></td>
                 <td><span class="estado-pill ${estado}">${estado}</span></td>
             </tr>`;
@@ -3419,7 +3419,7 @@
 
     // â”€â”€ Correo de notificaciones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function cargarEmailNotificacion() {
-        const { data } = await sb.from("configuracion").select("valor").eq("clave","notif_email").maybeSingle();
+        const { data } = await sb.from("configuración").select("valor").eq("clave","notif_email").maybeSingle();
         const input = document.getElementById("adminNotifEmail");
         const status = document.getElementById("notifEmailStatus");
         if (data && data.valor) {
@@ -3436,7 +3436,7 @@
         setBtnLoading("btnGuardarNotifEmail", true);
         try {
             // Upsert: si ya existe la clave, la actualiza; si no, la crea
-            const { error } = await sb.from("configuracion").upsert({ clave: "notif_email", valor: email }, { onConflict: "clave" });
+            const { error } = await sb.from("configuración").upsert({ clave: "notif_email", valor: email }, { onConflict: "clave" });
             if (error) { toast("No se pudo guardar: "+error.message,"error"); return; }
             toast("Correo de notificaciones guardado","success");
             const status = document.getElementById("notifEmailStatus");
@@ -3557,7 +3557,7 @@
                         <div class="tl-cita-name">${citaAqui.nombre_cliente||"â€”"}</div>
                         ${citaAqui.servicio?`<div class="tl-cita-servicio">${citaAqui.servicio}</div>`:""}
                         <div class="tl-cita-meta">
-                            <span><i class="fa-solid fa-phone" style="margin-right:4px;font-size:9px;"></i>${citaAqui.telefono||"â€”"}</span>
+                            <span><i class="fa-solid fa-phone" style="margin-right:4px;font-size:9px;"></i>${citaAqui.teléfono||"â€”"}</span>
                             <span class="estado-pill ${estado}" style="font-size:9px;padding:1px 7px;">${estado}</span>
                         </div>
                         <span class="tl-cita-dur">${durStr(durMin)}</span>
@@ -3621,7 +3621,7 @@
     // â”€â”€ renderAdmin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function renderAdmin() {
         const search=(document.getElementById("adminSearch")?.value||"").toLowerCase();
-        const filtered=search?clientas.filter(c=>(c.nombre||"").toLowerCase().includes(search)||(c.telefono||"").includes(search)):clientas;
+        const filtered=search?clientas.filter(c=>(c.nombre||"").toLowerCase().includes(search)||(c.teléfono||"").includes(search)):clientas;
 
         const todayISO=fmtISO(today);
         const startWeek=new Date(today); startWeek.setDate(today.getDate()-((today.getDay()+6)%7));
@@ -3649,7 +3649,7 @@
                 filtered.forEach(c=>{
                     const v=c.visitas||0, pct=Math.min(v,10)*10;
                     tb.innerHTML+=`<tr>
-                        <td><div class="client-name">${c.nombre}</div><div class="client-phone">${c.usuario?`@${c.usuario} Â· `:""} ${c.telefono||"â€”"}</div></td>
+                        <td><div class="client-name">${c.nombre}</div><div class="client-phone">${c.usuario?`@${c.usuario} Â· `:""} ${c.teléfono||"â€”"}</div></td>
                         <td><span class="stamps-pill ${v>=10?"full":""}"><span>${v}/10</span><span class="bar" style="--p:${pct}%"></span></span></td>
                         <td style="text-align:right;">
                             <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id},${v})"><i class="fa-solid fa-plus"></i></button>
@@ -3676,7 +3676,7 @@
                         <div class="cita-meta">
                             <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
                             <span><i class="fa-regular fa-clock"></i>${(cita.hora||"â€”").slice(0,5)}${cita.duracion_minutos?` Â· ${durStr(cita.duracion_minutos)}`:""}</span>
-                            <span><i class="fa-solid fa-phone"></i>${cita.telefono||"â€”"}</span>
+                            <span><i class="fa-solid fa-phone"></i>${cita.teléfono||"â€”"}</span>
                         </div>
                         <div class="cita-actions">
                             <button class="cita-btn approve" onclick="aprobarCita(${cita.id})"><i class="fa-solid fa-check" style="margin-right:5px;"></i>Aprobar</button>
@@ -3704,7 +3704,7 @@
         if (!cita) return;
         try {
             await sb.from("citas").update({estado:"completada"}).eq("id",id);
-            const cl=clientas.find(c=>(c.telefono||"").trim()===(cita.telefono||"").trim());
+            const cl=clientas.find(c=>(c.teléfono||"").trim()===(cita.teléfono||"").trim());
             if (cl && (cl.visitas||0)<10) {
                 await sb.from("clientas").update({visitas:(cl.visitas||0)+1}).eq("id",cl.id);
                 if ((cl.visitas||0)+1===10) toast("Â¡Tarjeta completa! Servicio gratis desbloqueado.","success","Recompensa");
@@ -3738,7 +3738,7 @@
         if (!cita) return;
         document.getElementById("editCitaId").value=cita.id;
         document.getElementById("editCitaNombre").value=cita.nombre_cliente||"";
-        document.getElementById("editCitaTelefono").value=cita.telefono||"";
+        document.getElementById("editCitaTelefono").value=cita.teléfono||"";
         document.getElementById("editCitaFecha").value=cita.fecha||"";
         document.getElementById("editCitaHora").value=cita.hora||"";
         setEditEstado(cita.estado||"pendiente");
@@ -3763,20 +3763,20 @@
         const estadoAnterior=previa?(previa.estado||"pendiente"):"pendiente";
         const payload={
             nombre_cliente:document.getElementById("editCitaNombre").value.trim(),
-            telefono:document.getElementById("editCitaTelefono").value.trim(),
+            teléfono:document.getElementById("editCitaTelefono").value.trim(),
             fecha:document.getElementById("editCitaFecha").value,
             hora:document.getElementById("editCitaHora").value,
             estado:nuevoEstado,
             duracion_minutos:previa?(parseInt(previa.duracion_minutos,10)||30):30,
             servicio:previa?(previa.servicio||""):""
         };
-        if (!payload.nombre_cliente||!payload.telefono||!payload.fecha||!payload.hora) return toast("Completa todos los campos","error");
+        if (!payload.nombre_cliente||!payload.teléfono||!payload.fecha||!payload.hora) return toast("Completa todos los campos","error");
         setBtnLoading("btnGuardarEdicion",true);
         try {
             const { error }=await sb.from("citas").update(payload).eq("id",id);
             if (error) { toast("No se pudo actualizar: "+error.message,"error"); return; }
             if (estadoAnterior!=="completada"&&nuevoEstado==="completada") {
-                const cl=clientas.find(c=>(c.telefono||"").trim()===payload.telefono);
+                const cl=clientas.find(c=>(c.teléfono||"").trim()===payload.teléfono);
                 if (cl&&(cl.visitas||0)<10) await sb.from("clientas").update({visitas:(cl.visitas||0)+1}).eq("id",cl.id);
             }
             toast("Cita actualizada","success"); closeEditCita(); cargarDatosAdmin();
@@ -3805,7 +3805,7 @@
         if (!n||!t) return toast("Introduce nombre y telÃ©fono","error");
         setBtnLoading("btnRegistrar",true);
         try {
-            const { error }=await sb.from("clientas").insert([{nombre:n,telefono:t,visitas:0}]);
+            const { error }=await sb.from("clientas").insert([{nombre:n,teléfono:t,visitas:0}]);
             if (!error) { toast("Clienta registrada","success"); document.getElementById("regNombre").value=""; document.getElementById("regTelef").value=""; cargarDatosAdmin(); }
             else toast("No se pudo registrar: "+error.message,"error");
         } catch(e){ toast("Error de conexiÃ³n","error"); }
@@ -4150,7 +4150,7 @@
 
         const matches = clientas.filter(c =>
             (c.nombre||"").toLowerCase().includes(term) ||
-            (c.telefono||"").toLowerCase().includes(term) ||
+            (c.teléfono||"").toLowerCase().includes(term) ||
             (c.usuario||"").toLowerCase().includes(term)
         ).slice(0, 8);
 
@@ -4158,7 +4158,7 @@
         matches.forEach(c => {
             html += `<div class="nc-client-item" data-id="${c.id}">
                 <span class="nc-cn">${c.nombre||"â€”"}</span>
-                <span class="nc-cm">${c.usuario?`@${c.usuario} Â· `:""}${c.telefono||"â€”"}</span>
+                <span class="nc-cm">${c.usuario?`@${c.usuario} Â· `:""}${c.teléfono||"â€”"}</span>
             </div>`;
         });
         // OpciÃ³n "crear nueva"
@@ -4184,7 +4184,7 @@
         ncSelectedClient = c;
         document.getElementById("ncScName").textContent = c.nombre || "â€”";
         document.getElementById("ncScMeta").textContent =
-            (c.usuario?`@${c.usuario} Â· `:"") + (c.telefono||"â€”") +
+            (c.usuario?`@${c.usuario} Â· `:"") + (c.teléfono||"â€”") +
             (c.visitas!=null ? ` Â· ${c.visitas}/10 sellos` : "");
         document.getElementById("ncClientSelected").style.display = "flex";
         document.getElementById("ncClientSelector").style.display = "none";
@@ -4223,7 +4223,7 @@
         setBtnLoading("btnNcCrear", true);
         try {
             const { data, error } = await sb.from("clientas")
-                .insert([{ nombre:n, telefono:t, visitas:0 }])
+                .insert([{ nombre:n, teléfono:t, visitas:0 }])
                 .select().single();
             if (error) { toast("No se pudo crear: "+error.message,"error"); return; }
             clientas.push(data);
@@ -4314,7 +4314,7 @@
             const ncDuracionFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
             const { data, error } = await sb.from("citas").insert([{
                 nombre_cliente: ncSelectedClient.nombre,
-                telefono: ncSelectedClient.telefono,
+                teléfono: ncSelectedClient.teléfono,
                 servicio: ncServicioFinal,
                 duracion_minutos: ncDuracionFinal,
                 fecha,
@@ -4738,7 +4738,7 @@
                 <h4>1. Responsable del Tratamiento</h4>
                 <p>Estudio Shanahan Nails es el Responsable del tratamiento de los datos personales del Usuario.</p>
                 <h4>2. Finalidad del Tratamiento</h4>
-                <p>Tus datos personales (nombre, telÃ©fono, correo) serÃ¡n utilizados exclusivamente con la finalidad de: gestionar tus reservas, crear tu cuenta de cliente en nuestra plataforma, y enviarte comunicaciones estrictamente necesarias relacionadas con tus citas.</p>
+                <p>Tus datos personales (nombre, telÃ©fono, correo) serÃ¡n utilizados exclusivamente con la finalidad de: gestiónar tus reservas, crear tu cuenta de cliente en nuestra plataforma, y enviarte comunicaciones estrictamente necesarias relacionadas con tus citas.</p>
                 <h4>3. LegitimaciÃ³n</h4>
                 <p>La base legal para el tratamiento de tus datos es la ejecuciÃ³n de la prestaciÃ³n del servicio (la reserva) y tu consentimiento expreso otorgado al registrarte.</p>
                 <h4>4. ConservaciÃ³n y Derechos ARCO</h4>
@@ -4750,7 +4750,7 @@
             html: `
                 <p>Una cookie es un pequeÃ±o fichero que se almacena en el navegador del usuario al acceder a determinadas pÃ¡ginas web.</p>
                 <h4>1. Â¿QuÃ© tipo de cookies utiliza esta pÃ¡gina web?</h4>
-                <p><strong>Cookies TÃ©cnicas / Necesarias:</strong> Son aquellas necesarias para la navegaciÃ³n y el buen funcionamiento de la pÃ¡gina web. Nos permiten gestionar el inicio de sesiÃ³n de tu cuenta y recordar tus preferencias bÃ¡sicas como la aceptaciÃ³n de este aviso. (No se pueden desactivar).</p>
+                <p><strong>Cookies TÃ©cnicas / Necesarias:</strong> Son aquellas necesarias para la navegaciÃ³n y el buen funcionamiento de la pÃ¡gina web. Nos permiten gestiónar el inicio de sesiÃ³n de tu cuenta y recordar tus preferencias bÃ¡sicas como la aceptaciÃ³n de este aviso. (No se pueden desactivar).</p>
                 <p><strong>Cookies de Terceros:</strong> Podemos utilizar herramientas externas que depositen cookies con fines analÃ­ticos bÃ¡sicos para mejorar el servicio.</p>
                 <h4>2. RevocaciÃ³n y eliminaciÃ³n de cookies</h4>
                 <p>Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuraciÃ³n de las opciones del navegador instalado en tu ordenador o dispositivo mÃ³vil (Chrome, Safari, Firefox, Edge...).</p>
