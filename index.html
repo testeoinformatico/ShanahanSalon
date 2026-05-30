@@ -4543,19 +4543,11 @@
       vec2 fragCoord = gl_FragCoord.xy;
       vec2 uv = fragCoord / u_res.xy;        
       float aspect = u_res.x / u_res.y;
-
       float depth = uv.y;               
 
       vec2 cuv = vec2(uv.x * aspect, uv.y);
-      
       cuv *= mix(2.0, 4.0, depth);
       cuv += vec2(u_time * 0.02, u_time * 0.15);
-
-      cuv += vec2(u_time * 0.02, u_time * 0.15);
-
-      // Eliminadas las olas que van hacia abajo (swellX y swell)
-      float swellX = 0.0;
-      float swell = 0.0;
 
       vec2 distort = vec2(0.0);
       float ripWave = 0.0;   
@@ -4582,32 +4574,40 @@
       distort = clamp(distort, -20.0, 20.0);
       cuv += distort * 0.04;   
 
-      vec2 warp = vec2(
-        fbm(cuv * 0.6 + u_time * 0.05) + 0.5 * fbm(cuv * 1.5 - u_time * 0.08),
-        fbm(cuv * 0.6 + 7.3 - u_time * 0.05) + 0.5 * fbm(cuv * 1.5 + 3.1 + u_time * 0.08)
+      // Liquid Gold Domain Warping
+      vec2 q = vec2(
+        fbm(cuv * 2.0 + u_time * 0.15) + 0.5 * fbm(cuv * 3.5 - u_time * 0.1),
+        fbm(cuv * 2.0 + 7.3 - u_time * 0.15) + 0.5 * fbm(cuv * 3.5 + 3.1 + u_time * 0.1)
       );
-      cuv += (warp - 0.75) * 3.5;
+      
+      vec2 r = vec2(
+        fbm(cuv * 1.5 + 4.0*q + vec2(1.7,9.2) + u_time * 0.2),
+        fbm(cuv * 1.5 + 4.0*q + vec2(8.3,2.8) - u_time * 0.2)
+      );
+      
+      float f = fbm(cuv * 2.0 + 4.0*r);
+      
+      // Integrar las ondas del ratón en la textura de mármol
+      f += ripWave * 0.15;
+      
+      // Paleta original (Agua/Crema Dorada) usando la nueva textura
+      vec3 baseColor = vec3(0.92, 0.82, 0.68); // Tono crema dorado uniforme original
+      
+      float light = f * 1.3; // Usamos el flujo de mármol como intensidad de luz
+      
+      vec3 col = baseColor;
+      
+      // Sombras sutiles en los pliegues profundos
+      col = mix(vec3(0.82, 0.70, 0.55), col, smoothstep(0.0, 0.5, f));
 
-      vec3 ca = caustic(rot(0.618) * cuv * 1.0   + vec2(10.0, u_time * 0.1));
-      vec3 cb = caustic(rot(2.399) * cuv * 1.618 + vec2(40.0, -u_time * 0.15));
-      vec3 cc = caustic(rot(-1.732)* cuv * 0.732 + vec2(-15.0, u_time * 0.2));
-      vec3 cd = caustic(rot(0.9)   * cuv * 1.25  + vec2(20.0, -u_time * 0.12));
-
-      float light = (ca.r + cb.r + cc.r + cd.r) * 0.26;
-      light = pow(light, 1.4) * 1.8;
-      light *= 0.4 + 1.2 * fbm(cuv * 0.2 + u_time * 0.03);
-      light += clamp(ripWave, 0.0, 1.5) * 0.05; 
-      // Eliminadas las crestas de las olas (crest)
-      light = max(light, 0.0);   
-      light *= mix(1.0, 0.12, smoothstep(0.35, 1.0, depth));
-
-      vec3 water = vec3(0.92, 0.82, 0.68); // Tono crema dorado uniforme
-
-      vec3 col = water;
-
-      col += vec3(light) * vec3(1.0, 0.98, 0.92) * 1.2;
-      float sparkle = pow(max(0.0, light - 0.5), 2.0);
-      col += sparkle * 0.4;
+      // Brillos de la textura
+      col += vec3(light) * vec3(1.0, 0.98, 0.92) * 0.9;
+      
+      // Destellos en las crestas (sparkle)
+      float sparkle = pow(max(0.0, light - 0.8), 2.0);
+      col += sparkle * 0.3;
+      
+      // Viñeta suave original
       float vig = smoothstep(1.3, 0.2, length(uv - vec2(0.5, 0.35)));
       col *= mix(0.82, 1.0, vig);
 
