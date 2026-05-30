@@ -1262,6 +1262,11 @@
             <span id="menuBadgePendientes" style="background:var(--accent); color:#fff; border-radius:50%; width:16px; height:16px; font-size:9px; display:none; align-items:center; justify-content:center; position:absolute; right:15px;">0</span>
         </button>
 
+        <button class="admin-menu-item" data-section="sorteos" onclick="switchAdminSection('sorteos')">
+            <i class="fa-solid fa-gift"></i>
+            <span>Sorteos</span>
+        </button>
+
         <button class="admin-menu-item" data-section="fidelizacion" onclick="switchAdminSection('fidelizacion')">
             <i class="fa-solid fa-gem"></i>
             <span>Clientas</span>
@@ -1816,6 +1821,28 @@
                         <h5><i class="fa-regular fa-calendar-check"></i> Solicitudes</h5>
                     </div>
                     <div id="listaCitasPendientes"></div>
+                </div>
+            </div>
+
+            </div><div class="admin-section" id="asecSorteos" style="display:none;">
+            <div class="col-12 col-lg-8">
+                <div class="luxury-card view-anim">
+                    <div class="admin-header" style="margin-bottom:16px;">
+                        <h5><i class="fa-solid fa-gift"></i> Participantes Sorteo</h5>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="sacarGanadorSorteo()" class="btn-luxury" style="padding: 8px 16px; font-size: 13px; margin: 0;"><i class="fa-solid fa-trophy" style="margin-right:5px;"></i>Sacar Ganadora</button>
+                            <button onclick="reiniciarSorteo()" class="btn-ghost" style="padding: 8px 16px; font-size: 13px; margin: 0; color: #d32f2f; border-color: #d32f2f;"><i class="fa-solid fa-rotate-right" style="margin-right:5px;"></i>Reiniciar</button>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 20px; font-size: 13px; color: var(--muted); background: var(--cream); padding: 12px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                        Enlace para compartir en Instagram y WhatsApp: <a href="sorteo.html" target="_blank" style="color: var(--burgundy); font-weight: 600; text-decoration: none;">shanahan-nails.es/sorteo.html</a>
+                    </div>
+                    <table class="admin-table">
+                        <thead><tr><th>Participante</th><th>Fecha de Inscripción</th></tr></thead>
+                        <tbody id="tablaParticipantesSorteo">
+                            <tr><td colspan="2"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">Cargando...</div></div></td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -2421,7 +2448,7 @@
     }
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","sorteos"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -2432,6 +2459,9 @@
         });
         if (name === "usuarios") {
             try { cargarUsuariosAdmin(); } catch(e) {}
+        }
+        if (name === "sorteos") {
+            try { cargarSorteos(); } catch(e) {}
         }
     }
 
@@ -3539,7 +3569,7 @@
             const citaFiltrada = dayCitas.find(c => (c.hora||"").slice(0,5) === t);
             const mostrarSlot  = agendaFilter === "all" || citaAqui || bloqueadoPor;
             if (!mostrarSlot && libre) {
-                // Slot libre y no coincide con filtro — mostrar igual pero tenue
+                // Slot libre and no coincide con filtro — mostrar igual pero tenue
             }
 
             hayAlgo = true;
@@ -4765,6 +4795,82 @@
     document.addEventListener("DOMContentLoaded", () => {
         checkCookies();
     });
+
+    // --- LOGICA DEL SORTEO ---
+    let participantesSorteo = [];
+    
+    async function cargarSorteos() {
+        const tb = document.getElementById("tablaParticipantesSorteo");
+        if (!tb) return;
+        
+        const { data, error } = await sb.from("sorteo_participantes").select("*").order("fecha_inscripcion", { ascending: false });
+        
+        if (error) {
+            tb.innerHTML = `<tr><td colspan="2"><div class="empty-state"><div class="label">Error: ${error.message}</div></div></td></tr>`;
+            return;
+        }
+        
+        participantesSorteo = data || [];
+        
+        if (participantesSorteo.length === 0) {
+            tb.innerHTML = `<tr><td colspan="2"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">Nadie se ha apuntado aún</div></div></td></tr>`;
+            return;
+        }
+        
+        let html = "";
+        participantesSorteo.forEach(p => {
+            const date = new Date(p.fecha_inscripcion).toLocaleString("es-ES", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" });
+            html += `<tr>
+                <td><div class="client-name">${p.nombre}</div><div class="client-phone"><i class="fa-solid fa-phone" style="font-size:9px;margin-right:4px;"></i>${p.telefono}</div></td>
+                <td style="color:var(--muted); font-size:12px;">${date}</td>
+            </tr>`;
+        });
+        tb.innerHTML = html;
+    }
+
+    function sacarGanadorSorteo() {
+        if (!participantesSorteo || participantesSorteo.length === 0) {
+            return toast("No hay participantes para sortear", "error");
+        }
+        // Efecto ruleta
+        const numParticipantes = participantesSorteo.length;
+        let counter = 0;
+        const maxTicks = 15;
+        const interval = setInterval(() => {
+            const rnd = Math.floor(Math.random() * numParticipantes);
+            const p = participantesSorteo[rnd];
+            toast("Sacando papeleta... " + p.nombre, "success"); // Show fake loading
+            
+            counter++;
+            if (counter >= maxTicks) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    const winner = participantesSorteo[Math.floor(Math.random() * numParticipantes)];
+                    Swal.fire({
+                        title: '¡Tenemos Ganadora!',
+                        html: `<div style="font-size:24px; color:var(--burgundy); font-family:'Playfair Display', serif; font-weight:700; margin-bottom:10px;">${winner.nombre}</div><div style="font-size:16px; color:var(--muted);"><i class="fa-solid fa-phone"></i> ${winner.telefono}</div>`,
+                        icon: 'success',
+                        confirmButtonText: '¡Celebrar!',
+                        confirmButtonColor: '#921F23',
+                        background: '#FCF5EE'
+                    });
+                }, 500);
+            }
+        }, 150);
+    }
+
+    async function reiniciarSorteo() {
+        if (!confirm("¿Estás segura? Esto borrará toda la lista de participantes de esta semana para empezar de cero.")) return;
+        
+        const { error } = await sb.from("sorteo_participantes").delete().neq("id", 0); // Delete all
+        if (error) {
+            toast("Error al reiniciar: " + error.message, "error");
+        } else {
+            toast("Lista de sorteo reiniciada", "success");
+            cargarSorteos();
+        }
+    }
+    // -------------------------
 
     </script>
 </body>
