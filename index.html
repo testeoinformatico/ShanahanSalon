@@ -1264,11 +1264,6 @@
             <span id="menuBadgePendientes" style="background:var(--accent); color:#fff; border-radius:50%; width:16px; height:16px; font-size:9px; display:none; align-items:center; justify-content:center; position:absolute; right:15px;">0</span>
         </button>
 
-        <button class="admin-menu-item" data-section="sorteos" onclick="switchAdminSection('sorteos')">
-            <i class="fa-solid fa-gift"></i>
-            <span>Sorteos</span>
-        </button>
-
         <button class="admin-menu-item" data-section="fidelizacion" onclick="switchAdminSection('fidelizacion')">
             <i class="fa-solid fa-gem"></i>
             <span>Clientas</span>
@@ -1826,17 +1821,7 @@
                 </div>
             </div>
 
-            </div><div class="admin-section" id="asecSorteos" style="display:none;">
-            <div class="col-12 col-lg-8">
-                <div class="luxury-card view-anim">
-                    <div class="admin-header" style="margin-bottom:16px;">
-                        <h5><i class="fa-solid fa-gift"></i> Participantes Sorteo</h5>
-                        <div style="display:flex; gap:10px;">
-                            <button onclick="sacarGanadorSorteo()" class="btn-luxury" style="padding: 8px 16px; font-size: 13px; margin: 0;"><i class="fa-solid fa-trophy" style="margin-right:5px;"></i>Sacar Ganadora</button>
-                            <button onclick="reiniciarSorteo()" class="btn-ghost" style="padding: 8px 16px; font-size: 13px; margin: 0; color: #d32f2f; border-color: #d32f2f;"><i class="fa-solid fa-rotate-right" style="margin-right:5px;"></i>Reiniciar</button>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 20px; font-size: 13px; color: var(--muted); background: var(--cream); padding: 12px; border-radius: 8px; border-left: 3px solid var(--accent);">
+            <div style="margin-bottom: 20px; font-size: 13px; color: var(--muted); background: var(--cream); padding: 12px; border-radius: 8px; border-left: 3px solid var(--accent);">
                         Enlace para compartir en Instagram y WhatsApp: <a href="sorteo.html" target="_blank" style="color: var(--burgundy); font-weight: 600; text-decoration: none;">shanahan-nails.es/sorteo.html</a>
                     </div>
                     <table class="admin-table">
@@ -2450,7 +2435,7 @@
     }
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","sorteos"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -2462,8 +2447,7 @@
         if (name === "usuarios") {
             try { cargarUsuariosAdmin(); } catch(e) {}
         }
-        if (name === "sorteos") {
-            try { cargarSorteos(); } catch(e) {}
+catch(e) {}
         }
     }
 
@@ -4581,10 +4565,13 @@
         vec2 r=vec2(fbm(uv+3.5*q+vec2(1.7,9.2)+0.4*t),fbm(uv+3.5*q+vec2(8.3,2.8)-0.3*t));
         float f=clamp(fbm(uv+3.5*r)*0.5+0.5,0.0,1.0);
         float caustic=pow(abs(sin(f*9.0+t*3.0)),8.0);
-        vec3 amber=vec3(0.78,0.58,0.24),gold=vec3(0.90,0.74,0.38),cream=vec3(0.99,0.95,0.86);
-        vec3 col=mix(amber,gold,smoothstep(0.25,0.65,f));
-        col=mix(col,cream,smoothstep(0.55,0.95,f));
-        col+=caustic*vec3(1.0,0.95,0.78)*0.5;
+        
+        // Colores de Oro Champagne (más pálidos y plateados que el oro tradicional)
+        vec3 bronze=vec3(0.70,0.60,0.50),champagne=vec3(0.92,0.86,0.78),silk=vec3(0.98,0.95,0.92);
+        
+        vec3 col=mix(bronze,champagne,smoothstep(0.25,0.65,f));
+        col=mix(col,silk,smoothstep(0.55,0.95,f));
+        col+=caustic*vec3(1.0,0.98,0.90)*0.5;
         return col;
       }
       void main(){
@@ -4603,17 +4590,17 @@
         uv += grad*4.5;
         vec3 col=liquidGold(uv);
 
-        // specular glints on the ripples
+        // specular glints on the ripples (Champagne)
         vec3 L=normalize(vec3(0.4,0.7,0.6));
         float spec=pow(max(dot(normal,L),0.0),24.0);
-        col += spec*vec3(1.0,0.97,0.85)*0.9;
+        col += spec*vec3(1.0,0.98,0.95)*0.9;
 
         // brighten crests, darken troughs a touch for depth
         float h=texture2D(heightTex,vUv).r;
-        col += h*vec3(0.11,0.09,0.05);
+        col += h*vec3(0.08,0.07,0.05);
 
         float edge=smoothstep(0.0,0.35,vUv.y)*smoothstep(1.0,0.65,vUv.y);
-        col=mix(col,vec3(0.99,0.95,0.86)*0.98,(1.0-edge)*0.22);
+        col=mix(col,vec3(0.98,0.95,0.92)*0.98,(1.0-edge)*0.22);
 
         gl_FragColor=vec4(col,1.0);
       }`
@@ -4763,85 +4750,10 @@
         checkCookies();
     });
 
-    // --- LOGICA DEL SORTEO ---
-    let participantesSorteo = [];
-    
-    async function cargarSorteos() {
-        const tb = document.getElementById("tablaParticipantesSorteo");
-        if (!tb) return;
-        
-        const { data, error } = await sb.from("sorteo_participantes").select("*").order("fecha_inscripcion", { ascending: false });
-        
-        if (error) {
-            tb.innerHTML = `<tr><td colspan="2"><div class="empty-state"><div class="label">Error: ${error.message}</div></div></td></tr>`;
-            return;
-        }
-        
-        participantesSorteo = data || [];
-        
-        if (participantesSorteo.length === 0) {
-            tb.innerHTML = `<tr><td colspan="2"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">Nadie se ha apuntado aún</div></div></td></tr>`;
-            return;
-        }
-        
-        let html = "";
-        participantesSorteo.forEach(p => {
-            const date = new Date(p.fecha_inscripcion).toLocaleString("es-ES", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" });
-            html += `<tr>
-                <td><div class="client-name">${p.nombre}</div><div class="client-phone"><i class="fa-solid fa-phone" style="font-size:9px;margin-right:4px;"></i>${p.telefono}</div></td>
-                <td style="color:var(--muted); font-size:12px;">${date}</td>
-            </tr>`;
-        });
-        tb.innerHTML = html;
-    }
-
-    function sacarGanadorSorteo() {
-        if (!participantesSorteo || participantesSorteo.length === 0) {
-            return toast("No hay participantes para sortear", "error");
-        }
-        // Efecto ruleta
-        const numParticipantes = participantesSorteo.length;
-        let counter = 0;
-        const maxTicks = 15;
-        const interval = setInterval(() => {
-            const rnd = Math.floor(Math.random() * numParticipantes);
-            const p = participantesSorteo[rnd];
-            toast("Sacando papeleta... " + p.nombre, "success"); // Show fake loading
-            
-            counter++;
-            if (counter >= maxTicks) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    const winner = participantesSorteo[Math.floor(Math.random() * numParticipantes)];
-                    Swal.fire({
-                        title: '¡Tenemos Ganadora!',
-                        html: `<div style="font-size:24px; color:var(--burgundy); font-family:'Playfair Display', serif; font-weight:700; margin-bottom:10px;">${winner.nombre}</div><div style="font-size:16px; color:var(--muted);"><i class="fa-solid fa-phone"></i> ${winner.telefono}</div>`,
-                        icon: 'success',
-                        confirmButtonText: '¡Celebrar!',
-                        confirmButtonColor: '#921F23',
-                        background: '#FCF5EE'
-                    });
-                }, 500);
-            }
-        }, 150);
-    }
-
-    async function reiniciarSorteo() {
-        if (!confirm("¿Estás segura? Esto borrará toda la lista de participantes de esta semana para empezar de cero.")) return;
-        
-        const { error } = await sb.from("sorteo_participantes").delete().neq("id", 0); // Delete all
-        if (error) {
-            toast("Error al reiniciar: " + error.message, "error");
-        } else {
-            toast("Lista de sorteo reiniciada", "success");
-            cargarSorteos();
-        }
-    }
-    // -------------------------
-
     </script>
 </body>
 </html>
+
 
 
 
