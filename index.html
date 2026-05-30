@@ -4593,23 +4593,21 @@
       // Paleta original (Agua/Crema Dorada) usando la nueva textura
       vec3 baseColor = vec3(0.92, 0.82, 0.68); // Tono crema dorado uniforme original
       
-      float light = f * 1.3; // Usamos el flujo de mármol como intensidad de luz
-      
       vec3 col = baseColor;
       
       // Sombras sutiles en los pliegues profundos
       col = mix(vec3(0.82, 0.70, 0.55), col, smoothstep(0.0, 0.5, f));
 
-      // Brillos de la textura
-      col += vec3(light) * vec3(1.0, 0.98, 0.92) * 0.9;
+      // Brillos suaves de la textura (mezclamos en lugar de sumar)
+      col = mix(col, vec3(0.96, 0.90, 0.78), smoothstep(0.4, 0.8, f));
       
-      // Destellos en las crestas (sparkle)
-      float sparkle = pow(max(0.0, light - 0.8), 2.0);
-      col += sparkle * 0.3;
+      // Destellos muy sutiles en las crestas más altas
+      float sparkle = smoothstep(0.7, 1.2, f);
+      col += sparkle * 0.15; // Añade solo un 15% de luz en los picos máximos
       
       // Viñeta suave original
       float vig = smoothstep(1.3, 0.2, length(uv - vec2(0.5, 0.35)));
-      col *= mix(0.82, 1.0, vig);
+      col *= mix(0.85, 1.0, vig);
 
       gl_FragColor = vec4(col, 1.0);
     }
