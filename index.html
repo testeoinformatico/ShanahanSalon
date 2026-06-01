@@ -1284,6 +1284,15 @@
             <span>Usuarios</span>
         </button>
 
+                <button class="admin-menu-item" data-section="resenas" onclick="switchAdminSection('resenas')">
+            <i class="fa-solid fa-star"></i>
+            <span>ReseÃ±as</span>
+        </button>
+        <button class="admin-menu-item" data-section="regalos" onclick="switchAdminSection('regalos')">
+            <i class="fa-solid fa-gift"></i>
+            <span>Regalos</span>
+        </button>
+
         <div class="admin-menu-sep"></div>
         
         <button class="admin-menu-item admin-menu-end" onclick="mostrarVista('login')">
@@ -1349,6 +1358,15 @@
                         <span style="font-size:14px; margin-bottom:4px;">Reservar Cita</span>
                         <span style="font-size:9.5px; font-weight:normal; opacity:0.85;">(Debes iniciar sesión o crear una cuenta primero)</span>
                     </button>
+                </div>
+            </div>
+        </section>
+
+                <section id="publicReviews" class="row justify-content-center" style="margin-bottom: 30px; display:none;">
+            <div class="col-12 col-md-8 text-center">
+                <div class="brand-ornament"><span>Testimonios</span></div>
+                <h3 style="font-family:'Playfair Display',serif; color:var(--burgundy); font-style:italic;">Lo que dicen nuestras clientas</h3>
+                <div id="reviewsCarousel" style="display:flex; gap:15px; overflow-x:auto; padding: 20px; margin-top: 10px; align-items: stretch; justify-content: flex-start; scroll-snap-type: x mandatory; padding-bottom: 30px;">
                 </div>
             </div>
         </section>
@@ -1468,6 +1486,13 @@
 
                     <div id="clienteEstado" class="reward-info"></div>
 
+                                        <div class="mis-citas-section" style="margin-top:20px; border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 20px;">
+                        <div class="mis-citas-title">Opciones Adicionales</div>
+                        <div class="mis-citas-tabs" style="justify-content: center;">
+                            <button type="button" class="mis-citas-tab" onclick="document.getElementById('modalResena').classList.add('show')"><i class="fa-solid fa-star" style="margin-right:5px;"></i>Dejar ReseÃ±a</button>
+                            <button type="button" class="mis-citas-tab" onclick="document.getElementById('modalRegalo').classList.add('show')"><i class="fa-solid fa-gift" style="margin-right:5px;"></i>Regalar</button>
+                        </div>
+                    </div>
                     <div class="mis-citas-section" id="misCitasSection">
                         <div class="mis-citas-title">Mis Citas</div>
                         <div class="mis-citas-tabs">
@@ -1492,6 +1517,57 @@
                 </div>
             </div>
         </section>
+
+            <!-- Modal Dejar Resena -->
+    <div class="modal-backdrop-x" id="modalResena">
+        <div class="modal-x">
+            <h4>Dejar una ReseÃ±a</h4>
+            <p>Comparte tu experiencia. SerÃ¡ revisada antes de publicarse.</p>
+            <div class="field">
+                <select id="resenaEstrellas">
+                    <option value="5">5 Estrellas (Excelente)</option>
+                    <option value="4">4 Estrellas (Muy bueno)</option>
+                    <option value="3">3 Estrellas (Bueno)</option>
+                    <option value="2">2 Estrellas (Regular)</option>
+                    <option value="1">1 Estrella (Malo)</option>
+                </select>
+                <label>PuntuaciÃ³n</label>
+            </div>
+            <div class="field">
+                <input type="text" id="resenaTexto" placeholder=" " maxlength="250">
+                <label>Comentario</label>
+            </div>
+            <div class="modal-actions mt-3">
+                <button type="button" class="btn-ghost" onclick="document.getElementById('modalResena').classList.remove('show')">Cancelar</button>
+                <button type="button" class="btn-luxury" onclick="enviarResena()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Comprar Regalo -->
+    <div class="modal-backdrop-x" id="modalRegalo">
+        <div class="modal-x">
+            <h4>Tarjeta de Regalo</h4>
+            <p>Genera un cÃ³digo para regalar a quien quieras.</p>
+            <div class="field">
+                <input type="text" id="regaloPara" placeholder=" ">
+                <label>Nombre del destinatario</label>
+            </div>
+            <div class="field">
+                <select id="regaloValor">
+                    <option value="Manicura (15â‚¬)">Manicura BÃ¡sica (15â‚¬)</option>
+                    <option value="AcrÃ­lico (35â‚¬)">UÃ±as AcrÃ­licas (35â‚¬)</option>
+                    <option value="20â‚¬">Saldo 20â‚¬</option>
+                    <option value="50â‚¬">Saldo 50â‚¬</option>
+                </select>
+                <label>Tipo de regalo</label>
+            </div>
+            <div class="modal-actions mt-3">
+                <button type="button" class="btn-ghost" onclick="document.getElementById('modalRegalo').classList.remove('show')">Cancelar</button>
+                <button type="button" class="btn-luxury" onclick="comprarRegalo()">Generar</button>
+            </div>
+        </div>
+    </div>
 
         <section id="vistaPedirCita" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-6 col-lg-5">
@@ -2423,7 +2499,7 @@
     }
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas","regalos"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -2432,9 +2508,11 @@
         document.querySelectorAll(".admin-menu-item[data-section]").forEach(b => {
             b.classList.toggle("active", b.dataset.section===name);
         });
-        if (name === "usuarios") {
+                if (name === "usuarios") {
             try { cargarUsuariosAdmin(); } catch(e) {}
         }
+        if (name === "resenas") { try { renderAdminResenas(); } catch(e) {} }
+        if (name === "regalos") { try { renderAdminRegalos(); } catch(e) {} }
         
     }
 
