@@ -113,6 +113,95 @@
         .brand-main { font-family: 'Playfair Display', serif; font-size: clamp(38px, 6vw, 52px); color: var(--burgundy); text-transform: uppercase; font-weight: 700; line-height: .95; letter-spacing: 2px; text-shadow: 0 2px 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.9); }
         .brand-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(46px, 7vw, 64px); color: var(--burgundy); margin-top: -12px; display: block; font-weight: 400; text-shadow: 0 2px 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.9); }
 
+        /* --- ESTILOS DE RESEÑAS VIP --- */
+        .reviews-carousel {
+            margin-top: 28px;
+            position: relative;
+            min-height: 120px;
+        }
+        .reviews-carousel-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--burgundy);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 2px 10px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.9);
+        }
+        .reviews-carousel-title::before, .reviews-carousel-title::after {
+            content: ''; height: 1.5px; width: 40px;
+            background: rgba(146,31,35,0.5);
+        }
+        .review-slide {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            text-align: center;
+            padding: 0 10px;
+        }
+        .review-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
+        }
+        .review-slide .review-stars {
+            color: var(--accent);
+            font-size: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 3px;
+        }
+        .review-slide .review-text {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0 0 10px;
+        }
+        .review-slide .review-author {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--burgundy);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .review-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .review-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--line);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .review-dot.active {
+            background: var(--accent);
+            width: 18px;
+            border-radius: 4px;
+        }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, #c9a74d, #e3cd83);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(201, 167, 77, 0.4);
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #b8953c, #d2bc72);
+            box-shadow: 0 6px 20px rgba(201, 167, 77, 0.6);
+            color: #fff;
+        }
+
         /* ---------- CARD ---------- */
         .luxury-card { background: #ffffff; padding: 44px 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.12); position: relative; border: 1px solid rgba(229, 218, 206, 0.6); }
         .luxury-card::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(201, 167, 77, 0.18); pointer-events: none; }
@@ -1284,6 +1373,11 @@
             <span>Usuarios</span>
         </button>
 
+        <button class="admin-menu-item" data-section="resenas" onclick="switchAdminSection('resenas')">
+            <i class="fa-solid fa-star"></i>
+            <span>Reseñas</span>
+        </button>
+
         <div class="admin-menu-sep"></div>
         
         <button class="admin-menu-item admin-menu-end" onclick="mostrarVista('login')">
@@ -1448,6 +1542,13 @@
                         <a href="https://wa.me/34644911596" target="_blank" rel="noopener" class="social-link whatsapp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
                 </div>
+
+                <!-- RESEÑAS VIP ANIMADAS -->
+                <div class="reviews-carousel" id="reviewsCarousel" style="display:none;">
+                    <div class="reviews-carousel-title"><i class="fa-solid fa-star" style="color:var(--accent);"></i> Lo que dicen nuestras clientas</div>
+                    <div id="reviewsSlides"></div>
+                    <div class="review-dots" id="reviewDots"></div>
+                </div>
             </div>
         </section>
 
@@ -1486,8 +1587,9 @@
                         <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
                     </button>
 
-                    <button class="btn-ghost mt-auto-link" onclick="cerrarSesionCliente()" style="margin-top:14px;">
-                        <i class="fa-solid fa-arrow-left-long" style="margin-right:8px;"></i> Cerrar Sesión
+                    <button class="btn-ghost" onclick="cerrarSesion()" style="margin-top: 20px; font-size: 12px; color: var(--muted); border-color: var(--line);">Cerrar Sesión</button>
+                    <button onclick="document.getElementById('modalResena').style.display='flex'" style="margin-top: 10px; font-size: 12px; color: #2a1a05; background: linear-gradient(135deg, #c9a74d, #e3cd83); border:none; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(201, 167, 77, 0.4); transition: all .3s ease; margin-left:10px;">
+                        <i class="fa-solid fa-star" style="margin-right:6px;"></i> Dejar Reseña
                     </button>
                 </div>
             </div>
@@ -2008,7 +2110,48 @@
                 </div>
             </div>
 
+            </div>
+
+
+
+            <!-- SECCIÓN RESEÑAS -->
+            <div class="admin-section" id="asecResenas" style="display:none;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="m-0"><i class="fa-solid fa-star"></i> Reseñas VIP</h5>
+                    <button class="btn-ghost" onclick="cargarResenas()"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+                <div class="table-responsive" style="max-height: 60vh; overflow-y:auto; background:#fff; border-radius:12px; border:1px solid var(--line);">
+                    <table class="table mb-0 admin-table">
+                        <tbody id="tablaResenas"></tbody>
+                    </table>
+                </div>
+            </div>
+
             </div></section>
+
+
+
+    <!-- MODAL RESEÑA -->
+    <div id="modalResena" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.7); backdrop-filter:blur(10px); z-index:9500; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:30px; border-radius:16px; width:90%; max-width:400px; box-shadow:0 15px 40px rgba(0,0,0,0.15); position:relative;">
+            <button onclick="document.getElementById('modalResena').style.display='none'" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:20px; color:var(--muted); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="font-family:'Playfair Display',serif; color:var(--accent); margin-top:0;"><i class="fa-solid fa-star"></i> Tu Experiencia</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">¿Qué tal fue tu visita al salón? ¡Nos encanta leerte!</p>
+            
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;" id="starRating">
+                <i class="fa-solid fa-star star-btn" data-val="1" style="color:var(--line); cursor:pointer; font-size:24px;"></i>
+                <i class="fa-solid fa-star star-btn" data-val="2" style="color:var(--line); cursor:pointer; font-size:24px;"></i>
+                <i class="fa-solid fa-star star-btn" data-val="3" style="color:var(--line); cursor:pointer; font-size:24px;"></i>
+                <i class="fa-solid fa-star star-btn" data-val="4" style="color:var(--line); cursor:pointer; font-size:24px;"></i>
+                <i class="fa-solid fa-star star-btn" data-val="5" style="color:var(--line); cursor:pointer; font-size:24px;"></i>
+            </div>
+            <input type="hidden" id="resenaPuntos" value="5">
+            
+            <textarea id="resenaTexto" placeholder="Me encantó el detalle de..." class="form-control mb-3" rows="3"></textarea>
+            
+            <button class="btn-luxury w-100" onclick="enviarResena()">Enviar Reseña</button>
+        </div>
+    </div>
 
     </main>
 
@@ -2423,7 +2566,7 @@
     }
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -4767,7 +4910,127 @@
     // Inicializar banners al cargar
     document.addEventListener("DOMContentLoaded", () => {
         checkCookies();
+        cargarMarquesinaResenas();
     });
+
+    // --- LÓGICA DE RESEÑAS VIP ---
+    const stars = document.querySelectorAll('.star-btn');
+    stars.forEach(star => {
+        star.addEventListener('click', (e) => {
+            const val = parseInt(e.target.getAttribute('data-val'));
+            document.getElementById('resenaPuntos').value = val;
+            stars.forEach(s => {
+                if(parseInt(s.getAttribute('data-val')) <= val) s.style.color = 'var(--gold)';
+                else s.style.color = 'var(--line)';
+            });
+        });
+        star.style.color = 'var(--gold)';
+    });
+
+    window.enviarResena = async function() {
+        const texto = document.getElementById('resenaTexto').value.trim();
+        const puntos = parseInt(document.getElementById('resenaPuntos').value);
+        if(!texto) { alert("¡Cuéntanos algo más!"); return; }
+        
+        const nombre = typeof currClient !== 'undefined' && currClient ? (currClient.nombre + " " + currClient.apellidos) : "Clienta VIP";
+        const cliente_id = typeof currClient !== 'undefined' && currClient ? currClient.id : null;
+        
+        const { error } = await sb.from('resenas').insert([{
+            cliente_nombre: nombre,
+            cliente_id: cliente_id,
+            puntuacion: puntos,
+            comentario: texto
+        }]);
+        
+        if (error) {
+            alert("Error: " + error.message);
+        } else {
+            document.getElementById('modalResena').style.display = 'none';
+            alert("¡Muchas gracias por tu reseña! Significa el mundo para nosotras.");
+        }
+    }
+
+    // Carrusel animado de reseñas en la página principal
+    let _reviewInterval = null;
+    let _reviewIndex = 0;
+    window.cargarMarquesinaResenas = async function() {
+        const { data, error } = await sb.from('resenas').select('*').eq('destacada', true).order('fecha_creacion', { ascending: false });
+        if(error || !data || data.length === 0) return;
+        
+        const container = document.getElementById('reviewsSlides');
+        const dotsContainer = document.getElementById('reviewDots');
+        if (!container || !dotsContainer) return;
+
+        let slidesHtml = '';
+        let dotsHtml = '';
+        data.forEach((r, i) => {
+            const starsHtml = '<i class="fa-solid fa-star"></i>'.repeat(r.puntuacion);
+            slidesHtml += `<div class="review-slide ${i === 0 ? 'active' : ''}">
+                <div class="review-stars">${starsHtml}</div>
+                <p class="review-text">"${r.comentario}"</p>
+                <div class="review-author">— ${r.cliente_nombre}</div>
+            </div>`;
+            dotsHtml += `<div class="review-dot ${i === 0 ? 'active' : ''}" onclick="goToReview(${i})"></div>`;
+        });
+        container.innerHTML = slidesHtml;
+        dotsContainer.innerHTML = dotsHtml;
+        document.getElementById('reviewsCarousel').style.display = 'block';
+
+        // Auto-rotate every 5 seconds
+        if (_reviewInterval) clearInterval(_reviewInterval);
+        _reviewInterval = setInterval(() => {
+            _reviewIndex = (_reviewIndex + 1) % data.length;
+            showReviewSlide(_reviewIndex);
+        }, 5000);
+    }
+
+    window.goToReview = function(idx) {
+        _reviewIndex = idx;
+        showReviewSlide(idx);
+    }
+
+    function showReviewSlide(idx) {
+        const slides = document.querySelectorAll('.review-slide');
+        const dots = document.querySelectorAll('.review-dot');
+        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    window.cargarResenas = async function() {
+        const tb = document.getElementById('tablaResenas');
+        const { data } = await sb.from('resenas').select('*').order('fecha_creacion', { ascending: false });
+        if(!data || data.length === 0) { tb.innerHTML = '<tr><td colspan="3" class="tl-empty">Sin reseñas</td></tr>'; return; }
+        
+        let html = '';
+        data.forEach(r => {
+            const isDestacada = r.destacada;
+            html += `<tr>
+                <td>
+                    <div style="font-weight:600;">${r.cliente_nombre} <span style="color:var(--gold); font-size:10px;">${r.puntuacion} <i class="fa-solid fa-star"></i></span></div>
+                    <div style="font-size:11px; color:var(--muted); font-style:italic;">"${r.comentario}"</div>
+                </td>
+                <td style="font-size:10px; font-weight:600;">
+                    ${isDestacada ? '<span style="color:var(--gold);"><i class="fa-solid fa-star"></i> PÚBLICA</span>' : '<span style="color:var(--line);">Oculta</span>'}
+                </td>
+                <td>
+                    <button class="tl-btn edit" onclick="toggleResena('${r.id}', ${!isDestacada})" title="Mostrar/Ocultar"><i class="${isDestacada ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}"></i></button>
+                    <button class="tl-btn del" onclick="borrarResena('${r.id}')" title="Borrar"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>`;
+        });
+        tb.innerHTML = html;
+    }
+    
+    window.toggleResena = async function(id, state) {
+        await sb.from('resenas').update({destacada: state}).eq('id', id);
+        cargarResenas();
+    }
+    window.borrarResena = async function(id) {
+        if(confirm("¿Segura que quieres borrar esta reseña?")) {
+            await sb.from('resenas').delete().eq('id', id);
+            cargarResenas();
+        }
+    }
 
     </script>
 </body>
