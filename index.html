@@ -113,7 +113,7 @@
         .brand-main { font-family: 'Playfair Display', serif; font-size: clamp(38px, 6vw, 52px); color: var(--burgundy); text-transform: uppercase; font-weight: 700; line-height: .95; letter-spacing: 2px; text-shadow: 0 2px 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.9); }
         .brand-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(46px, 7vw, 64px); color: var(--burgundy); margin-top: -12px; display: block; font-weight: 400; text-shadow: 0 2px 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.9); }
 
-        /* --- ESTILOS DE RESEÑAS VIP --- */
+        /* --- ESTILOS DE RESEÑAS DE CLIENTAS --- */
         .reviews-carousel {
             margin-top: 28px;
             position: relative;
@@ -188,6 +188,30 @@
             background: var(--accent);
             width: 18px;
             border-radius: 4px;
+        }
+
+        /* --- ESTILOS PÁGINA RESEÑAS --- */
+        .resenas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .resena-card-page {
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(229, 218, 206, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+        .resena-card-page:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            border-color: var(--accent);
         }
         
         .btn-gold {
@@ -1324,6 +1348,7 @@
         </button>
         <div class="nav-actions" id="mainNavActions">
             <button class="nav-btn" onclick="mostrarVista('vistaPrecios')">Precios y Servicios</button>
+            <button class="nav-btn" onclick="mostrarVista('vistaResenas')">Reseñas</button>
             <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
             <button class="nav-btn solid" onclick="mostrarVista('login')">Inicio</button>
         </div>
@@ -1543,11 +1568,27 @@
                     </div>
                 </div>
 
-                <!-- RESEÑAS VIP ANIMADAS -->
-                <div class="reviews-carousel" id="reviewsCarousel" style="display:none;">
-                    <div class="reviews-carousel-title"><i class="fa-solid fa-star" style="color:var(--accent);"></i> Lo que dicen nuestras clientas</div>
-                    <div id="reviewsSlides"></div>
-                    <div class="review-dots" id="reviewDots"></div>
+                <!-- RESEÑAS DE CLIENTAS -->
+            </div>
+        </section>
+
+        <section id="vistaResenas" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-10">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Testimonios</span></div>
+                    <span class="brand-main">Reseñas</span>
+                    <span class="brand-sub">de Clientas</span>
+                </div>
+                <div class="luxury-card view-anim" style="padding: 40px;">
+                    <p class="card-subtitle" style="text-align:center;margin-bottom:10px;">Lo que dicen nuestras clientas</p>
+                    <div style="text-align:center; margin-bottom:30px;">
+                        <button class="btn-luxury btn-gold" style="padding:10px 20px; width:auto;" onclick="document.getElementById('modalResena').style.display='flex'">
+                            <i class="fa-solid fa-star"></i> Dejar mi reseña
+                        </button>
+                    </div>
+                    <div class="resenas-grid" id="resenasGridPage">
+                        <!-- Inyectadas por JS -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -2117,7 +2158,7 @@
             <!-- SECCIÓN RESEÑAS -->
             <div class="admin-section" id="asecResenas" style="display:none;">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="m-0"><i class="fa-solid fa-star"></i> Reseñas VIP</h5>
+                    <h5 class="m-0"><i class="fa-solid fa-star"></i> Reseñas de Clientas</h5>
                     <button class="btn-ghost" onclick="cargarResenas()"><i class="fa-solid fa-rotate-right"></i></button>
                 </div>
                 <div class="table-responsive" style="max-height: 60vh; overflow-y:auto; background:#fff; border-radius:12px; border:1px solid var(--line);">
@@ -2516,7 +2557,7 @@
         const mainNav = document.getElementById("mainNavActions");
         if(mainNav) mainNav.classList.remove("show-mobile");
         
-        ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin","vistaPrecios"].forEach(v => {
+        ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin","vistaPrecios","vistaResenas"].forEach(v => {
             const el = document.getElementById(v);
             if (el) el.style.display = "none";
         });
@@ -4910,10 +4951,10 @@
     // Inicializar banners al cargar
     document.addEventListener("DOMContentLoaded", () => {
         checkCookies();
-        cargarMarquesinaResenas();
+        cargarVistaResenas();
     });
 
-    // --- LÓGICA DE RESEÑAS VIP ---
+    // --- LÓGICA DE RESEÑAS DE CLIENTAS ---
     const stars = document.querySelectorAll('.star-btn');
     stars.forEach(star => {
         star.addEventListener('click', (e) => {
@@ -4950,50 +4991,24 @@
         }
     }
 
-    // Carrusel animado de reseñas en la página principal
-    let _reviewInterval = null;
-    let _reviewIndex = 0;
-    window.cargarMarquesinaResenas = async function() {
+    // --- Cargar reseñas en la página de Reseñas ---
+    window.cargarVistaResenas = async function() {
         const { data, error } = await sb.from('resenas').select('*').eq('destacada', true).order('fecha_creacion', { ascending: false });
         if(error || !data || data.length === 0) return;
         
-        const container = document.getElementById('reviewsSlides');
-        const dotsContainer = document.getElementById('reviewDots');
-        if (!container || !dotsContainer) return;
+        const container = document.getElementById('resenasGridPage');
+        if (!container) return;
 
-        let slidesHtml = '';
-        let dotsHtml = '';
-        data.forEach((r, i) => {
+        let html = '';
+        data.forEach((r) => {
             const starsHtml = '<i class="fa-solid fa-star"></i>'.repeat(r.puntuacion);
-            slidesHtml += `<div class="review-slide ${i === 0 ? 'active' : ''}">
-                <div class="review-stars">${starsHtml}</div>
-                <p class="review-text">"${r.comentario}"</p>
-                <div class="review-author">— ${r.cliente_nombre}</div>
+            html += `<div class="resena-card-page">
+                <div style="color:var(--accent); font-size:16px;">${starsHtml}</div>
+                <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--muted); margin:0;">"${r.comentario}"</p>
+                <div style="font-size:12px; font-weight:600; color:var(--burgundy); text-transform:uppercase;">— ${r.cliente_nombre}</div>
             </div>`;
-            dotsHtml += `<div class="review-dot ${i === 0 ? 'active' : ''}" onclick="goToReview(${i})"></div>`;
         });
-        container.innerHTML = slidesHtml;
-        dotsContainer.innerHTML = dotsHtml;
-        document.getElementById('reviewsCarousel').style.display = 'block';
-
-        // Auto-rotate every 5 seconds
-        if (_reviewInterval) clearInterval(_reviewInterval);
-        _reviewInterval = setInterval(() => {
-            _reviewIndex = (_reviewIndex + 1) % data.length;
-            showReviewSlide(_reviewIndex);
-        }, 5000);
-    }
-
-    window.goToReview = function(idx) {
-        _reviewIndex = idx;
-        showReviewSlide(idx);
-    }
-
-    function showReviewSlide(idx) {
-        const slides = document.querySelectorAll('.review-slide');
-        const dots = document.querySelectorAll('.review-dot');
-        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
-        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        container.innerHTML = html;
     }
 
     window.cargarResenas = async function() {
