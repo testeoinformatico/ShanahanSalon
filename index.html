@@ -1429,20 +1429,32 @@
     <main class="container py-5">
 
         <section id="vistaSobreMi" class="row justify-content-center" style="display:none;">
-            <div class="col-12 col-md-10 col-lg-8">
+            <div class="col-12 col-md-10 col-lg-9">
                 <div class="brand-container view-anim">
                     <div class="brand-ornament"><span>Sobre mí</span></div>
-                    <span class="brand-main">Mi Historia</span>
-                    <span class="brand-sub">y Trabajo</span>
+                    <span class="brand-main">Conoce a</span>
+                    <span class="brand-sub">Jessica</span>
                 </div>
                 
-                <div class="luxury-card view-anim" style="padding: 40px;">
-                    <div style="font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: var(--text); text-align: justify; margin-bottom: 40px;">
-                        <p>Mi nombre es Jessica y comencé mi camino en este mundo en 2021, formándome con una de las mejores formadoras de España. Desde entonces, no he dejado de aprender, crecer y perfeccionar cada detalle de mi técnica junto a referentes del sector.</p>
-                        <p>Soy originaria de Mallorca, aunque actualmente vivo en Gran Canaria, donde he creado mi espacio y desarrollo mi trabajo con dedicación y cariño.</p>
-                        <p>Para mí, cada set de uñas es una combinación de precisión, sensibilidad y perfeccionismo. No me detengo hasta que el resultado transmite exactamente lo que busco: limpieza, armonía y detalle.</p>
-                        <p>Detrás de cada cita también hay cercanía. Soy una persona muy habladora y me gusta que mis clientas se sientan cómodas, relajadas y en confianza, como si estuvieran en casa.</p>
+                <div class="luxury-card view-anim" style="padding: 40px; background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e6 100%);">
+                    <div class="row align-items-center mb-5">
+                        <div class="col-12 col-md-5 text-center text-md-start mb-4 mb-md-0">
+                            <div style="position:relative; display:inline-block;">
+                                <img src="https://lofgjkrcgkqufqpybddn.supabase.co/storage/v1/object/public/galeria/perfil.jpg" alt="Jessica" style="width: 100%; max-width: 300px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 4px solid #fff; position:relative; z-index:2;">
+                                <div style="position:absolute; inset:0; border:1px solid var(--accent); border-radius:20px; transform:translate(15px, 15px); z-index:1;"></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-7">
+                            <div style="font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: var(--text); text-align: justify;">
+                                <p>Mi nombre es Jessica y comencé mi camino en este mundo en 2021, formándome con una de las mejores formadoras de España. Desde entonces, no he dejado de aprender, crecer y perfeccionar cada detalle de mi técnica junto a referentes del sector.</p>
+                                <p>Soy originaria de Mallorca, aunque actualmente vivo en Gran Canaria, donde he creado mi espacio y desarrollo mi trabajo con dedicación y cariño.</p>
+                                <p>Para mí, cada set de uñas es una combinación de precisión, sensibilidad y perfeccionismo. No me detengo hasta que el resultado transmite exactamente lo que busco: limpieza, armonía y detalle.</p>
+                                <p>Detrás de cada cita también hay cercanía. Soy una persona muy habladora y me gusta que mis clientas se sientan cómodas, relajadas y en confianza, como si estuvieran en casa.</p>
+                            </div>
+                        </div>
                     </div>
+
+                    <hr style="border-top: 1px solid rgba(229,218,206,0.6); margin: 40px 0;">
 
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--burgundy); text-align: center; margin-bottom: 20px;">Mis Trabajos</h3>
                     <div id="galeriaPublica" style="display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory;">
@@ -2641,7 +2653,7 @@
     }
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas","galeria"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -5093,7 +5105,7 @@
             let htmlPub = '';
             let htmlAdm = '';
             
-            const files = data.filter(f => f.name !== '.emptyFolderPlaceholder' && f.name !== '.keep');
+            const files = data.filter(f => f.name !== '.emptyFolderPlaceholder' && f.name !== '.keep' && f.name !== 'perfil.jpg');
             
             if (files.length === 0) {
                 const defaults = [
