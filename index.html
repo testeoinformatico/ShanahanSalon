@@ -1587,7 +1587,7 @@
                 <div class="luxury-card view-anim" style="padding: 40px;">
                     <p class="card-subtitle" style="text-align:center;margin-bottom:10px;">Lo que dicen nuestras clientas</p>
                     <div style="text-align:center; margin-bottom:30px;">
-                        <button class="btn-luxury btn-gold" style="padding:10px 20px; width:auto;" onclick="document.getElementById('modalResena').style.display='flex'">
+                        <button class="btn-luxury btn-gold" style="padding:10px 20px; width:auto;" onclick="abrirModalResena()">
                             <i class="fa-solid fa-star"></i> Dejar mi reseña
                         </button>
                     </div>
@@ -1634,7 +1634,7 @@
                     </button>
 
                     <button class="btn-ghost" onclick="cerrarSesion()" style="margin-top: 20px; font-size: 12px; color: var(--muted); border-color: var(--line);">Cerrar Sesión</button>
-                    <button onclick="document.getElementById('modalResena').style.display='flex'" style="margin-top: 10px; font-size: 12px; color: #2a1a05; background: linear-gradient(135deg, #c9a74d, #e3cd83); border:none; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(201, 167, 77, 0.4); transition: all .3s ease; margin-left:10px;">
+                    <button onclick="abrirModalResena()" style="margin-top: 10px; font-size: 12px; color: #2a1a05; background: linear-gradient(135deg, #c9a74d, #e3cd83); border:none; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(201, 167, 77, 0.4); transition: all .3s ease; margin-left:10px;">
                         <i class="fa-solid fa-star" style="margin-right:6px;"></i> Dejar Reseña
                     </button>
                 </div>
@@ -5057,6 +5057,15 @@
         });
         star.style.color = 'var(--gold)';
     });
+
+    window.abrirModalResena = function() {
+        if (typeof _clienteLogueado !== 'undefined' && _clienteLogueado) {
+            document.getElementById('modalResena').style.display = 'flex';
+        } else {
+            toast("Debes iniciar sesión para dejar una reseña", "error");
+            mostrarVista('login');
+        }
+    }
 
     window.enviarResena = async function() {
         const texto = document.getElementById('resenaTexto').value.trim();
