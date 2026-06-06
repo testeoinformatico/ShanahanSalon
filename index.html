@@ -5063,8 +5063,28 @@
         const puntos = parseInt(document.getElementById('resenaPuntos').value);
         if(!texto) { alert("¡Cuéntanos algo más!"); return; }
         
-        const nombre = typeof currClient !== 'undefined' && currClient ? (currClient.nombre + " " + currClient.apellidos) : "Clienta VIP";
-        const cliente_id = typeof currClient !== 'undefined' && currClient ? currClient.id : null;
+        let nombre = "Clienta actual";
+        let cliente_id = null;
+        
+        if (typeof _clienteLogueado !== 'undefined' && _clienteLogueado) {
+            nombre = _clienteLogueado.nombre;
+            if (_clienteLogueado.apellidos) nombre += " " + _clienteLogueado.apellidos;
+            cliente_id = _clienteLogueado.id;
+            
+            // Buscar última cita
+            const { data: ultimas } = await sb.from('citas')
+                .select('servicio')
+                .eq('telefono', _clienteLogueado.telefono)
+                .order('fecha', { ascending: false })
+                .limit(1);
+                
+            if (ultimas && ultimas.length > 0 && ultimas[0].servicio) {
+                let serv = ultimas[0].servicio.split(' · ')[1] || ultimas[0].servicio;
+                // quitar extras de la cadena si es muy larga, opcional
+                serv = serv.split(' + ')[0]; 
+                nombre += ` (Se hizo: ${serv})`;
+            }
+        }
         
         const { error } = await sb.from('resenas').insert([{
             cliente_nombre: nombre,
