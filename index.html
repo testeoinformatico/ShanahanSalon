@@ -5122,10 +5122,24 @@
         let html = '';
         data.forEach((r) => {
             const starsHtml = '<i class="fa-solid fa-star"></i>'.repeat(r.puntuacion);
-            html += `<div class="resena-card-page">
-                <div style="color:var(--accent); font-size:16px;">${starsHtml}</div>
-                <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--muted); margin:0;">"${r.comentario}"</p>
-                <div style="font-size:12px; font-weight:600; color:var(--burgundy); text-transform:uppercase;">— ${r.cliente_nombre}</div>
+            
+            let nombre = r.cliente_nombre;
+            let servicioStr = "";
+            if (nombre.includes("(Se hizo:")) {
+                const parts = nombre.split("(Se hizo:");
+                nombre = parts[0].trim();
+                servicioStr = parts[1].replace(")", "").trim();
+            }
+
+            html += `<div class="resena-card-page" style="display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <div style="color:var(--accent); font-size:14px; letter-spacing:2px; margin-bottom:12px;">${starsHtml}</div>
+                    <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:16px; color:var(--text); margin:0; line-height:1.6;">"${r.comentario}"</p>
+                </div>
+                <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(229,218,206,0.5);">
+                    <div style="font-size:13px; font-weight:700; color:var(--burgundy); text-transform:uppercase; letter-spacing:1px;">${nombre}</div>
+                    ${servicioStr ? `<div style="font-size:11px; color:var(--muted); margin-top:6px; font-family:'Inter', sans-serif;"><i class="fa-solid fa-sparkles" style="color:var(--gold); margin-right:4px;"></i>Se hizo: <span style="font-weight:600; color:var(--text);">${servicioStr}</span></div>` : ''}
+                </div>
             </div>`;
         });
         container.innerHTML = html;
