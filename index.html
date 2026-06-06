@@ -1474,41 +1474,7 @@
                 <div class="luxury-card view-anim" style="padding: 24px;">
                     <p class="card-subtitle" style="text-align:center;margin-bottom:24px;">Conoce nuestros servicios y tarifas</p>
                     <div class="servicio-grid" id="publicServicioGrid">
-                        <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Manicura Rusa · Nivelación</div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Color Liso</span><span class="servicio-opcion-precio">22€</span><span class="servicio-opcion-dur">1 h 15 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-precio">25€</span><span class="servicio-opcion-dur">1 h 45 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-precio">30€</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
-                        </div>
-                        <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Manicura Rusa · Extensión de Gel</div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Color Liso</span><span class="servicio-opcion-precio">32€</span><span class="servicio-opcion-dur">2 h</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Decoración Sencilla</span><span class="servicio-opcion-precio">35€</span><span class="servicio-opcion-dur">2 h 30 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Decoración Elaborada</span><span class="servicio-opcion-precio">40€</span><span class="servicio-opcion-dur">3 h</span></div>
-                        </div>
-                        <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Pedicura Macro</div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Con Esmalte Semipermanente</span><span class="servicio-opcion-precio">25€</span><span class="servicio-opcion-dur">1 h</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Semipermanente + Trat. Durezas</span><span class="servicio-opcion-precio">30€</span><span class="servicio-opcion-dur">1 h 20 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Solo Limpieza</span><span class="servicio-opcion-precio">17€</span><span class="servicio-opcion-dur">40 min</span></div>
-                        </div>
-                        <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Combos Mani + Pedi</div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Mani Rusa Nivelación + Pedi Macro Semiperm.</span><span class="servicio-opcion-precio">45€</span><span class="servicio-opcion-dur">2 h 15 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Mani Rusa Ext. Gel + Pedi Macro Semiperm.</span><span class="servicio-opcion-precio">55€</span><span class="servicio-opcion-dur">3 h 15 min</span></div>
-                        </div>
-                        <div class="servicio-grupo">
-                            <div class="servicio-grupo-titulo">Retirada</div>
-                            <div class="servicio-opcion" style="cursor:default;"><span class="servicio-opcion-nombre">Retirada + Limpieza de Cutícula</span><span class="servicio-opcion-precio">12€</span><span class="servicio-opcion-dur">25 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;border-style:dashed;border-color:rgba(146,31,35,.25);"><span class="servicio-opcion-nombre"><i class="fa-solid fa-plus" style="margin-right:6px;font-size:10px;color:var(--burgundy);"></i>Suplemento retirada (de otro centro)</span><span class="servicio-opcion-precio">+7€</span><span class="servicio-opcion-dur">+25 min</span></div>
-                        </div>
-                        <div class="servicio-grupo extras-grupo">
-                            <div class="servicio-grupo-titulo" style="color:var(--burgundy);">
-                                <i class="fa-solid fa-plus-circle" style="margin-right:4px;"></i>Extras (solo añadir a combos)
-                            </div>
-                            <div class="servicio-opcion" style="cursor:default;border-style:dashed;border-color:rgba(146,31,35,.25);"><span class="servicio-opcion-nombre"><i class="fa-solid fa-plus" style="margin-right:6px;font-size:10px;color:var(--burgundy);"></i>Decoración Sencilla</span><span class="servicio-opcion-precio">+3€</span><span class="servicio-opcion-dur">+20 min</span></div>
-                            <div class="servicio-opcion" style="cursor:default;border-style:dashed;border-color:rgba(146,31,35,.25);"><span class="servicio-opcion-nombre"><i class="fa-solid fa-plus" style="margin-right:6px;font-size:10px;color:var(--burgundy);"></i>Decoración Elaborada</span><span class="servicio-opcion-precio">+8€</span><span class="servicio-opcion-dur">+40 min</span></div>
-                        </div>
+                        <!-- Renderizado dinámicamente desde JS -->
                     </div>
                     <button class="btn-cta view-anim" style="margin-top:24px; display:flex; flex-direction:column; align-items:center; line-height:1.2; padding:12px 20px;" onclick="mostrarVista('login')">
                         <span style="font-size:14px; margin-bottom:4px;">Reservar Cita</span>
@@ -2869,10 +2835,13 @@
                 
                 g.items.forEach(it => {
                     const priceNum = parseInt(it.precio.replace(/[^0-9]/g,''), 10) || 0;
-                    html += `<div class="servicio-opcion" onclick="selSrvAcc('${it.val}', ${it.dur}, ${priceNum}, '${g.grupo}', this)" style="border:none;border-bottom:1px solid rgba(229,218,206,0.3);border-radius:0;margin:0;">
-                        <span class="servicio-opcion-nombre">${it.nombre}</span>
-                        <span class="servicio-opcion-precio">${it.precio}</span>
-                        <span class="servicio-opcion-dur">${it.durTxt}</span>
+                    html += `<div style="border-bottom:1px solid rgba(229,218,206,0.3); padding-bottom:8px;">
+                        <div class="servicio-opcion" onclick="selSrvAcc('${it.val}', ${it.dur}, ${priceNum}, '${g.grupo}', this)" style="border:none;border-radius:0;margin:0;padding-bottom:4px;">
+                            <span class="servicio-opcion-nombre">${it.isExtraAddon ? '<i class="fa-solid fa-plus" style="margin-right:6px;font-size:10px;color:var(--burgundy);"></i>' : ''}${it.nombre}</span>
+                            <span class="servicio-opcion-precio">${it.precio}</span>
+                            <span class="servicio-opcion-dur">${it.durTxt}</span>
+                        </div>
+                        ${it.desc ? `<div style="font-size:11.5px; color:var(--muted); padding: 0 16px 4px 16px; line-height:1.4; text-align:justify;">${it.desc}</div>` : ''}
                     </div>`;
                 });
                 html += `</div></div>`;
@@ -2888,10 +2857,13 @@
                 ext.items.forEach(it => {
                     const extraDur = parseInt(it.dur, 10);
                     const extraPrice = parseInt(it.precio.replace(/[^0-9]/g,''), 10) || 0;
-                    eHtml += `<div class="servicio-opcion extra-addon" onclick="selExtraAcc('${it.nombre}', ${extraDur}, ${extraPrice}, this)" style="border-style:dashed;border-color:rgba(146,31,35,.25);background:#fff;">
-                        <span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>${it.nombre}</span>
-                        <span class="servicio-opcion-precio">${it.precio}</span>
-                        <span class="servicio-opcion-dur">${it.durTxt}</span>
+                    eHtml += `<div style="margin-bottom:8px;">
+                        <div class="servicio-opcion extra-addon" onclick="selExtraAcc('${it.nombre}', ${extraDur}, ${extraPrice}, this)" style="border-style:dashed;border-color:rgba(146,31,35,.25);background:#fff;margin-bottom:4px;">
+                            <span class="servicio-opcion-nombre"><i class="fa-regular fa-square" style="margin-right:6px;font-size:13px;"></i>${it.nombre}</span>
+                            <span class="servicio-opcion-precio">${it.precio}</span>
+                            <span class="servicio-opcion-dur">${it.durTxt}</span>
+                        </div>
+                        ${it.desc ? `<div style="font-size:11px; color:var(--muted); padding: 0 10px; line-height:1.3; text-align:justify;">${it.desc}</div>` : ''}
                     </div>`;
                 });
                 extrasGrid.innerHTML = eHtml;
@@ -4396,31 +4368,32 @@
 
     // Lista de servicios para el selector (reutilizamos los que ya existen en el HTML del cliente)
     const NC_SERVICIOS = [
-        { grupo: "Mani Rusa · Nivelación", items: [
-            { val: "Mani Rusa Nivelación · Color Liso", nombre: "Color Liso", dur: 75, durTxt: "1 h 15 min", precio: "22€" },
-            { val: "Mani Rusa Nivelación · Decoración Sencilla", nombre: "Deco. Sencilla", dur: 105, durTxt: "1 h 45 min", precio: "25€" },
-            { val: "Mani Rusa Nivelación · Decoración Elaborada", nombre: "Deco. Elaborada", dur: 135, durTxt: "2 h 15 min", precio: "30€" }
+        { grupo: "Manicura Rusa · Nivelación", items: [
+            { val: "Mani Rusa Nivelación · Color Liso", nombre: "Color Liso", dur: 75, durTxt: "1 h 15 min", precio: "22€", desc: "Manicura técnica realizada con torno para una limpieza profunda de cutícula y una superficie totalmente pulida. Incluye nivelación de la uña natural para aportar mayor resistencia, uniformidad y un acabado impecable. Finalizada con esmaltado en color liso de alta duración, logrando un resultado elegante, fino y perfectamente estructurado." },
+            { val: "Mani Rusa Nivelación · Decoración Sencilla", nombre: "Decoración Sencilla", dur: 105, durTxt: "1 h 45 min", precio: "25€", desc: "Manicura rusa con nivelación de la uña natural para un acabado uniforme y duradero. Incluye diseños minimalistas como francesa, efecto aura, cromados o polka dot, aportando un toque moderno sin recargar la uña. Ideal para quienes buscan un diseño elegante pero con personalidad." },
+            { val: "Mani Rusa Nivelación · Decoración Elaborada", nombre: "Decoración Elaborada", dur: 135, durTxt: "2 h 15 min", precio: "30€", desc: "Servicio completo de manicura rusa con nivelación para una base perfecta y resistente. Incluye diseños más creativos y detallados en todas las uñas: efectos 3D, relieves, composiciones artísticas y combinaciones de técnicas. Perfecto para quienes buscan uñas llamativas y totalmente personalizadas." }
         ]},
-        { grupo: "Mani Rusa · Ext. Gel", items: [
-            { val: "Mani Rusa Ext. Gel · Color Liso", nombre: "Color Liso", dur: 120, durTxt: "2 h", precio: "32€" },
-            { val: "Mani Rusa Ext. Gel · Decoración Sencilla", nombre: "Deco. Sencilla", dur: 150, durTxt: "2 h 30 min", precio: "35€" },
-            { val: "Mani Rusa Ext. Gel · Decoración Elaborada", nombre: "Deco. Elaborada", dur: 180, durTxt: "3 h", precio: "40€" }
+        { grupo: "Manicura Rusa · Ext. Gel", items: [
+            { val: "Mani Rusa Ext. Gel · Color Liso", nombre: "Color Liso", dur: 120, durTxt: "2 h", precio: "32€", desc: "Extensión de uñas en gel con técnica profesional para alargar y estructurar la uña de forma natural y resistente. Incluye manicura rusa y esmaltado en color liso, consiguiendo un acabado limpio, sofisticado y duradero con forma totalmente personalizada." },
+            { val: "Mani Rusa Ext. Gel · Decoración Sencilla", nombre: "Decoración Sencilla", dur: 150, durTxt: "2 h 30 min", precio: "35€", desc: "Extensión de uñas en gel con acabado de alta precisión gracias a la manicura rusa. Incluye diseños sencillos como francesa, efecto aura, cromados o polka dot. Un servicio ideal para alargar la uña manteniendo un estilo delicado y actual." },
+            { val: "Mani Rusa Ext. Gel · Decoración Elaborada", nombre: "Decoración Elaborada", dur: 180, durTxt: "3 h", precio: "40€", desc: "Extensión de uñas en gel con estructura personalizada y manicura rusa para una base perfecta. Incluye diseños completos en todas las uñas con efectos 3D, relieves, arte detallado y composiciones más trabajadas. Pensado para resultados impactantes y totalmente a medida." }
         ]},
         { grupo: "Pedicura Macro", items: [
-            { val: "Pedicura Macro · Esmalte Semipermanente", nombre: "Semipermanente", dur: 60, durTxt: "1 h", precio: "25€" },
-            { val: "Pedicura Macro · Semipermanente + Trat. Durezas", nombre: "Semiperm. + Durezas", dur: 80, durTxt: "1 h 20 min", precio: "30€" },
-            { val: "Pedicura · Solo Limpieza", nombre: "Solo Limpieza", dur: 40, durTxt: "40 min", precio: "17€" }
+            { val: "Pedicura Macro · Esmalte Semipermanente", nombre: "Esmalte Semipermanente", dur: 60, durTxt: "1 h", precio: "25€", desc: "Tratamiento completo de pedicura en seco con técnica de torno (pedicura macro), sin uso de agua, lo que permite una mayor precisión e higiene. Incluye limpieza profunda de uñas y cutículas, finalizando con esmaltado semipermanente de alta duración. Resultado brillante, uniforme y resistente durante semanas." },
+            { val: "Pedicura Macro · Semipermanente + Trat. Durezas", nombre: "Semiperm. + Trat. Durezas", dur: 80, durTxt: "1 h 20 min", precio: "30€", desc: "Pedicura en seco realizada con técnica profesional de torno, enfocada en la eliminación de durezas, callosidades y piel engrosada con máxima precisión. Incluye esmaltado semipermanente y tratamiento específico para suavizar y mejorar la textura de la piel del pie. Ideal para pies cuidados tanto a nivel estético como de salud." },
+            { val: "Pedicura · Solo Limpieza", nombre: "Solo Limpieza", dur: 40, durTxt: "40 min", precio: "17€", desc: "Servicio básico de mantenimiento realizado en seco, sin uso de agua. Incluye corte, limado de uñas, retirada de cutícula y limpieza general del pie. No incluye esmalte. Perfecto para mantener los pies cuidados de forma regular y natural." }
         ]},
-        { grupo: "Combos", items: [
-            { val: "Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente", nombre: "Mani Nivel. + Pedi Semip.", dur: 135, durTxt: "2 h 15 min", precio: "45€" },
-            { val: "Combo · Mani Rusa Ext. Gel + Pedi Macro Semipermanente", nombre: "Mani Ext.Gel + Pedi Semip.", dur: 195, durTxt: "3 h 15 min", precio: "55€" }
+        { grupo: "Combos Mani + Pedi", items: [
+            { val: "Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente", nombre: "Mani Nivelación + Pedi Semip.", dur: 135, durTxt: "2 h 15 min", precio: "45€", desc: "Pack completo de manos y pies. Incluye manicura rusa con nivelación para una superficie uniforme, resistente y pulida, junto con pedicura en seco con técnica macro y esmaltado semipermanente. Un servicio integral con acabado profesional y duradero." },
+            { val: "Combo · Mani Rusa Ext. Gel + Pedi Macro Semipermanente", nombre: "Mani Ext. Gel + Pedi Semip.", dur: 195, durTxt: "3 h 15 min", precio: "55€", desc: "Pack premium de uñas en manos y pies. Incluye extensión de uñas en gel con manicura rusa para una estructura personalizada y duradera, junto con pedicura en seco con técnica macro y esmaltado semipermanente. Pensado para un resultado completo, elegante y de alta duración." }
         ]},
         { grupo: "Retirada", items: [
-            { val: "Retirada + Limpieza de Cutícula", nombre: "Retirada + Limp. Cutícula", dur: 25, durTxt: "25 min", precio: "12€" }
+            { val: "Retirada + Limpieza de Cutícula", nombre: "Retirada + Limp. Cutícula", dur: 25, durTxt: "25 min", precio: "12€", desc: "Retirada cuidadosa del producto anterior con torno y limpieza completa de cutícula para dejar la uña sana y preparada." },
+            { val: "Suplemento retirada (de otro centro)", nombre: "Suplemento retirada (de otro centro)", dur: 25, durTxt: "+25 min", precio: "+7€", isExtraAddon: true, desc: "Si traes material de otro centro, añade este suplemento a tu cita para contar con el tiempo necesario para la retirada." }
         ]},
         { grupo: "Extras (solo añadir a combos)", isExtras: true, items: [
-            { val: "Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min", precio: "+3€" },
-            { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min", precio: "+8€" }
+            { val: "Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min", precio: "+3€", desc: "Añade un toque especial a tu manicura con diseños minimalistas como francesa, efecto aura, cromados o polka dot. Ideal para complementar un color liso con un detalle elegante." },
+            { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min", precio: "+8€", desc: "Diseños completos y creativos en todas las uñas con técnicas avanzadas como efectos 3D, relieves y composiciones artísticas. Perfecto para quienes buscan un resultado llamativo y totalmente personalizado." }
         ]}
     ];
 
@@ -4435,20 +4408,26 @@
                 grid.innerHTML += `<div class="nc-servicio-grupo-titulo" style="color:var(--burgundy);"><i class="fa-solid fa-plus-circle" style="margin-right:4px;"></i>${g.grupo} (añadir al servicio)</div>`;
                 g.items.forEach(it => {
                     const isSel = ncSelectedExtras.some(e => e.name === it.val);
-                    grid.innerHTML += `<div class="nc-servicio-opcion nc-extra-addon${isSel?" selected":""}" data-extra="${it.val}" data-extradur="${it.dur}" data-precio="${it.precio}" style="border-style:dashed;${isSel?'border-color:var(--burgundy);background:rgba(146,31,35,.06);':'border-color:rgba(146,31,35,.25);'}">
-                        <span><i class="${isSel?'fa-solid fa-square-check':'fa-regular fa-square'}" style="margin-right:6px;font-size:13px;"></i>${it.nombre}</span>
-                        <span class="servicio-opcion-precio" style="margin-left:auto;margin-right:8px;">${it.precio}</span>
-                        <span class="nc-srv-dur"${isSel?' style="background:var(--burgundy);color:#fff;"':''}>${it.durTxt}</span>
+                    grid.innerHTML += `<div style="margin-bottom:8px;">
+                        <div class="nc-servicio-opcion nc-extra-addon${isSel?" selected":""}" data-extra="${it.val}" data-extradur="${it.dur}" data-precio="${it.precio}" style="border-style:dashed;${isSel?'border-color:var(--burgundy);background:rgba(146,31,35,.06);':'border-color:rgba(146,31,35,.25);'} margin-bottom:4px;">
+                            <span><i class="${isSel?'fa-solid fa-square-check':'fa-regular fa-square'}" style="margin-right:6px;font-size:13px;"></i>${it.nombre}</span>
+                            <span class="servicio-opcion-precio" style="margin-left:auto;margin-right:8px;">${it.precio}</span>
+                            <span class="nc-srv-dur"${isSel?' style="background:var(--burgundy);color:#fff;"':''}>${it.durTxt}</span>
+                        </div>
+                        ${it.desc ? `<div style="font-size:11px; color:var(--muted); padding: 0 10px; line-height:1.3; text-align:justify;">${it.desc}</div>` : ''}
                     </div>`;
                 });
             } else {
                 grid.innerHTML += `<div class="nc-servicio-grupo-titulo">${g.grupo}</div>`;
                 g.items.forEach(it => {
                     const isSel = ncSelectedServicio === it.val;
-                    grid.innerHTML += `<div class="nc-servicio-opcion${isSel?" selected":""}" data-val="${it.val}" data-dur="${it.dur}" data-precio="${it.precio}">
-                        <span>${it.nombre}</span>
-                        <span class="servicio-opcion-precio" style="margin-left:auto;margin-right:8px;">${it.precio}</span>
-                        <span class="nc-srv-dur">${it.durTxt}</span>
+                    grid.innerHTML += `<div style="margin-bottom:8px;">
+                        <div class="nc-servicio-opcion${isSel?" selected":""}" data-val="${it.val}" data-dur="${it.dur}" data-precio="${it.precio}" style="margin-bottom:4px;">
+                            <span>${it.nombre}</span>
+                            <span class="servicio-opcion-precio" style="margin-left:auto;margin-right:8px;">${it.precio}</span>
+                            <span class="nc-srv-dur">${it.durTxt}</span>
+                        </div>
+                        ${it.desc ? `<div style="font-size:11px; color:var(--muted); padding: 0 10px; line-height:1.3; text-align:justify;">${it.desc}</div>` : ''}
                     </div>`;
                 });
             }
@@ -5205,7 +5184,37 @@
         checkCookies();
         cargarVistaResenas();
         cargarGaleria();
+        renderPublicServicios();
     });
+
+    window.renderPublicServicios = function() {
+        const cont = document.getElementById("publicServicioGrid");
+        if(!cont) return;
+        let html = '';
+        NC_SERVICIOS.forEach(g => {
+            if(g.isExtras) {
+                html += `<div class="servicio-grupo extras-grupo">
+                    <div class="servicio-grupo-titulo" style="color:var(--burgundy);">
+                        <i class="fa-solid fa-plus-circle" style="margin-right:4px;"></i>${g.grupo}
+                    </div>`;
+            } else {
+                html += `<div class="servicio-grupo">
+                    <div class="servicio-grupo-titulo">${g.grupo}</div>`;
+            }
+            g.items.forEach(it => {
+                html += `<div style="border-bottom:1px solid rgba(229,218,206,0.3); padding-bottom:12px; margin-bottom:12px;">
+                    <div class="servicio-opcion" style="cursor:default; border:none; border-radius:0; margin:0; padding:4px 10px;">
+                        <span class="servicio-opcion-nombre">${it.isExtraAddon || g.isExtras ? '<i class="fa-solid fa-plus" style="margin-right:6px;font-size:10px;color:var(--burgundy);"></i>' : ''}${it.nombre}</span>
+                        <span class="servicio-opcion-precio">${it.precio}</span>
+                        <span class="servicio-opcion-dur">${it.durTxt}</span>
+                    </div>
+                    ${it.desc ? `<div style="font-size:12px; color:var(--muted); padding:4px 10px; line-height:1.5; text-align:justify;">${it.desc}</div>` : ''}
+                </div>`;
+            });
+            html += `</div>`;
+        });
+        cont.innerHTML = html;
+    };
 
     // --- LÓGICA DE RESEÑAS DE CLIENTAS ---
     const stars = document.querySelectorAll('.star-btn');
