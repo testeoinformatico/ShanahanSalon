@@ -1349,6 +1349,7 @@
         <div class="nav-actions" id="mainNavActions">
             <button class="nav-btn" onclick="mostrarVista('vistaPrecios')">Precios y Servicios</button>
             <button class="nav-btn" onclick="mostrarVista('vistaResenas')">Reseñas</button>
+            <button class="nav-btn" onclick="mostrarVista('vistaSobreMi')">Sobre Mí / Trabajos</button>
             <button class="nav-btn" onclick="mostrarVista('vistaAccesoAdmin')">Acceso Salón</button>
             <button class="nav-btn solid" onclick="mostrarVista('login')">Inicio</button>
         </div>
@@ -1402,6 +1403,10 @@
             <i class="fa-solid fa-star"></i>
             <span>Reseñas</span>
         </button>
+        <button class="admin-menu-item" data-section="galeria" onclick="switchAdminSection('galeria')">
+            <i class="fa-solid fa-images"></i>
+            <span>Galería</span>
+        </button>
 
         <div class="admin-menu-sep"></div>
         
@@ -1422,6 +1427,30 @@
     </div>
 
     <main class="container py-5">
+
+        <section id="vistaSobreMi" class="row justify-content-center" style="display:none;">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="brand-container view-anim">
+                    <div class="brand-ornament"><span>Sobre mí</span></div>
+                    <span class="brand-main">Mi Historia</span>
+                    <span class="brand-sub">y Trabajo</span>
+                </div>
+                
+                <div class="luxury-card view-anim" style="padding: 40px;">
+                    <div style="font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: var(--text); text-align: justify; margin-bottom: 40px;">
+                        <p>Mi nombre es Jessica y comencé mi camino en este mundo en 2021, formándome con una de las mejores formadoras de España. Desde entonces, no he dejado de aprender, crecer y perfeccionar cada detalle de mi técnica junto a referentes del sector.</p>
+                        <p>Soy originaria de Mallorca, aunque actualmente vivo en Gran Canaria, donde he creado mi espacio y desarrollo mi trabajo con dedicación y cariño.</p>
+                        <p>Para mí, cada set de uñas es una combinación de precisión, sensibilidad y perfeccionismo. No me detengo hasta que el resultado transmite exactamente lo que busco: limpieza, armonía y detalle.</p>
+                        <p>Detrás de cada cita también hay cercanía. Soy una persona muy habladora y me gusta que mis clientas se sientan cómodas, relajadas y en confianza, como si estuvieran en casa.</p>
+                    </div>
+
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--burgundy); text-align: center; margin-bottom: 20px;">Mis Trabajos</h3>
+                    <div id="galeriaPublica" style="display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory;">
+                        <!-- Cargado por JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section id="vistaPrecios" class="row justify-content-center" style="display:none;">
             <div class="col-12 col-md-8 col-lg-6">
@@ -2145,6 +2174,20 @@
                 </div>
             </div>
 
+            <!-- SECCIÓN GALERÍA -->
+            <div class="admin-section" id="asecGaleria" style="display:none;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="m-0"><i class="fa-solid fa-images"></i> Galería de Trabajos</h5>
+                    <label class="btn-luxury btn-gold" style="padding:10px 20px; cursor:pointer;">
+                        <i class="fa-solid fa-upload"></i> Subir Foto
+                        <input type="file" accept="image/*" style="display:none;" onchange="subirFotoGaleria(event)">
+                    </label>
+                </div>
+                <div id="adminGaleriaGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:15px; margin-top:20px;">
+                    <!-- Renderizado por JS -->
+                </div>
+            </div>
+
             </div></section>
 
 
@@ -2548,7 +2591,7 @@
         const mainNav = document.getElementById("mainNavActions");
         if(mainNav) mainNav.classList.remove("show-mobile");
         
-        ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin","vistaPrecios","vistaResenas"].forEach(v => {
+        ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin","vistaPrecios","vistaResenas","vistaSobreMi"].forEach(v => {
             const el = document.getElementById(v);
             if (el) el.style.display = "none";
         });
@@ -5038,10 +5081,83 @@
         document.getElementById('legalModal').style.display = 'flex';
     }
 
+    // --- LÓGICA GALERÍA ---
+    window.cargarGaleria = async function() {
+        try {
+            const { data, error } = await sb.storage.from('galeria').list();
+            if (error || !data) return;
+            
+            const contPub = document.getElementById('galeriaPublica');
+            const contAdm = document.getElementById('adminGaleriaGrid');
+            
+            let htmlPub = '';
+            let htmlAdm = '';
+            
+            const files = data.filter(f => f.name !== '.emptyFolderPlaceholder' && f.name !== '.keep');
+            
+            if (files.length === 0) {
+                const defaults = [
+                    "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=400&h=500", 
+                    "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&q=80&w=400&h=500"
+                ]; 
+                htmlPub = `<div style="color:var(--muted); font-size:14px; text-align:center; width:100%;">Aún no hay fotos en la galería. Configura el Storage para subir fotos.</div>`;
+                htmlAdm = htmlPub;
+            } else {
+                files.forEach(f => {
+                    const { data: { publicUrl } } = sb.storage.from('galeria').getPublicUrl(f.name);
+                    
+                    htmlPub += `
+                        <div style="flex: 0 0 250px; scroll-snap-align: start; border-radius:12px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
+                            <img src="${publicUrl}" style="width:100%; height:300px; object-fit:cover; display:block;">
+                        </div>
+                    `;
+                    
+                    htmlAdm += `
+                        <div style="position:relative; border-radius:12px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                            <img src="${publicUrl}" style="width:100%; height:150px; object-fit:cover; display:block;">
+                            <button onclick="borrarFotoGaleria('${f.name}')" style="position:absolute; top:8px; right:8px; background:rgba(255,0,0,0.8); color:#fff; border:none; width:30px; height:30px; border-radius:50%; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                });
+            }
+            if(contPub) contPub.innerHTML = htmlPub;
+            if(contAdm) contAdm.innerHTML = htmlAdm;
+        } catch (e) {
+            console.error("Error cargando galería:", e);
+        }
+    }
+
+    window.subirFotoGaleria = async function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        toast("Subiendo foto...", "info");
+        const fileExt = file.name.split('.').pop();
+        const fileName = `foto_${Date.now()}.${fileExt}`;
+        const { error } = await sb.storage.from('galeria').upload(fileName, file);
+        if(error) {
+            toast("Error al subir: " + error.message, "error");
+        } else {
+            toast("¡Foto subida con éxito!", "success");
+            cargarGaleria();
+        }
+    }
+
+    window.borrarFotoGaleria = async function(fileName) {
+        if(confirm("¿Segura que quieres borrar esta foto?")) {
+            const { error } = await sb.storage.from('galeria').remove([fileName]);
+            if(error) toast("Error al borrar: " + error.message, "error");
+            else {
+                toast("Foto borrada", "success");
+                cargarGaleria();
+            }
+        }
+    }
+
     // Inicializar banners al cargar
     document.addEventListener("DOMContentLoaded", () => {
         checkCookies();
         cargarVistaResenas();
+        cargarGaleria();
     });
 
     // --- LÓGICA DE RESEÑAS DE CLIENTAS ---
