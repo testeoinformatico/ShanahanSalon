@@ -1433,7 +1433,7 @@
                 <div class="brand-container view-anim">
                     <div class="brand-ornament"><span>Sobre mí</span></div>
                     <span class="brand-main">Conoce a</span>
-                    <span class="brand-sub">Jessica</span>
+                    <span class="brand-sub" style="font-style: normal; padding-left: 5px;">Jessica</span>
                 </div>
                 
                 <div class="luxury-card view-anim" style="padding: 40px; background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e6 100%);">
@@ -3957,6 +3957,7 @@
                         <td><span class="stamps-pill ${v>=10?"full":""}"><span>${v}/10</span><span class="bar" style="--p:${pct}%"></span></span></td>
                         <td style="text-align:right;">
                             <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id},${v})"><i class="fa-solid fa-plus"></i></button>
+                            <button class="action-icon" style="color:var(--burgundy);" title="Restar sello" onclick="restarVisita(${c.id},${v})"><i class="fa-solid fa-minus"></i></button>
                             <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${c.id})"><i class="fa-solid fa-rotate-left"></i></button>
                             <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${c.id})"><i class="fa-solid fa-trash"></i></button>
                         </td></tr>`;
@@ -4092,6 +4093,10 @@
     async function sumarVisita(id,actual) {
         if (actual<10) { try { await sb.from("clientas").update({visitas:actual+1}).eq("id",id); if(actual+1===10) toast("¡Tarjeta completa!","success","Recompensa"); cargarDatosAdmin(); } catch(e){ toast("No se pudo añadir sello","error"); } }
         else toast("Esta tarjeta ya está completa","info");
+    }
+    async function restarVisita(id,actual) {
+        if (actual>0) { try { await sb.from("clientas").update({visitas:actual-1}).eq("id",id); toast("Sello retirado","success"); cargarDatosAdmin(); } catch(e){ toast("No se pudo quitar sello","error"); } }
+        else toast("Esta tarjeta ya está a 0","info");
     }
     async function reiniciarVisitas(id) {
         const ok=await askConfirm("Reiniciar tarjeta","Se pondrán los sellos a 0.");
