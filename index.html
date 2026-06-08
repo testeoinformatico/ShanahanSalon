@@ -1418,7 +1418,12 @@
 
         <div class="admin-menu-sep"></div>
         
-        <button class="admin-menu-item admin-menu-end" onclick="sessionStorage.removeItem('adminAuth'); mostrarVista('login');">
+        <button class="admin-menu-item" onclick="document.getElementById('inputNuevaClave').value=''; document.getElementById('modalCambiarClave').style.display='flex';" style="color:var(--burgundy);">
+            <i class="fa-solid fa-lock"></i>
+            <span>Cambiar Clave</span>
+        </button>
+
+        <button class="admin-menu-item admin-menu-end" onclick="cerrarSesionAdmin()">
             <i class="fa-solid fa-power-off"></i>
             <span>Salir</span>
         </button>
@@ -1613,10 +1618,13 @@
                         <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
                     </button>
 
-                    <button class="btn-ghost" onclick="cerrarSesion()" style="margin-top: 20px; font-size: 12px; color: var(--muted); border-color: var(--line);">Cerrar Sesión</button>
-                    <button onclick="abrirModalResena()" style="margin-top: 10px; font-size: 12px; color: #2a1a05; background: linear-gradient(135deg, #c9a74d, #e3cd83); border:none; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(201, 167, 77, 0.4); transition: all .3s ease; margin-left:10px;">
-                        <i class="fa-solid fa-star" style="margin-right:6px;"></i> Dejar Reseña
-                    </button>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; justify-content:center;">
+                        <button class="btn-ghost" onclick="cerrarSesion()" style="font-size: 12px; color: var(--muted); border-color: var(--line); padding: 12px 18px;">Cerrar Sesión</button>
+                        <button class="btn-ghost" onclick="document.getElementById('inputNuevaClave').value=''; document.getElementById('modalCambiarClave').style.display='flex';" style="font-size: 12px; color: var(--burgundy); border-color: rgba(146,31,35,0.3); padding: 12px 18px;"><i class="fa-solid fa-lock" style="margin-right:6px;"></i>Cambiar Contraseña</button>
+                        <button onclick="abrirModalResena()" style="font-size: 12px; color: #2a1a05; background: linear-gradient(135deg, #c9a74d, #e3cd83); border:none; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(201, 167, 77, 0.4); transition: all .3s ease; border-radius: 6px;">
+                            <i class="fa-solid fa-star" style="margin-right:6px;"></i> Dejar Reseña
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -2528,10 +2536,18 @@
     }
 
     // Cerrar sesión de cliente
-    function cerrarSesionCliente() {
+    window.cerrarSesion = async function() {
         _clienteLogueado = null;
+        await sb.auth.signOut();
         mostrarVista('login');
-    }
+    };
+
+    // Cerrar sesión de admin
+    window.cerrarSesionAdmin = async function() {
+        sessionStorage.removeItem("adminAuth");
+        await sb.auth.signOut();
+        mostrarVista('login');
+    };
 
     // ── Admin sections ─────────────────────────────────────
     const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas","galeria"];
@@ -3046,20 +3062,41 @@
     // Escuchar si venimos de un link de recuperación de contraseña
     sb.auth.onAuthStateChange(async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
-            const nuevaClave = prompt("Escribe tu NUEVA contraseña:");
-            if (nuevaClave && nuevaClave.length >= 6) {
-                const { error } = await sb.auth.updateUser({ password: nuevaClave });
-                if (error) {
-                    alert("Error al actualizar la contraseña: " + error.message);
-                } else {
-                    alert("Contraseña actualizada correctamente. Ya puedes iniciar sesión.");
-                    await sb.auth.signOut(); // forzar relogueo limpio
-                }
-            } else {
-                alert("Operación cancelada o contraseña muy corta (mín. 6 caracteres).");
-            }
+            document.getElementById('inputNuevaClave').value = '';
+            document.getElementById('modalCambiarClave').style.display = 'flex';
         }
     });
+
+    window.procesarCambioClave = async function() {
+        const nuevaClave = document.getElementById('inputNuevaClave').value;
+        if (!nuevaClave || nuevaClave.length < 6) return toast("Mínimo 6 caracteres", "error");
+
+        const btn = document.querySelector("#modalCambiarClave .btn-luxury:last-child");
+        setBtnLoading(btn, true);
+        try {
+            const { error } = await sb.auth.updateUser({ password: nuevaClave });
+            if (error) {
+                toast("Error al actualizar: " + error.message, "error");
+            } else {
+                toast("Contraseña actualizada correctamente", "success");
+                document.getElementById('modalCambiarClave').style.display = 'none';
+                
+                // Disparar el envío del correo de confirmación de forma silenciosa
+                sb.rpc('send_password_changed_email').catch(()=>console.log("No se pudo enviar el correo de confirmación"));
+
+                // Si viene de una recuperación de contraseña, lo forzamos a reloguear limpio
+                if (!window.location.hash) {
+                    // Si no tiene hash de recuperación, significa que ya estaba logueado y la cambió desde el panel. No hace falta desloguearlo.
+                } else {
+                    setTimeout(() => sb.auth.signOut(), 2000); 
+                }
+            }
+        } catch(e) {
+            toast("Error de conexión", "error");
+        } finally {
+            setBtnLoading(btn, false);
+        }
+    };
 
     async function iniciarSesionCliente() {
         const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
@@ -5172,6 +5209,23 @@
     }
 
     </script>
+<!-- Modal de Nueva Contraseña -->
+<div class="modal-overlay" id="modalCambiarClave" style="display:none;align-items:center;justify-content:center;z-index:9999;" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content view-anim luxury-card" style="width:90%;max-width:400px;padding:30px;">
+        <h4 style="margin:0 0 16px;color:var(--burgundy);"><i class="fa-solid fa-lock" style="margin-right:8px;"></i>Nueva Contraseña</h4>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Escribe tu nueva contraseña de seguridad (mínimo 6 caracteres).</p>
+        <div class="field field-pass-wrap">
+            <input type="password" id="inputNuevaClave" placeholder=" " autocomplete="new-password">
+            <label>Nueva contraseña</label>
+            <button type="button" class="toggle-pass" onclick="togglePassVis('inputNuevaClave',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button class="btn-luxury" style="background:transparent;border:1px solid var(--line);color:var(--muted);" onclick="document.getElementById('modalCambiarClave').style.display='none'">Cancelar</button>
+            <button class="btn-luxury" onclick="procesarCambioClave()" style="flex:1;"><span>Guardar contraseña</span><span class="spinner"></span></button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal de Recuperación -->
 <div class="modal-overlay" id="modalRecuperar" style="display:none;align-items:center;justify-content:center;z-index:9999;" onclick="if(event.target===this) this.style.display='none'">
     <div class="modal-content view-anim luxury-card" style="width:90%;max-width:400px;padding:30px;">
