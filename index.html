@@ -1706,10 +1706,12 @@
                             <i class="fa-regular fa-envelope"></i>
                             <span id="regDisplayEmail"></span>
                         </div>
-                        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;text-align:center;">Hemos enviado un código de 6 dígitos a tu correo. Introdúcelo para verificar tu cuenta.</p>
+                        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;text-align:center;">Hemos enviado un código de 8 dígitos a tu correo. Introdúcelo para verificar tu cuenta.</p>
                         
                         <div class="otp-inputs" id="regOtpContainer">
                             <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
                             <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
                             <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
                             <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
@@ -3276,7 +3278,7 @@
 
     window.verificarRegistroOTP = async function() {
         const otp = getOTPCode("regOtpContainer");
-        if (otp.length < 6) return;
+        if (otp.length < 8) return;
         const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
         
         const btn = document.getElementById("btnVerificarRegOTP");
