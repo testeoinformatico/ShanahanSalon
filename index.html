@@ -1505,9 +1505,9 @@
 
                         <form onsubmit="event.preventDefault(); iniciarSesionCliente();">
                             <div class="field">
-                                <input type="text" id="loginUsuario" placeholder=" " autocomplete="username">
-                                <label>Usuario</label>
-                                <i class="fa-regular fa-user field-icon"></i>
+                                <input type="email" id="loginUsuario" placeholder=" " autocomplete="email">
+                                <label>Correo electrónico</label>
+                                <i class="fa-regular fa-envelope field-icon"></i>
                             </div>
                             <div class="field field-pass-wrap">
                                 <input type="password" id="loginPass" placeholder=" " autocomplete="current-password">
@@ -1520,45 +1520,7 @@
                         </form>
                     </div>
 
-                    <!-- PASO 2: OTP (solo dispositivo nuevo) -->
-                    <div class="otp-step" id="loginStepOTP">
-                        <h5 class="card-title">Verificación</h5>
-                        <p class="card-subtitle">Nuevo dispositivo detectado — enviamos un código a tu correo</p>
 
-                        <div class="step-indicator">
-                            <div class="step-dot done"></div>
-                            <div class="step-dot active"></div>
-                        </div>
-
-                        <div class="otp-email-display">
-                            <i class="fa-regular fa-envelope"></i><span id="loginEmailDisplay"></span>
-                        </div>
-
-                        <div class="otp-inputs" id="loginOTPInputs">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                        </div>
-
-                        <button type="button" class="btn-luxury" id="btnLoginVerificarOTP" onclick="loginVerificarOTP()">
-                            <span>Verificar y entrar</span><span class="spinner"></span>
-                        </button>
-
-                        <div class="otp-resend">
-                            ¿No llegó? <button id="btnLoginReenviar" onclick="loginReenviarOTP()" disabled>
-                                Reenviar (<span class="otp-countdown" id="loginCountdown">60</span>s)
-                            </button>
-                        </div>
-
-                        <button class="back-step" onclick="loginVolverCredenciales()">
-                            <i class="fa-solid fa-arrow-left"></i> Volver
-                        </button>
-                    </div>
 
                     <div class="divider-soft">¿Eres nueva?</div>
 
@@ -1704,40 +1666,6 @@
                             <label>Correo electrónico</label>
                             <i class="fa-regular fa-envelope field-icon"></i>
                         </div>
-                        <button type="button" class="btn-luxury" id="btnRegSolicitarOTP" onclick="regSolicitarOTP()" style="margin-bottom:18px;">
-                            <span>Enviar código de verificación</span><span class="spinner"></span>
-                        </button>
-                    </div>
-
-                    <!-- Sub-paso 1b: OTP -->
-                    <div id="regStepOTP" style="display:none; margin-bottom:18px;">
-                        <div class="otp-email-display">
-                            <i class="fa-regular fa-envelope"></i>Código enviado a <strong id="regEmailDisplay"></strong>
-                        </div>
-                        <div class="otp-inputs" id="regOTPInputs">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                            <input class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
-                        </div>
-                        <button type="button" class="btn-luxury" id="btnRegVerificarOTP" onclick="regVerificarOTP()">
-                            <span>Verificar y continuar</span><span class="spinner"></span>
-                        </button>
-                        <div class="otp-resend">
-                            ¿No llegó? <button id="btnRegReenviar" onclick="regReenviarOTP()" disabled>
-                                Reenviar (<span class="otp-countdown" id="regCountdown">60</span>s)
-                            </button>
-                        </div>
-                        <button class="back-step" onclick="regVolverDatos()">
-                            <i class="fa-solid fa-arrow-left"></i> Cambiar datos
-                        </button>
-                        <div id="regEmailVerificado" style="display:none; background:rgba(74,124,89,.1); border:1px solid rgba(74,124,89,.3); color:#4A7C59; padding:10px 14px; font-size:12px; font-weight:600; margin-top:8px;">
-                            <i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>Correo verificado ✓ — ya puedes elegir tu cita
-                        </div>
                     </div>
 
                     <div id="regErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
@@ -1838,9 +1766,9 @@
                     <div class="access-form">
                         <form onsubmit="event.preventDefault(); loginAdmin();">
                             <div class="field">
-                                <input type="text" id="adminUser" placeholder=" " autocomplete="username">
-                                <label>Usuario</label>
-                                <i class="fa-regular fa-user field-icon"></i>
+                                <input type="email" id="adminUser" placeholder=" " autocomplete="email">
+                                <label>Correo electrónico</label>
+                                <i class="fa-regular fa-envelope field-icon"></i>
                             </div>
                             <div class="field">
                                 <input type="password" id="adminPass" placeholder=" " autocomplete="current-password">
@@ -3109,105 +3037,31 @@
     let _loginClientaData = null;  // datos de la clienta tras validar credenciales
     let _loginCountdownIv = null;
 
-    function loginMostrarPaso(paso) {
-        // paso: "credenciales" | "otp"
-        document.getElementById("loginStepCredenciales").classList.toggle("active", paso==="credenciales");
-        document.getElementById("loginStepOTP").classList.toggle("active", paso==="otp");
-    }
-
     async function iniciarSesionCliente() {
         const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
         const clave   = document.getElementById("loginPass")?.value||"";
-        if (!usuario||!clave) return toast("Introduce usuario y contraseña","error");
+        if (!usuario||!clave) return toast("Introduce correo y contraseña","error");
 
         setBtnLoading("btnLoginCliente",true);
         try {
-            const { data, error } = await sb.from("clientas").select("*").eq("usuario",usuario).maybeSingle();
-            if (error) { toast("Error: "+error.message,"error"); return; }
-            if (!data)  { toast("Usuario no encontrado","error"); return; }
-            if (data.clave !== clave) { toast("Contraseña incorrecta","error"); return; }
-
-            _loginClientaData = data;
-
-            // ¿Dispositivo de confianza?
-            if (isDeviceTrusted(usuario)) {
-                // Acceso directo sin OTP
-                await mostrarPerfilCliente(data);
-                return;
-            }
-
-            // Dispositivo nuevo → pedir OTP al correo
-            if (!data.email) {
-                // Sin email registrado — acceso directo (clientas antiguas sin email)
-                toast("Bienvenida de nuevo","success");
-                await mostrarPerfilCliente(data);
-                return;
-            }
-
-            // Enviar OTP via Supabase Auth
-            const { error: otpErr } = await sb.auth.signInWithOtp({
-                email: data.email,
-                options: { shouldCreateUser: false }
+            const { data: authData, error: authErr } = await sb.auth.signInWithPassword({
+                email: usuario,
+                password: clave
             });
-            if (otpErr) {
-                // Si Supabase no tiene ese email en Auth, dejamos pasar (clientas sin Auth)
-                toast("No se pudo enviar OTP, accediendo sin verificación","info");
-                await mostrarPerfilCliente(data);
-                return;
-            }
+            if (authErr) { toast("Credenciales incorrectas","error"); return; }
+            
+            const userId = authData.user.id;
+            const { data: profile, error: profErr } = await sb.from("clientas").select("*").eq("id", userId).maybeSingle();
+            
+            if (profErr || !profile) { toast("Error cargando perfil","error"); return; }
 
-            // Mostrar pantalla OTP
-            const masked = data.email.replace(/(.{2}).*(@.*)/, "$1***$2");
-            document.getElementById("loginEmailDisplay").textContent = masked;
-            loginMostrarPaso("otp");
-            initOTPInputs("loginOTPInputs", code => loginVerificarOTP(code));
-            startCountdown("loginCountdown","btnLoginReenviar",60);
-            toast("Código enviado a tu correo","success");
-
+            toast("Bienvenida de nuevo","success");
+            await mostrarPerfilCliente(profile);
         } catch(e) {
             toast("Error de conexión","error");
         } finally {
             setBtnLoading("btnLoginCliente",false);
         }
-    }
-
-    async function loginVerificarOTP(autoCode) {
-        if (!_loginClientaData) return;
-        const email = _loginClientaData.email;
-        const code  = autoCode || getOTPCode("loginOTPInputs");
-        if (code.length!==8) return toast("Introduce los 8 dígitos","error");
-
-        setBtnLoading("btnLoginVerificarOTP",true);
-        try {
-            const { error } = await sb.auth.verifyOtp({ email, token:code, type:"email" });
-            if (error) { toast("Código incorrecto o expirado","error"); return; }
-
-            // Marcar dispositivo como confiable
-            trustDevice(_loginClientaData.usuario);
-            toast("Verificación correcta","success");
-            await mostrarPerfilCliente(_loginClientaData);
-        } catch(e) {
-            toast("Error al verificar","error");
-        } finally {
-            setBtnLoading("btnLoginVerificarOTP",false);
-        }
-    }
-
-    async function loginReenviarOTP() {
-        if (!_loginClientaData?.email) return;
-        try {
-            await sb.auth.signInWithOtp({ email:_loginClientaData.email, options:{shouldCreateUser:false} });
-            toast("Código reenviado","success");
-            startCountdown("loginCountdown","btnLoginReenviar",60);
-            clearOTPInputs("loginOTPInputs");
-            initOTPInputs("loginOTPInputs", code => loginVerificarOTP(code));
-        } catch(e) { toast("Error al reenviar","error"); }
-    }
-
-    function loginVolverCredenciales() {
-        _loginClientaData = null;
-        loginMostrarPaso("credenciales");
-        clearOTPInputs("loginOTPInputs");
     }
 
     let _renderingPerfil = false;
@@ -3281,9 +3135,6 @@
             mostrarVista("vistaCliente");
         }
         // Reset login para próxima vez
-        loginMostrarPaso("credenciales");
-        clearOTPInputs("loginOTPInputs");
-        _loginClientaData = null;
         const lu=document.getElementById("loginUsuario"); if(lu) lu.value="";
         const lp=document.getElementById("loginPass"); if(lp) lp.value="";
     }
@@ -3291,118 +3142,15 @@
     // ══════════════════════════════════════════════════════
     //  REGISTRO — datos + usuario + contraseña + OTP email
     // ══════════════════════════════════════════════════════
-    let regEmailVerificado = false;
-    let _regOTPCountdownIv = null;
-
-    async function regSolicitarOTP() {
-        const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
-        const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
-        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
-        const clave    = document.getElementById("citaClave")?.value||"";
-        const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
-        const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
-
-        if (!nombre)   return toast("Introduce tu nombre completo","error");
-        if (!telefono) return toast("Introduce tu teléfono","error");
-        if (!usuario || !/^[a-z0-9._]{3,20}$/.test(usuario))
-            return toast("Usuario inválido (3-20 car., sin espacios)","error");
-        if (clave.length<6) return toast("La contraseña debe tener al menos 6 caracteres","error");
-        if (clave!==claveC) return toast("Las contraseñas no coinciden","error");
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-            return toast("Introduce un correo válido","error");
-
-        setBtnLoading("btnRegSolicitarOTP",true);
-        try {
-            // Verificar usuario único
-            const { data: uEx } = await sb.from("clientas").select("id").eq("usuario",usuario).maybeSingle();
-            if (uEx) { toast("Ese usuario ya existe, elige otro","error"); return; }
-
-            // Verificar email único
-            const { data: eEx } = await sb.from("clientas").select("id").eq("email",email).maybeSingle();
-            if (eEx) { toast("Ese correo ya tiene una cuenta. Inicia sesión.","error"); return; }
-
-            // Verificar teléfono único
-            const { data: tEx } = await sb.from("clientas").select("id").eq("telefono",telefono).maybeSingle();
-            if (tEx) { toast("Ese teléfono ya está registrado en otra cuenta.","error"); return; }
-
-            // Enviar OTP
-            const { error } = await sb.auth.signInWithOtp({
-                email,
-                options: { shouldCreateUser: true }
-            });
-            if (error) { toast("Error enviando código: "+error.message,"error"); return; }
-
-            document.getElementById("regEmailDisplay").textContent = email;
-            document.getElementById("regStepDatos").style.display = "none";
-            document.getElementById("regStepOTP").style.display = "block";
-            document.getElementById("regEmailVerificado").style.display = "none";
-            document.getElementById("btnRegVerificarOTP").style.display = "";
-            regEmailVerificado = false;
-            initOTPInputs("regOTPInputs", code => regVerificarOTP(code));
-            startCountdown("regCountdown","btnRegReenviar",60);
-            toast("Código enviado — revisa tu correo","success");
-        } catch(e) {
-            toast("Error de conexión","error");
-        } finally {
-            setBtnLoading("btnRegSolicitarOTP",false);
-        }
-    }
-
-    async function regVerificarOTP(autoCode) {
-        const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
-        const code  = (typeof autoCode === "string" && autoCode) ? autoCode : getOTPCode("regOTPInputs");
-        
-        if (code.length !== 8) {
-            toast("Introduce los 8 dígitos", "error");
-            return;
-        }
-
-        setBtnLoading("btnRegVerificarOTP", true);
-        try {
-            const { error } = await sb.auth.verifyOtp({ email, token:code, type:"email" });
-            if (error) { 
-                toast("Código incorrecto o expirado", "error"); 
-                return; 
-            }
-            regEmailVerificado = true;
-            document.getElementById("regEmailVerificado").style.display = "block";
-            document.getElementById("btnRegVerificarOTP").style.display = "none";
-            toast("¡Correo verificado! Puedes crear tu cuenta.", "success");
-        } catch(e) {
-            console.error("regVerificarOTP error:", e);
-            toast("Error al verificar", "error");
-        } finally {
-            setBtnLoading("btnRegVerificarOTP", false);
-        }
-    }
-
-    async function regReenviarOTP() {
-        const email=(document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
-        if (!email) return;
-        try {
-            await sb.auth.signInWithOtp({email, options:{shouldCreateUser:true}});
-            toast("Código reenviado","success");
-            startCountdown("regCountdown","btnRegReenviar",60);
-            clearOTPInputs("regOTPInputs");
-            initOTPInputs("regOTPInputs", code => regVerificarOTP(code));
-        } catch(e) { toast("Error al reenviar","error"); }
-    }
-
-    function regVolverDatos() {
-        document.getElementById("regStepDatos").style.display="block";
-        document.getElementById("regStepOTP").style.display="none";
-        clearOTPInputs("regOTPInputs");
-        regEmailVerificado=false;
-    }
-
     // ══════════════════════════════════════════════════════
     //  CREAR CUENTA (solo registro, sin cita)
     // ══════════════════════════════════════════════════════
     async function crearCuenta() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
-        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase();
+        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase(); // alias opcional
         const clave    = document.getElementById("citaClave")?.value||"";
+        const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
 
         function showErr(msg) {
@@ -3415,37 +3163,51 @@
         }
         hideErr();
 
-        if (!nombre)           return showErr("Introduce tu nombre completo");
-        if (!telefono)         return showErr("Introduce tu teléfono");
-        if (!usuario)          return showErr("Elige un nombre de usuario");
-        if (clave.length<6)    return showErr("La contraseña debe tener al menos 6 caracteres");
-        if (!regEmailVerificado) return showErr("Debes verificar tu correo antes de crear la cuenta");
-        if (!document.getElementById("aceptoPrivacidad")?.checked) return showErr("Debes aceptar la Política de Privacidad para continuar");
+        if (!nombre)   return showErr("Introduce tu nombre completo");
+        if (!telefono) return showErr("Introduce tu teléfono");
+        if (usuario && !/^[a-z0-9._]{3,20}$/.test(usuario)) return showErr("Alias de usuario inválido (opcional)");
+        if (clave.length<6) return showErr("La contraseña debe tener al menos 6 caracteres");
+        if (clave!==claveC) return showErr("Las contraseñas no coinciden");
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr("Introduce un correo válido");
+        if (!document.getElementById("aceptoPrivacidad")?.checked) return showErr("Debes aceptar la Política de Privacidad");
 
         setBtnLoading("btnCrearCuenta",true);
         try {
-            // Crear clienta
-            const { error: cErr } = await sb.from("clientas")
-                .insert([{ nombre, telefono, usuario, clave, email, visitas:0 }]);
-            if (cErr) { showErr("No se pudo crear tu cuenta: "+cErr.message); return; }
+            // Verificar alias en caso de usarlo
+            let aliasFinal = usuario;
+            if (usuario) {
+                const { data: uEx } = await sb.from("clientas").select("id").eq("usuario",usuario).maybeSingle();
+                if (uEx) { showErr("Ese alias de usuario ya existe, elige otro"); return; }
+            } else {
+                aliasFinal = email; // Si no pone alias, usamos el email
+            }
 
-            // Marcar este dispositivo como confiable desde el primer acceso
-            trustDevice(usuario);
+            // 1. Crear usuario seguro en Supabase Auth
+            const { data: authData, error: authErr } = await sb.auth.signUp({
+                email: email,
+                password: clave
+            });
+            if (authErr) { showErr("No se pudo crear la cuenta: "+authErr.message); return; }
+            if (!authData.user) { showErr("Error desconocido al registrar usuario."); return; }
+
+            // 2. Insertar en tabla de clientas con el id seguro
+            const userId = authData.user.id;
+            const { error: cErr } = await sb.from("clientas")
+                .insert([{ id: userId, nombre, telefono, usuario: aliasFinal, visitas:0 }]);
+                
+            if (cErr) { showErr("No se pudo crear tu perfil en la base de datos."); return; }
 
             toast("¡Cuenta creada con éxito!", "success","¡Bienvenida!");
-            regEmailVerificado=false;
             ["citaNombre","citaTelefono","citaUsuario","citaClave","citaClaveConfirm","citaEmail"]
                 .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
             document.getElementById("usuarioFeedback").textContent="";
-            document.getElementById("regStepDatos").style.display="block";
-            document.getElementById("regStepOTP").style.display="none";
             hideErr();
 
             // Pre-rellenar login
-            const lu=document.getElementById("loginUsuario"); if(lu) lu.value=usuario;
+            const lu=document.getElementById("loginUsuario"); if(lu) lu.value=email;
             setTimeout(()=>{
                 mostrarVista("login");
-                setTimeout(()=>toast("Inicia sesión con tu usuario y contraseña para reservar tu cita","info"),500);
+                setTimeout(()=>toast("Inicia sesión con tu correo y contraseña","info"),500);
             },1200);
         } catch(e) {
             showErr("Error inesperado: "+(e.message||String(e)));
@@ -3518,6 +3280,7 @@
                 servicioFinal += " + Retirada (local)";
             }
             const { error: aErr } = await sb.from("citas").insert([{
+                cliente_id: _clienteLogueado.id,
                 nombre_cliente: _clienteLogueado.nombre,
                 telefono: _clienteLogueado.telefono,
                 servicio: servicioFinal,
@@ -3641,16 +3404,26 @@
     async function loginAdmin() {
         const user = (document.getElementById("adminUser")?.value||"").trim();
         const pass = (document.getElementById("adminPass")?.value||"").trim();
-        if (!user||!pass) return toast("Completa usuario y contraseña","error");
+        if (!user||!pass) return toast("Completa correo y contraseña","error");
         setBtnLoading("btnLoginAdmin",true);
         try {
-            const { data } = await sb.from("admins").select("*").eq("usuario",user).eq("password",pass).maybeSingle();
-            if (data) { 
+            const { data: authData, error: authErr } = await sb.auth.signInWithPassword({
+                email: user,
+                password: pass
+            });
+            if (authErr) { toast("Credenciales incorrectas","error"); return; }
+            
+            const userId = authData.user.id;
+            const { data: adminData } = await sb.from("admins").select("id").eq("id", userId).maybeSingle();
+            if (adminData) { 
                 sessionStorage.setItem("adminAuth", "true");
                 toast("Bienvenida al panel","success"); 
                 mostrarVista("vistaAdmin"); 
             }
-            else toast("Credenciales incorrectas","error");
+            else {
+                await sb.auth.signOut();
+                toast("No tienes permisos de administradora","error");
+            }
         } catch(e) { toast("Error al iniciar sesión","error"); }
         finally { setBtnLoading("btnLoginAdmin",false); }
     }
@@ -4641,6 +4414,7 @@
                 : ncSelectedServicio;
             const ncDuracionFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
             const { data, error } = await sb.from("citas").insert([{
+                cliente_id: ncSelectedClient.id,
                 nombre_cliente: ncSelectedClient.nombre,
                 telefono: ncSelectedClient.telefono,
                 servicio: ncServicioFinal,
