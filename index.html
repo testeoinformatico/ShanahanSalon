@@ -3078,17 +3078,15 @@
             if (error) {
                 toast("Error al actualizar: " + error.message, "error");
             } else {
-                toast("Contraseña actualizada correctamente", "success");
                 document.getElementById('modalCambiarClave').classList.remove('show');
+                document.getElementById('modalClaveOk').classList.add('show');
                 
                 // Disparar el envío del correo de confirmación de forma silenciosa
                 sb.rpc('send_password_changed_email').catch(()=>console.log("No se pudo enviar el correo de confirmación"));
 
                 // Si viene de una recuperación de contraseña, lo forzamos a reloguear limpio
-                if (!window.location.hash) {
-                    // Si no tiene hash de recuperación, significa que ya estaba logueado y la cambió desde el panel. No hace falta desloguearlo.
-                } else {
-                    setTimeout(() => sb.auth.signOut(), 2000); 
+                if (window.location.hash) {
+                    setTimeout(() => sb.auth.signOut(), 3000); 
                 }
             }
         } catch(e) {
@@ -5230,6 +5228,16 @@
         </div>
         <button class="btn-luxury" onclick="procesarCambioClave()" style="margin-top:18px;"><span>Guardar contraseña</span><span class="spinner"></span></button>
         <button class="link-soft" onclick="document.getElementById('modalCambiarClave').classList.remove('show')">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Contraseña Cambiada -->
+<div class="modal-backdrop-x" id="modalClaveOk" onclick="if(event.target===this) this.classList.remove('show')">
+    <div class="modal-x" style="text-align:center;">
+        <div style="font-size:50px; color:#4A7C59; margin-bottom:16px;"><i class="fa-solid fa-circle-check"></i></div>
+        <h4 style="margin:0 0 10px;color:var(--burgundy);font-family:'Playfair Display',serif;font-size:20px;">¡Contraseña Actualizada!</h4>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Tu contraseña ha sido cambiada con éxito.<br>Ya puedes usar tu nueva contraseña para iniciar sesión.</p>
+        <button class="btn-luxury" onclick="document.getElementById('modalClaveOk').classList.remove('show')" style="margin:0;"><span>Entendido</span></button>
     </div>
 </div>
 
