@@ -1660,12 +1660,6 @@
                         <div class="picker-label" style="margin-top:8px;">
                             <span><i class="fa-solid fa-key" style="margin-right:8px;color:var(--accent);"></i>Crea tu acceso</span>
                         </div>
-                        <div class="field">
-                            <input type="text" id="citaUsuario" placeholder=" " autocomplete="username" spellcheck="false">
-                            <label>Nombre de usuario</label>
-                            <i class="fa-regular fa-at field-icon"></i>
-                        </div>
-                        <div id="usuarioFeedback" style="font-size:11px;min-height:16px;margin-top:-14px;margin-bottom:10px;padding-left:2px;"></div>
                         <div class="field field-pass-wrap">
                             <input type="password" id="citaClave" placeholder=" " autocomplete="new-password">
                             <label>Contraseña</label>
@@ -2906,28 +2900,6 @@
         renderTimeSlots();
     }
 
-    // ── Usuario check ──────────────────────────────────────
-    let usuarioTimer = null;
-    async function checkUsuarioDisponible(val) {
-        const fb = document.getElementById("usuarioFeedback");
-        if (!fb) return;
-        val = (val||"").trim().toLowerCase();
-        if (!val) { fb.textContent=""; return; }
-        if (!/^[a-z0-9._]{3,20}$/.test(val)) {
-            fb.innerHTML = `<span style="color:#c0392b">✗ Solo letras/números/punto/guión bajo, 3-20 car.</span>`;
-            return;
-        }
-        fb.innerHTML = `<span style="color:var(--muted)">Comprobando…</span>`;
-        clearTimeout(usuarioTimer);
-        usuarioTimer = setTimeout(async () => {
-            try {
-                const { data } = await sb.from("clientas").select("id").eq("usuario",val).maybeSingle();
-                fb.innerHTML = data
-                    ? `<span style="color:#c0392b">✗ Ese usuario ya existe</span>`
-                    : `<span style="color:#27ae60">✓ Disponible</span>`;
-            } catch(e) { fb.textContent=""; }
-        }, 600);
-    }
 
     // ══════════════════════════════════════════════════════
     //  HELPERS OTP — inputs de 8 dígitos
@@ -3214,7 +3186,7 @@
     async function crearCuenta() {
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
-        const usuario  = (document.getElementById("citaUsuario")?.value||"").trim().toLowerCase(); // alias opcional
+
         const clave    = document.getElementById("citaClave")?.value||"";
         const claveC   = document.getElementById("citaClaveConfirm")?.value||"";
         const email    = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
@@ -3231,7 +3203,7 @@
 
         if (!nombre)   return showErr("Introduce tu nombre completo");
         if (!telefono) return showErr("Introduce tu teléfono");
-        if (usuario && !/^[a-z0-9._]{3,20}$/.test(usuario)) return showErr("Alias de usuario inválido (opcional)");
+
         if (clave.length<6) return showErr("La contraseña debe tener al menos 6 caracteres");
         if (clave!==claveC) return showErr("Las contraseñas no coinciden");
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr("Introduce un correo válido");
@@ -3239,34 +3211,30 @@
 
         setBtnLoading("btnCrearCuenta",true);
         try {
-            // Verificar alias en caso de usarlo
-            let aliasFinal = usuario;
-            if (usuario) {
-                const { data: uEx } = await sb.from("clientas").select("id").eq("usuario",usuario).maybeSingle();
-                if (uEx) { showErr("Ese alias de usuario ya existe, elige otro"); return; }
-            } else {
-                aliasFinal = email; // Si no pone alias, usamos el email
-            }
-
-            // 1. Crear usuario seguro en Supabase Auth
+            let aliasFinal = email; // Usamos el email como identificador único
+            
+            // 1. Crear usuario seguro en Supabase Auth y pasarle los datos
             const { data: authData, error: authErr } = await sb.auth.signUp({
                 email: email,
-                password: clave
+                password: clave,
+                options: {
+                    data: {
+                        nombre: nombre,
+                        telefono: telefono,
+                        usuario: aliasFinal
+                    }
+                }
             });
             if (authErr) { showErr("No se pudo crear la cuenta: "+authErr.message); return; }
             if (!authData.user) { showErr("Error desconocido al registrar usuario."); return; }
 
-            // 2. Insertar en tabla de clientas con el id seguro
-            const userId = authData.user.id;
-            const { error: cErr } = await sb.from("clientas")
-                .insert([{ id: userId, nombre, telefono, usuario: aliasFinal, visitas:0 }]);
-                
-            if (cErr) { showErr("No se pudo crear tu perfil en la base de datos."); return; }
+            // 2. La base de datos creará automáticamente el perfil en la tabla 'clientas'
+            // mediante un Trigger (ya no hacemos el insert desde aquí para evitar bloqueos de seguridad).
 
             toast("¡Cuenta creada con éxito!", "success","¡Bienvenida!");
-            ["citaNombre","citaTelefono","citaUsuario","citaClave","citaClaveConfirm","citaEmail"]
+            ["citaNombre","citaTelefono","citaClave","citaClaveConfirm","citaEmail"]
                 .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
-            document.getElementById("usuarioFeedback").textContent="";
+
             hideErr();
 
             // Pre-rellenar login
@@ -4625,9 +4593,7 @@
     // ══════════════════════════════════════════════════════
     // initPicker se llama al entrar en vistaReservar
     // Check usuario disponible (en vista registro)
-    document.getElementById("citaUsuario")?.addEventListener("input", () => {
-        checkUsuarioDisponible(document.getElementById("citaUsuario").value);
-    });
+
     try { cargarDisponibles(); } catch(e){ console.error("cargarDisponibles:",e); }
     try { mostrarVista("login"); } catch(e){ console.error("mostrarVista:",e); }
 
