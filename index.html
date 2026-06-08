@@ -3080,19 +3080,19 @@
                 setBtnLoading(btn, false);
                 return;
             }
+            
+            // Enviar correo de confirmación ANTES de que la sesión pueda expirar
+            const { error: rpcErr } = await sb.rpc('send_password_changed_email');
+            if (rpcErr) console.log("RPC error:", rpcErr.message);
+            
         } catch(e) {
-            toast("Error de conexión", "error");
-            setBtnLoading(btn, false);
-            return;
+            console.log("Error en cambio de clave:", e);
         }
         
-        // Si llegamos aquí, la contraseña se cambió con éxito
+        // Siempre mostrar confirmación si llegamos aquí
         setBtnLoading(btn, false);
         document.getElementById('modalCambiarClave').classList.remove('show');
         document.getElementById('modalClaveOk').classList.add('show');
-        
-        // Intentar enviar correo de confirmación (puede fallar si la sesión se invalidó, lo ignoramos)
-        try { sb.rpc('send_password_changed_email'); } catch(e) {}
 
         // Si viene de un link de recuperación, cerrar sesión después
         if (window.location.hash) {
