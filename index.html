@@ -1514,6 +1514,9 @@
                                 <label>Contraseña</label>
                                 <button type="button" class="toggle-pass" onclick="togglePassVis('loginPass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
                             </div>
+                            <div style="text-align: right; margin-top: -10px; margin-bottom: 15px;">
+                                <a href="#" onclick="solicitarRecuperacion(); return false;" style="font-size: 12px; color: var(--accent); text-decoration: none;">¿Olvidaste tu contraseña?</a>
+                            </div>
                             <button type="submit" class="btn-luxury" id="btnLoginCliente">
                                 <span>Entrar</span><span class="spinner"></span>
                             </button>
@@ -3036,6 +3039,38 @@
     // ══════════════════════════════════════════════════════
     let _loginClientaData = null;  // datos de la clienta tras validar credenciales
     let _loginCountdownIv = null;
+
+    async function solicitarRecuperacion() {
+        const email = prompt("Introduce tu correo electrónico para recuperar tu contraseña:");
+        if (!email) return;
+        try {
+            const { error } = await sb.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + window.location.pathname
+            });
+            if (error) toast("Error: " + error.message, "error");
+            else toast("Enlace de recuperación enviado a tu correo.", "success");
+        } catch(e) {
+            toast("Error de conexión", "error");
+        }
+    }
+
+    // Escuchar si venimos de un link de recuperación de contraseña
+    sb.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            const nuevaClave = prompt("Escribe tu NUEVA contraseña:");
+            if (nuevaClave && nuevaClave.length >= 6) {
+                const { error } = await sb.auth.updateUser({ password: nuevaClave });
+                if (error) {
+                    alert("Error al actualizar la contraseña: " + error.message);
+                } else {
+                    alert("Contraseña actualizada correctamente. Ya puedes iniciar sesión.");
+                    await sb.auth.signOut(); // forzar relogueo limpio
+                }
+            } else {
+                alert("Operación cancelada o contraseña muy corta (mín. 6 caracteres).");
+            }
+        }
+    });
 
     async function iniciarSesionCliente() {
         const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
