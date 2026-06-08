@@ -3303,7 +3303,12 @@
                 document.getElementById("modalRegistroOk").classList.add("show");
                 
                 // Enviar correo de bienvenida
-                sb.rpc('send_welcome_email', { p_email: email }).catch(()=>console.log("No se pudo enviar el correo de bienvenida"));
+                try {
+                    const { error: rpcErr } = await sb.rpc('send_welcome_email', { p_email: email });
+                    if (rpcErr) console.error("Error al enviar correo:", rpcErr);
+                } catch(e) {
+                    console.error("Excepción en rpc:", e);
+                }
                 
                 const lu=document.getElementById("loginUsuario"); if(lu) lu.value=email;
                 setTimeout(()=>{
