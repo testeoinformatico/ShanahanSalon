@@ -3294,17 +3294,21 @@
                 errorMsg.style.display = "block";
                 clearOTPInputs("regOtpContainer");
             } else {
-                toast("¡Cuenta verificada con éxito!", "success", "¡Bienvenida!");
                 ["citaNombre","citaTelefono","citaClave","citaClaveConfirm","citaEmail"]
                     .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
                 document.getElementById("regStepOTP").style.display = 'none';
                 document.getElementById("regStepDatos").style.display = 'block';
                 
+                // Mostrar popup de éxito
+                document.getElementById("modalRegistroOk").classList.add("show");
+                
+                // Enviar correo de bienvenida
+                sb.rpc('send_welcome_email', { p_email: email }).catch(()=>console.log("No se pudo enviar el correo de bienvenida"));
+                
                 const lu=document.getElementById("loginUsuario"); if(lu) lu.value=email;
                 setTimeout(()=>{
                     mostrarVista("login");
-                    setTimeout(()=>toast("Inicia sesión para reservar","info"),500);
-                },800);
+                }, 800);
             }
         } catch(e) {
             errorMsg.textContent = "Error de conexión";
@@ -5289,5 +5293,16 @@
         <button class="link-soft" onclick="document.getElementById('modalRecuperar').classList.remove('show')">Cancelar</button>
     </div>
 </div>
+
+<!-- Modal de Confirmación de Registro Exitoso -->
+<div class="modal-backdrop-x" id="modalRegistroOk" onclick="if(event.target===this) this.classList.remove('show')">
+    <div class="modal-x" style="text-align:center;">
+        <div style="font-size:50px; color:#4A7C59; margin-bottom:16px;"><i class="fa-solid fa-circle-check"></i></div>
+        <h4 style="margin:0 0 10px;color:var(--burgundy);font-family:'Playfair Display',serif;font-size:20px;">¡Cuenta Verificada!</h4>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Tu cuenta ha sido creada y verificada con éxito.<br>Ya puedes iniciar sesión para reservar tu cita.</p>
+        <button class="btn-luxury" onclick="document.getElementById('modalRegistroOk').classList.remove('show')" style="margin:0;"><span>Entendido</span></button>
+    </div>
+</div>
+
 </body>
 </html>
