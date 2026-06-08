@@ -3015,17 +3015,31 @@
     let _loginClientaData = null;  // datos de la clienta tras validar credenciales
     let _loginCountdownIv = null;
 
-    async function solicitarRecuperacion() {
-        const email = prompt("Introduce tu correo electrónico para recuperar tu contraseña:");
-        if (!email) return;
+    function solicitarRecuperacion() {
+        document.getElementById('inputRecuperarEmail').value = '';
+        document.getElementById('modalRecuperar').style.display = 'flex';
+    }
+
+    window.enviarRecuperacion = async function() {
+        const email = document.getElementById('inputRecuperarEmail').value.trim();
+        if (!email) return toast("Introduce un correo válido", "error");
+        
+        const btn = document.querySelector("#modalRecuperar .btn-luxury:last-child");
+        setBtnLoading(btn, true);
         try {
             const { error } = await sb.auth.resetPasswordForEmail(email, {
                 redirectTo: window.location.origin + window.location.pathname
             });
-            if (error) toast("Error: " + error.message, "error");
-            else toast("Enlace de recuperación enviado a tu correo.", "success");
+            if (error) {
+                toast("Error: " + error.message, "error");
+            } else {
+                toast("Enlace enviado a tu correo", "success");
+                document.getElementById('modalRecuperar').style.display = 'none';
+            }
         } catch(e) {
             toast("Error de conexión", "error");
+        } finally {
+            setBtnLoading(btn, false);
         }
     }
 
@@ -3058,7 +3072,10 @@
                 email: usuario,
                 password: clave
             });
-            if (authErr) { toast("Credenciales incorrectas","error"); return; }
+            if (authErr) { 
+                toast("Error: " + (authErr.message === 'Invalid login credentials' ? 'Correo o contraseña incorrectos' : authErr.message), "error"); 
+                return; 
+            }
             
             const userId = authData.user.id;
             const { data: profile, error: profErr } = await sb.from("clientas").select("*").eq("id", userId).maybeSingle();
@@ -3421,7 +3438,10 @@
                 email: user,
                 password: pass
             });
-            if (authErr) { toast("Credenciales incorrectas","error"); return; }
+            if (authErr) { 
+                toast("Error: " + (authErr.message === 'Invalid login credentials' ? 'Correo o contraseña incorrectos' : authErr.message), "error"); 
+                return; 
+            }
             
             const userId = authData.user.id;
             const { data: adminData } = await sb.from("admins").select("id").eq("id", userId).maybeSingle();
@@ -5152,5 +5172,21 @@
     }
 
     </script>
+<!-- Modal de Recuperación -->
+<div class="modal-overlay" id="modalRecuperar" style="display:none;align-items:center;justify-content:center;z-index:9999;" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content view-anim luxury-card" style="width:90%;max-width:400px;padding:30px;">
+        <h4 style="margin:0 0 16px;color:var(--burgundy);"><i class="fa-solid fa-key" style="margin-right:8px;"></i>Recuperar Contraseña</h4>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Introduce el correo con el que te registraste para enviarte un enlace de recuperación.</p>
+        <div class="field">
+            <input type="email" id="inputRecuperarEmail" placeholder=" " autocomplete="email">
+            <label>Correo electrónico</label>
+            <i class="fa-regular fa-envelope field-icon"></i>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button class="btn-luxury" style="background:transparent;border:1px solid var(--line);color:var(--muted);" onclick="document.getElementById('modalRecuperar').style.display='none'">Cancelar</button>
+            <button class="btn-luxury" onclick="enviarRecuperacion()" style="flex:1;"><span>Enviar enlace</span><span class="spinner"></span></button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
