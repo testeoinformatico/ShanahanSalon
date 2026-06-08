@@ -309,6 +309,14 @@
         .servicio-opcion.selected { border-color: var(--burgundy); background: var(--burgundy-soft); }
         .servicio-opcion input[type=radio] { display: none; }
         .servicio-opcion-nombre { font-size: 12.5px; color: var(--dark-text); font-weight: 500; flex: 1; }
+        .servicio-opcion.selected .servicio-opcion-nombre { font-weight: 700; color: var(--burgundy); }
+        .servicio-opcion.selected .servicio-opcion-nombre::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 8px;
+            color: var(--burgundy);
+        }
         .servicio-opcion-dur {
             font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
             color: var(--muted); background: var(--cream-deep); padding: 3px 8px;
@@ -2012,40 +2020,7 @@
             </div>
 
             </div><div class="admin-section" id="asecUsuarios" style="display:none;">
-            <div class="col-12 col-lg-8">
-                <div class="luxury-card view-anim usuarios-card">
-                    <div class="admin-header" style="margin-bottom:16px;">
-                        <h5><i class="fa-solid fa-user-shield"></i> Usuarios del salón</h5>
-                    </div>
-                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Crea cuentas de acceso al panel para el personal del salón.</p>
-
-                    <form onsubmit="event.preventDefault(); registrarNuevoAdmin();">
-                        <div class="nc-row">
-                            <div class="field">
-                                <input type="text" id="newAdminUser" placeholder=" " autocomplete="off">
-                                <label>Usuario</label>
-                                <i class="fa-regular fa-user field-icon"></i>
-                            </div>
-                            <div class="field field-pass-wrap">
-                                <input type="password" id="newAdminPass" placeholder=" " autocomplete="new-password">
-                                <label>Contraseña</label>
-                                <button type="button" class="toggle-pass" onclick="togglePassVis('newAdminPass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-luxury" id="btnRegistrarAdmin"><span>Crear usuario</span><span class="spinner"></span></button>
-                    </form>
-
-                    <hr style="border:none; border-top:1px solid var(--line); margin:30px 0 18px;">
-
-                    <div class="nc-section-title"><i class="fa-solid fa-users-gear"></i>Usuarios existentes</div>
-                    <div class="usuarios-list" id="listaUsuariosAdmin">
-                        <div class="empty-state" style="padding:14px 0;font-size:12px;">Cargando…</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notificaciones por correo -->
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-6 mx-auto">
                 <div class="luxury-card view-anim" style="position:sticky;top:20px;">
                     <div class="admin-header" style="margin-bottom:16px;">
                         <h5><i class="fa-solid fa-bell"></i> Notificaciones</h5>
