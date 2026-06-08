@@ -3077,22 +3077,26 @@
             const { error } = await sb.auth.updateUser({ password: nuevaClave });
             if (error) {
                 toast("Error al actualizar: " + error.message, "error");
-            } else {
-                document.getElementById('modalCambiarClave').classList.remove('show');
-                document.getElementById('modalClaveOk').classList.add('show');
-                
-                // Disparar el envío del correo de confirmación de forma silenciosa
-                sb.rpc('send_password_changed_email').catch(()=>console.log("No se pudo enviar el correo de confirmación"));
-
-                // Si viene de una recuperación de contraseña, lo forzamos a reloguear limpio
-                if (window.location.hash) {
-                    setTimeout(() => sb.auth.signOut(), 3000); 
-                }
+                setBtnLoading(btn, false);
+                return;
             }
         } catch(e) {
             toast("Error de conexión", "error");
-        } finally {
             setBtnLoading(btn, false);
+            return;
+        }
+        
+        // Si llegamos aquí, la contraseña se cambió con éxito
+        setBtnLoading(btn, false);
+        document.getElementById('modalCambiarClave').classList.remove('show');
+        document.getElementById('modalClaveOk').classList.add('show');
+        
+        // Intentar enviar correo de confirmación (puede fallar si la sesión se invalidó, lo ignoramos)
+        try { sb.rpc('send_password_changed_email'); } catch(e) {}
+
+        // Si viene de un link de recuperación, cerrar sesión después
+        if (window.location.hash) {
+            setTimeout(() => { try { sb.auth.signOut(); } catch(e) {} }, 3000); 
         }
     };
 
