@@ -1410,7 +1410,7 @@
 
         <div class="admin-menu-sep"></div>
         
-        <button class="admin-menu-item admin-menu-end" onclick="mostrarVista('login')">
+        <button class="admin-menu-item admin-menu-end" onclick="sessionStorage.removeItem('adminAuth'); mostrarVista('login');">
             <i class="fa-solid fa-power-off"></i>
             <span>Salir</span>
         </button>
@@ -2572,6 +2572,9 @@
     }
 
     function mostrarVista(id) {
+        if (id === "vistaAccesoAdmin" && sessionStorage.getItem("adminAuth") === "true") {
+            id = "vistaAdmin";
+        }
         const mainNav = document.getElementById("mainNavActions");
         if(mainNav) mainNav.classList.remove("show-mobile");
         
@@ -3642,7 +3645,11 @@
         setBtnLoading("btnLoginAdmin",true);
         try {
             const { data } = await sb.from("admins").select("*").eq("usuario",user).eq("password",pass).maybeSingle();
-            if (data) { toast("Bienvenida al panel","success"); mostrarVista("vistaAdmin"); }
+            if (data) { 
+                sessionStorage.setItem("adminAuth", "true");
+                toast("Bienvenida al panel","success"); 
+                mostrarVista("vistaAdmin"); 
+            }
             else toast("Credenciales incorrectas","error");
         } catch(e) { toast("Error al iniciar sesión","error"); }
         finally { setBtnLoading("btnLoginAdmin",false); }
@@ -4585,6 +4592,7 @@
     }
 
     function abrirNuevaCita(prefillFecha, prefillHora) {
+        document.body.style.overflow = "hidden";
         // Reset
         ncSelectedClient = null;
         ncSelectedServicio = null;
@@ -4607,6 +4615,7 @@
     }
 
     function cerrarNuevaCita() {
+        document.body.style.overflow = "";
         document.getElementById("nuevaCitaModal").classList.remove("show");
     }
 
