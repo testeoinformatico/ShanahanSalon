@@ -1679,26 +1679,55 @@
                             <label>Correo electrónico</label>
                             <i class="fa-regular fa-envelope field-icon"></i>
                         </div>
+                        
+                        <div id="regErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
+
+                        <!-- Verificación de Privacidad -->
+                        <div style="margin-top:20px; display:flex; align-items:flex-start; gap:10px;">
+                            <input type="checkbox" id="aceptoPrivacidad" style="margin-top:3px; accent-color:var(--burgundy);">
+                            <label for="aceptoPrivacidad" style="font-size:12px; color:var(--muted); line-height:1.4;">
+                                He leído y acepto la <a onclick="abrirLegal('privacidad')" style="color:var(--accent); text-decoration:none; font-weight:600; cursor:pointer;">Política de Privacidad</a> y el tratamiento de mis datos personales según el RGPD (UE).
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn-luxury" id="btnCrearCuenta" style="margin-top:20px;" onclick="crearCuenta()">
+                            <span>Crear Cuenta</span>
+                            <span class="spinner"></span>
+                        </button>
+
+                        <button type="button" class="link-soft" onclick="mostrarVista('login')" style="margin-top:12px;">
+                            <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
+                        </button>
                     </div>
 
-                    <div id="regErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
+                    <!-- Sub-paso 1b: OTP Email -->
+                    <div id="regStepOTP" style="display:none;">
+                        <div class="otp-email-display">
+                            <i class="fa-regular fa-envelope"></i>
+                            <span id="regDisplayEmail"></span>
+                        </div>
+                        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;text-align:center;">Hemos enviado un código de 6 dígitos a tu correo. Introdúcelo para verificar tu cuenta.</p>
+                        
+                        <div class="otp-inputs" id="regOtpContainer">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
 
-                    <!-- Verificación de Privacidad -->
-                    <div style="margin-top:20px; display:flex; align-items:flex-start; gap:10px;">
-                        <input type="checkbox" id="aceptoPrivacidad" style="margin-top:3px; accent-color:var(--burgundy);">
-                        <label for="aceptoPrivacidad" style="font-size:12px; color:var(--muted); line-height:1.4;">
-                            He leído y acepto la <a onclick="abrirLegal('privacidad')" style="color:var(--accent); text-decoration:none; font-weight:600; cursor:pointer;">Política de Privacidad</a> y el tratamiento de mis datos personales según el RGPD (UE).
-                        </label>
+                        <div id="regOtpErrorMsg" style="display:none;padding:12px 14px;background:rgba(146,31,35,.08);border-left:3px solid var(--burgundy);color:var(--burgundy);font-size:12px;margin-top:14px;"></div>
+
+                        <button type="button" class="btn-luxury" id="btnVerificarRegOTP" style="margin-top:20px;" onclick="verificarRegistroOTP()">
+                            <span>Verificar y Entrar</span>
+                            <span class="spinner"></span>
+                        </button>
+
+                        <button type="button" class="link-soft" onclick="document.getElementById('regStepOTP').style.display='none'; document.getElementById('regStepDatos').style.display='block';" style="margin-top:12px;">
+                            <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Cambiar correo
+                        </button>
                     </div>
-
-                    <button type="button" class="btn-luxury" id="btnCrearCuenta" style="margin-top:20px;" onclick="crearCuenta()">
-                        <span>Crear Cuenta</span>
-                        <span class="spinner"></span>
-                    </button>
-
-                    <button type="button" class="link-soft" onclick="mostrarVista('login')" style="margin-top:12px;">
-                        <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Volver
-                    </button>
                 </div>
             </div>
         </section>
@@ -3231,22 +3260,55 @@
             // 2. La base de datos creará automáticamente el perfil en la tabla 'clientas'
             // mediante un Trigger (ya no hacemos el insert desde aquí para evitar bloqueos de seguridad).
 
-            toast("¡Cuenta creada con éxito!", "success","¡Bienvenida!");
-            ["citaNombre","citaTelefono","citaClave","citaClaveConfirm","citaEmail"]
-                .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+            toast("¡Código enviado a tu correo!", "info");
+            
+            document.getElementById("regDisplayEmail").textContent = email;
+            initOTPInputs("regOtpContainer", verificarRegistroOTP);
+            document.getElementById("regStepDatos").style.display = 'none';
+            document.getElementById("regStepOTP").style.display = 'block';
 
-            hideErr();
-
-            // Pre-rellenar login
-            const lu=document.getElementById("loginUsuario"); if(lu) lu.value=email;
-            setTimeout(()=>{
-                mostrarVista("login");
-                setTimeout(()=>toast("Inicia sesión con tu correo y contraseña","info"),500);
-            },1200);
         } catch(e) {
             showErr("Error inesperado: "+(e.message||String(e)));
         } finally {
             setBtnLoading("btnCrearCuenta",false);
+        }
+    }
+
+    window.verificarRegistroOTP = async function() {
+        const otp = getOTPCode("regOtpContainer");
+        if (otp.length < 6) return;
+        const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
+        
+        const btn = document.getElementById("btnVerificarRegOTP");
+        setBtnLoading(btn, true);
+        
+        const errorMsg = document.getElementById("regOtpErrorMsg");
+        errorMsg.style.display = "none";
+        
+        try {
+            const { data, error } = await sb.auth.verifyOtp({ email, token: otp, type: 'signup' });
+            if (error) {
+                errorMsg.textContent = "Código incorrecto o caducado";
+                errorMsg.style.display = "block";
+                clearOTPInputs("regOtpContainer");
+            } else {
+                toast("¡Cuenta verificada con éxito!", "success", "¡Bienvenida!");
+                ["citaNombre","citaTelefono","citaClave","citaClaveConfirm","citaEmail"]
+                    .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+                document.getElementById("regStepOTP").style.display = 'none';
+                document.getElementById("regStepDatos").style.display = 'block';
+                
+                const lu=document.getElementById("loginUsuario"); if(lu) lu.value=email;
+                setTimeout(()=>{
+                    mostrarVista("login");
+                    setTimeout(()=>toast("Inicia sesión para reservar","info"),500);
+                },800);
+            }
+        } catch(e) {
+            errorMsg.textContent = "Error de conexión";
+            errorMsg.style.display = "block";
+        } finally {
+            setBtnLoading(btn, false);
         }
     }
 
