@@ -5219,9 +5219,9 @@
             <label>Nueva contraseña</label>
             <button type="button" class="toggle-pass" onclick="togglePassVis('inputNuevaClave',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
         </div>
-        <div style="display:flex;gap:10px;margin-top:20px;">
-            <button class="btn-ghost" onclick="document.getElementById('modalCambiarClave').style.display='none'" style="flex:1; margin:0; padding:14px; display:flex; justify-content:center; align-items:center;">Cancelar</button>
-            <button class="btn-luxury" onclick="procesarCambioClave()" style="flex:1; margin:0; padding:14px; display:flex; justify-content:center; align-items:center;"><span>Guardar contraseña</span><span class="spinner"></span></button>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+            <button class="btn-luxury" onclick="procesarCambioClave()" style="margin:0;"><span>Guardar contraseña</span><span class="spinner"></span></button>
+            <button class="btn-ghost" onclick="document.getElementById('modalCambiarClave').style.display='none'" style="margin:0; width:100%; border:none;">Cancelar</button>
         </div>
     </div>
 </div>
@@ -5236,9 +5236,9 @@
             <label>Correo electrónico</label>
             <i class="fa-regular fa-envelope field-icon"></i>
         </div>
-        <div style="display:flex;gap:10px;margin-top:20px;">
-            <button class="btn-ghost" onclick="document.getElementById('modalRecuperar').style.display='none'" style="flex:1; margin:0; padding:14px; display:flex; justify-content:center; align-items:center;">Cancelar</button>
-            <button class="btn-luxury" onclick="enviarRecuperacion()" style="flex:1; margin:0; padding:14px; display:flex; justify-content:center; align-items:center;"><span>Enviar enlace</span><span class="spinner"></span></button>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+            <button class="btn-luxury" onclick="enviarRecuperacion()" style="margin:0;"><span>Enviar enlace</span><span class="spinner"></span></button>
+            <button class="btn-ghost" onclick="document.getElementById('modalRecuperar').style.display='none'" style="margin:0; width:100%; border:none;">Cancelar</button>
         </div>
     </div>
 </div>
