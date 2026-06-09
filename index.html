@@ -2421,13 +2421,6 @@
         return h>0 ? (m>0 ? `${h}h ${m}min` : `${h}h`) : `${m}min`;
     }
 
-    // Escapa HTML para evitar XSS al pintar datos de usuario con innerHTML
-    function esc(s) {
-        return String(s ?? "").replace(/[&<>"']/g, c => (
-            {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]
-        ));
-    }
-
     // ── Slot helpers ───────────────────────────────────────
     function slotBloqueado(t, citasDelDia, durNueva, fechaISO) {
         const tMin = toMin(t), durN = parseInt(durNueva,10)||30;
@@ -2518,9 +2511,8 @@
     }
 
     function mostrarVista(id) {
-        // Si ya hay sesión de administradora válida, saltar directa al panel
-        if (id === "vistaAccesoAdmin") {
-            esAdmin().then(ok => { if (ok) mostrarVista("vistaAdmin"); });
+        if (id === "vistaAccesoAdmin" && sessionStorage.getItem("adminAuth") === "true") {
+            id = "vistaAdmin";
         }
         const mainNav = document.getElementById("mainNavActions");
         if(mainNav) mainNav.classList.remove("show-mobile");
@@ -2539,17 +2531,10 @@
         el.querySelectorAll(".view-anim").forEach(a => { a.style.animation="none"; a.offsetHeight; a.style.animation=""; });
 
         if (id === "vistaAdmin") {
-            esAdmin().then(ok => {
-                if (!ok) {
-                    toast("Debes iniciar sesión como administradora","error");
-                    mostrarVista("vistaAccesoAdmin");
-                    return;
-                }
-                body.classList.add("admin-mode");
-                el.classList.add("active-layout");
-                if (adminMenu) { adminMenu.style.display="flex"; setTimeout(()=>adminMenu.classList.add("show"),50); }
-                cargarDatosAdmin().then(()=>{ try{showWelcome();}catch(e){} });
-            });
+            body.classList.add("admin-mode");
+            el.classList.add("active-layout");
+            if (adminMenu) { adminMenu.style.display="flex"; setTimeout(()=>adminMenu.classList.add("show"),50); }
+            cargarDatosAdmin().then(()=>{ try{showWelcome();}catch(e){} });
         } else {
             body.classList.remove("admin-mode");
             document.getElementById("vistaAdmin")?.classList.remove("active-layout");
@@ -2584,6 +2569,7 @@
 
     // Cerrar sesión de admin
     window.cerrarSesionAdmin = async function() {
+        sessionStorage.removeItem("adminAuth");
         await sb.auth.signOut();
         mostrarVista('login');
     };
@@ -3495,7 +3481,7 @@
             <div class="mi-cita-date"><span class="day">${dt.getDate()}</span><span class="month">${MONTHS_ES[dt.getMonth()].slice(0,3)}</span></div>
             <div class="mi-cita-info">
                 <span class="weekday">${fullDay}</span>
-                ${c.servicio ? `<span style="font-size:10.5px;color:var(--accent);font-weight:600;">${esc(c.servicio)}</span>` : ""}
+                ${c.servicio ? `<span style="font-size:10.5px;color:var(--accent);font-weight:600;">${c.servicio}</span>` : ""}
                 <span class="hora">${hora} h${c.duracion_minutos ? ` · ${durStr(c.duracion_minutos)}` : ""}  </span>
                 <span class="estado-pill ${estado}">${estado}</span>
             </div>
@@ -3514,15 +3500,6 @@
     // ══════════════════════════════════════════════════════
     //  ADMIN
     // ══════════════════════════════════════════════════════
-    async function esAdmin() {
-        try {
-            const { data: { session } } = await sb.auth.getSession();
-            if (!session) return false;
-            const { data } = await sb.from("admins").select("id").eq("id", session.user.id).maybeSingle();
-            return !!data;
-        } catch (e) { return false; }
-    }
-
     async function loginAdmin() {
         const user = (document.getElementById("adminUser")?.value||"").trim();
         const pass = (document.getElementById("adminPass")?.value||"").trim();
@@ -3541,6 +3518,7 @@
             const userId = authData.user.id;
             const { data: adminData } = await sb.from("admins").select("id").eq("id", userId).maybeSingle();
             if (adminData) { 
+                sessionStorage.setItem("adminAuth", "true");
                 toast("Bienvenida al panel","success"); 
                 mostrarVista("vistaAdmin"); 
             }
@@ -3618,8 +3596,8 @@
             return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
                 <td><span style="font-weight:600;">${fechaBonita}</span></td>
                 <td>${hora} h</td>
-                <td>${esc(c.nombre_cliente)} <span style="font-size:10px;color:var(--muted);">${esc(c.telefono)}</span></td>
-                <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${esc(c.servicio)||"—"}</span></td>
+                <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
+                <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"—"}</span></td>
                 <td><span class="estado-pill ${estado}">${estado}</span></td>
             </tr>`;
         }).join("");
@@ -3762,10 +3740,10 @@
                 const durMin = parseInt(citaAqui.duracion_minutos,10)||30;
                 bodyHTML = `
                     <div class="tl-cita ${estado}" onclick="abrirEditarCita(${citaAqui.id})">
-                        <div class="tl-cita-name">${esc(citaAqui.nombre_cliente)||"—"}</div>
-                        ${citaAqui.servicio?`<div class="tl-cita-servicio">${esc(citaAqui.servicio)}</div>`:""}
+                        <div class="tl-cita-name">${citaAqui.nombre_cliente||"—"}</div>
+                        ${citaAqui.servicio?`<div class="tl-cita-servicio">${citaAqui.servicio}</div>`:""}
                         <div class="tl-cita-meta">
-                            <span><i class="fa-solid fa-phone" style="margin-right:4px;font-size:9px;"></i>${esc(citaAqui.telefono)||"—"}</span>
+                            <span><i class="fa-solid fa-phone" style="margin-right:4px;font-size:9px;"></i>${citaAqui.telefono||"—"}</span>
                             <span class="estado-pill ${estado}" style="font-size:9px;padding:1px 7px;">${estado}</span>
                         </div>
                         <span class="tl-cita-dur">${durStr(durMin)}</span>
@@ -3781,7 +3759,7 @@
                 const inicioB = toMin((bloqueadoPor.hora||"").slice(0,5));
                 const finB    = inicioB + durMin;
                 const restMin = finB - tMin;
-                bodyHTML = `<div class="tl-bloqueado"><i class="fa-solid fa-lock" style="font-size:10px;"></i>Bloqueado — ${esc(bloqueadoPor.nombre_cliente)} (${durStr(restMin)} restantes)</div>`;
+                bodyHTML = `<div class="tl-bloqueado"><i class="fa-solid fa-lock" style="font-size:10px;"></i>Bloqueado — ${bloqueadoPor.nombre_cliente||""} (${durStr(restMin)} restantes)</div>`;
             } else {
                 bodyHTML = `<div class="tl-libre" onclick="abrirNuevaCita('${iso}','${t}')"><i class="fa-regular fa-circle" style="font-size:10px;color:#4A7C59;"></i>Libre<span class="tl-libre-action"><i class="fa-solid fa-plus" style="margin-right:4px;"></i>Agendar</span></div>`;
             }
@@ -3857,13 +3835,13 @@
                 filtered.forEach(c=>{
                     const v=c.visitas||0, pct=Math.min(v,10)*10;
                     tb.innerHTML+=`<tr>
-                        <td><div class="client-name">${esc(c.nombre)}</div><div class="client-phone">${c.usuario?`@${esc(c.usuario)} · `:""} ${esc(c.telefono)||"—"}</div></td>
+                        <td><div class="client-name">${c.nombre}</div><div class="client-phone">${c.usuario?`@${c.usuario} · `:""} ${c.telefono||"—"}</div></td>
                         <td><span class="stamps-pill ${v>=10?"full":""}"><span>${v}/10</span><span class="bar" style="--p:${pct}%"></span></span></td>
                         <td style="text-align:right;">
-                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${c.id},${v})"><i class="fa-solid fa-plus"></i></button>
-                            <button class="action-icon" style="color:var(--burgundy);" title="Restar sello" onclick="restarVisita(${c.id},${v})"><i class="fa-solid fa-minus"></i></button>
-                            <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${c.id})"><i class="fa-solid fa-rotate-left"></i></button>
-                            <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                            <button class="action-icon success" title="Sumar sello" onclick="sumarVisita('${c.id}',${v})"><i class="fa-solid fa-plus"></i></button>
+                            <button class="action-icon" style="color:var(--burgundy);" title="Restar sello" onclick="restarVisita('${c.id}',${v})"><i class="fa-solid fa-minus"></i></button>
+                            <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas('${c.id}')"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button class="action-icon danger" title="Eliminar" onclick="borrarCliente('${c.id}')"><i class="fa-solid fa-trash"></i></button>
                         </td></tr>`;
                 });
             }
@@ -3880,12 +3858,12 @@
                 pendientes.forEach(cita=>{
                     const fecha=cita.fecha?new Date(cita.fecha+"T00:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long"}):"—";
                     lista.innerHTML+=`<div class="cita-card">
-                        <div class="cita-name">${esc(cita.nombre_cliente)||"—"}</div>
-                        ${cita.servicio?`<div style="font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:600;">${esc(cita.servicio)}</div>`:""}
+                        <div class="cita-name">${cita.nombre_cliente||"—"}</div>
+                        ${cita.servicio?`<div style="font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:600;">${cita.servicio}</div>`:""}
                         <div class="cita-meta">
                             <span><i class="fa-regular fa-calendar"></i>${fecha}</span>
                             <span><i class="fa-regular fa-clock"></i>${(cita.hora||"—").slice(0,5)}${cita.duracion_minutos?` · ${durStr(cita.duracion_minutos)}`:""}</span>
-                            <span><i class="fa-solid fa-phone"></i>${esc(cita.telefono)||"—"}</span>
+                            <span><i class="fa-solid fa-phone"></i>${cita.telefono||"—"}</span>
                         </div>
                         <div class="cita-actions">
                             <button class="cita-btn approve" onclick="aprobarCita(${cita.id})"><i class="fa-solid fa-check" style="margin-right:5px;"></i>Aprobar</button>
@@ -4389,13 +4367,13 @@
         let html = "";
         matches.forEach(c => {
             html += `<div class="nc-client-item" data-id="${c.id}">
-                <span class="nc-cn">${esc(c.nombre)||"—"}</span>
-                <span class="nc-cm">${c.usuario?`@${esc(c.usuario)} · `:""}${esc(c.telefono)||"—"}</span>
+                <span class="nc-cn">${c.nombre||"—"}</span>
+                <span class="nc-cm">${c.usuario?`@${c.usuario} · `:""}${c.telefono||"—"}</span>
             </div>`;
         });
         // Opción "crear nueva"
         html += `<div class="nc-client-item new-client" data-new="1">
-            <span class="nc-cn"><i class="fa-solid fa-user-plus"></i>Crear nueva clienta "${esc(term)}"</span>
+            <span class="nc-cn"><i class="fa-solid fa-user-plus"></i>Crear nueva clienta "${term}"</span>
             <span class="nc-cm">Registrar una clienta nueva y agendarle la cita</span>
         </div>`;
         box.innerHTML = html;
@@ -4619,8 +4597,8 @@
                         </div>
                     </div>
                     <div class="u-actions">
-                        <button class="action-icon" title="Cambiar contraseña" onclick="cambiarPassAdmin(${u.id},'${u.usuario.replace(/'/g,"\\'")}')"><i class="fa-solid fa-key"></i></button>
-                        <button class="action-icon danger" title="Eliminar" onclick="eliminarUsuarioAdmin(${u.id},'${u.usuario.replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="action-icon" title="Cambiar contraseña" onclick="cambiarPassAdmin('${u.id}','${u.usuario.replace(/'/g,"\\'")}')"><i class="fa-solid fa-key"></i></button>
+                        <button class="action-icon danger" title="Eliminar" onclick="eliminarUsuarioAdmin('${u.id}','${u.usuario.replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`;
             }).join("");
@@ -4629,10 +4607,27 @@
         }
     }
 
-    // Las administradoras se crean en Supabase (Authentication) y se marcan
-    // insertando su id en la tabla "admins". No se guardan contraseñas aquí.
     async function registrarNuevoAdmin() {
-        toast("Crea la cuenta en Supabase (Authentication) y añade su id a la tabla admins.","info");
+        const u = (document.getElementById("newAdminUser").value||"").trim();
+        const p = (document.getElementById("newAdminPass").value||"").trim();
+        if (!u || !p) return toast("Introduce usuario y contraseña","error");
+        if (p.length < 4) return toast("La contraseña debe tener al menos 4 caracteres","error");
+        setBtnLoading("btnRegistrarAdmin", true);
+        try {
+            // Comprobar que no exista ya
+            const { data: existente } = await sb.from("admins").select("id").eq("usuario",u).maybeSingle();
+            if (existente) { toast("Ese usuario ya existe","error"); return; }
+            const { error } = await sb.from("admins").insert([{ usuario: u, password: p }]);
+            if (error) { toast("No se pudo crear: "+error.message,"error"); return; }
+            toast("Usuario creado","success");
+            document.getElementById("newAdminUser").value = "";
+            document.getElementById("newAdminPass").value = "";
+            cargarUsuariosAdmin();
+        } catch(e) {
+            toast("Error de conexión","error");
+        } finally {
+            setBtnLoading("btnRegistrarAdmin", false);
+        }
     }
 
     async function eliminarUsuarioAdmin(id, usuario) {
@@ -4646,10 +4641,16 @@
         } catch(e) { toast("Error","error"); }
     }
 
-    // Cada administradora cambia su propia contraseña desde "Cambiar Clave"
-    // (usa sb.auth.updateUser, que es seguro). No se guardan contraseñas en la tabla.
     async function cambiarPassAdmin(id, usuario) {
-        toast("Cada administradora cambia su clave desde 'Cambiar Clave' al iniciar sesión.","info");
+        const nuevo = prompt(`Nueva contraseña para "${usuario}":`);
+        if (nuevo == null) return;
+        const limpio = nuevo.trim();
+        if (limpio.length < 4) return toast("La contraseña debe tener al menos 4 caracteres","error");
+        try {
+            const { error } = await sb.from("admins").update({password:limpio}).eq("id",id);
+            if (error) { toast("No se pudo cambiar: "+error.message,"error"); return; }
+            toast("Contraseña actualizada","success");
+        } catch(e) { toast("Error","error"); }
     }
 
     // ══════════════════════════════════════════════════════
@@ -5202,11 +5203,11 @@
             html += `<div class="resena-card-page" style="display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                     <div style="color:var(--accent); font-size:14px; letter-spacing:2px; margin-bottom:12px;">${starsHtml}</div>
-                    <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:16px; color:var(--text); margin:0; line-height:1.6;">"${esc(r.comentario)}"</p>
+                    <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:16px; color:var(--text); margin:0; line-height:1.6;">"${r.comentario}"</p>
                 </div>
                 <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(229,218,206,0.5);">
-                    <div style="font-size:13px; font-weight:700; color:var(--burgundy); text-transform:uppercase; letter-spacing:1px;">${esc(nombre)}</div>
-                    ${servicioStr ? `<div style="font-size:11px; color:var(--muted); margin-top:6px; font-family:'Inter', sans-serif;"><i class="fa-solid fa-sparkles" style="color:var(--gold); margin-right:4px;"></i>Se hizo: <span style="font-weight:600; color:var(--text);">${esc(servicioStr)}</span></div>` : ''}
+                    <div style="font-size:13px; font-weight:700; color:var(--burgundy); text-transform:uppercase; letter-spacing:1px;">${nombre}</div>
+                    ${servicioStr ? `<div style="font-size:11px; color:var(--muted); margin-top:6px; font-family:'Inter', sans-serif;"><i class="fa-solid fa-sparkles" style="color:var(--gold); margin-right:4px;"></i>Se hizo: <span style="font-weight:600; color:var(--text);">${servicioStr}</span></div>` : ''}
                 </div>
             </div>`;
         });
@@ -5223,8 +5224,8 @@
             const isDestacada = r.destacada;
             html += `<tr>
                 <td>
-                    <div style="font-weight:600;">${esc(r.cliente_nombre)} <span style="color:var(--gold); font-size:10px;">${esc(r.puntuacion)} <i class="fa-solid fa-star"></i></span></div>
-                    <div style="font-size:11px; color:var(--muted); font-style:italic;">"${esc(r.comentario)}"</div>
+                    <div style="font-weight:600;">${r.cliente_nombre} <span style="color:var(--gold); font-size:10px;">${r.puntuacion} <i class="fa-solid fa-star"></i></span></div>
+                    <div style="font-size:11px; color:var(--muted); font-style:italic;">"${r.comentario}"</div>
                 </td>
                 <td style="font-size:10px; font-weight:600;">
                     ${isDestacada ? '<span style="color:var(--gold);"><i class="fa-solid fa-star"></i> PÚBLICA</span>' : '<span style="color:var(--line);">Oculta</span>'}
