@@ -4381,8 +4381,8 @@
 
         box.querySelectorAll(".nc-client-item[data-id]").forEach(el => {
             el.addEventListener("click", () => {
-                const id = parseInt(el.dataset.id, 10);
-                const c = clientas.find(x => x.id===id);
+                const id = el.dataset.id;
+                const c = clientas.find(x => String(x.id)===id);
                 if (c) ncSetClient(c);
             });
         });
