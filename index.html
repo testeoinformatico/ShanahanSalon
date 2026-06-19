@@ -2610,10 +2610,13 @@
     //  DÍAS DISPONIBLES
     // ══════════════════════════════════════════════════════
     function isDiaDisponible(iso) {
-        if (diasDisponibles.length === 0) return true;
+        // Solo cuentan las reglas de disponibilidad de día/mes/exclusión.
+        // Las horas bloqueadas (hora_bloqueada) NO deben cerrar el día entero.
+        const reglas = diasDisponibles.filter(b => b.tipo==="dia" || b.tipo==="mes" || b.tipo==="excluido");
+        if (reglas.length === 0) return true;   // sin reglas → todo abierto
         const mes = iso.slice(0,7);
-        if (diasDisponibles.some(b=>b.tipo==="excluido"&&b.valor===iso)) return false;
-        return diasDisponibles.some(b=>(b.tipo==="dia"&&b.valor===iso)||(b.tipo==="mes"&&b.valor===mes));
+        if (reglas.some(b=>b.tipo==="excluido"&&b.valor===iso)) return false;
+        return reglas.some(b=>(b.tipo==="dia"&&b.valor===iso)||(b.tipo==="mes"&&b.valor===mes));
     }
 
     async function cargarDisponibles() {
@@ -3909,26 +3912,53 @@
         } catch(e) { toast("No se pudo aprobar","error"); }
     }
 
+    // ── Fidelidad (lógica centralizada para todos los flujos) ──
+    // Localiza a la clienta de una cita: primero por id, y como respaldo por
+    // teléfono normalizado (sin espacios) para tolerar formatos distintos.
+    function clientaDeCita(cita) {
+        if (!cita) return null;
+        if (cita.cliente_id != null) {
+            const porId = clientas.find(c => c.id === cita.cliente_id);
+            if (porId) return porId;
+        }
+        const tel = (cita.telefono||"").replace(/\s+/g,"");
+        if (!tel) return null;
+        return clientas.find(c => (c.telefono||"").replace(/\s+/g,"") === tel) || null;
+    }
+
+    // Suma un sello al completar una cita (reinicia la tarjeta si ya estaba llena).
+    async function aplicarSelloFidelidad(cliente) {
+        if (!cliente) { toast("Cita completada","success"); return; }
+        const visActual = cliente.visitas||0;
+        if (visActual >= 10) {
+            await sb.from("clientas").update({visitas:1}).eq("id",cliente.id);
+            toast("Cita completada · premio canjeado · tarjeta reiniciada","success","Recompensa");
+        } else {
+            const nuevas = visActual + 1;
+            await sb.from("clientas").update({visitas:nuevas}).eq("id",cliente.id);
+            if (nuevas === 10) toast("¡Tarjeta completa! Servicio gratis desbloqueado.","success","Recompensa");
+            else if (nuevas === 5) toast("Cita completada · ¡20% descuento desbloqueado!","success","Recompensa");
+            else toast("Cita completada · sello sumado","success");
+        }
+    }
+
+    // Retira un sello si una cita deja de estar completada (mantiene el conteo equilibrado).
+    async function quitarSelloFidelidad(cliente) {
+        if (!cliente) return;
+        const visActual = cliente.visitas||0;
+        if (visActual > 0) {
+            await sb.from("clientas").update({visitas:visActual-1}).eq("id",cliente.id);
+            toast("Sello retirado (cita ya no completada)","info");
+        }
+    }
+
     async function completarCita(id) {
         const cita=citas.find(c=>c.id===id);
         if (!cita) return;
+        if ((cita.estado||"") === "completada") { toast("Esta cita ya estaba completada","info"); return; }
         try {
             await sb.from("citas").update({estado:"completada"}).eq("id",id);
-            const cl=clientas.find(c=>(c.telefono||"").trim()===(cita.telefono||"").trim());
-            if (cl) {
-                const visActual = cl.visitas||0;
-                if (visActual >= 10) {
-                    // Ya tenía la tarjeta completa → canjeó su premio → reiniciar a 1 (esta cita cuenta como primer sello nuevo)
-                    await sb.from("clientas").update({visitas:1}).eq("id",cl.id);
-                    toast("Cita completada · premio canjeado · tarjeta reiniciada","success","Recompensa");
-                } else {
-                    const nuevas = visActual + 1;
-                    await sb.from("clientas").update({visitas:nuevas}).eq("id",cl.id);
-                    if (nuevas === 10) toast("¡Tarjeta completa! Servicio gratis desbloqueado.","success","Recompensa");
-                    else if (nuevas === 5) toast("Cita completada · ¡20% descuento desbloqueado!","success","Recompensa");
-                    else toast("Cita completada · sello sumado","success");
-                }
-            } else toast("Cita completada","success");
+            await aplicarSelloFidelidad(clientaDeCita(cita));
             cargarDatosAdmin();
         } catch(e) { toast("No se pudo completar","error"); }
     }
@@ -3990,13 +4020,31 @@
             servicio:previa?(previa.servicio||""):""
         };
         if (!payload.nombre_cliente||!payload.telefono||!payload.fecha||!payload.hora) return toast("Completa todos los campos","error");
+
+        // Validar que la nueva fecha/hora no solape con otra cita ni quede fuera de horario.
+        const _durEdit = payload.duracion_minutos;
+        const _horaEdit = (payload.hora||"").slice(0,5);
+        if (slotFueraDeHorario(_horaEdit, _durEdit)) return toast("El servicio no cabe en ese horario","error");
+        try {
+            const { data: _frescas, error: _chk } = await sb.from("citas")
+                .select("id,hora,duracion_minutos,estado")
+                .eq("fecha", payload.fecha)
+                .neq("estado", "cancelada");
+            if (_chk) return toast("No se pudo verificar la disponibilidad. Inténtalo de nuevo.","error");
+            // Excluir la propia cita que se está editando
+            const _otras = (_frescas||[]).filter(c => c.id !== id).map(c => ({...c, fecha: payload.fecha}));
+            if (slotBloqueado(_horaEdit, _otras, _durEdit, payload.fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
+        } catch(e) { return toast("No se pudo verificar la disponibilidad.","error"); }
+
         setBtnLoading("btnGuardarEdicion",true);
         try {
             const { error }=await sb.from("citas").update(payload).eq("id",id);
             if (error) { toast("No se pudo actualizar: "+error.message,"error"); return; }
-            if (estadoAnterior!=="completada"&&nuevoEstado==="completada") {
-                const cl=clientas.find(c=>(c.telefono||"").trim()===payload.telefono);
-                if (cl&&(cl.visitas||0)<10) await sb.from("clientas").update({visitas:(cl.visitas||0)+1}).eq("id",cl.id);
+            const _cl = clientaDeCita({cliente_id: previa?previa.cliente_id:null, telefono: payload.telefono});
+            if (estadoAnterior!=="completada" && nuevoEstado==="completada") {
+                await aplicarSelloFidelidad(_cl);
+            } else if (estadoAnterior==="completada" && nuevoEstado!=="completada") {
+                await quitarSelloFidelidad(_cl);
             }
             toast("Cita actualizada","success"); closeEditCita(); cargarDatosAdmin();
         } catch(e) { toast("Error al guardar","error"); }
