@@ -3378,6 +3378,29 @@
             } else if (opcionRetirada === 'local') {
                 servicioFinal += " + Retirada (local)";
             }
+
+            // ── Revalidar disponibilidad contra la BD justo antes de insertar ──
+            // Evita solapamientos por datos desactualizados o reservas simultáneas.
+            const fechaISO = fmtISO(selectedDate);
+            const { data: citasFrescas, error: chkErr } = await sb.from("citas")
+                .select("hora,duracion_minutos,estado")
+                .eq("fecha", fechaISO)
+                .neq("estado", "cancelada");
+            if (chkErr) { showErr("No se pudo verificar la disponibilidad. Inténtalo de nuevo."); return; }
+            const citasDia = (citasFrescas || []).map(c => ({ ...c, fecha: fechaISO }));
+            if (slotFueraDeHorario(selectedTime, duracionFinal) ||
+                slotBloqueado(selectedTime, citasDia, duracionFinal, fechaISO)) {
+                // Refrescar el grid para que la clienta vea la ocupación actualizada
+                citas = citas.filter(c => c.fecha !== fechaISO);
+                citasDia.forEach(c => citas.push(c));
+                selectedTime = null;
+                const lbl = document.getElementById("pickedTimeLabel");
+                if (lbl) { lbl.textContent = "Sin elegir"; lbl.classList.add("empty"); }
+                try { renderTimeSlots(); } catch(e) {}
+                showErr("Esa hora se acaba de ocupar. Elige otra, por favor.");
+                return;
+            }
+
             const { error: aErr } = await sb.from("citas").insert([{
                 cliente_id: _clienteLogueado.id,
                 nombre_cliente: _clienteLogueado.nombre,
@@ -4511,10 +4534,17 @@
         if (!fecha || !hora) return toast("Introduce fecha y hora","error");
 
         const horaStr = hora.slice(0,5);
-        const citasDelDia = citas.filter(c => c.fecha === fecha);
         const ncTotalDurFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
         if (slotFueraDeHorario(horaStr, ncTotalDurFinal)) return toast("El servicio no cabe en ese horario","error");
-        if (slotBloqueado(horaStr, citasDelDia, ncTotalDurFinal, fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
+
+        // Revalidar contra la BD (datos frescos) para evitar solapamientos.
+        const { data: ncFrescas, error: ncChkErr } = await sb.from("citas")
+            .select("hora,duracion_minutos,estado")
+            .eq("fecha", fecha)
+            .neq("estado", "cancelada");
+        if (ncChkErr) return toast("No se pudo verificar la disponibilidad. Inténtalo de nuevo.","error");
+        const ncCitasDia = (ncFrescas || []).map(c => ({ ...c, fecha }));
+        if (slotBloqueado(horaStr, ncCitasDia, ncTotalDurFinal, fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
 
         const estado = document.getElementById("ncEstado").value || "confirmada";
 
