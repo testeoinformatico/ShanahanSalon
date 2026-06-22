@@ -2383,6 +2383,8 @@
     let selectedTime = null;
     let selectedServicio  = null;
     let selectedDuracion  = 0;
+    let selectedExtras    = [];   // [{name, dur, precio}] — ÚNICA fuente de verdad (la usan getTotalDuracion y el bloqueo)
+    let selectedPrecio    = 0;
     let activePeriod = "morning";
 
     // Agenda admin
@@ -2682,12 +2684,9 @@
                 }
                 document.getElementById("pickedDateLabel").textContent = fmtPretty(selectedDate);
                 document.getElementById("pickedDateLabel").classList.remove("empty");
-                // Recargar citas de ese día para tener ocupación fresca
+                // Recargar ocupación de ese día (vía RPC, ve TODAS las citas sin exponer datos personales)
                 try {
-                    const { data } = await sb.from("citas")
-                        .select("hora,duracion_minutos,estado")
-                        .eq("fecha", el.dataset.iso)
-                        .neq("estado","cancelada");
+                    const { data } = await sb.rpc("horas_ocupadas", { p_fecha: el.dataset.iso });
                     // Reemplazar citas de ese día en memoria local
                     citas = citas.filter(c => c.fecha !== el.dataset.iso);
                     (data||[]).forEach(c => citas.push({...c, fecha: el.dataset.iso}));
@@ -2769,7 +2768,8 @@
         });
 
         // Funciones para el Acordeón Dinámico de Servicios
-        let selectedExtras = []; // [{name, dur, precio}]
+        // (selectedExtras es global; aquí solo lo reiniciamos para esta sesión de picker)
+        selectedExtras = [];
 
         window.renderClientAccordion = function() {
             const grid = document.getElementById("servicioGrid");
@@ -3383,12 +3383,9 @@
             }
 
             // ── Revalidar disponibilidad contra la BD justo antes de insertar ──
-            // Evita solapamientos por datos desactualizados o reservas simultáneas.
+            // Vía RPC: ve TODAS las citas (no solo las de esta clienta) sin exponer datos personales.
             const fechaISO = fmtISO(selectedDate);
-            const { data: citasFrescas, error: chkErr } = await sb.from("citas")
-                .select("hora,duracion_minutos,estado")
-                .eq("fecha", fechaISO)
-                .neq("estado", "cancelada");
+            const { data: citasFrescas, error: chkErr } = await sb.rpc("horas_ocupadas", { p_fecha: fechaISO });
             if (chkErr) { showErr("No se pudo verificar la disponibilidad. Inténtalo de nuevo."); return; }
             const citasDia = (citasFrescas || []).map(c => ({ ...c, fecha: fechaISO }));
             if (slotFueraDeHorario(selectedTime, duracionFinal) ||
@@ -3414,7 +3411,15 @@
                 hora: selectedTime,
                 estado: "pendiente"
             }]);
-            if (aErr) { showErr("Error al guardar la cita: "+aErr.message); return; }
+            if (aErr) {
+                const msg = (aErr.message||"").toLowerCase();
+                if (msg.includes("ocupado") || msg.includes("overlap") || aErr.code === "23514") {
+                    showErr("Esa hora se acaba de ocupar. Elige otra, por favor.");
+                } else {
+                    showErr("Error al guardar la cita: "+aErr.message);
+                }
+                return;
+            }
 
             toast("¡Solicitud enviada! Te confirmaremos pronto.", "success","¡Reserva enviada!");
             resetPicker();
@@ -4613,9 +4618,9 @@
                 estado
             }]).select().single();
             if (error) { toast("No se pudo agendar: "+error.message,"error"); return; }
-            // Si la cita queda como completada, sumar sello
-            if (estado === "completada" && (ncSelectedClient.visitas||0) < 10) {
-                await sb.from("clientas").update({visitas:(ncSelectedClient.visitas||0)+1}).eq("id",ncSelectedClient.id);
+            // Si la cita queda como completada, sumar sello (lógica centralizada)
+            if (estado === "completada") {
+                await aplicarSelloFidelidad(ncSelectedClient);
             }
             toast("Cita agendada","success");
             cerrarNuevaCita();
