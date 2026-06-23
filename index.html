@@ -2549,8 +2549,13 @@
                 mostrarVista("login");
                 return;
             }
-            try { initPicker(); } catch(e){}
-            try { cargarDisponibles(); } catch(e){}
+            // Cargar bloqueos/disponibilidad ANTES de pintar, para que el calendario
+            // y la cuadrícula de horas reflejen los bloqueos desde el primer pintado.
+            (async () => {
+                try { await cargarDisponibles(); } catch(e){}
+                try { initPicker(); } catch(e){}
+                try { renderCalendar(); renderTimeSlots(); } catch(e){}
+            })();
         }
 
         // Al volver al perfil del cliente, refrescar datos
@@ -2623,9 +2628,16 @@
 
     async function cargarDisponibles() {
         try {
-            const { data } = await sb.from("dias_disponibles").select("*");
+            const { data, error } = await sb.rpc("dias_bloqueados");
+            if (error) throw error;
             diasDisponibles = data || [];
-        } catch(e) { diasDisponibles = []; }
+        } catch(e) {
+            // Respaldo: si la función RPC no existe todavía, usar lectura directa
+            try {
+                const { data } = await sb.from("dias_disponibles").select("*");
+                diasDisponibles = data || [];
+            } catch(e2) { diasDisponibles = []; }
+        }
         try { renderDCalendar(); }    catch(e){}
         try { renderMesesGrid(); }    catch(e){}
         try { renderDispDiaItems(); } catch(e){}
