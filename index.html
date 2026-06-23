@@ -4150,16 +4150,21 @@
         });
     }
     async function toggleDisponible(tipo,valor,mesDisp){
+        let res;
         if(tipo==="dia"&&mesDisp==="true"){
             const excl=diasDisponibles.find(b=>b.tipo==="excluido"&&b.valor===valor);
-            if(excl){ await sb.from("dias_disponibles").delete().eq("id",excl.id); toast("Día reactivado","success"); }
-            else { await sb.from("dias_disponibles").insert([{tipo:"excluido",valor}]); toast("Día excluido","info"); }
+            if(excl){ res=await sb.from("dias_disponibles").delete().eq("id",excl.id); if(!res.error) toast("Día reactivado","success"); }
+            else { res=await sb.from("dias_disponibles").insert([{tipo:"excluido",valor}]); if(!res.error) toast("Día excluido","info"); }
         } else {
             const ex=diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
-            if(ex){ await sb.from("dias_disponibles").delete().eq("id",ex.id); toast(tipo==="mes"?"Mes deshabilitado":"Día deshabilitado","info"); }
-            else { await sb.from("dias_disponibles").insert([{tipo,valor}]); toast(tipo==="mes"?"Mes habilitado":"Día habilitado","success"); }
+            if(ex){ res=await sb.from("dias_disponibles").delete().eq("id",ex.id); if(!res.error) toast(tipo==="mes"?"Mes deshabilitado":"Día deshabilitado","info"); }
+            else { res=await sb.from("dias_disponibles").insert([{tipo,valor}]); if(!res.error) toast(tipo==="mes"?"Mes habilitado":"Día habilitado","success"); }
         }
-        cargarDisponibles();
+        if (res && res.error) {
+            toast("No se pudo guardar: "+res.error.message,"error");
+            return; // no recargar sobre un cambio que no llegó a guardarse
+        }
+        await cargarDisponibles();
     }
     // ══════════════════════════════════════════════════════
     //  HORAS BLOQUEADAS
