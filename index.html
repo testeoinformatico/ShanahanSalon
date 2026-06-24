@@ -989,22 +989,20 @@
         .disp-panel { display: none; }
         .disp-panel.active { display: block; }
         .disp-mini-cal { user-select: none; }
-        .disp-mini-cal .cal-day.disponible { background: rgba(74,124,89,.12); color: #2D4F37; border-color: rgba(74,124,89,.35); font-weight: 600; }
-        .disp-mini-cal .cal-day.disponible:hover:not(.selected) { background: rgba(74,124,89,.22); border-color: #4A7C59; }
+        .disp-mini-cal .cal-day.bloqueado { background: rgba(146,31,35,.1); color: #c9a0a7; text-decoration: line-through; border-color: rgba(146,31,35,.2); font-weight: 600; }
+        .disp-mini-cal .cal-day.bloqueado:hover:not(.selected) { background: rgba(146,31,35,.18); border-color: var(--burgundy); }
         .disp-mini-cal .cal-day.pasado-no-disp { color: #D9CFC4; cursor: not-allowed; text-decoration: line-through; }
         .meses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mes-chip { padding: 10px 6px; border: 1px solid var(--line); background: #fff; font-family: 'Poppins', sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; color: var(--muted); cursor: pointer; text-align: center; transition: all .25s var(--ease); }
-        .mes-chip:hover { border-color: #4A7C59; color: #2D4F37; }
-        .mes-chip.disponible { background: #4A7C59; color: #fff; border-color: #4A7C59; }
-        .mes-chip.disponible:hover { background: #3a6347; }
+        .mes-chip:hover { border-color: var(--burgundy); color: var(--burgundy); }
+        .mes-chip.bloqueado { background: var(--burgundy); color: #fff; border-color: var(--burgundy); }
+        .mes-chip.bloqueado:hover { background: #73181c; }
         .disp-lista { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
         .disp-lista-title { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
-        .disp-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(74,124,89,.07); border-left: 2px solid #4A7C59; margin-bottom: 6px; font-size: 12px; color: var(--dark-text); }
+        .disp-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(146,31,35,.07); border-left: 2px solid var(--burgundy); margin-bottom: 6px; font-size: 12px; color: var(--dark-text); }
         .disp-item button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 6px; transition: color .2s; line-height: 1; }
         .disp-item button:hover { color: var(--burgundy); }
         .cal-day.no-disponible { background: transparent !important; color: #D9CFC4 !important; text-decoration: line-through !important; cursor: not-allowed !important; border-color: transparent !important; pointer-events: none !important; }
-        .disp-mini-cal .cal-day.excluido-admin { background: rgba(146,31,35,.1); color: #c9a0a7; text-decoration: line-through; border-color: rgba(146,31,35,.2); }
-        .disp-mini-cal .cal-day.excluido-admin:hover { background: rgba(146,31,35,.18); border-color: var(--burgundy); }
 
         .modal-x.wide { max-width: 480px; }
         .edit-modal-header { text-align: center; margin-bottom: 22px; }
@@ -1949,18 +1947,18 @@
             <div class="col-12">
                 <div class="luxury-card view-anim" style="padding:30px;">
                     <div class="admin-header" style="margin-bottom:20px;">
-                        <h5><i class="fa-regular fa-calendar-check"></i> Días disponibles para reserva</h5>
+                        <h5><i class="fa-solid fa-lock"></i> Bloqueo de Agenda</h5>
                     </div>
-                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas <strong>solo podrán reservar</strong> en los días y meses que marques como disponibles.</p>
+                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">El calendario está <strong>siempre abierto</strong> por defecto. Marca los días, meses u horas en los que <strong>no</strong> vas a poder atender.</p>
                     <div class="disp-wrap">
                         <div class="disp-tabs" style="grid-template-columns:1fr 1fr 1fr;">
-                            <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-check"></i>Días concretos</button>
+                            <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-xmark"></i>Días bloqueados</button>
                             <button type="button" class="disp-tab" data-dtab="meses"><i class="fa-solid fa-calendar"></i>Meses enteros</button>
-                            <button type="button" class="disp-tab" data-dtab="horas"><i class="fa-regular fa-clock"></i>Horas bloqueadas</button>
+                            <button type="button" class="disp-tab" data-dtab="horas"><i class="fa-regular fa-clock"></i>Horas sueltas</button>
                         </div>
 
                         <div class="disp-panel active" id="dpanelDias">
-                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un día para marcarlo disponible o quitarlo.</p>
+                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un día para bloquearlo o desbloquearlo (festivos, asuntos propios...).</p>
                             <div class="disp-mini-cal">
                                 <div class="cal-head">
                                     <div class="cal-month" id="dCalMonth"></div>
@@ -1972,13 +1970,13 @@
                                 <div class="cal-grid" id="dCalGrid"></div>
                             </div>
                             <div class="disp-lista">
-                                <div class="disp-lista-title">Días habilitados</div>
-                                <div id="dispDiaItems"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div></div>
+                                <div class="disp-lista-title">Días bloqueados</div>
+                                <div id="dispDiaItems"><div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días bloqueados</div></div>
                             </div>
                         </div>
 
                         <div class="disp-panel" id="dpanelMeses">
-                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para habilitarlo o deshabilitarlo entero.</p>
+                            <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">Haz clic en un mes para bloquearlo entero (vacaciones largas).</p>
                             <div class="meses-grid" id="mesesGrid"></div>
                         </div>
 
@@ -2617,13 +2615,14 @@
     //  DÍAS DISPONIBLES
     // ══════════════════════════════════════════════════════
     function isDiaDisponible(iso) {
-        // Solo cuentan las reglas de disponibilidad de día/mes/exclusión.
-        // Las horas bloqueadas (hora_bloqueada) NO deben cerrar el día entero.
-        const reglas = diasDisponibles.filter(b => b.tipo==="dia" || b.tipo==="mes" || b.tipo==="excluido");
-        if (reglas.length === 0) return true;   // sin reglas → todo abierto
+        // En el sistema de lista negra, todo está abierto por defecto
         const mes = iso.slice(0,7);
-        if (reglas.some(b=>b.tipo==="excluido"&&b.valor===iso)) return false;
-        return reglas.some(b=>(b.tipo==="dia"&&b.valor===iso)||(b.tipo==="mes"&&b.valor===mes));
+        // Comprobar si el día o su mes están explícitamente bloqueados
+        const bloqueado = diasDisponibles.some(b => 
+            (b.tipo === "dia_bloqueado" && b.valor === iso) || 
+            (b.tipo === "mes_bloqueado" && b.valor === mes)
+        );
+        return !bloqueado;
     }
 
     async function cargarDisponibles() {
@@ -4126,28 +4125,24 @@
         for(let i=offset-1;i>=0;i--) grid.innerHTML+=`<div class="cal-day muted">${prevDim-i}</div>`;
         for(let d=1;d<=dim;d++){
             const iso=`${y}-${pad2(m+1)}-${pad2(d)}`;
-            const mes=`${y}-${pad2(m+1)}`;
-            const mesDisp=diasDisponibles.some(b=>b.tipo==="mes"&&b.valor===mes);
-            const excl=diasDisponibles.some(b=>b.tipo==="excluido"&&b.valor===iso);
-            const diaDisp=diasDisponibles.some(b=>b.tipo==="dia"&&b.valor===iso);
+            const isBloqueado=diasDisponibles.some(b=>b.tipo==="dia_bloqueado"&&b.valor===iso);
             const isToday=new Date(y,m,d).getTime()===today.getTime();
             let cls="cal-day";
             if(isToday) cls+=" today";
-            if((mesDisp||diaDisp)&&!excl) cls+=" disponible";
-            if(excl) cls+=" excluido-admin";
-            grid.innerHTML+=`<div class="${cls}" data-iso="${iso}" data-mes-disp="${mesDisp}">${d}</div>`;
+            if(isBloqueado) cls+=" bloqueado";
+            grid.innerHTML+=`<div class="${cls}" data-iso="${iso}">${d}</div>`;
         }
         const trail=(7-((offset+dim)%7))%7;
         for(let i=1;i<=trail;i++) grid.innerHTML+=`<div class="cal-day muted">${i}</div>`;
         grid.querySelectorAll(".cal-day:not(.muted)").forEach(el=>{
-            el.addEventListener("click",()=>toggleDisponible("dia",el.dataset.iso,el.dataset.mesDisp));
+            el.addEventListener("click",()=>toggleDisponible("dia_bloqueado",el.dataset.iso));
         });
     }
     function renderDispDiaItems() {
         const el=document.getElementById("dispDiaItems"); if(!el) return;
-        const dias=diasDisponibles.filter(b=>b.tipo==="dia").sort((a,b)=>a.valor.localeCompare(b.valor));
-        if(!dias.length){ el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días habilitados</div>`; return; }
-        el.innerHTML=dias.map(b=>{ const dt=new Date(b.valor+"T00:00:00"); return `<div class="disp-item"><span><i class="fa-regular fa-calendar-check" style="margin-right:8px;color:#4A7C59;"></i>${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}</span><button onclick="toggleDisponible('dia','${b.valor}')"><i class="fa-solid fa-xmark"></i></button></div>`; }).join("");
+        const dias=diasDisponibles.filter(b=>b.tipo==="dia_bloqueado").sort((a,b)=>a.valor.localeCompare(b.valor));
+        if(!dias.length){ el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días bloqueados</div>`; return; }
+        el.innerHTML=dias.map(b=>{ const dt=new Date(b.valor+"T00:00:00"); return `<div class="disp-item"><span><i class="fa-regular fa-calendar-xmark" style="margin-right:8px;color:var(--burgundy);"></i>${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}</span><button onclick="toggleDisponible('dia_bloqueado','${b.valor}')"><i class="fa-solid fa-xmark"></i></button></div>`; }).join("");
     }
     function renderMesesGrid() {
         const grid=document.getElementById("mesesGrid"); if(!grid) return;
@@ -4155,25 +4150,25 @@
         [today.getFullYear(), today.getFullYear()+1].forEach((year,yi)=>{
             for(let m=0;m<12;m++){
                 const valor=`${year}-${pad2(m+1)}`;
-                const disp=diasDisponibles.some(b=>b.tipo==="mes"&&b.valor===valor);
-                grid.innerHTML+=`<button type="button" class="mes-chip ${disp?"disponible":""}" onclick="toggleDisponible('mes','${valor}')" style="${yi>0?"opacity:.75":""}">${MONTHS_ES[m]}${yi>0?` '${String(year).slice(2)}`:""}</button>`;
+                const isBloqueado=diasDisponibles.some(b=>b.tipo==="mes_bloqueado"&&b.valor===valor);
+                grid.innerHTML+=`<button type="button" class="mes-chip ${isBloqueado?"bloqueado":""}" onclick="toggleDisponible('mes_bloqueado','${valor}')" style="${yi>0?"opacity:.75":""}">${MONTHS_ES[m]}${yi>0?` '${String(year).slice(2)}`:""}</button>`;
             }
         });
     }
-    async function toggleDisponible(tipo,valor,mesDisp){
+    async function toggleDisponible(tipo,valor){
         let res;
-        if(tipo==="dia"&&mesDisp==="true"){
-            const excl=diasDisponibles.find(b=>b.tipo==="excluido"&&b.valor===valor);
-            if(excl){ res=await sb.from("dias_disponibles").delete().eq("id",excl.id); if(!res.error) toast("Día reactivado","success"); }
-            else { res=await sb.from("dias_disponibles").insert([{tipo:"excluido",valor}]); if(!res.error) toast("Día excluido","info"); }
-        } else {
-            const ex=diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
-            if(ex){ res=await sb.from("dias_disponibles").delete().eq("id",ex.id); if(!res.error) toast(tipo==="mes"?"Mes deshabilitado":"Día deshabilitado","info"); }
-            else { res=await sb.from("dias_disponibles").insert([{tipo,valor}]); if(!res.error) toast(tipo==="mes"?"Mes habilitado":"Día habilitado","success"); }
+        const ex=diasDisponibles.find(b=>b.tipo===tipo&&b.valor===valor);
+        if(ex){ 
+            res=await sb.from("dias_disponibles").delete().eq("id",ex.id); 
+            if(!res.error) toast(tipo==="mes_bloqueado"?"Mes desbloqueado":"Día desbloqueado","success"); 
+        } else { 
+            res=await sb.from("dias_disponibles").insert([{tipo,valor}]); 
+            if(!res.error) toast(tipo==="mes_bloqueado"?"Mes bloqueado":"Día bloqueado","info"); 
         }
+        
         if (res && res.error) {
             toast("No se pudo guardar: "+res.error.message,"error");
-            return; // no recargar sobre un cambio que no llegó a guardarse
+            return;
         }
         await cargarDisponibles();
     }
