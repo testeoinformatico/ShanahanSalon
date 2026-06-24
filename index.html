@@ -2025,12 +2025,17 @@
                             <input type="text" id="historialSearch" placeholder="Buscar por nombre…" oninput="renderHistorialAdmin()">
                         </div>
                     </div>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;">
-                        <button type="button" class="filter-chip active" data-hfilter="all" onclick="setHistorialFilter('all')">Todas</button>
-                        <button type="button" class="filter-chip" data-hfilter="completada" onclick="setHistorialFilter('completada')">Completadas</button>
-                        <button type="button" class="filter-chip" data-hfilter="cancelada" onclick="setHistorialFilter('cancelada')">Canceladas</button>
-                        <button type="button" class="filter-chip" data-hfilter="confirmada" onclick="setHistorialFilter('confirmada')">Confirmadas</button>
-                        <button type="button" class="filter-chip" data-hfilter="pendiente" onclick="setHistorialFilter('pendiente')">Pendientes</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="button" class="filter-chip active" data-hfilter="all" onclick="setHistorialFilter('all')">Todas</button>
+                            <button type="button" class="filter-chip" data-hfilter="completada" onclick="setHistorialFilter('completada')">Completadas</button>
+                            <button type="button" class="filter-chip" data-hfilter="cancelada" onclick="setHistorialFilter('cancelada')">Canceladas</button>
+                            <button type="button" class="filter-chip" data-hfilter="confirmada" onclick="setHistorialFilter('confirmada')">Confirmadas</button>
+                            <button type="button" class="filter-chip" data-hfilter="pendiente" onclick="setHistorialFilter('pendiente')">Pendientes</button>
+                        </div>
+                        <div style="background:var(--burgundy); color:#fff; padding:6px 14px; border-radius:30px; font-weight:600; font-size:14px; box-shadow:0 4px 10px rgba(146,31,35,0.2);">
+                            Balance: <span id="historialBalance">0€</span>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="admin-table" id="tablaHistorial">
@@ -2040,6 +2045,7 @@
                                     <th>Hora</th>
                                     <th>Clienta</th>
                                     <th>Servicio</th>
+                                    <th>Precio</th>
                                     <th>Estado</th>
                                 </tr>
                             </thead>
@@ -3632,6 +3638,17 @@
             filtered = filtered.filter(c => (c.nombre_cliente||"").toLowerCase().includes(search));
         }
 
+        // Calcular el balance: sumamos todas las citas que NO estén canceladas
+        const balanceTotal = filtered.reduce((sum, c) => {
+            if ((c.estado||"pendiente") !== "cancelada") {
+                return sum + (Number(c.precio) || 0);
+            }
+            return sum;
+        }, 0);
+        
+        const balanceEl = document.getElementById("historialBalance");
+        if (balanceEl) balanceEl.textContent = balanceTotal + "€";
+
         if (!filtered.length) {
             tbody.innerHTML = "";
             if (emptyEl) { emptyEl.style.display = "block"; }
@@ -3646,11 +3663,13 @@
             const fechaBonita = `${dias[dt.getDay()]}, ${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)} ${dt.getFullYear()}`;
             const hora = (c.hora||"").slice(0,5);
             const estado = c.estado||"pendiente";
+            const precio = (Number(c.precio) || 0) + "€";
             return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
                 <td><span style="font-weight:600;">${fechaBonita}</span></td>
                 <td>${hora} h</td>
                 <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
                 <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"—"}</span></td>
+                <td><span style="font-weight:600;">${precio}</span></td>
                 <td><span class="estado-pill ${estado}">${estado}</span></td>
             </tr>`;
         }).join("");
@@ -4391,8 +4410,8 @@
             { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min", precio: "+8€", desc: "Diseños completos y creativos en todas las uñas con técnicas avanzadas como efectos 3D, relieves y composiciones artísticas. Perfecto para quienes buscan un resultado llamativo y totalmente personalizado." }
         ]}
     ];
-
-    let ncSelectedExtras = []; // [{name, dur}]
+    let ncSelectedPrecio = 0;
+    let ncSelectedExtras = []; // [{name, dur, precio}]
 
     function ncRenderServicios() {
         const grid = document.getElementById("ncServicioGrid");
@@ -4432,6 +4451,7 @@
             el.addEventListener("click", () => {
                 ncSelectedServicio = el.dataset.val;
                 ncSelectedDuracion = parseInt(el.dataset.dur, 10) || 30;
+                ncSelectedPrecio = parseInt(el.dataset.precio.replace(/[^0-9]/g,''), 10) || 0;
                 ncSelectedExtras = [];
                 ncRenderServicios();
                 ncValidarSlot();
@@ -4442,9 +4462,10 @@
             el.addEventListener("click", () => {
                 const name = el.dataset.extra;
                 const dur = parseInt(el.dataset.extradur, 10);
+                const precio = parseInt(el.dataset.precio.replace(/[^0-9]/g,''), 10) || 0;
                 const idx = ncSelectedExtras.findIndex(e => e.name === name);
                 if (idx >= 0) ncSelectedExtras.splice(idx, 1);
-                else ncSelectedExtras.push({ name, dur });
+                else ncSelectedExtras.push({ name, dur, precio });
                 ncRenderServicios();
                 ncValidarSlot();
             });
@@ -4630,12 +4651,14 @@
                 ? ncSelectedServicio + " + " + ncSelectedExtras.map(e => e.name).join(" + ")
                 : ncSelectedServicio;
             const ncDuracionFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
+            const ncPrecioFinal = ncSelectedPrecio + ncSelectedExtras.reduce((s, e) => s + e.precio, 0);
             const { data, error } = await sb.from("citas").insert([{
                 cliente_id: ncSelectedClient.id,
                 nombre_cliente: ncSelectedClient.nombre,
                 telefono: ncSelectedClient.telefono,
                 servicio: ncServicioFinal,
                 duracion_minutos: ncDuracionFinal,
+                precio: ncPrecioFinal,
                 fecha,
                 hora: horaStr,
                 estado
