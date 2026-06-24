@@ -3816,6 +3816,7 @@
                         ${citaAqui.servicio?`<div class="tl-cita-servicio">${citaAqui.servicio}</div>`:""}
                         <div class="tl-cita-meta">
                             <span><i class="fa-solid fa-phone" style="margin-right:4px;font-size:9px;"></i>${citaAqui.telefono||"—"}</span>
+                            <span style="color:var(--burgundy); font-weight:600;"><i class="fa-solid fa-tag" style="margin-right:4px;font-size:9px;"></i>${(Number(citaAqui.precio)||0)}€</span>
                             <span class="estado-pill ${estado}" style="font-size:9px;padding:1px 7px;">${estado}</span>
                         </div>
                         <span class="tl-cita-dur">${durStr(durMin)}</span>
@@ -4160,8 +4161,17 @@
     function renderDispDiaItems() {
         const el=document.getElementById("dispDiaItems"); if(!el) return;
         const dias=diasDisponibles.filter(b=>b.tipo==="dia_bloqueado").sort((a,b)=>a.valor.localeCompare(b.valor));
-        if(!dias.length){ el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días bloqueados</div>`; return; }
-        el.innerHTML=dias.map(b=>{ const dt=new Date(b.valor+"T00:00:00"); return `<div class="disp-item"><span><i class="fa-regular fa-calendar-xmark" style="margin-right:8px;color:var(--burgundy);"></i>${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}</span><button onclick="toggleDisponible('dia_bloqueado','${b.valor}')"><i class="fa-solid fa-xmark"></i></button></div>`; }).join("");
+        if(!dias.length){ el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días bloqueados</div>`; el.style.display="block"; return; }
+        el.style.display = "flex";
+        el.style.flexWrap = "wrap";
+        el.style.gap = "8px";
+        el.innerHTML=dias.map(b=>{ 
+            const dt=new Date(b.valor+"T00:00:00"); 
+            return `<div style="display:inline-flex; align-items:center; background:#fff; border:1px solid rgba(146,31,35,0.3); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--burgundy); box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+                <span>${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)} ${dt.getFullYear()}</span>
+                <button onclick="toggleDisponible('dia_bloqueado','${b.valor}')" style="background:none; border:none; padding:0; margin-left:8px; color:var(--burgundy); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>`; 
+        }).join("");
     }
     function renderMesesGrid() {
         const grid=document.getElementById("mesesGrid"); if(!grid) return;
