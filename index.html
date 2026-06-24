@@ -2628,13 +2628,22 @@
 
     async function cargarDisponibles() {
         try {
-            const { data } = await sb.from("dias_disponibles").select("*");
-            diasDisponibles = data || [];
-        } catch(e) { diasDisponibles = []; }
+            const { data, error } = await sb.from("dias_disponibles").select("*");
+            if (error) {
+                console.error("Error cargando disponibilidad:", error.message);
+                diasDisponibles = [];
+            } else {
+                diasDisponibles = data || [];
+            }
+        } catch(e) {
+            console.error("Excepción cargando disponibilidad:", e);
+            diasDisponibles = [];
+        }
         try { renderDCalendar(); }    catch(e){}
         try { renderMesesGrid(); }    catch(e){}
         try { renderDispDiaItems(); } catch(e){}
         try { renderCalendar(); }     catch(e){}
+        try { renderTimeSlots(); }    catch(e){}
         try { renderHCalendar(); }    catch(e){}
         try { renderHorasLista(); }   catch(e){}
     }
