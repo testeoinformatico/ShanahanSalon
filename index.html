@@ -3429,12 +3429,14 @@
                 return;
             }
 
+            const totalPrecio = selectedPrecio + selectedExtras.reduce((s, e) => s + e.precio, 0);
             const { error: aErr } = await sb.from("citas").insert([{
                 cliente_id: _clienteLogueado.id,
                 nombre_cliente: _clienteLogueado.nombre,
                 telefono: _clienteLogueado.telefono,
                 servicio: servicioFinal,
                 duracion_minutos: duracionFinal,
+                precio: totalPrecio,
                 fecha: fmtISO(selectedDate),
                 hora: selectedTime,
                 estado: "pendiente"
@@ -3638,10 +3640,17 @@
             filtered = filtered.filter(c => (c.nombre_cliente||"").toLowerCase().includes(search));
         }
 
+        // Helper para extraer número de cualquier formato de precio (ej. "25", "25€", 25)
+        const parsePrecio = (val) => {
+            if (val === null || val === undefined) return 0;
+            const str = String(val).replace(/[^0-9.-]/g, '');
+            return parseFloat(str) || 0;
+        };
+
         // Calcular el balance: sumamos todas las citas que NO estén canceladas
         const balanceTotal = filtered.reduce((sum, c) => {
             if ((c.estado||"pendiente") !== "cancelada") {
-                return sum + (Number(c.precio) || 0);
+                return sum + parsePrecio(c.precio);
             }
             return sum;
         }, 0);
@@ -3663,13 +3672,13 @@
             const fechaBonita = `${dias[dt.getDay()]}, ${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)} ${dt.getFullYear()}`;
             const hora = (c.hora||"").slice(0,5);
             const estado = c.estado||"pendiente";
-            const precio = (Number(c.precio) || 0) + "€";
+            const precioStr = parsePrecio(c.precio) + "€";
             return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
                 <td><span style="font-weight:600;">${fechaBonita}</span></td>
                 <td>${hora} h</td>
                 <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
                 <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"—"}</span></td>
-                <td><span style="font-weight:600;">${precio}</span></td>
+                <td><span style="font-weight:600;">${precioStr}</span></td>
                 <td><span class="estado-pill ${estado}">${estado}</span></td>
             </tr>`;
         }).join("");
