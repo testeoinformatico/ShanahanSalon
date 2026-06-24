@@ -2628,16 +2628,9 @@
 
     async function cargarDisponibles() {
         try {
-            const { data, error } = await sb.rpc("dias_bloqueados");
-            if (error) throw error;
+            const { data } = await sb.from("dias_disponibles").select("*");
             diasDisponibles = data || [];
-        } catch(e) {
-            // Respaldo: si la función RPC no existe todavía, usar lectura directa
-            try {
-                const { data } = await sb.from("dias_disponibles").select("*");
-                diasDisponibles = data || [];
-            } catch(e2) { diasDisponibles = []; }
-        }
+        } catch(e) { diasDisponibles = []; }
         try { renderDCalendar(); }    catch(e){}
         try { renderMesesGrid(); }    catch(e){}
         try { renderDispDiaItems(); } catch(e){}
@@ -2720,6 +2713,15 @@
         }
         if (!selectedServicio) {
             wrap.innerHTML = `<div class="time-empty">Elige primero el servicio</div>`;
+            return;
+        }
+        // Si el día está cerrado (mes no habilitado o día excluido), no mostrar horas
+        const isoCheck = fmtISO(selectedDate);
+        if (!isDiaDisponible(isoCheck)) {
+            wrap.innerHTML = `<div class="time-empty">Este día no está disponible</div>`;
+            selectedTime = null;
+            const lbl = document.getElementById("pickedTimeLabel");
+            if (lbl) { lbl.textContent = "Sin elegir"; lbl.classList.add("empty"); }
             return;
         }
 
