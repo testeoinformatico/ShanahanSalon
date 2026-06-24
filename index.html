@@ -4162,15 +4162,34 @@
         const el=document.getElementById("dispDiaItems"); if(!el) return;
         const dias=diasDisponibles.filter(b=>b.tipo==="dia_bloqueado").sort((a,b)=>a.valor.localeCompare(b.valor));
         if(!dias.length){ el.innerHTML=`<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin días bloqueados</div>`; el.style.display="block"; return; }
-        el.style.display = "flex";
-        el.style.flexWrap = "wrap";
-        el.style.gap = "8px";
-        el.innerHTML=dias.map(b=>{ 
-            const dt=new Date(b.valor+"T00:00:00"); 
-            return `<div style="display:inline-flex; align-items:center; background:#fff; border:1px solid rgba(146,31,35,0.3); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--burgundy); box-shadow:0 2px 5px rgba(0,0,0,0.03);">
-                <span>${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)} ${dt.getFullYear()}</span>
-                <button onclick="toggleDisponible('dia_bloqueado','${b.valor}')" style="background:none; border:none; padding:0; margin-left:8px; color:var(--burgundy); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-            </div>`; 
+        
+        const porMes = {};
+        dias.forEach(b => {
+            const dt = new Date(b.valor+"T00:00:00");
+            const mesStr = `${MONTHS_ES[dt.getMonth()]} ${dt.getFullYear()}`;
+            if (!porMes[mesStr]) porMes[mesStr] = [];
+            porMes[mesStr].push({dt, b});
+        });
+
+        el.style.display = "block";
+        el.innerHTML = Object.entries(porMes).map(([mes, arr]) => {
+            const pills = arr.map(({dt, b}) => `
+                <div style="display:inline-flex; align-items:center; background:#fff; border:1px solid rgba(146,31,35,0.3); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--burgundy); box-shadow:0 2px 5px rgba(0,0,0,0.03); margin:4px;">
+                    <span>${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)}</span>
+                    <button onclick="toggleDisponible('dia_bloqueado','${b.valor}')" style="background:none; border:none; padding:0; margin-left:8px; color:var(--burgundy); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `).join("");
+            
+            return `
+            <details style="margin-bottom:10px; background:#fafafa; border:1px solid var(--line); border-radius:10px; overflow:hidden;" open>
+                <summary style="padding:10px 14px; font-size:13px; font-weight:600; cursor:pointer; outline:none; color:var(--text-main); user-select:none; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+                    <span><i class="fa-regular fa-calendar" style="margin-right:6px; color:var(--burgundy);"></i>${mes}</span>
+                    <span style="font-size:11px; background:rgba(146,31,35,0.1); color:var(--burgundy); padding:2px 8px; border-radius:12px;">${arr.length}</span>
+                </summary>
+                <div style="padding:10px; display:flex; flex-wrap:wrap; gap:4px;">
+                    ${pills}
+                </div>
+            </details>`;
         }).join("");
     }
     function renderMesesGrid() {
@@ -4321,26 +4340,47 @@
             el.innerHTML = `<div class="empty-state" style="padding:14px 0;font-size:12px;">Sin horas bloqueadas</div>`;
             return;
         }
-        // Agrupar por fecha
-        const porFecha = {};
+        
+        // Agrupar por mes, y luego por fecha
+        const porMes = {};
         bloqueadas.forEach(b => {
             const [fecha, hora] = b.valor.split("T");
-            if (!porFecha[fecha]) porFecha[fecha] = [];
-            porFecha[fecha].push({hora, id:b.id, key:b.valor});
-        });
-        el.innerHTML = Object.entries(porFecha).map(([fecha, horas]) => {
             const dt = new Date(fecha+"T00:00:00");
-            const label = `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()} ${dt.getFullYear()}`;
-            const pills = horas.map(h =>
-                `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(146,31,35,.08);border:1px solid rgba(146,31,35,.2);color:var(--burgundy);padding:3px 9px;font-size:11px;font-weight:600;margin:2px;">
-                    ${h.hora}
-                    <button onclick="desbloquearHora('${h.key}','${h.hora}')" style="background:none;border:none;cursor:pointer;color:var(--burgundy);font-size:10px;padding:0;line-height:1;"><i class="fa-solid fa-xmark"></i></button>
-                </span>`
-            ).join("");
-            return `<div style="margin-bottom:10px;">
-                <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:5px;">${label}</div>
-                <div>${pills}</div>
-            </div>`;
+            const mesStr = `${MONTHS_ES[dt.getMonth()]} ${dt.getFullYear()}`;
+            if (!porMes[mesStr]) porMes[mesStr] = {};
+            if (!porMes[mesStr][fecha]) porMes[mesStr][fecha] = [];
+            porMes[mesStr][fecha].push({hora, id:b.id, key:b.valor});
+        });
+
+        el.innerHTML = Object.entries(porMes).map(([mes, fechasObj]) => {
+            let totalHorasMes = 0;
+            const fechasHTML = Object.entries(fechasObj).map(([fecha, horas]) => {
+                totalHorasMes += horas.length;
+                const dt = new Date(fecha+"T00:00:00");
+                const label = `${dt.getDate()} de ${MONTHS_ES[dt.getMonth()].toLowerCase()}`;
+                const pills = horas.map(h =>
+                    `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(146,31,35,.08);border:1px solid rgba(146,31,35,.2);color:var(--burgundy);border-radius:15px;padding:4px 10px;font-size:11px;font-weight:600;margin:3px;">
+                        ${h.hora}
+                        <button onclick="desbloquearHora('${h.key}','${h.hora}')" style="background:none;border:none;cursor:pointer;color:var(--burgundy);font-size:10px;padding:0;line-height:1;"><i class="fa-solid fa-xmark"></i></button>
+                    </span>`
+                ).join("");
+                return `
+                <div style="margin-bottom:12px;">
+                    <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;"><i class="fa-solid fa-calendar-day" style="margin-right:4px;"></i>${label}</div>
+                    <div style="display:flex; flex-wrap:wrap;">${pills}</div>
+                </div>`;
+            }).join("");
+
+            return `
+            <details style="margin-bottom:10px; background:#fafafa; border:1px solid var(--line); border-radius:10px; overflow:hidden;" open>
+                <summary style="padding:10px 14px; font-size:13px; font-weight:600; cursor:pointer; outline:none; color:var(--text-main); user-select:none; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+                    <span><i class="fa-regular fa-clock" style="margin-right:6px; color:var(--burgundy);"></i>${mes}</span>
+                    <span style="font-size:11px; background:rgba(146,31,35,0.1); color:var(--burgundy); padding:2px 8px; border-radius:12px;">${totalHorasMes} bloqueos</span>
+                </summary>
+                <div style="padding:12px 14px 4px 14px;">
+                    ${fechasHTML}
+                </div>
+            </details>`;
         }).join("");
     }
 
@@ -4391,35 +4431,7 @@
     let ncSelectedDuracion = 0;
 
     // Lista de servicios para el selector (reutilizamos los que ya existen en el HTML del cliente)
-    const NC_SERVICIOS = [
-        { grupo: "Manicura Rusa · Nivelación", items: [
-            { val: "Mani Rusa Nivelación · Color Liso", nombre: "Color Liso", dur: 75, durTxt: "1 h 15 min", precio: "22€", desc: "Manicura técnica realizada con torno para una limpieza profunda de cutícula y una superficie totalmente pulida. Incluye nivelación de la uña natural para aportar mayor resistencia, uniformidad y un acabado impecable. Finalizada con esmaltado en color liso de alta duración, logrando un resultado elegante, fino y perfectamente estructurado." },
-            { val: "Mani Rusa Nivelación · Decoración Sencilla", nombre: "Decoración Sencilla", dur: 105, durTxt: "1 h 45 min", precio: "25€", desc: "Manicura rusa con nivelación de la uña natural para un acabado uniforme y duradero. Incluye diseños minimalistas como francesa, efecto aura, cromados o polka dot, aportando un toque moderno sin recargar la uña. Ideal para quienes buscan un diseño elegante pero con personalidad." },
-            { val: "Mani Rusa Nivelación · Decoración Elaborada", nombre: "Decoración Elaborada", dur: 135, durTxt: "2 h 15 min", precio: "30€", desc: "Servicio completo de manicura rusa con nivelación para una base perfecta y resistente. Incluye diseños más creativos y detallados en todas las uñas: efectos 3D, relieves, composiciones artísticas y combinaciones de técnicas. Perfecto para quienes buscan uñas llamativas y totalmente personalizadas." }
-        ]},
-        { grupo: "Manicura Rusa · Ext. Gel", items: [
-            { val: "Mani Rusa Ext. Gel · Color Liso", nombre: "Color Liso", dur: 120, durTxt: "2 h", precio: "32€", desc: "Extensión de uñas en gel con técnica profesional para alargar y estructurar la uña de forma natural y resistente. Incluye manicura rusa y esmaltado en color liso, consiguiendo un acabado limpio, sofisticado y duradero con forma totalmente personalizada." },
-            { val: "Mani Rusa Ext. Gel · Decoración Sencilla", nombre: "Decoración Sencilla", dur: 150, durTxt: "2 h 30 min", precio: "35€", desc: "Extensión de uñas en gel con acabado de alta precisión gracias a la manicura rusa. Incluye diseños sencillos como francesa, efecto aura, cromados o polka dot. Un servicio ideal para alargar la uña manteniendo un estilo delicado y actual." },
-            { val: "Mani Rusa Ext. Gel · Decoración Elaborada", nombre: "Decoración Elaborada", dur: 180, durTxt: "3 h", precio: "40€", desc: "Extensión de uñas en gel con estructura personalizada y manicura rusa para una base perfecta. Incluye diseños completos en todas las uñas con efectos 3D, relieves, arte detallado y composiciones más trabajadas. Pensado para resultados impactantes y totalmente a medida." }
-        ]},
-        { grupo: "Pedicura Macro", items: [
-            { val: "Pedicura Macro · Esmalte Semipermanente", nombre: "Esmalte Semipermanente", dur: 60, durTxt: "1 h", precio: "25€", desc: "Tratamiento completo de pedicura en seco con técnica de torno (pedicura macro), sin uso de agua, lo que permite una mayor precisión e higiene. Incluye limpieza profunda de uñas y cutículas, finalizando con esmaltado semipermanente de alta duración. Resultado brillante, uniforme y resistente durante semanas." },
-            { val: "Pedicura Macro · Semipermanente + Trat. Durezas", nombre: "Semiperm. + Trat. Durezas", dur: 80, durTxt: "1 h 20 min", precio: "30€", desc: "Pedicura en seco realizada con técnica profesional de torno, enfocada en la eliminación de durezas, callosidades y piel engrosada con máxima precisión. Incluye esmaltado semipermanente y tratamiento específico para suavizar y mejorar la textura de la piel del pie. Ideal para pies cuidados tanto a nivel estético como de salud." },
-            { val: "Pedicura · Solo Limpieza", nombre: "Solo Limpieza", dur: 40, durTxt: "40 min", precio: "17€", desc: "Servicio básico de mantenimiento realizado en seco, sin uso de agua. Incluye corte, limado de uñas, retirada de cutícula y limpieza general del pie. No incluye esmalte. Perfecto para mantener los pies cuidados de forma regular y natural." }
-        ]},
-        { grupo: "Combos Mani + Pedi", items: [
-            { val: "Combo · Mani Rusa Nivelación + Pedi Macro Semipermanente", nombre: "Mani Nivelación + Pedi Semip.", dur: 135, durTxt: "2 h 15 min", precio: "45€", desc: "Pack completo de manos y pies. Incluye manicura rusa con nivelación para una superficie uniforme, resistente y pulida, junto con pedicura en seco con técnica macro y esmaltado semipermanente. Un servicio integral con acabado profesional y duradero." },
-            { val: "Combo · Mani Rusa Ext. Gel + Pedi Macro Semipermanente", nombre: "Mani Ext. Gel + Pedi Semip.", dur: 195, durTxt: "3 h 15 min", precio: "55€", desc: "Pack premium de uñas en manos y pies. Incluye extensión de uñas en gel con manicura rusa para una estructura personalizada y duradera, junto con pedicura en seco con técnica macro y esmaltado semipermanente. Pensado para un resultado completo, elegante y de alta duración." }
-        ]},
-        { grupo: "Retirada", items: [
-            { val: "Retirada + Limpieza de Cutícula", nombre: "Retirada + Limp. Cutícula", dur: 25, durTxt: "25 min", precio: "12€", desc: "Retirada cuidadosa del producto anterior con torno y limpieza completa de cutícula para dejar la uña sana y preparada." },
-            { val: "Suplemento retirada (de otro centro)", nombre: "Suplemento retirada (de otro centro)", dur: 25, durTxt: "+25 min", precio: "+7€", isExtraAddon: true, desc: "Si traes material de otro centro, añade este suplemento a tu cita para contar con el tiempo necesario para la retirada." }
-        ]},
-        { grupo: "Extras (solo añadir a combos)", isExtras: true, items: [
-            { val: "Decoración Sencilla", nombre: "Decoración Sencilla", dur: 20, durTxt: "+20 min", precio: "+3€", desc: "Añade un toque especial a tu manicura con diseños minimalistas como francesa, efecto aura, cromados o polka dot. Ideal para complementar un color liso con un detalle elegante." },
-            { val: "Decoración Elaborada", nombre: "Decoración Elaborada", dur: 40, durTxt: "+40 min", precio: "+8€", desc: "Diseños completos y creativos en todas las uñas con técnicas avanzadas como efectos 3D, relieves y composiciones artísticas. Perfecto para quienes buscan un resultado llamativo y totalmente personalizado." }
-        ]}
-    ];
+    let NC_SERVICIOS = [];
     let ncSelectedPrecio = 0;
     let ncSelectedExtras = []; // [{name, dur, precio}]
 
@@ -5216,12 +5228,48 @@
     }
 
     // Inicializar banners al cargar
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         checkCookies();
         cargarVistaResenas();
         cargarGaleria();
+        await cargarCatServicios(); // Cargar catálogo desde BD primero
         renderPublicServicios();
+        if(typeof renderAcordeon === 'function') renderAcordeon();
+        if(typeof ncRenderServicios === 'function') ncRenderServicios();
     });
+
+    async function cargarCatServicios() {
+        try {
+            const { data, error } = await sb.from("servicios").select("*").order("orden_grupo").order("orden_item");
+            if(error) { console.error("Error cargando servicios", error); return; }
+            if(!data || !data.length) return;
+
+            const mapGroups = {};
+            data.forEach(s => {
+                if(!mapGroups[s.grupo]) {
+                    mapGroups[s.grupo] = {
+                        grupo: s.grupo,
+                        isExtras: s.is_extras_group,
+                        orden: s.orden_grupo,
+                        items: []
+                    };
+                }
+                mapGroups[s.grupo].items.push({
+                    val: s.val,
+                    nombre: s.nombre,
+                    dur: s.dur,
+                    durTxt: s.dur_txt,
+                    precio: s.precio,
+                    desc: s.descrip,
+                    isExtraAddon: s.is_extra_addon
+                });
+            });
+
+            NC_SERVICIOS = Object.values(mapGroups).sort((a,b) => a.orden - b.orden);
+        } catch(e) {
+            console.error("Error fatal servicios", e);
+        }
+    }
 
     window.renderPublicServicios = function() {
         const cont = document.getElementById("publicServicioGrid");
