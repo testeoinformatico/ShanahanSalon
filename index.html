@@ -2037,20 +2037,8 @@
                             Balance: <span id="historialBalance">0€</span>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="admin-table" id="tablaHistorial">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Clienta</th>
-                                    <th>Servicio</th>
-                                    <th>Precio</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div class="table-responsive" id="historialContenedor">
+                        <!-- Renderizado dinámico agrupado por meses -->
                     </div>
                     <div id="historialEmpty" class="mis-citas-empty" style="display:none;"><i class="fa-solid fa-clock-rotate-left"></i><div class="label">No hay citas en el historial</div></div>
                 </div>
@@ -2176,6 +2164,11 @@
                 <input type="time" id="editCitaHora" placeholder=" ">
                 <label>Hora</label>
                 <i class="fa-regular fa-clock field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="number" id="editCitaPrecio" placeholder=" ">
+                <label>Precio final (€)</label>
+                <i class="fa-solid fa-euro-sign field-icon"></i>
             </div>
 
             <div class="picker-label" style="margin:18px 0 4px;"><span><i class="fa-solid fa-circle-dot" style="margin-right:8px; color:var(--accent);"></i>Estado de la cita</span></div>
@@ -3658,30 +3651,74 @@
         const balanceEl = document.getElementById("historialBalance");
         if (balanceEl) balanceEl.textContent = balanceTotal + "€";
 
+        const container = document.getElementById("historialContenedor");
+        if (!container) return;
+
         if (!filtered.length) {
-            tbody.innerHTML = "";
+            container.innerHTML = "";
             if (emptyEl) { emptyEl.style.display = "block"; }
-            document.getElementById("tablaHistorial").style.display = "none";
             return;
         }
         if (emptyEl) emptyEl.style.display = "none";
-        document.getElementById("tablaHistorial").style.display = "";
 
-        tbody.innerHTML = filtered.map(c => {
+        // Agrupar por mes
+        const meses = {};
+        filtered.forEach(c => {
             const dt = new Date(c.fecha+"T00:00:00");
-            const fechaBonita = `${dias[dt.getDay()]}, ${dt.getDate()} ${MONTHS_ES[dt.getMonth()].slice(0,3)} ${dt.getFullYear()}`;
-            const hora = (c.hora||"").slice(0,5);
-            const estado = c.estado||"pendiente";
-            const precioStr = parsePrecio(c.precio) + "€";
-            return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
-                <td><span style="font-weight:600;">${fechaBonita}</span></td>
-                <td>${hora} h</td>
-                <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
-                <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"—"}</span></td>
-                <td><span style="font-weight:600;">${precioStr}</span></td>
-                <td><span class="estado-pill ${estado}">${estado}</span></td>
-            </tr>`;
-        }).join("");
+            const mesKey = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+            const mesNombre = `${MONTHS_ES[dt.getMonth()]} ${dt.getFullYear()}`;
+            if (!meses[mesKey]) meses[mesKey] = { nombre: mesNombre, citas: [], sum: 0 };
+            meses[mesKey].citas.push(c);
+            if ((c.estado||"pendiente") !== "cancelada") {
+                meses[mesKey].sum += parsePrecio(c.precio);
+            }
+        });
+
+        const keys = Object.keys(meses).sort((a,b) => b.localeCompare(a)); // Meses más recientes primero
+        let html = "";
+        keys.forEach((k, idx) => {
+            const mes = meses[k];
+            // Solo el primer mes abierto por defecto para no saturar la pantalla
+            const isOpen = idx === 0 ? "open" : "";
+            html += `<details class="disp-month-details" ${isOpen} style="margin-bottom:12px; border:1px solid rgba(229,218,206,0.8); border-radius:12px; background:#fff; overflow:hidden;">
+                <summary style="padding:16px; background:rgba(229,218,206,0.2); font-weight:600; color:var(--burgundy); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-family:'Playfair Display',serif; font-size:16px;"><i class="fa-regular fa-calendar-days" style="margin-right:8px;"></i>${mes.nombre} (${mes.citas.length})</span>
+                    <span style="font-size:14px; font-weight:700; color:var(--accent); background:#fff; padding:4px 10px; border-radius:20px; border:1px solid rgba(229,218,206,0.5);">Generado: ${mes.sum}€</span>
+                </summary>
+                <div style="padding:16px; border-top:1px solid rgba(229,218,206,0.4); overflow-x:auto;">
+                    <table class="admin-table" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Clienta</th>
+                                <th>Servicio</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            html += mes.citas.map(c => {
+                const dt = new Date(c.fecha+"T00:00:00");
+                const fechaBonita = `${dias[dt.getDay()]}, ${dt.getDate()}`;
+                const hora = (c.hora||"").slice(0,5);
+                const estado = c.estado||"pendiente";
+                const precioStr = parsePrecio(c.precio) + "€";
+                return `<tr style="cursor:pointer;" onclick="abrirEditarCita(${c.id})">
+                    <td><span style="font-weight:600;">${fechaBonita}</span></td>
+                    <td>${hora} h</td>
+                    <td>${c.nombre_cliente||""} <span style="font-size:10px;color:var(--muted);">${c.telefono||""}</span></td>
+                    <td><span style="color:var(--accent);font-weight:600;font-size:12px;">${c.servicio||"—"}</span></td>
+                    <td><span style="font-weight:600;">${precioStr}</span></td>
+                    <td><span class="estado-pill ${estado}">${estado}</span></td>
+                </tr>`;
+            }).join("");
+            
+            html += `</tbody></table></div></details>`;
+        });
+
+        container.innerHTML = html;
     }
 
     // ── Correo de notificaciones ─────────────────────────────
@@ -4046,6 +4083,7 @@
         document.getElementById("editCitaTelefono").value=cita.telefono||"";
         document.getElementById("editCitaFecha").value=cita.fecha||"";
         document.getElementById("editCitaHora").value=cita.hora||"";
+        document.getElementById("editCitaPrecio").value=parsePrecio(cita.precio) || 0;
         setEditEstado(cita.estado||"pendiente");
         document.getElementById("editCitaModal").classList.add("show");
     }
@@ -4071,6 +4109,7 @@
             telefono:document.getElementById("editCitaTelefono").value.trim(),
             fecha:document.getElementById("editCitaFecha").value,
             hora:document.getElementById("editCitaHora").value,
+            precio:document.getElementById("editCitaPrecio").value.trim(),
             estado:nuevoEstado,
             duracion_minutos:previa?(parseInt(previa.duracion_minutos,10)||30):30,
             servicio:previa?(previa.servicio||""):""
