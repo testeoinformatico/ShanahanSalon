@@ -3615,9 +3615,7 @@
         renderHistorialAdmin();
     }
     function renderHistorialAdmin() {
-        const tbody = document.querySelector("#tablaHistorial tbody");
         const emptyEl = document.getElementById("historialEmpty");
-        if (!tbody) return;
         const search = (document.getElementById("historialSearch")?.value || "").toLowerCase();
         const dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 
