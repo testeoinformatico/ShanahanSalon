@@ -2394,34 +2394,34 @@
                 <i class="fa-solid fa-euro-sign field-icon"></i>
             </div>
             <div class="row">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <div class="field">
                         <input type="number" id="editServicioDuracionNum" placeholder=" ">
                         <label>Minutos (sistema)</label>
                         <i class="fa-solid fa-stopwatch field-icon"></i>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <div class="field">
                         <input type="text" id="editServicioDuracionTxt" placeholder=" ">
-                        <label>Duración (texto público)</label>
+                        <label>Duración (texto)</label>
                         <i class="fa-regular fa-clock field-icon"></i>
                     </div>
                 </div>
             </div>
-            <div class="field" style="margin-top:15px; margin-bottom:5px;">
+            <div class="field" style="margin-top:5px; margin-bottom:5px;">
                 <i class="fa-solid fa-align-left field-icon" style="top:16px; transform:none; font-size:16px; color:var(--muted);"></i>
                 <textarea id="editServicioDesc" placeholder="Descripción detallada (opcional)..." rows="3" style="width:100%; padding:14px 14px 14px 45px; border:2px solid var(--border); border-radius:12px; font-size:14px; outline:none; transition:border-color 0.3s ease; resize:none; background:var(--bg); font-family:inherit; color:var(--text);"></textarea>
             </div>
 
-            <div class="modal-actions" style="margin-top:24px; display:flex; justify-content:space-between; align-items:center;">
-                <button type="button" id="btnEliminarServicio" onclick="eliminarServicio()" style="background:transparent; color:#e74c3c; border:none; font-weight:600; font-size:14px; padding:8px 0; cursor:pointer; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-trash-can"></i> Borrar</button>
-                <div style="display:flex; gap:12px;">
-                    <button type="button" class="btn-cancel" onclick="closeEditServicio()">Cancelar</button>
-                    <button type="button" class="btn-luxury" id="btnGuardarServicio" onclick="guardarServicio()" style="margin:0; padding:10px 20px;">
-                        <span>Guardar</span><i class="fa-solid fa-check" style="margin-left:8px;"></i>
+            <div class="modal-actions" style="margin-top:24px; display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; gap:12px; width:100%;">
+                    <button type="button" class="btn-cancel" onclick="closeEditServicio()" style="flex:1;">Cancelar</button>
+                    <button type="button" class="btn-luxury" id="btnGuardarServicio" onclick="guardarServicio()" style="flex:1; margin:0; justify-content:center;">
+                        <span>Guardar</span>
                     </button>
                 </div>
+                <button type="button" id="btnEliminarServicio" onclick="eliminarServicio()" style="background:rgba(231,76,60,0.08); color:#e74c3c; border:1px solid rgba(231,76,60,0.2); border-radius:12px; font-weight:600; font-size:14px; padding:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; width:100%; transition:all 0.3s ease;"><i class="fa-solid fa-trash-can"></i> Eliminar Servicio</button>
             </div>
         </div>
     </div>
