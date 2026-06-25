@@ -1928,7 +1928,7 @@
                         <h5><i class="fa-solid fa-gem"></i> Fidelización</h5>
                         <div class="admin-search">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="adminSearch" placeholder="Buscar clienta…" oninput="renderAdmin()">
+                            <input type="text" id="adminSearch" placeholder="Buscar clienta…" oninput="clientasPage=1; renderAdmin()">
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -1942,6 +1942,7 @@
                             </thead>
                             <tbody></tbody>
                         </table>
+                        <div id="clientasPagination" style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding:0 10px; font-size:14px; color:var(--muted);"></div>
                     </div>
                 </div>
             </div>
@@ -2654,7 +2655,7 @@
     };
 
     // ── Admin sections ─────────────────────────────────────
-    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas","galeria"];
+    const ADMIN_SECTIONS = ["agenda","solicitudes","fidelizacion","disponibilidad","historial","usuarios","resenas","galeria","servicios"];
     function switchAdminSection(name) {
         ADMIN_SECTIONS.forEach(s => {
             const el = document.getElementById("asec"+s.charAt(0).toUpperCase()+s.slice(1));
@@ -4139,9 +4140,20 @@
     }
 
     // ── renderAdmin ────────────────────────────────────────
+    let clientasPage = 1;
+    const CLIENTAS_PER_PAGE = 10;
+    
+    window.changeClientasPage = function(delta) {
+        clientasPage += delta;
+        renderAdmin();
+    }
+
     function renderAdmin() {
         const search=(document.getElementById("adminSearch")?.value||"").toLowerCase();
-        const filtered=search?clientas.filter(c=>(c.nombre||"").toLowerCase().includes(search)||(c.telefono||"").includes(search)):clientas;
+        let filtered=search?clientas.filter(c=>(c.nombre||"").toLowerCase().includes(search)||(c.telefono||"").includes(search)):[...clientas];
+        
+        // Orden alfabético
+        filtered.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
 
         const todayISO=fmtISO(today);
         const startWeek=new Date(today); startWeek.setDate(today.getDate()-((today.getDay()+6)%7));
@@ -4161,12 +4173,20 @@
 
         // Tabla clientas
         const tb=document.querySelector("#tablaClientes tbody");
+        const pagEl=document.getElementById("clientasPagination");
         if(tb) {
             tb.innerHTML="";
             if(!filtered.length) {
                 tb.innerHTML=`<tr><td colspan="3"><div class="empty-state"><i class="fa-regular fa-folder-open"></i><div class="label">${search?"Sin resultados":"Sin clientas registradas"}</div></div></td></tr>`;
+                if(pagEl) pagEl.innerHTML = "";
             } else {
-                filtered.forEach(c=>{
+                const totalPages = Math.ceil(filtered.length / CLIENTAS_PER_PAGE) || 1;
+                if(clientasPage > totalPages) clientasPage = totalPages;
+                if(clientasPage < 1) clientasPage = 1;
+                const startIdx = (clientasPage - 1) * CLIENTAS_PER_PAGE;
+                const paged = filtered.slice(startIdx, startIdx + CLIENTAS_PER_PAGE);
+
+                paged.forEach(c=>{
                     const v=c.visitas||0, pct=Math.min(v,10)*10;
                     tb.innerHTML+=`<tr>
                         <td><div class="client-name">${c.nombre}</div><div class="client-phone">${c.usuario?`@${c.usuario} · `:""} ${c.telefono||"—"}</div></td>
@@ -4178,6 +4198,17 @@
                             <button class="action-icon danger" title="Eliminar" onclick="borrarCliente('${c.id}')"><i class="fa-solid fa-trash"></i></button>
                         </td></tr>`;
                 });
+
+                if(pagEl) {
+                    pagEl.innerHTML = `
+                        <div>Mostrando ${startIdx + 1}-${Math.min(startIdx + CLIENTAS_PER_PAGE, filtered.length)} de ${filtered.length} clientas</div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="cal-nav" style="width:32px;height:32px;font-size:12px;" onclick="changeClientasPage(-1)" ${clientasPage===1?'disabled':''}><i class="fa-solid fa-chevron-left"></i></button>
+                            <span style="display:flex; align-items:center; font-weight:600; font-size:13px; color:var(--text); padding:0 8px;">Pág. ${clientasPage} de ${totalPages}</span>
+                            <button class="cal-nav" style="width:32px;height:32px;font-size:12px;" onclick="changeClientasPage(1)" ${clientasPage===totalPages?'disabled':''}><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    `;
+                }
             }
         }
 
