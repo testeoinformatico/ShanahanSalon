@@ -1413,6 +1413,10 @@
             <i class="fa-solid fa-images"></i>
             <span>Galería</span>
         </button>
+        <button class="admin-menu-item" data-section="servicios" onclick="switchAdminSection('servicios')">
+            <i class="fa-solid fa-list-ul"></i>
+            <span>Servicios</span>
+        </button>
 
         <div class="admin-menu-sep"></div>
         
@@ -1637,12 +1641,11 @@
                 <div class="luxury-card view-anim">
                     <p class="card-subtitle">Crea tu cuenta para poder reservar citas</p>
 
-                    <!-- PASO 1: Datos personales + cuenta + email -->
                     <div class="picker-label" style="margin-top:0;">
                         <span><i class="fa-regular fa-user" style="margin-right:8px;color:var(--accent);"></i>Tus datos</span>
                     </div>
 
-                    <!-- Sub-paso 1a: datos -->
+
                     <div id="regStepDatos">
                         <div class="field">
                             <input type="text" id="citaNombre" placeholder=" " autocomplete="name">
@@ -2129,6 +2132,22 @@
         </div>
     </div>
 
+        <div class="admin-section" id="asecServicios" style="display:none;">
+            <div class="col-12">
+                <div class="luxury-card view-anim" style="padding:30px;">
+                    <div class="admin-header" style="margin-bottom:20px;">
+                        <h5><i class="fa-solid fa-list-ul"></i> Gestión de Servicios</h5>
+                        <button type="button" class="btn-luxury" style="margin-top:0; padding:9px 16px; font-size:10px;" onclick="abrirCrearServicio()">
+                            <i class="fa-solid fa-plus" style="margin-right:6px;"></i><span>Añadir Servicio</span>
+                        </button>
+                    </div>
+                    <div class="table-responsive" id="serviciosContenedor">
+                        <!-- Renderizado de servicios aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- FAB mobile: nueva cita -->
@@ -2350,6 +2369,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <div class="modal-backdrop-x" id="editServicioModal">
+        <div class="modal-x wide">
+            <div class="edit-modal-header">
+                <h4 id="servicioModalTitle">Editar Servicio</h4>
+                <p>Modifica los detalles del servicio en el catálogo</p>
+            </div>
+            <input type="hidden" id="editServicioId">
+            <div class="field">
+                <input type="text" id="editServicioNombre" placeholder=" ">
+                <label>Nombre del Servicio</label>
+                <i class="fa-solid fa-tag field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="text" id="editServicioGrupo" placeholder=" ">
+                <label>Grupo (ej. Manicura Rusa)</label>
+                <i class="fa-solid fa-layer-group field-icon"></i>
+            </div>
+            <div class="field">
+                <input type="number" id="editServicioPrecio" placeholder=" ">
+                <label>Precio (€)</label>
+                <i class="fa-solid fa-euro-sign field-icon"></i>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="field">
+                        <input type="number" id="editServicioDuracionNum" placeholder=" ">
+                        <label>Minutos (sistema)</label>
+                        <i class="fa-solid fa-stopwatch field-icon"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="field">
+                        <input type="text" id="editServicioDuracionTxt" placeholder=" ">
+                        <label>Duración (texto público)</label>
+                        <i class="fa-regular fa-clock field-icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <textarea id="editServicioDesc" placeholder=" " rows="3" style="width:100%; padding:14px; padding-left:45px; border:2px solid var(--border); border-radius:12px; font-size:15px; outline:none; transition:border-color 0.3s ease; resize:vertical; background:var(--bg);"></textarea>
+                <label style="top:14px; position:absolute; left:14px; color:var(--muted); pointer-events:none; transition:0.3s ease; font-size:12px; background:var(--bg); padding:0 4px; transform:translateY(-50%);">Descripción (opcional)</label>
+                <i class="fa-solid fa-align-left field-icon" style="top:14px; transform:none;"></i>
+            </div>
+
+            <div class="modal-actions" style="margin-top:24px; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <button type="button" class="btn-cancel" onclick="closeEditServicio()">Cancelar</button>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="btn-cancel" id="btnEliminarServicio" onclick="eliminarServicio()" style="background:#fff0f0; color:#d32f2f; border-color:#ffcdd2;">Eliminar</button>
+                    <button type="button" class="btn-luxury" id="btnGuardarServicio" onclick="guardarServicio()">
+                        <span>Guardar</span><i class="fa-solid fa-check" style="margin-left:8px;"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
     // ═══════════════════════════════════════════════════════
@@ -3717,6 +3792,148 @@
         });
 
         container.innerHTML = html;
+    }
+
+    // ── Gestión de Servicios Admin ─────────────────────────────────────
+    function renderAdminServicios() {
+        const container = document.getElementById("serviciosContenedor");
+        if (!container) return;
+
+        if (!NC_SERVICIOS || NC_SERVICIOS.length === 0) {
+            container.innerHTML = `<div class="mis-citas-empty"><i class="fa-solid fa-list-ul"></i><div class="label">No hay servicios configurados</div></div>`;
+            return;
+        }
+
+        let html = "";
+        NC_SERVICIOS.forEach((grupo, idx) => {
+            const isOpen = idx === 0 ? "open" : "";
+            html += `<details class="disp-month-details" ${isOpen} style="margin-bottom:12px; border:1px solid rgba(229,218,206,0.8); border-radius:12px; background:#fff; overflow:hidden;">
+                <summary style="padding:16px; background:rgba(229,218,206,0.2); font-weight:600; color:var(--burgundy); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-family:'Playfair Display',serif; font-size:16px;"><i class="fa-solid fa-layer-group" style="margin-right:8px;"></i>${grupo.grupo}</span>
+                </summary>
+                <div style="padding:16px; border-top:1px solid rgba(229,218,206,0.4); overflow-x:auto;">
+                    <table class="admin-table" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th>Servicio</th>
+                                <th>Precio</th>
+                                <th>Duración</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            grupo.items.forEach(s => {
+                html += `<tr>
+                    <td><div style="font-weight:600; color:var(--accent);">${s.nombre}</div><div style="font-size:11px; color:var(--muted); max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.desc||""}</div></td>
+                    <td><span style="font-weight:600;">${s.precio}€</span></td>
+                    <td>${s.durTxt}</td>
+                    <td style="text-align:right;">
+                        <button class="cita-btn reject" onclick="abrirEditarServicio(${s.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody></table></div></details>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function abrirCrearServicio() {
+        document.getElementById("servicioModalTitle").textContent = "Crear Nuevo Servicio";
+        document.getElementById("editServicioId").value = "";
+        document.getElementById("editServicioNombre").value = "";
+        document.getElementById("editServicioGrupo").value = "";
+        document.getElementById("editServicioPrecio").value = "";
+        document.getElementById("editServicioDuracionNum").value = "";
+        document.getElementById("editServicioDuracionTxt").value = "";
+        document.getElementById("editServicioDesc").value = "";
+        document.getElementById("btnEliminarServicio").style.display = "none";
+        document.getElementById("editServicioModal").classList.add("show");
+    }
+
+    function abrirEditarServicio(id) {
+        let servicio = null;
+        for (const g of NC_SERVICIOS) {
+            const f = g.items.find(i => i.id === id);
+            if (f) { servicio = f; servicio.grupo = g.grupo; break; }
+        }
+        if (!servicio) return;
+        
+        document.getElementById("servicioModalTitle").textContent = "Editar Servicio";
+        document.getElementById("editServicioId").value = servicio.id;
+        document.getElementById("editServicioNombre").value = servicio.nombre || "";
+        document.getElementById("editServicioGrupo").value = servicio.grupo || "";
+        document.getElementById("editServicioPrecio").value = servicio.precio || 0;
+        document.getElementById("editServicioDuracionNum").value = servicio.dur || 0;
+        document.getElementById("editServicioDuracionTxt").value = servicio.durTxt || "";
+        document.getElementById("editServicioDesc").value = servicio.desc || "";
+        document.getElementById("btnEliminarServicio").style.display = "block";
+        
+        document.getElementById("editServicioModal").classList.add("show");
+    }
+
+    function closeEditServicio() { document.getElementById("editServicioModal").classList.remove("show"); }
+    document.getElementById("editServicioModal").addEventListener("click",e=>{ if(e.target.id==="editServicioModal") closeEditServicio(); });
+
+    async function guardarServicio() {
+        const id = document.getElementById("editServicioId").value;
+        const nombre = document.getElementById("editServicioNombre").value.trim();
+        const grupo = document.getElementById("editServicioGrupo").value.trim();
+        const precio = parseInt(document.getElementById("editServicioPrecio").value, 10);
+        const duracion_minutos = parseInt(document.getElementById("editServicioDuracionNum").value, 10);
+        const duracion_texto = document.getElementById("editServicioDuracionTxt").value.trim();
+        const descripcion = document.getElementById("editServicioDesc").value.trim();
+
+        if (!nombre || !grupo || isNaN(precio) || isNaN(duracion_minutos)) {
+            return toast("Rellena todos los campos obligatorios", "error");
+        }
+
+        const payload = { nombre, grupo, precio, dur: duracion_minutos, dur_txt: duracion_texto, descrip: descripcion };
+
+        setBtnLoading("btnGuardarServicio", true);
+        try {
+            if (id) {
+                const { error } = await sb.from("servicios").update(payload).eq("id", parseInt(id, 10));
+                if (error) throw error;
+                toast("Servicio actualizado", "success");
+            } else {
+                // Determine `val` based on name for new services
+                payload.val = nombre.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                const { error } = await sb.from("servicios").insert([payload]);
+                if (error) throw error;
+                toast("Servicio creado", "success");
+            }
+            closeEditServicio();
+            await cargarCatServicios(); // Recargar array global
+            renderAdminServicios();
+            try { renderPublicServicios(); } catch(e){} // Actualizar UI de cliente si procede
+        } catch(e) {
+            toast("Error: " + e.message, "error");
+        } finally {
+            setBtnLoading("btnGuardarServicio", false);
+        }
+    }
+
+    async function eliminarServicio() {
+        const id = parseInt(document.getElementById("editServicioId").value, 10);
+        if (!id) return;
+        const ok = await askConfirm("Eliminar Servicio", "¿Estás segura de eliminar este servicio? Desaparecerá del catálogo para las clientas.");
+        if (!ok) return;
+
+        setBtnLoading("btnEliminarServicio", true);
+        try {
+            const { error } = await sb.from("servicios").delete().eq("id", id);
+            if (error) throw error;
+            toast("Servicio eliminado", "success");
+            closeEditServicio();
+            await cargarCatServicios();
+            renderAdminServicios();
+            try { renderPublicServicios(); } catch(e){}
+        } catch(e) {
+            toast("Error: " + e.message, "error");
+        } finally {
+            setBtnLoading("btnEliminarServicio", false);
+        }
     }
 
     // ── Correo de notificaciones ─────────────────────────────
@@ -5301,6 +5518,7 @@
                     };
                 }
                 mapGroups[s.grupo].items.push({
+                    id: s.id,
                     val: s.val,
                     nombre: s.nombre,
                     dur: s.dur,
@@ -5312,6 +5530,7 @@
             });
 
             NC_SERVICIOS = Object.values(mapGroups).sort((a,b) => a.orden - b.orden);
+            if(typeof renderAdminServicios === 'function') renderAdminServicios();
         } catch(e) {
             console.error("Error fatal servicios", e);
         }
