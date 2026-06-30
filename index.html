@@ -3133,7 +3133,7 @@
     let _loginClientaData = null;  // datos de la clienta tras validar credenciales
     let _loginCountdownIv = null;
 
-    function solicitarRecuperacion() {
+    window.solicitarRecuperacion = function() {
         document.getElementById('inputRecuperarEmail').value = '';
         document.getElementById('modalRecuperar').classList.add('show');
     }
