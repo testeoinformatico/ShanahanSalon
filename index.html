@@ -3142,12 +3142,10 @@
         const email = document.getElementById('inputRecuperarEmail').value.trim();
         if (!email) return toast("Introduce un correo válido", "error");
         
-        const btn = document.querySelector("#modalRecuperar .btn-luxury");
-        setBtnLoading(btn, true);
+        setBtnLoading("btnRecuperar", true);
         try {
-            const { error } = await sb.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.origin + window.location.pathname
-            });
+            const opts = window.location.protocol === 'file:' ? {} : { redirectTo: window.location.origin + window.location.pathname };
+            const { error } = await sb.auth.resetPasswordForEmail(email, opts);
             if (error) {
                 toast("Error: " + error.message, "error");
             } else {
@@ -3157,7 +3155,7 @@
         } catch(e) {
             toast("Error de conexión", "error");
         } finally {
-            setBtnLoading(btn, false);
+            setBtnLoading("btnRecuperar", false);
         }
     }
 
@@ -3173,13 +3171,12 @@
         const nuevaClave = document.getElementById('inputNuevaClave').value;
         if (!nuevaClave || nuevaClave.length < 6) return toast("Mínimo 6 caracteres", "error");
 
-        const btn = document.querySelector("#modalCambiarClave .btn-luxury");
-        setBtnLoading(btn, true);
+        setBtnLoading("btnCambiarClave", true);
         try {
             const { error } = await sb.auth.updateUser({ password: nuevaClave });
             if (error) {
                 toast("Error al actualizar: " + error.message, "error");
-                setBtnLoading(btn, false);
+                setBtnLoading("btnCambiarClave", false);
                 return;
             }
             
@@ -3192,7 +3189,7 @@
         }
         
         // Siempre mostrar confirmación si llegamos aquí
-        setBtnLoading(btn, false);
+        setBtnLoading("btnCambiarClave", false);
         document.getElementById('modalCambiarClave').classList.remove('show');
         document.getElementById('modalClaveOk').classList.add('show');
 
@@ -3380,8 +3377,7 @@
         if (otp.length < 8) return;
         const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
         
-        const btn = document.getElementById("btnVerificarRegOTP");
-        setBtnLoading(btn, true);
+        setBtnLoading("btnVerificarRegOTP", true);
         
         const errorMsg = document.getElementById("regOtpErrorMsg");
         errorMsg.style.display = "none";
@@ -3410,7 +3406,7 @@
             errorMsg.textContent = "Error de conexión";
             errorMsg.style.display = "block";
         } finally {
-            setBtnLoading(btn, false);
+            setBtnLoading("btnVerificarRegOTP", false);
         }
     }
 
@@ -5743,7 +5739,7 @@
             <label>Nueva contraseña</label>
             <button type="button" class="toggle-pass" onclick="togglePassVis('inputNuevaClave',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
         </div>
-        <button class="btn-luxury" onclick="procesarCambioClave()" style="margin-top:18px;"><span>Guardar contraseña</span><span class="spinner"></span></button>
+        <button class="btn-luxury" id="btnCambiarClave" onclick="procesarCambioClave()" style="margin-top:18px;"><span>Guardar contraseña</span><span class="spinner"></span></button>
         <button class="link-soft" onclick="document.getElementById('modalCambiarClave').classList.remove('show')">Cancelar</button>
     </div>
 </div>
@@ -5768,7 +5764,7 @@
             <label>Correo electrónico</label>
             <i class="fa-regular fa-envelope field-icon"></i>
         </div>
-        <button class="btn-luxury" onclick="enviarRecuperacion()" style="margin-top:18px;"><span>Enviar enlace</span><span class="spinner"></span></button>
+        <button class="btn-luxury" id="btnRecuperar" onclick="enviarRecuperacion()" style="margin-top:18px;"><span>Enviar enlace</span><span class="spinner"></span></button>
         <button class="link-soft" onclick="document.getElementById('modalRecuperar').classList.remove('show')">Cancelar</button>
     </div>
 </div>
