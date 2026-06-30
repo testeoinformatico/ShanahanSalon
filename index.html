@@ -3135,22 +3135,29 @@
 
     window.solicitarRecuperacion = function() {
         document.getElementById('inputRecuperarEmail').value = '';
+        document.getElementById('inputRecoveryCode').value = '';
+        document.getElementById('inputRecoveryNewPass').value = '';
+        document.getElementById('recoveryStep1').style.display = 'block';
+        document.getElementById('recoveryStep2').style.display = 'none';
         document.getElementById('modalRecuperar').classList.add('show');
     }
 
+    let _recoveryEmail = '';
+
     window.enviarRecuperacion = async function() {
-        const email = document.getElementById('inputRecuperarEmail').value.trim();
+        const email = document.getElementById('inputRecuperarEmail').value.trim().toLowerCase();
         if (!email) return toast("Introduce un correo válido", "error");
         
         setBtnLoading("btnRecuperar", true);
         try {
-            const opts = window.location.protocol === 'file:' ? {} : { redirectTo: window.location.origin + window.location.pathname };
-            const { error } = await sb.auth.resetPasswordForEmail(email, opts);
+            const { data, error } = await sb.rpc('send_recovery_code', { p_email: email });
             if (error) {
                 toast("Error: " + error.message, "error");
             } else {
-                toast("Enlace enviado a tu correo", "success");
-                document.getElementById('modalRecuperar').classList.remove('show');
+                _recoveryEmail = email;
+                toast("Código enviado a tu correo", "success");
+                document.getElementById('recoveryStep1').style.display = 'none';
+                document.getElementById('recoveryStep2').style.display = 'block';
             }
         } catch(e) {
             toast("Error de conexión", "error");
@@ -3159,14 +3166,37 @@
         }
     }
 
-    // Escuchar si venimos de un link de recuperación de contraseña
-    sb.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'PASSWORD_RECOVERY') {
-            document.getElementById('inputNuevaClave').value = '';
-            document.getElementById('modalCambiarClave').classList.add('show');
-        }
-    });
+    window.verificarCodigoRecuperacion = async function() {
+        const code = document.getElementById('inputRecoveryCode').value.trim();
+        const newPass = document.getElementById('inputRecoveryNewPass').value;
+        
+        if (!code || code.length !== 6) return toast("Introduce el código de 6 dígitos", "error");
+        if (!newPass || newPass.length < 6) return toast("La contraseña debe tener mínimo 6 caracteres", "error");
 
+        setBtnLoading("btnVerifyRecovery", true);
+        try {
+            const { data, error } = await sb.rpc('verify_recovery_code', { 
+                p_email: _recoveryEmail, 
+                p_code: code, 
+                p_new_password: newPass 
+            });
+            if (error) {
+                toast("Error: " + error.message, "error");
+            } else if (data && data.ok) {
+                toast("¡Contraseña actualizada con éxito!", "success");
+                document.getElementById('modalRecuperar').classList.remove('show');
+                document.getElementById('modalClaveOk').classList.add('show');
+            } else {
+                toast(data?.error || "Código incorrecto o caducado", "error");
+            }
+        } catch(e) {
+            toast("Error de conexión", "error");
+        } finally {
+            setBtnLoading("btnVerifyRecovery", false);
+        }
+    }
+
+    // Cambiar clave desde perfil (admin o cliente logueado)
     window.procesarCambioClave = async function() {
         const nuevaClave = document.getElementById('inputNuevaClave').value;
         if (!nuevaClave || nuevaClave.length < 6) return toast("Mínimo 6 caracteres", "error");
@@ -3180,7 +3210,7 @@
                 return;
             }
             
-            // Enviar correo de confirmación ANTES de que la sesión pueda expirar
+            // Enviar correo de confirmación
             const { error: rpcErr } = await sb.rpc('send_password_changed_email');
             if (rpcErr) console.log("RPC error:", rpcErr.message);
             
@@ -3188,7 +3218,6 @@
             console.log("Error en cambio de clave:", e);
         }
         
-        // Siempre mostrar confirmación si llegamos aquí
         setBtnLoading("btnCambiarClave", false);
         document.getElementById('modalCambiarClave').classList.remove('show');
         document.getElementById('modalClaveOk').classList.add('show');
@@ -5757,15 +5786,35 @@
 <!-- Modal de Recuperación -->
 <div class="modal-backdrop-x" id="modalRecuperar" onclick="if(event.target===this) this.classList.remove('show')">
     <div class="modal-x">
-        <h4 style="margin:0 0 16px;color:var(--burgundy);font-family:'Playfair Display',serif;font-size:18px;"><i class="fa-solid fa-key" style="margin-right:8px;"></i>Recuperar Contraseña</h4>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Introduce el correo con el que te registraste.</p>
-        <div class="field">
-            <input type="email" id="inputRecuperarEmail" placeholder=" " autocomplete="email">
-            <label>Correo electrónico</label>
-            <i class="fa-regular fa-envelope field-icon"></i>
+        <!-- Paso 1: Email -->
+        <div id="recoveryStep1">
+            <h4 style="margin:0 0 16px;color:var(--burgundy);font-family:'Playfair Display',serif;font-size:18px;"><i class="fa-solid fa-key" style="margin-right:8px;"></i>Recuperar Contraseña</h4>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Introduce el correo con el que te registraste. Te enviaremos un código de verificación.</p>
+            <div class="field">
+                <input type="email" id="inputRecuperarEmail" placeholder=" " autocomplete="email">
+                <label>Correo electrónico</label>
+                <i class="fa-regular fa-envelope field-icon"></i>
+            </div>
+            <button class="btn-luxury" id="btnRecuperar" onclick="enviarRecuperacion()" style="margin-top:18px;"><span>Enviar código</span><span class="spinner"></span></button>
+            <button class="link-soft" onclick="document.getElementById('modalRecuperar').classList.remove('show')">Cancelar</button>
         </div>
-        <button class="btn-luxury" id="btnRecuperar" onclick="enviarRecuperacion()" style="margin-top:18px;"><span>Enviar enlace</span><span class="spinner"></span></button>
-        <button class="link-soft" onclick="document.getElementById('modalRecuperar').classList.remove('show')">Cancelar</button>
+        <!-- Paso 2: Código + nueva contraseña -->
+        <div id="recoveryStep2" style="display:none;">
+            <h4 style="margin:0 0 16px;color:var(--burgundy);font-family:'Playfair Display',serif;font-size:18px;"><i class="fa-solid fa-shield-halved" style="margin-right:8px;"></i>Introduce el Código</h4>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Hemos enviado un código de 6 dígitos a tu correo. Introdúcelo junto con tu nueva contraseña.</p>
+            <div class="field">
+                <input type="text" id="inputRecoveryCode" placeholder=" " maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="letter-spacing:8px; text-align:center; font-size:22px; font-weight:700;">
+                <label>Código de 6 dígitos</label>
+                <i class="fa-solid fa-hashtag field-icon"></i>
+            </div>
+            <div class="field field-pass-wrap">
+                <input type="password" id="inputRecoveryNewPass" placeholder=" " autocomplete="new-password">
+                <label>Nueva contraseña</label>
+                <button type="button" class="toggle-pass" onclick="togglePassVis('inputRecoveryNewPass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <button class="btn-luxury" id="btnVerifyRecovery" onclick="verificarCodigoRecuperacion()" style="margin-top:18px;"><span>Cambiar contraseña</span><span class="spinner"></span></button>
+            <button class="link-soft" onclick="document.getElementById('recoveryStep2').style.display='none'; document.getElementById('recoveryStep1').style.display='block';">Volver</button>
+        </div>
     </div>
 </div>
 
