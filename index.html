@@ -1342,6 +1342,17 @@
     <canvas id="gl" style="position:fixed;inset:0;width:100%;height:100%;z-index:-1;cursor:crosshair;"></canvas>
     <div class="fallback" id="fb" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;color:#8a1c1c;font-family:sans-serif;background:#f6ece2;z-index:5;text-align:center;padding:2rem;">Tu navegador no soporta WebGL.</div>
 
+    <!-- Aviso: temporalmente fuera de Canarias -->
+    <div id="avisoFueraCanarias" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(44,36,36,0.55);backdrop-filter:blur(6px);padding:1.5rem;">
+        <div style="max-width:460px;width:100%;background:var(--cream);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-lg);padding:2.4rem 2rem;text-align:center;position:relative;font-family:'Poppins',sans-serif;">
+            <button type="button" onclick="document.getElementById('avisoFueraCanarias').style.display='none';" aria-label="Cerrar aviso" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.4rem;color:var(--muted);cursor:pointer;line-height:1;">&times;</button>
+            <div style="font-size:2rem;color:var(--accent);margin-bottom:.6rem;"><i class="fa-solid fa-plane-departure"></i></div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--burgundy);font-size:1.5rem;margin:0 0 .8rem;">Estamos temporalmente fuera de Canarias</h2>
+            <p style="color:var(--dark-text);font-size:1rem;line-height:1.6;margin:0 0 1.4rem;">Disculpa las molestias. Volvemos a atender citas a partir del <strong>27 de septiembre</strong>. ¡Gracias por tu paciencia! 💅</p>
+            <button type="button" onclick="document.getElementById('avisoFueraCanarias').style.display='none';" style="background:var(--burgundy);color:#fff;border:none;border-radius:50px;padding:.7rem 2rem;font-family:'Poppins',sans-serif;font-weight:500;font-size:.95rem;cursor:pointer;">Entendido</button>
+        </div>
+    </div>
+
     <nav class="topbar">
         <div class="cat-shadow-container">
             <lottie-player src="loader-cat.json" background="transparent" speed="1" style="width: 120px; height: 120px;" loop autoplay></lottie-player>
