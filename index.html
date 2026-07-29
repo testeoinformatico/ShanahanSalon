@@ -2131,6 +2131,12 @@
         }
         .hero-seccion .hero-btn-ghost { color: var(--white-soft); border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.12); }
         .hero-seccion .hero-blob { display: none; }
+        /* Con el logo ya transparente, el rojo de marca sobre el dorado del hero
+           se queda en 3,3:1. Mientras la cabecera va transparente sobre el vídeo
+           lo pasamos a crema; al hacer scroll vuelve al rojo sobre el marfil. */
+        body.en-inicio nav.topbar:not(.scrolled) .nav-logo img {
+            filter: brightness(0) invert(1) drop-shadow(0 2px 10px rgba(59,33,28,0.5));
+        }
         @media (max-width: 768px) {
             .hero-seccion .hero-home { padding-left: 20px; padding-right: 20px; }
         }
