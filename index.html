@@ -2182,6 +2182,105 @@
             .inm-parrafo { opacity: 1; }
         }
 
+        /* --- Trabajos inmersivos: rejilla que se llena foto a foto --- */
+        .inmersivo-trabajos { height: 340vh; }
+        .inmersivo-trabajos .inmersivo-contenido { width: min(100%, 1100px); }
+        .trabajos-titulo {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: clamp(28px, 3.4vw, 42px);
+            color: var(--burgundy);
+            text-align: center;
+            letter-spacing: -0.5px;
+            margin: 0 0 3vh;
+        }
+        /* Cuatro ventanas en arco: el resto de la galería sigue cargada porque
+           alimenta las columnas del bloque de Sobre Mí, pero aquí no se muestra */
+        .trabajos-rejilla {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(12px, 1.6vw, 24px);
+            align-items: end;
+        }
+        .trabajos-rejilla .galeria-item:nth-child(n+5) { display: none; }
+        .trabajos-rejilla .galeria-item {
+            overflow: hidden;
+            cursor: zoom-in;
+            border-radius: 999px 999px 16px 16px;   /* ventana con arco */
+            border: 5px solid var(--white-soft);
+            box-shadow: 0 18px 40px rgba(59,33,28,0.18);
+            /* el scroll las abre de abajo arriba, como una persiana que sube */
+            clip-path: inset(100% 0 0 0);
+            will-change: clip-path, transform;
+        }
+        /* las ventanas alternan altura, como una fachada */
+        .trabajos-rejilla .galeria-item:nth-child(even) { margin-bottom: 4vh; }
+        .trabajos-rejilla .galeria-item img {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            height: auto !important;
+            object-fit: cover;
+            display: block;
+        }
+        /* La invitación aparece cuando ya están todas las fotos */
+        .trabajos-invita {
+            text-align: center;
+            margin-top: 3.5vh;
+            opacity: 0;
+            will-change: opacity, transform;
+        }
+        .invita-texto { margin: 0 0 8px; line-height: 1.05; }
+        .invita-serif {
+            display: block;
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: clamp(26px, 3.2vw, 44px);
+            color: var(--burgundy);
+            letter-spacing: -1px;
+        }
+        .invita-sans {
+            display: block;
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: clamp(22px, 2.6vw, 36px);
+            color: var(--burgundy);
+            letter-spacing: -1px;
+        }
+        .invita-sub {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 300;
+            font-size: clamp(14px, 1.4vw, 16.5px);
+            color: var(--dark-text);
+            max-width: 46ch;
+            margin: 0 auto 18px;
+        }
+        .invita-botones {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .invita-botones .hero-btn-ghost { text-decoration: none; display: inline-flex; align-items: center; }
+        @media (max-width: 768px) {
+            .inmersivo-trabajos { height: 220vh; }
+            .trabajos-rejilla { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .trabajos-rejilla .galeria-item { border-radius: 700px 700px 12px 12px; border-width: 4px; }
+            .trabajos-rejilla .galeria-item:nth-child(even) { margin-bottom: 0; }
+            /* ventanas menos altas: si no, las dos filas más la invitación no
+               caben en la pantalla clavada, que recorta lo que sobresale */
+            .trabajos-rejilla .galeria-item img { aspect-ratio: 3 / 4; }
+            .trabajos-titulo { font-size: 24px; margin-bottom: 1.4vh; }
+            .trabajos-invita { margin-top: 2.5vh; }
+            .invita-sub { font-size: 13.5px; margin-bottom: 14px; }
+            .invita-botones { flex-direction: column; align-items: center; }
+            .invita-botones .hero-btn-primary, .invita-botones .hero-btn-ghost { width: 100%; max-width: 300px; justify-content: center; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .inmersivo-trabajos { height: auto; }
+            .trabajos-rejilla .galeria-item { clip-path: none; }
+            .trabajos-invita { opacity: 1; }
+        }
+
         #sobreMi .brand-ornament { color: var(--burgundy); }
         #sobreMi .luxury-card { background: var(--white-soft) !important; }
         @media (max-width: 768px) {
@@ -2578,13 +2677,29 @@
                   </div>
                 </div>
 
-                <div class="luxury-card reveal" style="padding: 40px; background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e6 100%);">
-                    <div class="rule rule-stripes" role="presentation" aria-hidden="true"><span class="rule-mark"></span></div>
-
-                    <h3 class="reveal" style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 30px; color: var(--burgundy); text-align: center; margin-bottom: 22px; letter-spacing: -0.5px;">Mis Trabajos</h3>
-                    <div id="galeriaPublica" class="reveal reveal-2" style="display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory;">
-                        <!-- Cargado por JS -->
+                <!-- ===== TRABAJOS INMERSIVOS: las fotos entran una a una
+                          y al final la invitación a visitar el estudio ===== -->
+                <div class="inmersivo inmersivo-trabajos" id="inmersivoTrabajos">
+                  <div class="inmersivo-pantalla">
+                    <div class="inmersivo-contenido">
+                        <div class="rule rule-stripes" role="presentation" aria-hidden="true"><span class="rule-mark"></span></div>
+                        <h3 class="trabajos-titulo">Mis Trabajos</h3>
+                        <div id="galeriaPublica" class="trabajos-rejilla">
+                            <!-- Cargado por JS -->
+                        </div>
+                        <div class="trabajos-invita" id="trabajosInvita">
+                            <p class="invita-texto">
+                                <span class="invita-serif">Cada set nace</span>
+                                <span class="invita-sans">de una cita tranquila.</span>
+                            </p>
+                            <p class="invita-sub">Reserva tu hueco en el estudio y sal con las uñas que tenías en mente.</p>
+                            <div class="invita-botones">
+                                <button class="hero-btn-primary" onclick="mostrarVista('vistaPedirCita')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                                <a class="hero-btn-ghost" href="https://wa.me/34644911596" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Escríbenos</a>
+                            </div>
+                        </div>
                     </div>
+                  </div>
                 </div>
                 </div>
               </div>
@@ -3855,6 +3970,62 @@
         window.addEventListener("scroll", programar, { passive: true });
         window.addEventListener("resize", programar, { passive: true });
         window.actualizarInmersivo = pintar;   // recálculo inmediato al cambiar de vista
+        pintar();
+    })();
+
+    // Trabajos inmersivos: al bajar, las fotos entran una a una y al final
+    // aparece la invitación a visitar el estudio
+    (function() {
+        const pista = document.getElementById("inmersivoTrabajos");
+        if (!pista) return;
+        const rejilla = document.getElementById("galeriaPublica");
+        const invita = document.getElementById("trabajosInvita");
+        const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const entre = (v, a, b) => Math.max(0, Math.min(1, (v - a) / (b - a)));
+        let piezas = [];
+        let pendiente = false;
+
+        window.montarTrabajos = function() {
+            // solo las cuatro primeras son ventanas; el resto sigue en el DOM
+            // porque alimenta las columnas del bloque de Sobre Mí
+            piezas = Array.from(rejilla ? rejilla.querySelectorAll(".galeria-item") : []).slice(0, 4);
+            programar();
+        };
+
+        function pintar() {
+            pendiente = false;
+            if (sinMovimiento) return;
+            const total = pista.offsetHeight - window.innerHeight;
+            if (total <= 0) return;
+            const p = Math.max(0, Math.min(1, -pista.getBoundingClientRect().top / total));
+
+            // cada ventana se abre de abajo arriba, una tras otra
+            const n = piezas.length || 1;
+            piezas.forEach((el, i) => {
+                const desde = 0.08 + (i / n) * 0.52;
+                const q = entre(p, desde, desde + 0.22);
+                el.style.clipPath = "inset(" + ((1 - q) * 100).toFixed(1) + "% 0 0 0)";
+                el.style.transform = "translateY(" + ((1 - q) * 22).toFixed(1) + "px)";
+            });
+
+            // la invitación entra cuando ya están las cuatro abiertas
+            if (invita) {
+                const q = entre(p, 0.74, 0.9);
+                invita.style.opacity = q.toFixed(3);
+                invita.style.transform = "translateY(" + ((1 - q) * 28).toFixed(1) + "px)";
+            }
+        }
+
+        function programar() {
+            if (pendiente) return;
+            pendiente = true;
+            requestAnimationFrame(pintar);
+        }
+
+        window.addEventListener("scroll", programar, { passive: true });
+        window.addEventListener("resize", programar, { passive: true });
+        window.actualizarTrabajos = pintar;
         pintar();
     })();
 
@@ -6782,8 +6953,8 @@
                     const { data: { publicUrl } } = sb.storage.from('galeria').getPublicUrl(f.name);
                     
                     htmlPub += `
-                        <div class="galeria-item" style="flex: 0 0 250px; scroll-snap-align: start; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1); cursor:zoom-in;" onclick="abrirFotoZoom('${publicUrl}')">
-                            <img src="${publicUrl}" alt="Trabajo de manicura — Shanahan Nails" loading="lazy" style="width:100%; height:300px; object-fit:cover; display:block; transition:transform 0.6s var(--ease);" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="galeria-item" onclick="abrirFotoZoom('${publicUrl}')">
+                            <img src="${publicUrl}" alt="Trabajo de manicura — Shanahan Nails" loading="lazy" style="transition:transform 0.6s var(--ease);" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
                         </div>
                     `;
 
@@ -6797,35 +6968,15 @@
             }
             if(contPub) {
                 contPub.innerHTML = htmlPub;
-                initCarouselAutoScroll();
                 // las mismas fotos alimentan las columnas del scroll inmersivo
                 if (typeof window.montarColumnasInmersivas === "function") window.montarColumnasInmersivas();
+                // y la rejilla de trabajos recuenta sus piezas para revelarlas una a una
+                if (typeof window.montarTrabajos === "function") window.montarTrabajos();
             }
             if(contAdm) contAdm.innerHTML = htmlAdm;
         } catch (e) {
             console.error("Error cargando galería:", e);
         }
-    }
-
-    let carouselInterval = null;
-    function initCarouselAutoScroll() {
-        const galeria = document.getElementById('galeriaPublica');
-        if (!galeria) return;
-        
-        if (carouselInterval) clearInterval(carouselInterval);
-        
-        carouselInterval = setInterval(() => {
-            if (galeria.scrollLeft + galeria.clientWidth >= galeria.scrollWidth - 20) {
-                galeria.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
-                galeria.scrollBy({ left: 265, behavior: 'smooth' });
-            }
-        }, 3000); // Cambia cada 3 segundos
-        
-        galeria.addEventListener('mouseenter', () => clearInterval(carouselInterval));
-        galeria.addEventListener('mouseleave', initCarouselAutoScroll);
-        galeria.addEventListener('touchstart', () => clearInterval(carouselInterval));
-        galeria.addEventListener('touchend', initCarouselAutoScroll);
     }
 
     window.abrirFotoZoom = function(url) {
