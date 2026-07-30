@@ -2068,6 +2068,120 @@
             margin-top: -2vh;
             padding: 13vh 5vw 9vh;
         }
+        /* ============================================================
+           SCROLL INMERSIVO DE SOBRE MÍ
+           La pista da recorrido; la pantalla se clava con position:sticky y
+           todo lo de dentro avanza atado al scroll (reversible al subir).
+           ============================================================ */
+        .inmersivo { position: relative; height: 300vh; }
+        .inmersivo-pantalla {
+            position: sticky;
+            top: 0;
+            height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        /* Tres columnas de trabajos desfilando por detrás */
+        .inm-fondo {
+            position: absolute;
+            inset: -12% 0;
+            display: flex;
+            gap: 2.5vw;
+            justify-content: center;
+            pointer-events: none;
+            opacity: .5;
+        }
+        .inm-col {
+            flex: 0 0 clamp(150px, 20vw, 280px);
+            display: flex;
+            flex-direction: column;
+            gap: 2.5vw;
+            will-change: transform;
+        }
+        .inm-col img {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            border-radius: 120px 120px 18px 18px;
+            display: block;
+        }
+        /* Velo para que el texto se lea sobre las fotos */
+        .inmersivo-pantalla::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 50% 50%,
+                rgba(240,224,218,0.94) 0%,
+                rgba(240,224,218,0.86) 42%,
+                rgba(240,224,218,0.55) 100%);
+        }
+        .inmersivo-contenido {
+            position: relative;
+            z-index: 2;          /* por encima del velo y las columnas */
+            width: min(100%, 980px);
+            padding: 0 4vw;
+        }
+        .inm-fila {
+            display: flex;
+            align-items: center;
+            gap: 4vw;
+            margin-top: 2vh;
+        }
+        .inm-foto-caja { position: relative; flex: 0 0 clamp(180px, 30%, 300px); }
+        .inm-foto {
+            width: 100%;
+            display: block;
+            border-radius: 200px 200px 22px 22px;
+            border: 4px solid #fff;
+            box-shadow: 0 22px 45px rgba(59,33,28,0.16);
+            position: relative;
+            z-index: 2;
+            clip-path: inset(0 0 100% 0);   /* lo abre el scroll */
+            will-change: clip-path, transform;
+        }
+        .inm-foto-marco {
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--accent);
+            border-radius: 200px 200px 22px 22px;
+            transform: translate(15px, 15px);
+            z-index: 1;
+        }
+        .inm-texto { flex: 1 1 auto; }
+        .inm-parrafo {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(15px, 1.5vw, 18px);
+            line-height: 1.75;
+            color: var(--dark-text);
+            margin-bottom: 14px;
+            opacity: 0;                      /* los revela el scroll */
+            will-change: opacity, transform;
+        }
+        @media (max-width: 768px) {
+            .inmersivo { height: 200vh; }    /* recorrido más corto en móvil */
+            .inm-fila { flex-direction: column; gap: 1.6vh; margin-top: 0; }
+            /* la foto y los textos se aprietan para que los 4 párrafos entren
+               enteros en la pantalla clavada, que recorta lo que sobresale */
+            .inm-foto-caja { flex: 0 0 auto; width: min(46%, 170px); }
+            .inm-foto, .inm-foto-marco { border-radius: 130px 130px 18px 18px; }
+            .inm-col { flex-basis: 34vw; }
+            .inm-parrafo { font-size: 13.5px; line-height: 1.5; margin-bottom: 7px; }
+            .inmersivo-contenido { padding: 0 22px; }
+            #sobreMi .inmersivo .brand-container { padding: 6px 6px 0; }
+            #sobreMi .inmersivo .brand-main { font-size: clamp(30px, 8vw, 40px); }
+            #sobreMi .inmersivo .brand-sub { font-size: clamp(26px, 7vw, 34px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .inmersivo { height: auto; }
+            .inmersivo-pantalla { position: relative; height: auto; padding: 8vh 0; }
+            .inm-fondo { display: none; }
+            .inm-foto { clip-path: none; }
+            .inm-parrafo { opacity: 1; }
+        }
+
         #sobreMi .brand-ornament { color: var(--burgundy); }
         #sobreMi .luxury-card { background: var(--white-soft) !important; }
         @media (max-width: 768px) {
@@ -2109,13 +2223,19 @@
             z-index: 1;          /* sobre el vídeo y el velo, bajo el titular */
             display: flex;
             pointer-events: none;
+            perspective: 1400px;            /* da volumen al giro de las lamas */
+            transform-style: preserve-3d;
         }
         .hero-persiana span {
             flex: 1 1 0;
             display: block;
             background: linear-gradient(180deg, #CDAB72 0%, var(--accent) 48%, #9C7D50 100%);
-            transform: scaleX(0);   /* cada barra crece desde su borde izquierdo */
+            /* Lamas de persiana veneciana: arrancan de canto (90°, invisibles) y
+               giran sobre su eje vertical hasta quedar planas y tapar el vídeo */
+            transform: rotateY(90deg);
             transform-origin: left center;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
             will-change: transform;
         }
 
@@ -2423,30 +2543,38 @@
             <div class="col-12 panel-seccion panel-nude" id="sobreMi">
               <div class="row justify-content-center">
                 <div class="col-12 col-md-10 col-lg-9">
-                <div class="brand-container reveal">
-                    <div class="brand-ornament"><span>Sobre mí</span></div>
-                    <span class="brand-main">Conoce a</span>
-                    <span class="brand-sub" style="font-style: normal; padding-left: 5px;">Jessica</span>
-                </div>
-
-                <div class="luxury-card reveal reveal-2" style="padding: 40px; background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e6 100%);">
-                    <div class="row align-items-center mb-5">
-                        <div class="col-12 col-md-5 text-center text-md-start mb-4 mb-md-0">
-                            <div class="reveal reveal-izq" style="position:relative; display:inline-block;">
-                                <img src="https://lofgjkrcgkqufqpybddn.supabase.co/storage/v1/object/public/galeria/perfil.jpg" alt="Jessica, técnica de uñas de Shanahan Nails" loading="lazy" style="width: 100%; max-width: 300px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 4px solid #fff; position:relative; z-index:2;">
-                                <div style="position:absolute; inset:0; border:1px solid var(--accent); border-radius:20px; transform:translate(15px, 15px); z-index:1;"></div>
-                            </div>
+                <!-- ===== SCROLL INMERSIVO: la sección se clava mientras los
+                          trabajos desfilan detrás a distintas velocidades ===== -->
+                <div class="inmersivo" id="inmersivoSobreMi">
+                  <div class="inmersivo-pantalla">
+                    <div class="inm-fondo" aria-hidden="true">
+                        <div class="inm-col" data-vel="1"></div>
+                        <div class="inm-col" data-vel="1.6"></div>
+                        <div class="inm-col" data-vel="0.65"></div>
+                    </div>
+                    <div class="inmersivo-contenido">
+                        <div class="brand-container">
+                            <div class="brand-ornament"><span>Sobre mí</span></div>
+                            <span class="brand-main">Conoce a</span>
+                            <span class="brand-sub" style="font-style: normal; padding-left: 5px;">Jessica</span>
                         </div>
-                        <div class="col-12 col-md-7">
-                            <div class="reveal reveal-der reveal-2" style="font-family: 'Instrument Serif', serif; font-size: 16px; line-height: 1.8; color: var(--dark-text);">
-                                <p>Mi nombre es Jessica y comencé mi camino en este mundo en 2021, formándome con una de las mejores formadoras de España. Desde entonces, no he dejado de aprender, crecer y perfeccionar cada detalle de mi técnica junto a referentes del sector.</p>
-                                <p>Soy originaria de Mallorca, aunque actualmente vivo en Gran Canaria, donde he creado mi espacio y desarrollo mi trabajo con dedicación y cariño.</p>
-                                <p>Para mí, cada set de uñas es una combinación de precisión, sensibilidad y perfeccionismo. No me detengo hasta que el resultado transmite exactamente lo que busco: limpieza, armonía y detalle.</p>
-                                <p>Detrás de cada cita también hay cercanía. Soy una persona muy habladora y me gusta que mis clientas se sientan cómodas, relajadas y en confianza, como si estuvieran en casa.</p>
+                        <div class="inm-fila">
+                            <div class="inm-foto-caja">
+                                <img class="inm-foto" src="https://lofgjkrcgkqufqpybddn.supabase.co/storage/v1/object/public/galeria/perfil.jpg" alt="Jessica, técnica de uñas de Shanahan Nails" loading="lazy">
+                                <span class="inm-foto-marco" aria-hidden="true"></span>
+                            </div>
+                            <div class="inm-texto">
+                                <p class="inm-parrafo">Mi nombre es Jessica y comencé mi camino en este mundo en 2021, formándome con una de las mejores formadoras de España. Desde entonces, no he dejado de aprender, crecer y perfeccionar cada detalle de mi técnica junto a referentes del sector.</p>
+                                <p class="inm-parrafo">Soy originaria de Mallorca, aunque actualmente vivo en Gran Canaria, donde he creado mi espacio y desarrollo mi trabajo con dedicación y cariño.</p>
+                                <p class="inm-parrafo">Para mí, cada set de uñas es una combinación de precisión, sensibilidad y perfeccionismo. No me detengo hasta que el resultado transmite exactamente lo que busco: limpieza, armonía y detalle.</p>
+                                <p class="inm-parrafo">Detrás de cada cita también hay cercanía. Soy una persona muy habladora y me gusta que mis clientas se sientan cómodas, relajadas y en confianza, como si estuvieran en casa.</p>
                             </div>
                         </div>
                     </div>
+                  </div>
+                </div>
 
+                <div class="luxury-card reveal" style="padding: 40px; background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e6 100%);">
                     <div class="rule rule-stripes" role="presentation" aria-hidden="true"><span class="rule-mark"></span></div>
 
                     <h3 class="reveal" style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 30px; color: var(--burgundy); text-align: center; margin-bottom: 22px; letter-spacing: -0.5px;">Mis Trabajos</h3>
@@ -3627,15 +3755,16 @@
             if (recorrido <= 0) return;
             const p = Math.min(1, window.scrollY / recorrido);
 
-            // Ola de izquierda a derecha: cada barra arranca un poco después
-            // que su vecina (la primera al 40% del recorrido, la última al 70%)
-            // y cierra en 0.25; la última termina al 95%, antes de que el arco
-            // cubra el hero. scaleX hasta 1.02 evita costuras de sub-píxel.
+            // Lamas de persiana veneciana girando sobre su eje vertical: de 90°
+            // (de canto, invisibles) a 0° (planas, tapan el vídeo). En ola de
+            // izquierda a derecha: cada lama arranca algo después que su vecina.
             const N = barras.length;
             barras.forEach((b, i) => {
                 const inicio = 0.40 + (i / N) * 0.30;
                 const prog = entre(p, inicio, inicio + 0.25);
-                b.style.transform = "scaleX(" + (1.02 * prog).toFixed(4) + ")";
+                const grados = 90 * (1 - prog);
+                // 1.02 de escala al cerrar: evita costuras de sub-píxel entre lamas
+                b.style.transform = "rotateY(" + grados.toFixed(2) + "deg) scaleX(" + (prog < 1 ? 1 : 1.02) + ")";
             });
         }
 
@@ -3647,7 +3776,79 @@
 
         window.addEventListener("scroll", programar, { passive: true });
         window.addEventListener("resize", () => { construir(); programar(); }, { passive: true });
+        window.actualizarPersiana = pintar;   // recálculo inmediato al cambiar de vista
         construir();
+        pintar();
+    })();
+
+    // Scroll inmersivo de Sobre Mí: mientras la sección está clavada, las
+    // columnas de trabajos, la foto y los párrafos avanzan atados al scroll
+    (function() {
+        const pista = document.getElementById("inmersivoSobreMi");
+        if (!pista) return;
+        const columnas = Array.from(pista.querySelectorAll(".inm-col"));
+        const foto = pista.querySelector(".inm-foto");
+        const parrafos = Array.from(pista.querySelectorAll(".inm-parrafo"));
+        const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const entre = (v, a, b) => Math.max(0, Math.min(1, (v - a) / (b - a)));
+        let pendiente = false;
+
+        // Reparte las fotos reales de la galería en las tres columnas
+        window.montarColumnasInmersivas = function() {
+            const fuente = document.getElementById("galeriaPublica");
+            if (!fuente || !columnas.length) return;
+            const urls = Array.from(fuente.querySelectorAll("img")).map(i => i.src).filter(Boolean);
+            if (!urls.length) return;
+            columnas.forEach(c => c.textContent = "");
+            // duplicamos la lista para que ninguna columna se quede corta al desplazarse
+            urls.concat(urls).forEach((src, i) => {
+                const img = document.createElement("img");
+                img.src = src;
+                img.alt = "";
+                img.loading = "lazy";
+                columnas[i % columnas.length].appendChild(img);
+            });
+            programar();
+        };
+
+        function pintar() {
+            pendiente = false;
+            if (sinMovimiento) return;
+            const total = pista.offsetHeight - window.innerHeight;
+            if (total <= 0) return;
+            const p = Math.max(0, Math.min(1, -pista.getBoundingClientRect().top / total));
+
+            // Columnas: cada una viaja a su ritmo (la del medio más rápida)
+            columnas.forEach(c => {
+                const vel = parseFloat(c.dataset.vel) || 1;
+                c.style.transform = "translate3d(0," + (-p * vel * 26).toFixed(2) + "%,0)";
+            });
+
+            // Foto: se revela con máscara y se acerca despacio
+            if (foto) {
+                const q = entre(p, 0.04, 0.34);
+                foto.style.clipPath = "inset(0 0 " + ((1 - q) * 100).toFixed(1) + "% 0)";
+                foto.style.transform = "scale(" + (1.1 - 0.1 * q).toFixed(4) + ")";
+            }
+
+            // Párrafos: entran escalonados a lo largo del recorrido
+            parrafos.forEach((el, i) => {
+                const q = entre(p, 0.20 + i * 0.13, 0.20 + i * 0.13 + 0.15);
+                el.style.opacity = q.toFixed(3);
+                el.style.transform = "translateY(" + ((1 - q) * 24).toFixed(1) + "px)";
+            });
+        }
+
+        function programar() {
+            if (pendiente) return;
+            pendiente = true;
+            requestAnimationFrame(pintar);
+        }
+
+        window.addEventListener("scroll", programar, { passive: true });
+        window.addEventListener("resize", programar, { passive: true });
+        window.actualizarInmersivo = pintar;   // recálculo inmediato al cambiar de vista
         pintar();
     })();
 
@@ -6591,6 +6792,8 @@
             if(contPub) {
                 contPub.innerHTML = htmlPub;
                 initCarouselAutoScroll();
+                // las mismas fotos alimentan las columnas del scroll inmersivo
+                if (typeof window.montarColumnasInmersivas === "function") window.montarColumnasInmersivas();
             }
             if(contAdm) contAdm.innerHTML = htmlAdm;
         } catch (e) {
