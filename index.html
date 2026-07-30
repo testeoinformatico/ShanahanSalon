@@ -2754,9 +2754,9 @@
                         <!-- Renderizado dinámicamente desde JS -->
                     </div>
                     <div class="rule rule-pearls" role="presentation" aria-hidden="true"><span class="rule-mark"><i></i><i></i><i></i></span></div>
-                    <button class="btn-cta view-anim" style="margin-top:24px; display:flex; flex-direction:column; align-items:center; line-height:1.2; padding:12px 20px;" onclick="mostrarVista('login')">
+                    <button class="btn-cta view-anim" style="margin-top:24px; display:flex; flex-direction:column; align-items:center; line-height:1.2; padding:12px 20px;" onclick="mostrarVista('vistaReservar')">
                         <span style="font-size:14px; margin-bottom:4px;">Reservar Cita</span>
-                        <span style="font-size:9.5px; font-weight:normal; opacity:0.85;">(Debes iniciar sesión o crear una cuenta primero)</span>
+                        <span style="font-size:9.5px; font-weight:normal; opacity:0.85;">Si aún no tienes cuenta, te guiamos para crearla</span>
                     </button>
                 </div>
             </div>
@@ -2783,7 +2783,7 @@
                     </h1>
                     <p class="hero-sub">Manicura de lujo, precisión y detalle en cada set. Reserva tu cita y acumula puntos con cada visita.</p>
                     <div class="hero-ctas">
-                        <button class="hero-btn-primary" onclick="mostrarVista('vistaPedirCita')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                        <button class="hero-btn-primary" onclick="mostrarVista('vistaReservar')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
                         <button class="hero-btn-ghost" onclick="irASobreMi()"><i class="fa-solid fa-play" style="margin-right:8px;font-size:11px;"></i>Ver trabajos</button>
                     </div>
                 </div>
@@ -2798,8 +2798,8 @@
 
                     <!-- PASO 1: Usuario + Contraseña -->
                     <div class="otp-step active" id="loginStepCredenciales">
-                        <h5 class="card-title">Consultar Puntos</h5>
-                        <p class="card-subtitle">Accede a tu programa de fidelización</p>
+                        <h5 class="card-title" id="loginTitulo">Iniciar Sesión</h5>
+                        <p class="card-subtitle" id="loginSubtitulo">Accede para reservar tu cita y ver tus puntos</p>
 
                         <div class="step-indicator">
                             <div class="step-dot active"></div>
@@ -2905,7 +2905,8 @@
                             </p>
                             <p class="invita-sub">Reserva tu hueco en el estudio y sal con las uñas que tenías en mente.</p>
                             <div class="invita-botones">
-                                <button class="hero-btn-primary" onclick="mostrarVista('vistaPedirCita')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                                <button class="hero-btn-primary" onclick="mostrarVista('vistaReservar')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                                <button class="hero-btn-ghost" onclick="mostrarVista('vistaPedirCita')"><i class="fa-regular fa-user" style="margin-right:8px;"></i>Crear cuenta</button>
                                 <a class="hero-btn-ghost" href="https://wa.me/34644911596" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Escríbenos</a>
                             </div>
                         </div>
@@ -2972,7 +2973,8 @@
                             </p>
                             <p class="lat-final-sub">Reserva tu cita y nos vemos en el estudio.</p>
                             <div class="invita-botones">
-                                <button class="hero-btn-primary" onclick="mostrarVista('vistaPedirCita')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                                <button class="hero-btn-primary" onclick="mostrarVista('vistaReservar')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                                <button class="hero-btn-ghost" onclick="mostrarVista('vistaPedirCita')"><i class="fa-regular fa-user" style="margin-right:8px;"></i>Crear cuenta</button>
                                 <a class="hero-btn-ghost" href="https://wa.me/34644911596" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Escríbenos</a>
                             </div>
                         </div>
@@ -3902,6 +3904,7 @@
     let diasDisponibles = [];
     let agendaInitialized = false;
     let _clienteLogueado = null;  // datos del cliente logueado
+    let _loginParaReservar = false;  // marca si llegamos al login desde "Reservar cita"
 
     // Picker estado
     let calCursor    = null;   // se inicializa en initPicker
@@ -4401,7 +4404,7 @@
                 <div class="lat-dia">
                     <div class="lat-dia-nombre">${d.etiqueta}</div>
                     <div class="lat-horas">${d.horas.map(h =>
-                        `<button type="button" class="lat-hora" onclick="mostrarVista('vistaPedirCita')">${h}</button>`
+                        `<button type="button" class="lat-hora" onclick="mostrarVista('vistaReservar')">${h}</button>`
                     ).join("")}</div>
                 </div>`).join("");
 
@@ -4483,10 +4486,24 @@
             document.getElementById("vistaAdmin")?.classList.remove("active-layout");
         }
 
+        // El login se presenta según de dónde vengas
+        if (id === "login") {
+            const t = document.getElementById("loginTitulo");
+            const s = document.getElementById("loginSubtitulo");
+            if (t && s) {
+                t.textContent = _loginParaReservar ? "Inicia sesión para reservar" : "Iniciar Sesión";
+                s.textContent = _loginParaReservar
+                    ? "¿Aún no tienes cuenta? Créala aquí abajo, tarda un minuto."
+                    : "Accede para reservar tu cita y ver tus puntos";
+            }
+            _loginParaReservar = false;
+        }
+
         // Al entrar a la vista de reservar, inicializar picker
         if (id === "vistaReservar") {
             if (!_clienteLogueado) {
-                toast("Debes iniciar sesión para reservar","error");
+                _loginParaReservar = true;
+                toast("Inicia sesión para reservar tu cita","info");
                 mostrarVista("login");
                 return;
             }
