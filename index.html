@@ -2281,6 +2281,217 @@
             .trabajos-invita { opacity: 1; }
         }
 
+        /* ============================================================
+           DÓNDE ESTAMOS — la pantalla se clava y el contenido viaja de lado
+           ============================================================ */
+        .panel-lateral {
+            background: linear-gradient(180deg, var(--cream) 0%, #EFE6DC 55%, var(--cream-deep) 100%);
+            border-radius: 100px 100px 0 0;
+            margin-top: -2vh;
+        }
+        .lateral-pista { position: relative; height: 380vh; }
+        .lateral-pantalla {
+            position: sticky;
+            top: 0;
+            height: 100svh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .lateral-fila {
+            display: flex;
+            will-change: transform;
+        }
+        .lat-panel {
+            /* --vw es el ancho real sin barra de desplazamiento; con 100vw cada
+               panel se pasaría y la fila quedaría descuadrada */
+            flex: 0 0 var(--vw, 100vw);
+            width: var(--vw, 100vw);
+            height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 6vw;
+        }
+        .lat-caja { width: min(100%, 900px); text-align: center; }
+
+        .lat-h { margin: 10px 0 0; line-height: 1; }
+        .lat-h-serif {
+            display: block;
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: clamp(46px, 8vw, 104px);
+            color: var(--burgundy);
+            letter-spacing: -2px;
+        }
+        .lat-h-sans {
+            display: block;
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: clamp(32px, 5.4vw, 72px);
+            color: var(--burgundy);
+            letter-spacing: -2px;
+            margin-top: 2px;
+        }
+        .lat-pista-txt {
+            margin-top: 22px;
+            font-family: 'Barlow', sans-serif;
+            font-size: 11.5px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .lat-pista-txt i { margin-right: 8px; animation: latEmpuja 1.8s ease-in-out infinite; display: inline-block; }
+        @keyframes latEmpuja { 50% { transform: translateX(7px); } }
+
+        /* Panel de la isla */
+        .lat-isla-img {
+            width: min(52vh, 62%);
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 26px 45px rgba(59,33,28,0.18));
+        }
+        .lat-isla-txt {
+            margin-top: 18px;
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: clamp(26px, 3.4vw, 44px);
+            color: var(--burgundy);
+        }
+
+        /* Panel de dirección + huecos */
+        .lat-dos-col {
+            display: flex;
+            align-items: center;
+            gap: 5vw;
+            text-align: left;
+        }
+        .lat-dir { flex: 1 1 46%; }
+        .lat-calle {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: clamp(32px, 4.4vw, 58px);
+            color: var(--burgundy);
+            margin: 8px 0 0;
+            letter-spacing: -1px;
+        }
+        .lat-ciudad {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 300;
+            font-size: clamp(15px, 1.6vw, 19px);
+            color: var(--dark-text);
+            margin: 2px 0 22px;
+        }
+        .lat-mapa { display: inline-flex; align-items: center; text-decoration: none; }
+
+        /* Tarjeta flotante de huecos, en cristal */
+        .lat-huecos {
+            flex: 1 1 54%;
+            background: rgba(255,253,252,0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.75);
+            border-radius: 26px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 26px 55px rgba(59,33,28,0.14);
+            padding: 24px 24px 18px;
+        }
+        .lat-huecos-tit {
+            font-family: 'Barlow', sans-serif;
+            font-size: 10px;
+            letter-spacing: 3.4px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+        .lat-dia { margin-bottom: 13px; opacity: 0; transform: translateY(12px); }
+        .lat-dia.in { opacity: 1; transform: none; transition: opacity .55s var(--ease), transform .55s var(--ease); }
+        .lat-dia-nombre {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: 19px;
+            color: var(--burgundy);
+            margin-bottom: 7px;
+        }
+        .lat-horas { display: flex; flex-wrap: wrap; gap: 7px; }
+        .lat-hora {
+            font-family: 'Barlow', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--burgundy);
+            background: rgba(185,152,105,0.14);
+            border: 1px solid rgba(185,152,105,0.4);
+            border-radius: 999px;
+            padding: 7px 15px;
+            cursor: pointer;
+            transition: all .25s var(--ease);
+        }
+        .lat-hora:hover { background: var(--burgundy); border-color: var(--burgundy); color: #fff; }
+        .lat-huecos-cargando, .lat-huecos-lleno {
+            font-family: 'Barlow', sans-serif;
+            font-size: 14px;
+            color: var(--muted);
+            margin: 0;
+        }
+        .lat-huecos-lleno { color: var(--dark-text); line-height: 1.6; }
+        .lat-horario {
+            font-family: 'Barlow', sans-serif;
+            font-size: 11.5px;
+            color: var(--muted);
+            margin: 14px 0 0;
+            padding-top: 12px;
+            border-top: 1px solid rgba(185,152,105,0.25);
+        }
+        .lat-final-sub {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 300;
+            font-size: clamp(15px, 1.6vw, 18px);
+            color: var(--dark-text);
+            margin: 16px auto 22px;
+            max-width: 42ch;
+        }
+
+        /* Indicador de avance lateral */
+        .lateral-puntos {
+            position: absolute;
+            bottom: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 9px;
+            z-index: 3;
+        }
+        .lateral-puntos span {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(59,33,28,0.2);
+            transition: all .35s var(--ease);
+        }
+        .lateral-puntos span.activo { background: var(--accent); width: 26px; border-radius: 999px; }
+
+        @media (max-width: 768px) {
+            .panel-lateral { border-radius: 60px 60px 0 0; }
+            .lateral-pista { height: 300vh; }
+            .lat-panel { padding: 0 22px; }
+            .lat-dos-col { flex-direction: column; gap: 22px; text-align: center; }
+            .lat-dir, .lat-huecos { flex: 0 0 auto; width: 100%; }
+            .lat-horas { justify-content: center; }
+            .lat-huecos { padding: 18px 16px 14px; }
+            .lat-isla-img { width: min(42vh, 74%); }
+            .lat-h-serif { font-size: clamp(38px, 13vw, 60px); }
+            .lat-h-sans { font-size: clamp(26px, 9vw, 42px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .lateral-pista { height: auto; }
+            .lateral-pantalla { position: relative; height: auto; }
+            .lateral-fila { flex-direction: column; transform: none !important; }
+            .lat-panel { flex: 0 0 auto; width: 100%; height: auto; padding: 8vh 6vw; }
+            .lateral-puntos { display: none; }
+            .lat-dia { opacity: 1; transform: none; }
+        }
+
         #sobreMi .brand-ornament { color: var(--burgundy); }
         #sobreMi .luxury-card { background: var(--white-soft) !important; }
         @media (max-width: 768px) {
@@ -2701,6 +2912,76 @@
                     </div>
                   </div>
                 </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== DÓNDE ESTAMOS: al bajar, el contenido viaja de lado ===== -->
+            <div class="col-12 panel-seccion panel-lateral" id="dondeEstamos">
+              <div class="lateral-pista" id="lateralPista">
+                <div class="lateral-pantalla">
+                  <div class="lateral-fila" id="lateralFila">
+
+                    <!-- 1 · Título -->
+                    <section class="lat-panel lat-titulo" aria-label="Dónde estamos">
+                        <div class="lat-caja">
+                            <div class="brand-ornament"><span>El estudio</span></div>
+                            <p class="lat-h">
+                                <span class="lat-h-serif">Dónde</span>
+                                <span class="lat-h-sans">nos encontramos.</span>
+                            </p>
+                            <p class="lat-pista-txt"><i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i> Sigue bajando</p>
+                        </div>
+                    </section>
+
+                    <!-- 2 · Gran Canaria -->
+                    <section class="lat-panel lat-isla" aria-label="Gran Canaria">
+                        <div class="lat-caja">
+                            <img class="lat-isla-img" id="latIslaImg" src="gran-canaria.png" alt="Silueta de Gran Canaria" loading="lazy">
+                            <p class="lat-isla-txt"><span>Gran Canaria</span></p>
+                        </div>
+                    </section>
+
+                    <!-- 3 · Dirección, horarios reales y mapa -->
+                    <section class="lat-panel lat-direccion" aria-label="Dirección y horarios">
+                        <div class="lat-caja lat-dos-col">
+                            <div class="lat-dir">
+                                <div class="brand-ornament"><span>Ven a vernos</span></div>
+                                <p class="lat-calle">Calle Guanajuato, 69</p>
+                                <p class="lat-ciudad">Las Palmas de Gran Canaria</p>
+                                <a class="hero-btn-primary lat-mapa" href="https://www.google.com/maps/search/?api=1&amp;query=Calle+Guanajuato+69%2C+Las+Palmas+de+Gran+Canaria" target="_blank" rel="noopener">
+                                    <i class="fa-solid fa-location-dot" style="margin-right:8px;"></i>Abrir en Google Maps
+                                </a>
+                            </div>
+                            <div class="lat-huecos" id="latHuecos">
+                                <div class="lat-huecos-tit">Próximos huecos</div>
+                                <div class="lat-huecos-cuerpo" id="latHuecosCuerpo">
+                                    <p class="lat-huecos-cargando">Consultando disponibilidad…</p>
+                                </div>
+                                <p class="lat-horario">Horario · 9:00–14:00 y 16:00–21:00</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 4 · Te esperamos -->
+                    <section class="lat-panel lat-final" aria-label="Te esperamos">
+                        <div class="lat-caja">
+                            <p class="lat-h lat-h-final">
+                                <span class="lat-h-serif">Te</span>
+                                <span class="lat-h-sans">esperamos.</span>
+                            </p>
+                            <p class="lat-final-sub">Reserva tu cita y nos vemos en el estudio.</p>
+                            <div class="invita-botones">
+                                <button class="hero-btn-primary" onclick="mostrarVista('vistaPedirCita')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
+                                <a class="hero-btn-ghost" href="https://wa.me/34644911596" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Escríbenos</a>
+                            </div>
+                        </div>
+                    </section>
+
+                  </div>
+                  <div class="lateral-puntos" id="lateralPuntos" aria-hidden="true">
+                      <span></span><span></span><span></span><span></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4027,6 +4308,111 @@
         window.addEventListener("resize", programar, { passive: true });
         window.actualizarTrabajos = pintar;
         pintar();
+    })();
+
+    // Dónde estamos: al bajar, la fila de paneles viaja de lado
+    (function() {
+        const pista = document.getElementById("lateralPista");
+        const fila = document.getElementById("lateralFila");
+        if (!pista || !fila) return;
+        const puntos = Array.from(document.querySelectorAll("#lateralPuntos span"));
+        const paneles = Array.from(fila.querySelectorAll(".lat-panel"));
+        const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let pendiente = false;
+
+        function pintar() {
+            pendiente = false;
+            if (sinMovimiento) return;
+            const total = pista.offsetHeight - window.innerHeight;
+            if (total <= 0) return;
+            const p = Math.max(0, Math.min(1, -pista.getBoundingClientRect().top / total));
+
+            // la fila se desplaza justo lo que sobresale de la pantalla
+            const desplazable = fila.scrollWidth - window.innerWidth;
+            fila.style.transform = "translate3d(" + (-p * desplazable).toFixed(1) + "px,0,0)";
+
+            // el indicador marca en qué panel estamos
+            if (puntos.length) {
+                const i = Math.min(puntos.length - 1, Math.round(p * (paneles.length - 1)));
+                puntos.forEach((s, k) => s.classList.toggle("activo", k === i));
+            }
+        }
+
+        function programar() {
+            if (pendiente) return;
+            pendiente = true;
+            requestAnimationFrame(pintar);
+        }
+
+        window.addEventListener("scroll", programar, { passive: true });
+        window.addEventListener("resize", programar, { passive: true });
+        window.actualizarLateral = pintar;
+        pintar();
+    })();
+
+    // Próximos huecos reales: reutiliza el horario, los bloqueos y la RPC
+    // "horas_ocupadas", que devuelve la ocupación sin datos personales
+    (async function() {
+        const cuerpo = document.getElementById("latHuecosCuerpo");
+        if (!cuerpo || typeof sb === "undefined") return;
+
+        const DIAS_A_MOSTRAR = 3;      // días con hueco que enseñamos
+        const HORAS_POR_DIA  = 3;      // huecos por día
+        const DURACION_MIN   = 60;     // hueco útil mínimo, en minutos
+        const SLOTS = ["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00",
+                       "16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00"];
+
+        const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+
+        try {
+            const hoy = new Date(); hoy.setHours(0,0,0,0);
+            const encontrados = [];
+
+            for (let salto = 1; salto <= 21 && encontrados.length < DIAS_A_MOSTRAR; salto++) {
+                const d = new Date(hoy); d.setDate(d.getDate() + salto);
+                const fecha = iso(d);
+                if (typeof isDiaDisponible === "function" && !isDiaDisponible(fecha)) continue;
+
+                const { data, error } = await sb.rpc("horas_ocupadas", { p_fecha: fecha });
+                if (error) continue;
+                const ocupadas = (data || []).map(c => ({ ...c, fecha }));
+
+                const todos = SLOTS.filter(t =>
+                    !slotFueraDeHorario(t, DURACION_MIN) && !slotBloqueado(t, ocupadas, DURACION_MIN, fecha)
+                );
+                // repartidas a lo largo del día, no las tres primeras seguidas:
+                // así se ve que hay hueco de mañana y de tarde
+                const libres = todos.length <= HORAS_POR_DIA ? todos
+                    : [...new Set(Array.from({length: HORAS_POR_DIA}, (_, i) =>
+                        todos[Math.round(i * (todos.length - 1) / (HORAS_POR_DIA - 1))]))];
+
+                if (libres.length) encontrados.push({ fecha, etiqueta: `${DIAS[d.getDay()]} ${d.getDate()}`, horas: libres });
+            }
+
+            if (!encontrados.length) {
+                cuerpo.innerHTML = `<p class="lat-huecos-lleno">Estos días están completos.<br>
+                    <a href="https://wa.me/34644911596" target="_blank" rel="noopener" style="color:var(--burgundy);font-weight:600;">Escríbeme por WhatsApp</a>
+                    y te aviso si queda alguna cancelación.</p>`;
+                return;
+            }
+
+            cuerpo.innerHTML = encontrados.map(d => `
+                <div class="lat-dia">
+                    <div class="lat-dia-nombre">${d.etiqueta}</div>
+                    <div class="lat-horas">${d.horas.map(h =>
+                        `<button type="button" class="lat-hora" onclick="mostrarVista('vistaPedirCita')">${h}</button>`
+                    ).join("")}</div>
+                </div>`).join("");
+
+            // entran flotando, una tras otra
+            cuerpo.querySelectorAll(".lat-dia").forEach((el, i) =>
+                setTimeout(() => el.classList.add("in"), 120 * i));
+
+        } catch (e) {
+            console.error("Huecos:", e);
+            cuerpo.innerHTML = `<p class="lat-huecos-lleno">Consulta la disponibilidad al reservar tu cita.</p>`;
+        }
     })();
 
     // Menú "Sobre Mí": desliza suavemente hasta la sección del inicio
