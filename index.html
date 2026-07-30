@@ -2236,7 +2236,11 @@
             transform-origin: left center;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            will-change: transform;
+            /* Invisible hasta que le toca girar: con perspectiva, una lama a 90°
+               solo queda de canto si está en el punto de fuga; las de los lados
+               se ven en escorzo y asomarían desde el principio. */
+            opacity: 0;
+            will-change: transform, opacity;
         }
 
         /* En el inicio no debe asomar el agua: el hero y los paneles ya lo
@@ -3765,6 +3769,8 @@
                 const grados = 90 * (1 - prog);
                 // 1.02 de escala al cerrar: evita costuras de sub-píxel entre lamas
                 b.style.transform = "rotateY(" + grados.toFixed(2) + "deg) scaleX(" + (prog < 1 ? 1 : 1.02) + ")";
+                // aparece justo al empezar su giro, no antes
+                b.style.opacity = Math.min(1, prog * 6).toFixed(3);
             });
         }
 
