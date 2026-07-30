@@ -1857,6 +1857,10 @@
                 border-bottom: none;
                 box-shadow: none;
                 animation: blurIn .45s var(--ease) both;
+                /* en pantallas bajas (móvil en horizontal) el menú se desplaza
+                   en lugar de recortar opciones */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             .nav-actions .nav-btn {
                 width: 100%;
@@ -1871,6 +1875,30 @@
             .nav-actions .nav-btn.solid { background: var(--burgundy); color: #fff; }
             body.menu-open { overflow: hidden; }
             body.menu-open .mobile-menu-btn .fa-bars::before { content: '\f00d'; }
+
+            /* El backdrop-filter de la cabecera al hacer scroll crea un bloque
+               contenedor y atrapaba dentro al menú (position:fixed), que se
+               encogía a una tira de 140px. Con el menú abierto lo desactivamos:
+               la cabecera queda tapada por el menú, así que no se nota. */
+            body.menu-open nav.topbar {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+            }
+
+            /* Zonas táctiles: el ojo de la contraseña medía 20px de alto y el
+               enlace de recuperación 14px. Se agranda el área sin mover nada
+               de sitio (padding compensado con margen negativo). */
+            .toggle-pass {
+                padding: 12px;
+                margin: -12px -12px 0 0;
+                font-size: 15px;
+            }
+            .field-pass-wrap .toggle-pass { top: 4px; }
+            a[onclick*="solicitarRecuperacion"] {
+                display: inline-block;
+                padding: 10px 4px;
+                margin: -10px -4px;
+            }
         }
 
         /* --- Accesibilidad: foco visible + movimiento reducido --- */
@@ -2133,9 +2161,16 @@
         .hero-seccion .hero-blob { display: none; }
         /* Con el logo ya transparente, el rojo de marca sobre el dorado del hero
            se queda en 3,3:1. Mientras la cabecera va transparente sobre el vídeo
-           lo pasamos a crema; al hacer scroll vuelve al rojo sobre el marfil. */
-        body.en-inicio nav.topbar:not(.scrolled) .nav-logo img {
+           lo pasamos a crema; al hacer scroll vuelve al rojo sobre el marfil.
+           El :not(.menu-open) es imprescindible: con el menú móvil abierto el
+           fondo pasa a marfil y en crema el logo desaparecería. */
+        body.en-inicio:not(.menu-open) nav.topbar:not(.scrolled) .nav-logo img {
             filter: brightness(0) invert(1) drop-shadow(0 2px 10px rgba(59,33,28,0.5));
+        }
+        /* Mismo criterio para la hamburguesa, que va en chocolate */
+        body.en-inicio:not(.menu-open) nav.topbar:not(.scrolled) .mobile-menu-btn {
+            color: var(--white-soft);
+            text-shadow: 0 2px 10px rgba(59,33,28,0.55);
         }
         @media (max-width: 768px) {
             .hero-seccion .hero-home { padding-left: 20px; padding-right: 20px; }
@@ -2177,8 +2212,8 @@
         <button type="button" class="nav-logo" onclick="mostrarVista('login')" aria-label="Ir al inicio">
             <img src="logo.png" alt="Shanahan Nails">
         </button>
-        <button type="button" class="mobile-menu-btn" onclick="toggleMobileMenu()">
-            <i class="fa-solid fa-bars"></i>
+        <button type="button" class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Abrir menú" aria-expanded="false" aria-controls="mainNavActions">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
         </button>
         <div class="nav-actions" id="mainNavActions">
             <button class="nav-btn" onclick="mostrarVista('vistaPrecios')">Precios y Servicios</button>
@@ -3470,11 +3505,23 @@
     }
 
     // ── Vista switch ───────────────────────────────────────
-    function toggleMobileMenu() {
+    function toggleMobileMenu(forzarCierre) {
         const nav = document.getElementById("mainNavActions");
-        if(nav) nav.classList.toggle("show-mobile");
-        document.body.classList.toggle("menu-open", nav && nav.classList.contains("show-mobile"));
+        if (!nav) return;
+        const abierto = forzarCierre === true ? false : !nav.classList.contains("show-mobile");
+        nav.classList.toggle("show-mobile", abierto);
+        document.body.classList.toggle("menu-open", abierto);
+        const btn = document.querySelector(".mobile-menu-btn");
+        if (btn) {
+            btn.setAttribute("aria-expanded", abierto ? "true" : "false");
+            btn.setAttribute("aria-label", abierto ? "Cerrar menú" : "Abrir menú");
+        }
     }
+
+    // Escape cierra el menú móvil
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" && document.body.classList.contains("menu-open")) toggleMobileMenu(true);
+    });
 
     // Ancho real de la ventana (sin barra de desplazamiento) para que los
     // paneles de sección salgan a sangre exactos
@@ -3606,9 +3653,7 @@
 
     // Menú "Sobre Mí": desliza suavemente hasta la sección del inicio
     window.irASobreMi = function() {
-        const nav = document.getElementById("mainNavActions");
-        if (nav) nav.classList.remove("show-mobile");
-        document.body.classList.remove("menu-open");
+        toggleMobileMenu(true);
 
         const destino = document.getElementById("sobreMi");
         if (!destino) return;
@@ -3640,9 +3685,10 @@
         if (id === "vistaAccesoAdmin" && sessionStorage.getItem("adminAuth") === "true") {
             id = "vistaAdmin";
         }
-        const mainNav = document.getElementById("mainNavActions");
-        if(mainNav) mainNav.classList.remove("show-mobile");
-        
+        // cierre completo del menú móvil: sin esto el body se quedaba con
+        // overflow:hidden y el móvil no podía desplazar
+        toggleMobileMenu(true);
+
         ["login","vistaCliente","vistaPedirCita","vistaReservar","vistaAccesoAdmin","vistaAdmin","vistaPrecios","vistaResenas"].forEach(v => {
             const el = document.getElementById(v);
             if (el) el.style.display = "none";
