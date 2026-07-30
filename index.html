@@ -2793,7 +2793,7 @@
                         siempre por encima de la sección de crear cuenta ===== -->
             <div class="col-12 panel-seccion panel-claro">
               <div class="row justify-content-center">
-                <div class="col-12 col-md-6 col-lg-5">
+                <div class="col-12 col-md-6 col-lg-5" id="bloqueAcceso">
                 <div class="luxury-card reveal">
 
                     <!-- PASO 1: Usuario + Contraseña -->
@@ -3905,6 +3905,7 @@
     let agendaInitialized = false;
     let _clienteLogueado = null;  // datos del cliente logueado
     let _loginParaReservar = false;  // marca si llegamos al login desde "Reservar cita"
+    let _irAlAcceso = false;         // pide desplazar hasta la tarjeta de acceso
 
     // Picker estado
     let calCursor    = null;   // se inicializa en initPicker
@@ -4503,6 +4504,7 @@
         if (id === "vistaReservar") {
             if (!_clienteLogueado) {
                 _loginParaReservar = true;
+                _irAlAcceso = true;
                 toast("Inicia sesión para reservar tu cita","info");
                 mostrarVista("login");
                 return;
@@ -4522,6 +4524,25 @@
             mostrarPerfilCliente(_clienteLogueado).finally(() => { _renderingPerfil = false; });
         }
 
+        // El inicio contiene toda la página (hero, acceso, Sobre Mí, trabajos,
+        // ubicación). Si venimos a iniciar sesión, subir al tope deja la tarjeta
+        // de acceso fuera de pantalla y parece que no ha pasado nada: vamos a ella.
+        if (id === "login" && _irAlAcceso) {
+            _irAlAcceso = false;
+            const acceso = document.getElementById("bloqueAcceso");
+            if (acceso) {
+                setTimeout(() => {
+                    acceso.scrollIntoView({ behavior: "smooth", block: "center" });
+                    // la tarjeta se revela con el scroll: forzamos el repaso para
+                    // que no llegue invisible si el desplazamiento es corto
+                    if (typeof window.revelarVisibles === "function") {
+                        window.revelarVisibles();
+                        setTimeout(window.revelarVisibles, 500);
+                    }
+                }, 60);
+                return;
+            }
+        }
         window.scrollTo({top:0,behavior:"smooth"});
     }
 
