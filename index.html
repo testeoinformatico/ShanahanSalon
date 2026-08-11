@@ -2520,8 +2520,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* anclamos a la derecha: al recortar en vertical, lo que se pierde
+               es la seda de la izquierda y las uñas siguen en cuadro */
+            object-position: 72% 60%;
             display: block;
         }
+        @media (max-width: 768px) { .hero-video { object-position: 68% 62%; } }
         /* Persiana dorada: al bajar, las barras van saliendo en ola de
            izquierda a derecha hasta tapar el vídeo. Va dentro del hero, así
            el arco de la sección siguiente pasa por encima sin fundidos. */
@@ -2766,9 +2770,7 @@
             <!-- ===== HERO: sección de fondo dorado con el vídeo dentro.
                         Se desplaza con la página, sin animación de scroll ===== -->
             <div class="col-12 panel-seccion hero-seccion">
-                <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-                    <source src="hero-video.mp4" type="video/mp4">
-                </video>
+                <img class="hero-video" id="heroImagen" src="hero-imagen.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
                 <!-- Persiana dorada: las barras engordan al bajar hasta tapar el vídeo -->
                 <div class="hero-persiana" id="heroPersiana" aria-hidden="true"></div>
                 <div class="hero-home">
@@ -4063,15 +4065,28 @@
         const main = document.querySelector("main.container");
 
         function medir() {
-            raiz.style.setProperty("--vw", raiz.clientWidth + "px");
-            // hueco que dejan la cabecera y el relleno del contenedor: el hero
-            // se sube esa cantidad para empezar en el borde de la página
-            if (topbar && main) {
-                const hueco = topbar.offsetHeight + parseFloat(getComputedStyle(main).paddingTop || 0);
-                raiz.style.setProperty("--tope-hero", hueco + "px");
+            // Si medimos antes de que la página tenga ancho (carga temprana,
+            // pestaña oculta), fijar --vw a 0 colapsaría todos los paneles y no
+            // se recuperaría solo. Solo escribimos valores con sentido.
+            const ancho = raiz.clientWidth || window.innerWidth || 0;
+            if (ancho > 0) raiz.style.setProperty("--vw", ancho + "px");
+
+            // El hero se sube hasta el borde de la página. En vez de sumar
+            // cabecera + relleno (que se dejaba 20px por el camino), medimos
+            // su posición natural anulando el tirón un instante: así es exacto
+            // sea cual sea lo que haya encima.
+            const hero = document.querySelector(".hero-seccion");
+            if (hero) {
+                const previo = hero.style.marginTop;
+                hero.style.marginTop = "0px";
+                const natural = hero.getBoundingClientRect().top + window.scrollY;
+                hero.style.marginTop = previo;
+                if (natural > 0) raiz.style.setProperty("--tope-hero", natural + "px");
             }
         }
         window.addEventListener("resize", medir, { passive: true });
+        window.addEventListener("load", medir);        // por si al arrancar aún no había medidas
+        window.addEventListener("pageshow", medir);    // al volver desde el historial
         medir();
     })();
 
@@ -4120,16 +4135,6 @@
 
     // El inicio es la vista que se muestra al cargar
     document.body.classList.add("en-inicio");
-
-    // El vídeo del hero solo corre cuando el inicio está a la vista
-    (function() {
-        const video = document.getElementById("heroVideo");
-        if (!video) return;
-        window.ajustarVideoHero = function(enInicio) {
-            if (enInicio) video.play().catch(() => {});
-            else video.pause();
-        };
-    })();
 
     // Persiana dorada del hero: al bajar, las barras engordan hasta tapar el vídeo
     (function() {
@@ -4470,7 +4475,6 @@
         el.style.display = id === "vistaAdmin" ? "block" : "flex";
         el.querySelectorAll(".view-anim").forEach(a => { a.style.animation="none"; a.offsetHeight; a.style.animation=""; });
         body.classList.toggle("en-inicio", id === "login");
-        if (typeof window.ajustarVideoHero === "function") window.ajustarVideoHero(id === "login");
         // el agua solo se dibuja donde se ve: en el inicio queda tapada
         if (typeof window.ajustarAgua === "function") window.ajustarAgua(id !== "login");
         if (typeof window.revelarVisibles === "function") {
