@@ -584,6 +584,22 @@
             color: var(--accent); padding: 8px 12px 4px; font-weight: 600;
         }
 
+        /* Selector de servicio dentro del editor de cita */
+        .ed-servicio-actual {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; background: var(--cream); border: 1px solid var(--line);
+            font-size: 12px; color: var(--burgundy);
+        }
+        .ed-servicio-actual span { flex: 1; line-height: 1.35; }
+        .ed-servicio-btn {
+            flex: none; background: none; border: 1px solid var(--accent); color: var(--accent);
+            font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+            padding: 5px 10px; cursor: pointer; transition: all .25s var(--ease);
+        }
+        .ed-servicio-btn:hover { background: var(--accent); color: #fff; }
+        /* Al crecer el modal con el servicio, que no se salga de pantalla */
+        #editCitaModal .modal-x { max-height: calc(100vh - 48px); overflow-y: auto; }
+
         .nc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 520px) { .nc-row { grid-template-columns: 1fr; } }
 
@@ -3633,6 +3649,13 @@
                 <label>Teléfono</label>
                 <i class="fa-solid fa-phone field-icon"></i>
             </div>
+
+            <div class="nc-section-title" style="margin:16px 0 8px;"><i class="fa-solid fa-spa"></i>Servicio</div>
+            <div class="ed-servicio-actual">
+                <span id="editServicioTexto">Sin servicio asignado</span>
+                <button type="button" class="ed-servicio-btn" id="btnCambiarServicio" onclick="edToggleServicios()">Cambiar</button>
+            </div>
+            <div class="nc-servicio-grid" id="editServicioGrid" style="display:none; margin-top:6px;"></div>
             <div class="field">
                 <input type="date" id="editCitaFecha" placeholder=" ">
                 <label>Fecha</label>
@@ -3953,6 +3976,14 @@
     function durStr(min) {
         const h = Math.floor(min/60), m = min%60;
         return h>0 ? (m>0 ? `${h}h ${m}min` : `${h}h`) : `${m}min`;
+    }
+
+    // Extrae el numero de cualquier formato de precio ("25", "25 EUR", "Desde 35 EUR", 25).
+    // Definida aqui, a nivel global, porque la usan tanto el historial como el editor de citas.
+    function parsePrecio(val) {
+        if (val === null || val === undefined) return 0;
+        const str = String(val).replace(/[^0-9.-]/g, '');
+        return parseFloat(str) || 0;
     }
 
     // ── Slot helpers ───────────────────────────────────────
@@ -5644,12 +5675,6 @@
             filtered = filtered.filter(c => (c.nombre_cliente||"").toLowerCase().includes(search));
         }
 
-        // Helper para extraer número de cualquier formato de precio (ej. "25", "25€", 25)
-        const parsePrecio = (val) => {
-            if (val === null || val === undefined) return 0;
-            const str = String(val).replace(/[^0-9.-]/g, '');
-            return parseFloat(str) || 0;
-        };
 
         // Calcular el balance: sumamos todas las citas que NO estén canceladas
         const balanceTotal = filtered.reduce((sum, c) => {
@@ -6267,8 +6292,94 @@
         document.getElementById("editCitaFecha").value=cita.fecha||"";
         document.getElementById("editCitaHora").value=cita.hora||"";
         document.getElementById("editCitaPrecio").value=parsePrecio(cita.precio) || 0;
+        edCargarServicioDeCita(cita);
         setEditEstado(cita.estado||"pendiente");
         document.getElementById("editCitaModal").classList.add("show");
+    }
+
+    // ── Selector de servicio del editor de cita ────────────
+    // Arranca con el servicio que ya tiene la cita; si no se toca, se guarda igual que estaba.
+    let edSelServicio = null, edSelDuracion = 0, edSelPrecio = 0, edSelExtras = [];
+
+    function edTextoServicio() {
+        if (!edSelServicio) return "";
+        return edSelExtras.length
+            ? edSelServicio + " + " + edSelExtras.map(e => e.name).join(" + ")
+            : edSelServicio;
+    }
+    function edDuracionTotal() { return edSelDuracion + edSelExtras.reduce((s, e) => s + e.dur, 0); }
+    function edPrecioTotal()   { return edSelPrecio   + edSelExtras.reduce((s, e) => s + e.precio, 0); }
+
+    function edPintarResumen() {
+        const txt = document.getElementById("editServicioTexto");
+        if (!txt) return;
+        const nombre = edTextoServicio();
+        txt.textContent = nombre ? nombre + " · " + durStr(edDuracionTotal()) : "Sin servicio asignado";
+    }
+
+    window.edToggleServicios = function() {
+        const grid = document.getElementById("editServicioGrid");
+        const btn  = document.getElementById("btnCambiarServicio");
+        if (!grid) return;
+        const abierto = grid.style.display !== "none";
+        grid.style.display = abierto ? "none" : "grid";
+        if (btn) btn.textContent = abierto ? "Cambiar" : "Cerrar";
+        if (!abierto) edRenderServicios();
+    };
+
+    function edRenderServicios() {
+        const grid = document.getElementById("editServicioGrid");
+        if (!grid) return;
+        if (!NC_SERVICIOS || !NC_SERVICIOS.length) {
+            grid.innerHTML = '<div class="nc-servicio-grupo-titulo">No se pudo cargar el catalogo de servicios</div>';
+            return;
+        }
+        grid.innerHTML = "";
+        NC_SERVICIOS.forEach(g => {
+            const titulo = g.isExtras ? g.grupo + " (se suman al servicio)" : g.grupo;
+            grid.innerHTML += `<div class="nc-servicio-grupo-titulo">${titulo}</div>`;
+            g.items.forEach(it => {
+                const sel = g.isExtras ? edSelExtras.some(e => e.name === it.val) : edSelServicio === it.val;
+                const caja = g.isExtras ? `<i class="${sel?'fa-solid fa-square-check':'fa-regular fa-square'}" style="margin-right:6px;"></i>` : "";
+                grid.innerHTML += `<div class="nc-servicio-opcion${sel?" selected":""}" data-esextra="${g.isExtras?1:0}" data-val="${it.val}" data-dur="${it.dur}" data-precio="${it.precio}"${g.isExtras?' style="border-style:dashed;"':''}>
+                    <span>${caja}${it.nombre}</span>
+                    <span class="servicio-opcion-precio" style="margin-left:auto;margin-right:8px;">${it.precio}</span>
+                    <span class="nc-srv-dur">${it.durTxt}</span>
+                </div>`;
+            });
+        });
+        grid.querySelectorAll(".nc-servicio-opcion").forEach(el => {
+            el.addEventListener("click", () => {
+                const dur    = parseInt(el.dataset.dur, 10) || 0;
+                const precio = parseInt(String(el.dataset.precio).replace(/[^0-9]/g,''), 10) || 0;
+                if (el.dataset.esextra === "1") {
+                    const i = edSelExtras.findIndex(e => e.name === el.dataset.val);
+                    if (i >= 0) edSelExtras.splice(i, 1);
+                    else edSelExtras.push({ name: el.dataset.val, dur, precio });
+                } else {
+                    edSelServicio = el.dataset.val;
+                    edSelDuracion = dur || 30;
+                    edSelPrecio   = precio;
+                    edSelExtras   = [];
+                }
+                edRenderServicios();
+                edPintarResumen();
+                const campoPrecio = document.getElementById("editCitaPrecio");
+                if (campoPrecio) campoPrecio.value = edPrecioTotal();
+            });
+        });
+    }
+
+    function edCargarServicioDeCita(cita) {
+        edSelExtras   = [];
+        edSelServicio = cita.servicio || null;
+        edSelDuracion = parseInt(cita.duracion_minutos, 10) || 0;
+        edSelPrecio   = parsePrecio(cita.precio) || 0;
+        const grid = document.getElementById("editServicioGrid");
+        const btn  = document.getElementById("btnCambiarServicio");
+        if (grid) { grid.style.display = "none"; grid.innerHTML = ""; }
+        if (btn) btn.textContent = "Cambiar";
+        edPintarResumen();
     }
     function closeEditCita() { document.getElementById("editCitaModal").classList.remove("show"); }
     document.getElementById("editCitaModal").addEventListener("click",e=>{ if(e.target.id==="editCitaModal") closeEditCita(); });
@@ -6294,8 +6405,8 @@
             hora:document.getElementById("editCitaHora").value,
             precio:document.getElementById("editCitaPrecio").value.trim(),
             estado:nuevoEstado,
-            duracion_minutos:previa?(parseInt(previa.duracion_minutos,10)||30):30,
-            servicio:previa?(previa.servicio||""):""
+            duracion_minutos:edDuracionTotal()||(previa?(parseInt(previa.duracion_minutos,10)||30):30),
+            servicio:edTextoServicio()||(previa?(previa.servicio||""):"")
         };
         if (!payload.nombre_cliente||!payload.telefono||!payload.fecha||!payload.hora) return toast("Completa todos los campos","error");
 
