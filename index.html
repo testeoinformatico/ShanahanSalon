@@ -3846,7 +3846,7 @@
                 <i class="fa-solid fa-layer-group field-icon"></i>
             </div>
             <div class="field">
-                <input type="number" id="editServicioPrecio" placeholder=" ">
+                <input type="text" inputmode="decimal" id="editServicioPrecio" placeholder=" ">
                 <label>Precio (€)</label>
                 <i class="fa-solid fa-euro-sign field-icon"></i>
             </div>
@@ -3960,6 +3960,15 @@
         if (val === null || val === undefined) return 0;
         const str = String(val).replace(/[^0-9.-]/g, '');
         return parseFloat(str) || 0;
+    }
+
+
+    // Deja cualquier precio con el simbolo al final y un espacio: "28" -> "28 €",
+    // "25€" -> "25 €"; "Desde 35 €" y "+7 €" se quedan igual. Misma regla que en la BD.
+    // Devuelve "" si no hay ningun numero, para poder validar.
+    function formatearPrecio(val) {
+        const t = String(val === null || val === undefined ? "" : val).trim().replace(/ *€ *$/, "");
+        return /[0-9]/.test(t) ? t + " €" : "";
     }
 
     // ── Slot helpers ───────────────────────────────────────
@@ -5765,7 +5774,7 @@
             grupo.items.forEach(s => {
                 html += `<tr>
                     <td><div style="font-weight:600; color:var(--accent);">${s.nombre}</div><div style="font-size:11px; color:var(--muted); max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.desc||""}</div></td>
-                    <td><span style="font-weight:600;">${s.precio}€</span></td>
+                    <td><span style="font-weight:600;">${s.precio}</span></td>
                     <td>${s.durTxt}</td>
                     <td style="text-align:right;">
                         <button class="cita-btn reject" onclick="abrirEditarServicio(${s.id})" title="Editar"><i class="fa-solid fa-pen"></i></button>
@@ -5802,7 +5811,7 @@
         document.getElementById("editServicioId").value = servicio.id;
         document.getElementById("editServicioNombre").value = servicio.nombre || "";
         document.getElementById("editServicioGrupo").value = servicio.grupo || "";
-        document.getElementById("editServicioPrecio").value = servicio.precio || 0;
+        document.getElementById("editServicioPrecio").value = formatearPrecio(servicio.precio);
         document.getElementById("editServicioDuracionNum").value = servicio.dur || 0;
         document.getElementById("editServicioDuracionTxt").value = servicio.durTxt || "";
         document.getElementById("editServicioDesc").value = servicio.desc || "";
@@ -5818,12 +5827,12 @@
         const id = document.getElementById("editServicioId").value;
         const nombre = document.getElementById("editServicioNombre").value.trim();
         const grupo = document.getElementById("editServicioGrupo").value.trim();
-        const precio = parseInt(document.getElementById("editServicioPrecio").value, 10);
+        const precio = formatearPrecio(document.getElementById("editServicioPrecio").value); // "28" -> "28 €"
         const duracion_minutos = parseInt(document.getElementById("editServicioDuracionNum").value, 10);
         const duracion_texto = document.getElementById("editServicioDuracionTxt").value.trim();
         const descripcion = document.getElementById("editServicioDesc").value.trim();
 
-        if (!nombre || !grupo || isNaN(precio) || isNaN(duracion_minutos)) {
+        if (!nombre || !grupo || !precio || isNaN(duracion_minutos)) {
             return toast("Rellena todos los campos obligatorios", "error");
         }
 
@@ -7579,7 +7588,7 @@
                     nombre: s.nombre,
                     dur: s.dur,
                     durTxt: s.dur_txt,
-                    precio: s.precio,
+                    precio: formatearPrecio(s.precio), // por si en la BD quedo alguno sin €
                     desc: s.descrip,
                     isExtraAddon: s.is_extra_addon
                 });
