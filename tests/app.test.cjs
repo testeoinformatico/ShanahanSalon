@@ -8,6 +8,7 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const app = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
 const core = fs.readFileSync(path.join(root, 'assets/core.js'), 'utf8');
 const homeMotion = fs.readFileSync(path.join(root, 'assets/home-motion.js'), 'utf8');
+const liquid = fs.readFileSync(path.join(root, 'assets/liquid-background.js'), 'utf8');
 const services = [
     { id: 1, grupo: 'Manicura', val: 'Manicura · Color', nombre: 'Color', dur: 75, dur_txt: '1 h 15 min', precio: '25 €', orden_grupo: 1 },
     { id: 2, grupo: 'Retirada', val: 'Suplemento retirada (de otro centro)', nombre: 'Retirada de otro centro', dur: 30, dur_txt: '+30 min', precio: '+7 €', is_extra_addon: true, orden_grupo: 2 },
@@ -75,14 +76,16 @@ async function fixture(options = {}) {
     w.eval(core);
     w.eval(app);
     w.eval(homeMotion);
+    w.eval(liquid);
     await settle();
     return { w, dom, errors, writes, client, operations };
 }
 
-test('app renders catalog and navigates without creating a liquid canvas or initializing a GPU context', async t => {
+test('app renders catalog and navigates without a GPU context when reduced motion is enabled', async t => {
     const f = await fixture({ hash: '#precios' }); t.after(() => f.dom.window.close());
     assert.deepEqual(f.errors, []);
     assert.equal(f.w.document.getElementById('gl'), null);
+    assert.equal(f.w.document.getElementById('liquidBackground').hidden, true);
     assert.equal(f.w.document.getElementById('vistaPrecios').style.display, 'flex');
     assert.match(f.w.document.getElementById('publicServicioGrid').textContent, /25 €/);
     f.w.mostrarVista('vistaResenas');
