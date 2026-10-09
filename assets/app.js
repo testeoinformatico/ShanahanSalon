@@ -4,7 +4,7 @@
     //  clientas : id (Auth), nombre, telefono, visitas
     //  citas    : id, nombre_cliente, telefono, servicio,
     //             duracion_minutos, fecha, hora, estado
-    //  admins   : id (Auth), usuario; las contraseñas pertenecen a Supabase Auth.
+    //  admins   : id (Auth); las contraseñas pertenecen a Supabase Auth.
     //  dias_disponibles : id, tipo, valor
     // ═══════════════════════════════════════════════════════
 
@@ -1621,7 +1621,7 @@
             }]);
             if (aErr) {
                 const msg = (aErr.message||"").toLowerCase();
-                if (msg.includes("ocupado") || msg.includes("overlap") || aErr.code === "23514") {
+                if (msg.includes("ocupado") || msg.includes("overlap") || aErr.code === "23P01") {
                     showErr("Esa hora se acaba de ocupar. Elige otra, por favor.");
                 } else {
                     showErr("Error al guardar la cita: "+aErr.message);

@@ -23,13 +23,19 @@ COMMIT;
 
 `admins` solo contiene `id`, asociado a `auth.users`; no hay columnas de contraseñas heredadas. Todas las tablas exportadas tienen RLS activa: los permisos de tabla concedidos a `anon` no implican por sí solos acceso a todas las filas.
 
-Existen disparadores de solapamiento y guardas de citas/perfiles. Hay que leer sus funciones para evaluar concurrencia y cambios de precio, estado o sellos. `sumar_sello_al_completar` existe, pero no aparece conectado directamente a un disparador en el diagnóstico; otra función podría invocarlo.
+La segunda exportación confirma que `check_cita_overlap` consulta con `EXISTS` sin una restricción de exclusión: dos transacciones concurrentes pueden pasar la comprobación. Usa horas sin fecha para calcular los intervalos. `citas_guard` solo protege el estado y `clientas_guard` protege las visitas; no validan precios, duraciones de catálogo ni bloqueos de agenda. La política UPDATE de clientas permite modificar los demás campos de una cita propia, aunque la interfaz solicita esos cambios por WhatsApp.
+
+Se ha preparado, sin aplicar al servidor, `03-proteger-reservas.sql`: añade una restricción GiST de exclusión sobre intervalos de fecha y hora (canceladas excluidas), valida duraciones positivas, actualiza el aviso del disparador con los mismos intervalos, fija el esquema de `is_admin` y desactiva la política de edición directa de clientas. La política administrativa se conserva. Una duración nula mantiene el valor histórico de 30 minutos. El script falla y revierte si los datos existentes incumplen las restricciones; no elimina reservas. Usa la agenda única que ya asumen el esquema y la web.
+
+Las pruebas locales en PostgreSQL/PGlite comprobaron intervalos contiguos y solapados, cambios de día, cancelaciones, rechazo por la restricción incluso desactivando el disparador, permisos de clienta y administrador, repetición y reversión con datos incompatibles. PGlite no simula transacciones simultáneas entre conexiones; tampoco se probaron los disparadores de correo reales. El frontend reconoce el código `23P01` para mostrar el aviso de horario ocupado.
+
+`sumar_sello_al_completar` no aparece conectado a un disparador, suma por teléfono y limita a 10, mientras la web suma por separado y reinicia la tarjeta al canjear. No se ha activado: provocaría un doble cómputo o errores con la web actual. La fidelización atómica requiere una migración coordinada con el frontend y un registro de movimientos/reversiones; sigue pendiente.
 
 `clientas.usuario` es obligatorio y `clientas.id` referencia Auth. La creación manual de perfiles desde el administrador debe revisarse frente a estas restricciones antes de publicarse.
 
 ## Pendiente antes de publicar
 
-1. Obtener las definiciones de funciones y disparadores de reservas, perfiles y fidelización. Las funciones de correo y recuperación necesitan una revisión separada que no exponga secretos incrustados.
+1. Aplicar y comprobar los scripts preparados en el servidor. Se recibieron las funciones de reservas, perfiles y fidelización; faltan las definiciones completas de los disparadores (eventos y momento de ejecución). Las funciones de correo y recuperación necesitan una revisión separada que no exponga secretos incrustados.
 2. Comprobar que perfiles y citas de una clienta solo sean accesibles por su `auth.uid()`, que solo el personal pueda administrar tablas y Storage, y que las lecturas públicas se limiten a catálogo, reseñas publicadas y disponibilidad sin datos personales. Verificar las funciones de recuperación y sus permisos/límites de intentos.
 3. Comprobar una restricción o transacción que rechace intervalos de cita solapados, incluidos envíos simultáneos. No basta con ejecutar `horas_ocupadas` y luego insertar desde el navegador. Revisar citas canceladas y bloques de días/meses/horas.
 4. Sustituir completar/editar/crear/eliminar citas y ajustar sellos por operaciones atómicas e idempotentes. Bloquear las filas afectadas; guardar el movimiento de sellos y el canje de premios para poder revertir una cita sin perder el historial. La comparación de valores en el cliente reduce conflictos, pero no reemplaza esta transacción.
