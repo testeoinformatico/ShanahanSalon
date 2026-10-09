@@ -23,7 +23,7 @@
         html, body { margin: 0; padding: 0; }
 
         body {
-            background-color: transparent;
+            background-color: var(--cream);
             color: var(--dark-text);
             font-family: 'Barlow', sans-serif;
             font-weight: 400;
@@ -50,15 +50,14 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            transition: background .6s var(--ease), box-shadow .6s var(--ease), border-color .6s var(--ease), padding .6s var(--ease);
+            transition: background .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
         }
         nav.topbar.scrolled {
             border-bottom: 1px solid rgba(255,255,255,0.55);
-            background: rgba(244, 238, 232, 0.82);
+            background: var(--cream);
             box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 4px 20px rgba(59,33,28,0.08);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 12px 5vw;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
         }
 
         .nav-logo {
@@ -2529,9 +2528,7 @@
                solo mientras se animan */
         }
 
-        /* En el inicio no debe asomar el agua: el hero y los paneles ya lo
-           cubren todo; cerramos el hueco del final para que el panel nude
-           entregue directamente al footer (sin franja blanca) */
+        /* Los paneles de la portada entregan directamente al footer. */
         body.en-inicio main.container { padding-bottom: 0 !important; }
         body.en-inicio .site-footer { margin-top: 0; }
 

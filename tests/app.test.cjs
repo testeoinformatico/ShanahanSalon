@@ -25,7 +25,7 @@ async function fixture(options = {}) {
     const w = dom.window;
     w.scrollTo = () => {};
     w.HTMLElement.prototype.scrollIntoView = () => {};
-    w.HTMLCanvasElement.prototype.getContext = () => null;
+    w.HTMLCanvasElement.prototype.getContext = () => { throw new Error('Unexpected canvas/GPU initialization'); };
     w.matchMedia = () => ({ matches: true, addEventListener() {}, removeEventListener() {} });
     w.IntersectionObserver = class { observe() {} disconnect() {} unobserve() {} };
     w.ResizeObserver = class { observe() {} disconnect() {} };
@@ -79,9 +79,10 @@ async function fixture(options = {}) {
     return { w, dom, errors, writes, client, operations };
 }
 
-test('app initializes without WebGL, renders catalog, and supports direct URLs', async t => {
+test('app renders catalog and navigates without creating a liquid canvas or initializing a GPU context', async t => {
     const f = await fixture({ hash: '#precios' }); t.after(() => f.dom.window.close());
     assert.deepEqual(f.errors, []);
+    assert.equal(f.w.document.getElementById('gl'), null);
     assert.equal(f.w.document.getElementById('vistaPrecios').style.display, 'flex');
     assert.match(f.w.document.getElementById('publicServicioGrid').textContent, /25 €/);
     f.w.mostrarVista('vistaResenas');

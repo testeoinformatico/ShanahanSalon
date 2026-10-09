@@ -13,7 +13,8 @@ function setup(reduced = false) {
     const w = dom.window, requests = [];
     w.document.body.classList.add('en-inicio');
     w.matchMedia = () => ({ matches: reduced, addEventListener() {} });
-    w.IntersectionObserver = class { observe() {} };
+    let intersection;
+    w.IntersectionObserver = class { constructor(callback) { intersection = callback; } observe() {} };
     w.Image = function() {
         const img = w.document.createElement('img');
         Object.defineProperty(img, 'complete', { get: () => false });
@@ -29,7 +30,7 @@ function setup(reduced = false) {
             return img;
         }));
     }
-    return { dom, w, requests, gallery, track, photos, start: () => w.eval(script) };
+    return { dom, w, requests, gallery, track, photos, intersect: visible => intersection([{ isIntersecting: visible }]), start: () => w.eval(script) };
 }
 
 test('reduced motion shows loaded photos without a pinned animation', async () => {
@@ -67,5 +68,36 @@ test('an older photo load cannot restore images removed from the gallery', async
         assert.match(images[0].getAttribute('src'), /new\.jpg$/);
         f.photos([]); await settle();
         assert.equal(f.track.hidden, true);
+    } finally { f.dom.window.close(); }
+});
+
+test('scroll bursts measure once per frame; settling and inactive views do not keep measuring', async () => {
+    const f = setup();
+    try {
+        const frames = new Map(); let id = 0, reads = 0, top = -400, time = 0;
+        f.w.requestAnimationFrame = callback => { frames.set(++id, callback); return id; };
+        f.w.cancelAnimationFrame = handle => frames.delete(handle);
+        f.track.getBoundingClientRect = () => { reads++; return { top, height: 2160 }; };
+        Object.defineProperty(f.w.document.getElementById('nailStage'), 'clientHeight', { get: () => 640 });
+        function flush() { const callbacks = [...frames.values()]; frames.clear(); time += 16; callbacks.forEach(callback => callback(time)); }
+        f.photos(['one.jpg']); f.start(); f.requests[0].onload(); await settle();
+        f.intersect(true);
+        for (let i = 0; i < 25; i++) f.w.dispatchEvent(new f.w.Event('scroll'));
+        assert.equal(reads, 0);
+        assert.equal(frames.size, 1);
+        flush(); assert.equal(reads, 1);
+        top = -900;
+        for (let i = 0; i < 25; i++) f.w.dispatchEvent(new f.w.Event('scroll'));
+        assert.equal(frames.size, 1);
+        flush(); assert.equal(reads, 2);
+        for (let i = 0; i < 100 && frames.size; i++) flush();
+        assert.equal(reads, 2);
+        assert.equal(frames.size, 0);
+        f.intersect(false);
+        f.w.dispatchEvent(new f.w.Event('scroll'));
+        assert.equal(frames.size, 0);
+        f.intersect(true);
+        f.w.document.body.classList.remove('en-inicio'); await settle();
+        assert.equal(frames.size, 0);
     } finally { f.dom.window.close(); }
 });
