@@ -1,9 +1,71 @@
-/* Portada: anchura natural, márgenes comunes y desplazamiento vertical nativo. */
+/* Portada: márgenes comunes y efectos visuales sin interceptar el scroll. */
 html { scroll-behavior: auto; }
 body.en-inicio {
     --home-gutter: clamp(20px, 4vw, 64px);
     --home-space: clamp(64px, 7vw, 100px);
     --home-curve: clamp(36px, 6vw, 80px);
+}
+
+/* Pincelada de esmalte: se dibuja una vez al entrar en la portada. */
+#login .hero-polish { position: relative; isolation: isolate; width: 100%; padding: 38px 0; margin: 24px 0 0; }
+#login .polish-brush { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+#login .polish-title { position: relative; z-index: 1; margin: 0; color: #fff8ef; font: italic clamp(64px, 11vw, 140px)/.95 'Instrument Serif', serif; letter-spacing: -3px; }
+#login .polish-title span { display: block; font: 600 clamp(13px, 2vw, 21px)/1.2 'Barlow', sans-serif; letter-spacing: 9px; text-transform: uppercase; margin-top: 22px; }
+body.en-inicio .paint-stroke { stroke-dasharray: 1; animation: polishPaint 1.5s cubic-bezier(.35,0,.2,1) .2s both; }
+body.en-inicio .paint-stroke.fine { animation-delay: .34s; }
+body.en-inicio .paint-stroke.finer { animation-delay: .48s; }
+body.en-inicio .polish-title { animation: polishUnveil 1.45s cubic-bezier(.35,0,.2,1) .25s both; }
+@keyframes polishPaint { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes polishUnveil { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+
+/* La galería normal permanece accesible si faltan fotos, JS o animaciones. */
+#login .panel-nail { padding: 0 0 calc(var(--home-space) + 32px); background: var(--cream); }
+#inmersivoTrabajos { scroll-margin-top: 84px; }
+.nail-intro { text-align: center; padding: 50px var(--home-gutter) 36px; }
+.nail-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin: 0 0 20px; }
+.nail-intro .nail-eyebrow { color: #99764b; }
+.nail-intro h2 { font: italic clamp(38px, 6vw, 66px)/1.03 'Instrument Serif', serif; margin: 0 0 15px; }
+.nail-intro > p:last-child { font-size: 16px; color: #775e54; line-height: 1.5; max-width: 480px; margin: 0 auto; }
+.nail-defs { position: absolute; width: 0; height: 0; pointer-events: none; }
+.nail-track { position: relative; height: auto; --nail-top: 80px; }
+.nail-track[hidden] { display: none; }
+.nail-stage { position: relative; height: calc(100svh - var(--nail-top)); min-height: 360px; overflow: clip; isolation: isolate; background: radial-gradient(ellipse at 50% 40%, #fef9f2, #eddbd0 75%); }
+.nail-mural { position: absolute; inset: 0; background: #43271f; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nail-mural img { width: 100%; height: 100%; min-width: 0; object-fit: cover; object-position: center; }
+.nail-mural::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #25120ad9, transparent 55%); }
+.nail-side { display: none; position: absolute; top: 43%; width: 30%; font: italic clamp(28px, 4.5vw, 64px)/1 'Instrument Serif', serif; text-align: center; }
+.nail-side.left { left: 1%; } .nail-side.right { right: 1%; }
+.nail-shine { display: none; position: absolute; top: 19%; left: 46%; width: 3%; height: 37%; border-radius: 50%; background: linear-gradient(90deg, transparent, #fff7, transparent); transform: rotate(8deg); pointer-events: none; filter: blur(2px); }
+.nail-cue { display: none; position: absolute; bottom: 7%; left: 0; right: 0; text-align: center; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; pointer-events: none; }
+.nail-heading { position: absolute; left: 7%; right: 7%; bottom: 9%; color: #fff5eb; z-index: 2; pointer-events: none; }
+.nail-heading .nail-display { font: italic clamp(48px, 8vw, 110px)/.92 'Instrument Serif', serif; margin: 0 0 18px; }
+.nail-heading > p:last-child { font-size: 16px; line-height: 1.5; max-width: 360px; margin: 0; }
+.nail-track.nail-motion { height: 300svh; }
+.nail-motion .nail-stage { position: sticky; top: var(--nail-top); }
+.nail-motion .nail-mural { clip-path: url(#nailClip); }
+.nail-motion .nail-side, .nail-motion .nail-cue, .nail-motion .nail-shine { display: block; }
+.nail-motion .nail-heading { opacity: 0; transform: translateY(24px); }
+.nail-details { width: min(100%, 1248px); padding: 32px var(--home-gutter) 0; margin-inline: auto; }
+@media (max-width: 768px) {
+    #login .hero-polish { padding: 36px 0; }
+    #login .polish-title { font-size: clamp(64px, 19vw, 110px); letter-spacing: -2px; }
+    #login .polish-title span { font-size: 13px; letter-spacing: 6px; margin-top: 15px; }
+    .nail-track { --nail-top: 72px; }
+    #inmersivoTrabajos { scroll-margin-top: 76px; }
+    .nail-side { font-size: 27px; top: 44%; width: 26%; }
+    .nail-mural { grid-template-columns: 1fr 1.3fr 1fr; gap: 4px; }
+    .nail-heading { left: 8%; bottom: 12%; }
+    .nail-heading .nail-display { font-size: clamp(42px, 16vw, 62px); }
+    .nail-heading > p:last-child { font-size: 15px; max-width: 250px; }
+    .nail-cue { font-size: 9px; letter-spacing: 2px; bottom: 10%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    body.en-inicio .paint-stroke, body.en-inicio .polish-title { animation: none; clip-path: none; stroke-dashoffset: 0; }
+    .nail-track.nail-motion { height: auto; }
+    .nail-motion .nail-stage { position: relative; top: auto; }
+    .nail-motion .nail-mural { clip-path: none; }
+    .nail-motion .nail-side, .nail-motion .nail-cue, .nail-motion .nail-shine { display: none; }
+    .nail-motion .nail-heading { opacity: 1 !important; transform: none !important; }
 }
 body.en-inicio main.container { width: 100%; max-width: none; padding: 0 !important; }
 body.en-inicio nav.topbar,

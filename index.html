@@ -166,18 +166,19 @@
                 <img class="hero-video" id="heroImagen" src="hero-imagen.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
                 <div class="hero-home">
                     <div class="hero-chip"><span class="hero-chip-dot"></span>Estudio Shanahan Nails · Gran Canaria</div>
-                    <h1 class="hero-headline">
-                        <span class="hh-serif">
-                            <span class="hh-word" style="--i:0">Cada</span><span class="hh-word" style="--i:1">capa</span>
-                        </span>
-                        <span class="hh-sans">
-                            <span class="hh-word" style="--i:2">cuenta</span><span class="hh-word" style="--i:3">una</span><span class="hh-word" style="--i:4">historia.</span>
-                        </span>
-                    </h1>
+                    <div class="hero-polish">
+                        <svg class="polish-brush" viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true">
+                            <defs><linearGradient id="polishGradient" x1="0" y1="0" x2="1" y2=".5"><stop stop-color="#9c4f5f"/><stop offset=".55" stop-color="#c47c81"/><stop offset="1" stop-color="#e6b99c"/></linearGradient></defs>
+                            <path class="paint-stroke" pathLength="1" d="M80 185 C220 190 290 70 480 100 S740 167 920 72" fill="none" stroke="url(#polishGradient)" stroke-width="105" stroke-linecap="round"/>
+                            <path class="paint-stroke fine" pathLength="1" d="M67 152 C225 174 290 48 480 71 S753 138 932 42" fill="none" stroke="#f4c9b1" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+                            <path class="paint-stroke finer" pathLength="1" d="M91 222 C235 220 303 103 492 132 S748 202 915 110" fill="none" stroke="#dfab8c" stroke-opacity=".7" stroke-width="5" stroke-linecap="round"/>
+                        </svg>
+                        <h1 class="polish-title">Shanahan<span>Nails</span></h1>
+                    </div>
                     <p class="hero-sub">Manicura de lujo, precisión y detalle en cada set. Reserva tu cita y acumula puntos con cada visita.</p>
                     <div class="hero-ctas">
                         <button class="hero-btn-primary" onclick="mostrarVista('vistaReservar')">Reservar mi cita <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>
-                        <button class="hero-btn-ghost" onclick="irASobreMi()"><i class="fa-solid fa-play" style="margin-right:8px;font-size:11px;"></i>Ver trabajos</button>
+                        <button class="hero-btn-ghost" onclick="irATrabajos()"><i class="fa-solid fa-play" style="margin-right:8px;font-size:11px;"></i>Ver trabajos</button>
                     </div>
                 </div>
             </div>
@@ -274,10 +275,27 @@
                   </div>
                 </div>
 
-                <!-- Galería y acceso a reservas. -->
-                <div class="inmersivo inmersivo-trabajos" id="inmersivoTrabajos">
-                  <div class="inmersivo-pantalla">
-                    <div class="inmersivo-contenido">
+                </div>
+              </div>
+            </div>
+
+            <section class="col-12 panel-seccion panel-nail" id="inmersivoTrabajos" aria-labelledby="nailIntroTitle">
+                <div class="nail-intro">
+                    <p class="nail-eyebrow">Shanahan · Nuestros trabajos</p>
+                    <h2 id="nailIntroTitle">Un pequeño detalle.<br>Una gran entrada.</h2>
+                    <p>Diseños que hablan de ti. Baja y descubre nuestra galería.</p>
+                </div>
+                <svg class="nail-defs" aria-hidden="true"><defs><clipPath id="nailClip" clipPathUnits="objectBoundingBox"><path id="nailPath" d="M .5 .12 C .585 .12 .61 .23 .61 .39 L .6 .73 C .598 .82 .57 .86 .5 .86 C .43 .86 .402 .82 .4 .73 L .39 .39 C .39 .23 .415 .12 .5 .12 Z"/></clipPath></defs></svg>
+                <div class="nail-track" id="nailTrack" hidden aria-hidden="true">
+                    <div class="nail-stage" id="nailStage">
+                        <div class="nail-side left">Tu estilo.</div><div class="nail-side right">Sin límites.</div>
+                        <div class="nail-mural" id="nailMural"></div>
+                        <div class="nail-shine"></div>
+                        <p class="nail-cue">Sigue bajando · descubre la galería</p>
+                        <div class="nail-heading"><p class="nail-eyebrow">Shanahan · La galería</p><p class="nail-display">Hechas para<br>mirarlas.</p><p>Texturas, reflejos y pequeños detalles que hablan de ti.</p></div>
+                    </div>
+                </div>
+                <div class="nail-details">
                         <div class="rule rule-stripes" role="presentation" aria-hidden="true"><span class="rule-mark"></span></div>
                         <h3 class="trabajos-titulo">Mis Trabajos</h3>
                         <div id="galeriaPublica" class="trabajos-rejilla">
@@ -295,12 +313,8 @@
                                 <a class="hero-btn-ghost" href="https://wa.me/34644911596" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Escríbenos</a>
                             </div>
                         </div>
-                    </div>
-                  </div>
                 </div>
-                </div>
-              </div>
-            </div>
+            </section>
 
             <!-- Dirección y disponibilidad en el mismo flujo de lectura. -->
             <div class="col-12 panel-seccion panel-lateral" id="dondeEstamos">
@@ -1274,6 +1288,7 @@
 
     <script src="assets/core.js"></script>
     <script src="assets/app.js" defer></script>
+    <script src="assets/home-motion.js" defer></script>
 
 <!-- Modal de Nueva Contraseña -->
 <div class="modal-backdrop-x" id="modalCambiarClave" onclick="if(event.target===this) this.classList.remove('show')">
