@@ -1,3 +1,9 @@
 
 # Scripts SQL de mantenimiento: se quedan en local, no se despliegan
 *.sql
+!docs/fidelidad-migration.sql
+dist/
+node_modules/
+test-results/
+.env
+.env.*
