@@ -295,11 +295,13 @@
         mostrarVista('vistaReservar');
     };
 
-    // Menú "Sobre Mí": desliza suavemente hasta la sección del inicio
-    window.irASobreMi = function() {
+    // Un único desplazamiento hacia las secciones de la portada.
+    window.irASobreMi = () => irASeccionInicio('sobreMi');
+    window.irATrabajos = () => irASeccionInicio('inmersivoTrabajos');
+    function irASeccionInicio(id) {
         toggleMobileMenu(true);
 
-        const destino = document.getElementById("sobreMi");
+        const destino = document.getElementById(id);
         if (!destino) return;
 
         const inicio = document.getElementById("login");
