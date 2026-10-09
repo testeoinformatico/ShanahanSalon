@@ -16,7 +16,16 @@ body:not(.en-inicio) .halloween-decor .halloween-bat { animation-play-state: pau
 .bat-one { top: 28%; left: 8%; transform: rotate(-16deg); }
 .bat-two { top: 24%; right: 10%; width: clamp(36px, 4vw, 56px); transform: rotate(15deg); animation-delay: .3s; }
 .bat-three { top: 34%; right: 5%; width: clamp(26px, 3vw, 42px); transform: rotate(-12deg); animation-delay: .6s; }
-#login .halloween-badge { display: inline-block; margin-top: 18px; color: #ffe5c4; font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; }
+#login .halloween-badge { display: inline-block; margin-top: 18px; color: #ffe5c4; font: italic clamp(30px, 4vw, 44px)/1.1 'Instrument Serif', serif; text-shadow: 0 2px 12px #27142380; }
+.halloween-spider { position: absolute; top: 80px; left: 17%; width: 46px; color: #271423; transform-origin: 50% 0; animation: halloweenSwing 3s ease-in-out 2; animation-play-state: paused; }
+.halloween-spider svg { display: block; width: 100%; height: auto; }
+.halloween-decor.in-view.is-visible .halloween-spider { animation-play-state: running; }
+body:not(.en-inicio) .halloween-decor .halloween-spider { animation-play-state: paused; }
+.halloween-charm { display: flex; align-items: center; justify-content: center; gap: 16px; width: min(100%, 430px); padding: 16px 20px; margin: 32px auto 0; border: 1px solid #ab8254; border-radius: 80px; color: #fff0d9; background: #432031; }
+.halloween-charm > svg { width: 46px; flex-shrink: 0; height: 54px; }
+.halloween-charm > span { font: italic 28px/1.1 'Instrument Serif', serif; }
+.halloween-charm small { display: block; margin-top: 8px; color: #ead1b1; font: 400 9px/1.5 'Barlow', sans-serif; letter-spacing: 1.4px; text-transform: uppercase; }
+@keyframes halloweenSwing { 0%, 100% { transform: rotate(0); } 35% { transform: rotate(9deg); } 70% { transform: rotate(-6deg); } }
 @keyframes halloweenFlight {
     0%, 100% { translate: 0 0; }
     40% { translate: 10px -13px; }
@@ -27,8 +36,12 @@ body:not(.en-inicio) .halloween-decor .halloween-bat { animation-play-state: pau
     .bat-one { top: 30%; left: 3%; width: 38px; }
     .bat-two { top: 27%; right: 4%; width: 32px; }
     .bat-three { top: 36%; right: 2%; width: 23px; }
-    #login .halloween-badge { font-size: 9px; letter-spacing: 2px; }
+    .halloween-spider { top: 72px; left: 18%; width: 32px; }
+    .halloween-charm { gap: 10px; padding: 14px; }
+    .halloween-charm > svg { width: 34px; height: 44px; }
+    .halloween-charm > span { font-size: 25px; }
+    .halloween-charm small { font-size: 8px; letter-spacing: 1px; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .halloween-decor .halloween-bat { animation: none; }
+    .halloween-decor .halloween-bat, .halloween-decor .halloween-spider { animation: none; }
 }
