@@ -52,7 +52,10 @@ body.en-inicio .polish-title { animation: polishUnveil 1.45s cubic-bezier(.35,0,
     #login .polish-title span { font-size: 13px; letter-spacing: 6px; margin-top: 15px; }
     .nail-track { --nail-top: 72px; }
     #inmersivoTrabajos { scroll-margin-top: 76px; }
-    .nail-side { font-size: 27px; top: 44%; width: 26%; }
+    /* En móvil, las frases van sobre la uña: los laterales no tienen espacio. */
+    .nail-side { font-size: clamp(24px, 6.5vw, 30px); line-height: 1.2; top: 10%; width: calc(50% - 24px); white-space: nowrap; }
+    .nail-side.left { left: 16px; }
+    .nail-side.right { right: 16px; }
     .nail-mural { grid-template-columns: 1fr 1.3fr 1fr; gap: 4px; }
     .nail-heading { left: 8%; bottom: 12%; }
     .nail-heading .nail-display { font-size: clamp(42px, 16vw, 62px); }
