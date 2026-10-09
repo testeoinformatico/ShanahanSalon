@@ -1,3 +1,7 @@
 
 # Scripts SQL de mantenimiento: se quedan en local, no se despliegan
 *.sql
+node_modules/
+test-results/
+.env
+.env.*
