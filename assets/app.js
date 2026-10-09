@@ -185,307 +185,44 @@
         if (e.key === "Escape" && document.body.classList.contains("menu-open")) toggleMobileMenu(true);
     });
 
-    // Ancho real de la ventana (sin barra de desplazamiento) para que los
-    // paneles de sección salgan a sangre exactos
+    // Cabecera de altura estable: solo cambia el aspecto al pasar el hero.
     (function() {
-        const raiz = document.documentElement;
-        const topbar = document.querySelector("nav.topbar");
-        const main = document.querySelector("main.container");
-
-        function medir() {
-            // Si medimos antes de que la página tenga ancho (carga temprana,
-            // pestaña oculta), fijar --vw a 0 colapsaría todos los paneles y no
-            // se recuperaría solo. Solo escribimos valores con sentido.
-            const ancho = raiz.clientWidth || window.innerWidth || 0;
-            if (ancho > 0) raiz.style.setProperty("--vw", ancho + "px");
-
-            // El hero se sube hasta el borde de la página. En vez de sumar
-            // cabecera + relleno (que se dejaba 20px por el camino), medimos
-            // su posición natural anulando el tirón un instante: así es exacto
-            // sea cual sea lo que haya encima.
-            const hero = document.querySelector(".hero-seccion");
-            if (hero) {
-                const previo = hero.style.marginTop;
-                hero.style.marginTop = "0px";
-                const natural = hero.getBoundingClientRect().top + window.scrollY;
-                hero.style.marginTop = previo;
-                if (natural > 0) raiz.style.setProperty("--tope-hero", natural + "px");
-            }
-        }
-        window.addEventListener("resize", medir, { passive: true });
-        window.addEventListener("load", medir);        // por si al arrancar aún no había medidas
-        window.addEventListener("pageshow", medir);    // al volver desde el historial
-        medir();
-    })();
-
-    // Cabecera: transparente sobre el hero, marfil al desplazarse
-    (function() {
-        const topbar = document.querySelector("nav.topbar");
+        const topbar = document.querySelector('nav.topbar');
         if (!topbar) return;
-        const onScroll = () => topbar.classList.toggle("scrolled", window.scrollY > 30);
-        window.addEventListener("scroll", onScroll, { passive: true });
-        onScroll();
-    })();
-
-    // Revelado al bajar: secciones y separadores entran al aparecer en pantalla
-    (function() {
-        const SEL = ".reveal:not(.in), .rule:not(.in)";
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            document.querySelectorAll(SEL).forEach(el => el.classList.add("in"));
-            window.revelarVisibles = function(){};
-            return;
-        }
-
-        let pendiente = false;
-
-        function comprobar() {
-            pendiente = false;
-            const limite = window.innerHeight * 0.92;
-            document.querySelectorAll(SEL).forEach(el => {
-                const r = el.getBoundingClientRect();
-                if (r.width === 0 && r.height === 0) return;   // sigue oculto en otra vista
-                if (r.top < limite && r.bottom > 0) el.classList.add("in");
-            });
-        }
-
-        function programar() {
-            if (pendiente) return;
-            pendiente = true;
-            requestAnimationFrame(comprobar);
-        }
-
-        window.addEventListener("scroll", programar, { passive: true });
-        window.addEventListener("resize", programar, { passive: true });
-        window.revelarVisibles = comprobar;   // comprobación inmediata al cambiar de vista
-        comprobar();
-    })();
-
-    // El inicio es la vista que se muestra al cargar
-    document.body.classList.add("en-inicio");
-
-    // Persiana dorada del hero: al bajar, las barras engordan hasta tapar el vídeo
-    (function() {
-        const hero = document.querySelector(".hero-seccion");
-        const persiana = document.getElementById("heroPersiana");
-        if (!hero || !persiana) return;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-        // Una barra cada ~40px: misma densidad en móvil y en escritorio
-        const SEPARACION = 40;
-        let barras = [];
-
-        function construir() {
-            const cuantas = Math.max(6, Math.round(window.innerWidth / SEPARACION));
-            if (barras.length === cuantas) return;
-            persiana.textContent = "";
-            for (let i = 0; i < cuantas; i++) persiana.appendChild(document.createElement("span"));
-            barras = Array.from(persiana.children);
-        }
-
-        const entre = (v, a, b) => Math.max(0, Math.min(1, (v - a) / (b - a)));
-        let pendiente = false;
-
-        function pintar() {
-            pendiente = false;
-            const recorrido = hero.offsetHeight * 0.85;
-            if (recorrido <= 0) return;
-            const p = Math.min(1, window.scrollY / recorrido);
-
-            // Lamas de persiana veneciana girando sobre su eje vertical: de 90°
-            // (de canto, invisibles) a 0° (planas, tapan el vídeo). En ola de
-            // izquierda a derecha: cada lama arranca algo después que su vecina.
-            const N = barras.length;
-            barras.forEach((b, i) => {
-                const inicio = 0.40 + (i / N) * 0.30;
-                const prog = entre(p, inicio, inicio + 0.25);
-                const grados = 90 * (1 - prog);
-                // 1.02 de escala al cerrar: evita costuras de sub-píxel entre lamas
-                b.style.transform = "rotateY(" + grados.toFixed(2) + "deg) scaleX(" + (prog < 1 ? 1 : 1.02) + ")";
-                // aparece justo al empezar su giro, no antes
-                b.style.opacity = Math.min(1, prog * 6).toFixed(3);
-            });
-        }
-
-        function programar() {
-            if (pendiente) return;
-            pendiente = true;
-            requestAnimationFrame(pintar);
-        }
-
-        window.addEventListener("scroll", programar, { passive: true });
-        window.addEventListener("resize", () => { construir(); programar(); }, { passive: true });
-        window.actualizarPersiana = pintar;   // recálculo inmediato al cambiar de vista
-        construir();
-        pintar();
-    })();
-
-    // Scroll inmersivo de Sobre Mí: mientras la sección está clavada, las
-    // columnas de trabajos, la foto y los párrafos avanzan atados al scroll
-    (function() {
-        const pista = document.getElementById("inmersivoSobreMi");
-        if (!pista) return;
-        const columnas = Array.from(pista.querySelectorAll(".inm-col"));
-        const foto = pista.querySelector(".inm-foto");
-        const parrafos = Array.from(pista.querySelectorAll(".inm-parrafo"));
-        const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        const entre = (v, a, b) => Math.max(0, Math.min(1, (v - a) / (b - a)));
-        let pendiente = false;
-
-        // Reparte las fotos reales de la galería en las tres columnas
-        window.montarColumnasInmersivas = function() {
-            const fuente = document.getElementById("galeriaPublica");
-            if (!fuente || !columnas.length) return;
-            const urls = Array.from(fuente.querySelectorAll("img")).map(i => i.src).filter(Boolean);
-            if (!urls.length) return;
-            columnas.forEach(c => c.textContent = "");
-            // duplicamos la lista para que ninguna columna se quede corta al desplazarse
-            urls.concat(urls).forEach((src, i) => {
-                const img = document.createElement("img");
-                img.src = src;
-                img.alt = "";
-                img.loading = "lazy";
-                columnas[i % columnas.length].appendChild(img);
-            });
-            programar();
+        let scrolled;
+        const actualizar = () => {
+            const next = window.scrollY > 30;
+            if (scrolled === next) return;
+            scrolled = next;
+            topbar.classList.toggle('scrolled', next);
         };
-
-        function pintar() {
-            pendiente = false;
-            if (sinMovimiento) return;
-            const total = pista.offsetHeight - window.innerHeight;
-            if (total <= 0) return;
-            const p = Math.max(0, Math.min(1, -pista.getBoundingClientRect().top / total));
-
-            // Columnas: cada una viaja a su ritmo (la del medio más rápida)
-            columnas.forEach(c => {
-                const vel = parseFloat(c.dataset.vel) || 1;
-                c.style.transform = "translate3d(0," + (-p * vel * 26).toFixed(2) + "%,0)";
-            });
-
-            // Foto: se revela con máscara y se acerca despacio
-            if (foto) {
-                const q = entre(p, 0.04, 0.34);
-                foto.style.clipPath = "inset(0 0 " + ((1 - q) * 100).toFixed(1) + "% 0)";
-                foto.style.transform = "scale(" + (1.1 - 0.1 * q).toFixed(4) + ")";
-            }
-
-            // Párrafos: entran escalonados a lo largo del recorrido
-            parrafos.forEach((el, i) => {
-                const q = entre(p, 0.20 + i * 0.13, 0.20 + i * 0.13 + 0.15);
-                el.style.opacity = q.toFixed(3);
-                el.style.transform = "translateY(" + ((1 - q) * 24).toFixed(1) + "px)";
-            });
-        }
-
-        function programar() {
-            if (pendiente) return;
-            pendiente = true;
-            requestAnimationFrame(pintar);
-        }
-
-        window.addEventListener("scroll", programar, { passive: true });
-        window.addEventListener("resize", programar, { passive: true });
-        window.actualizarInmersivo = pintar;   // recálculo inmediato al cambiar de vista
-        pintar();
+        window.addEventListener('scroll', actualizar, { passive: true });
+        actualizar();
     })();
 
-    // Trabajos inmersivos: al bajar, las fotos entran una a una y al final
-    // aparece la invitación a visitar el estudio
+    // Entradas discretas, una sola vez. No medir ni transformar secciones
+    // en cada evento de scroll; el navegador mantiene el desplazamiento nativo.
     (function() {
-        const pista = document.getElementById("inmersivoTrabajos");
-        if (!pista) return;
-        const rejilla = document.getElementById("galeriaPublica");
-        const invita = document.getElementById("trabajosInvita");
-        const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        const entre = (v, a, b) => Math.max(0, Math.min(1, (v - a) / (b - a)));
-        let piezas = [];
-        let pendiente = false;
-
-        window.montarTrabajos = function() {
-            // solo las cuatro primeras son ventanas; el resto sigue en el DOM
-            // porque alimenta las columnas del bloque de Sobre Mí
-            piezas = Array.from(rejilla ? rejilla.querySelectorAll(".galeria-item") : []).slice(0, 4);
-            programar();
+        const selector = '.reveal:not(.in), .rule:not(.in)';
+        const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const observados = new WeakSet();
+        const observer = !sinMovimiento && typeof IntersectionObserver !== 'undefined'
+            ? new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('in');
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0, rootMargin: '0px 0px -24px 0px' }) : null;
+        window.revelarVisibles = function() {
+            document.querySelectorAll(selector).forEach(el => {
+                if (!observer) el.classList.add('in');
+                else if (!observados.has(el)) { observados.add(el); observer.observe(el); }
+            });
         };
-
-        function pintar() {
-            pendiente = false;
-            if (sinMovimiento) return;
-            const total = pista.offsetHeight - window.innerHeight;
-            if (total <= 0) return;
-            const p = Math.max(0, Math.min(1, -pista.getBoundingClientRect().top / total));
-
-            // cada ventana se abre de abajo arriba, una tras otra
-            const n = piezas.length || 1;
-            piezas.forEach((el, i) => {
-                const desde = 0.08 + (i / n) * 0.52;
-                const q = entre(p, desde, desde + 0.22);
-                el.style.clipPath = "inset(" + ((1 - q) * 100).toFixed(1) + "% 0 0 0)";
-                el.style.transform = "translateY(" + ((1 - q) * 22).toFixed(1) + "px)";
-            });
-
-            // la invitación entra cuando ya están las cuatro abiertas
-            if (invita) {
-                const q = entre(p, 0.74, 0.9);
-                invita.style.opacity = q.toFixed(3);
-                invita.style.transform = "translateY(" + ((1 - q) * 28).toFixed(1) + "px)";
-            }
-        }
-
-        function programar() {
-            if (pendiente) return;
-            pendiente = true;
-            requestAnimationFrame(pintar);
-        }
-
-        window.addEventListener("scroll", programar, { passive: true });
-        window.addEventListener("resize", programar, { passive: true });
-        window.actualizarTrabajos = pintar;
-        pintar();
+        window.revelarVisibles();
     })();
-
-    // Dónde estamos: al bajar, la fila de paneles viaja de lado
-    (function() {
-        const pista = document.getElementById("lateralPista");
-        const fila = document.getElementById("lateralFila");
-        if (!pista || !fila) return;
-        const puntos = Array.from(document.querySelectorAll("#lateralPuntos span"));
-        const paneles = Array.from(fila.querySelectorAll(".lat-panel"));
-        const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        let pendiente = false;
-
-        function pintar() {
-            pendiente = false;
-            if (sinMovimiento) return;
-            const total = pista.offsetHeight - window.innerHeight;
-            if (total <= 0) return;
-            const p = Math.max(0, Math.min(1, -pista.getBoundingClientRect().top / total));
-
-            // la fila se desplaza justo lo que sobresale de la pantalla
-            const desplazable = fila.scrollWidth - window.innerWidth;
-            fila.style.transform = "translate3d(" + (-p * desplazable).toFixed(1) + "px,0,0)";
-
-            // el indicador marca en qué panel estamos
-            if (puntos.length) {
-                const i = Math.min(puntos.length - 1, Math.round(p * (paneles.length - 1)));
-                puntos.forEach((s, k) => s.classList.toggle("activo", k === i));
-            }
-        }
-
-        function programar() {
-            if (pendiente) return;
-            pendiente = true;
-            requestAnimationFrame(pintar);
-        }
-
-        window.addEventListener("scroll", programar, { passive: true });
-        window.addEventListener("resize", programar, { passive: true });
-        window.actualizarLateral = pintar;
-        pintar();
-    })();
+    document.body.classList.add('en-inicio');
 
     // Próximos huecos reales: reutiliza el horario, los bloqueos y la RPC
     // "horas_ocupadas", que devuelve la ocupación sin datos personales
@@ -568,12 +305,13 @@
         const inicio = document.getElementById("login");
         const inicioOculto = inicio && getComputedStyle(inicio).display === "none";
 
-        const deslizar = () => destino.scrollIntoView({ behavior: "smooth", block: "start" });
+        const deslizar = () => destino.scrollIntoView({
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start'
+        });
 
         if (inicioOculto) {
-            // Volvemos al inicio y esperamos a que mostrarVista termine su scroll al tope
-            mostrarVista("login");
-            setTimeout(deslizar, 90);
+            mostrarVista('login', { scroll: false });
+            requestAnimationFrame(deslizar);
         } else {
             deslizar();
         }
@@ -625,8 +363,6 @@
         if (typeof window.ajustarAgua === "function") window.ajustarAgua(id !== "login");
         if (typeof window.revelarVisibles === "function") {
             window.revelarVisibles();
-            // el scroll al tope de más abajo es suave: repasamos cuando haya terminado
-            setTimeout(window.revelarVisibles, 600);
         }
 
         if (id === "vistaAdmin") {
@@ -697,7 +433,7 @@
             const acceso = document.getElementById("bloqueAcceso");
             if (acceso) {
                 setTimeout(() => {
-                    acceso.scrollIntoView({ behavior: "smooth", block: "center" });
+                    acceso.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' });
                     // la tarjeta se revela con el scroll: forzamos el repaso para
                     // que no llegue invisible si el desplazamiento es corto
                     if (typeof window.revelarVisibles === "function") {
@@ -708,7 +444,7 @@
                 return;
             }
         }
-        window.scrollTo({top:0,behavior:"smooth"});
+        if (options.scroll !== false) window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     function limpiarSesionLocal() {
@@ -3583,10 +3319,7 @@
             }
             if(contPub) {
                 contPub.innerHTML = htmlPub;
-                // las mismas fotos alimentan las columnas del scroll inmersivo
-                if (typeof window.montarColumnasInmersivas === "function") window.montarColumnasInmersivas();
-                // y la rejilla de trabajos recuenta sus piezas para revelarlas una a una
-                if (typeof window.montarTrabajos === "function") window.montarTrabajos();
+                if (typeof window.revelarVisibles === "function") window.revelarVisibles();
             }
             if(contAdm) contAdm.innerHTML = htmlAdm;
         } catch (e) {
