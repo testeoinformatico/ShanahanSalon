@@ -2199,7 +2199,7 @@
                 const inicioB = toMin((bloqueadoPor.hora||"").slice(0,5));
                 const finB    = inicioB + durMin;
                 const restMin = finB - tMin;
-                bodyHTML = `<div class="tl-bloqueado"><i class="fa-solid fa-lock" style="font-size:10px;"></i>Bloqueado — ${bloqueadoPor.nombre_cliente||""} (${durStr(restMin)} restantes)</div>`;
+                bodyHTML = `<div class="tl-bloqueado"><i class="fa-solid fa-lock" style="font-size:10px;"></i>Bloqueado — ${escapeHTML(bloqueadoPor.nombre_cliente||"")} (${durStr(restMin)} restantes)</div>`;
             } else {
                 bodyHTML = `<div class="tl-libre" onclick="abrirNuevaCita('${iso}','${t}')"><i class="fa-regular fa-circle" style="font-size:10px;color:#4A7C59;"></i>Libre<span class="tl-libre-action"><i class="fa-solid fa-plus" style="margin-right:4px;"></i>Agendar</span></div>`;
             }
@@ -2299,6 +2299,7 @@
                         <td style="text-align:right;">
                             <button class="action-icon success" title="Sumar sello" onclick="sumarVisita(${inlineArg(c.id)},${v})"><i class="fa-solid fa-plus"></i></button>
                             <button class="action-icon" style="color:var(--burgundy);" title="Restar sello" onclick="restarVisita(${inlineArg(c.id)},${v})"><i class="fa-solid fa-minus"></i></button>
+                            ${v >= 10 ? `<button class="btn-ghost" onclick="canjearRegalo(${inlineArg(c.id)})">Canjear regalo</button>` : ''}
                             <button class="action-icon" title="Reiniciar" onclick="reiniciarVisitas(${inlineArg(c.id)})"><i class="fa-solid fa-rotate-left"></i></button>
                             <button class="action-icon danger" title="Eliminar" onclick="borrarCliente(${inlineArg(c.id)})"><i class="fa-solid fa-trash"></i></button>
                         </td></tr>`;
@@ -2346,89 +2347,70 @@
         }
     }
 
-    // ── Admin acciones ─────────────────────────────────────
-    async function aprobarCita(id) {
-        try {
-            const { error } = await sb.from("citas").update({estado:"confirmada"}).eq("id",id);
-            if (error) { toast("Error: "+error.message,"error"); return; }
-            toast("Cita confirmada","success");
-            cargarDatosAdmin();
-        } catch(e) { toast("No se pudo aprobar","error"); }
+    // Todas las acciones de fidelidad se guardan en una transacción del servidor.
+    const operacionesPendientes = new Map();
+    const operacionesEnCurso = new Map();
+    async function operacionSalon(tipo, datos) {
+        const key = JSON.stringify([tipo, datos]);
+        if (operacionesEnCurso.has(key)) return operacionesEnCurso.get(key);
+        const ejecutar = async () => {
+            if (!operacionesPendientes.has(key)) operacionesPendientes.set(key, crypto.randomUUID());
+            const { data, error } = await sb.rpc('salon_operar', {
+                p_operacion: operacionesPendientes.get(key), p_tipo: tipo, p_datos: datos
+            });
+            if (error) {
+                if (error.hint === 'CONFIRMAR_SIN_SELLO') {
+                    const ok = await askConfirm('Revisar tarjeta', error.message);
+                    if (!ok) throw new Error('No se guardaron cambios.');
+                    const result = await operacionSalon(tipo, { ...datos, conservar_sellos: true });
+                    operacionesPendientes.delete(key);
+                    return result;
+                }
+                if (error.code === 'PGRST202') throw new Error('Falta activar la actualización del salón. Contacta con la persona que gestiona la web.');
+                throw error;
+            }
+            operacionesPendientes.delete(key);
+            return data;
+        };
+        const promise = ejecutar();
+        operacionesEnCurso.set(key, promise);
+        try { return await promise; }
+        finally { operacionesEnCurso.delete(key); }
     }
-
-    // ── Fidelidad (lógica centralizada para todos los flujos) ──
-    // Localiza a la clienta de una cita: primero por id, y como respaldo por
-    // teléfono normalizado (sin espacios) para tolerar formatos distintos.
-    function clientaDeCita(cita) {
-        if (!cita) return null;
-        if (cita.cliente_id != null) {
-            const porId = clientas.find(c => c.id === cita.cliente_id);
-            if (porId) return porId;
-        }
-        const tel = (cita.telefono||"").replace(/\s+/g,"");
-        if (!tel) return null;
-        return clientas.find(c => (c.telefono||"").replace(/\s+/g,"") === tel) || null;
+    function resultadoSalon(result, mensaje) {
+        toast(result?.aviso || mensaje, result?.aviso ? 'info' : 'success');
     }
-
-    // Suma un sello al completar una cita (reinicia la tarjeta si ya estaba llena).
-    async function aplicarSelloFidelidad(cliente) {
-        if (!cliente) { toast("Cita completada","success"); return; }
-        const visActual = Number(cliente.visitas)||0;
-        if (visActual >= 10) {
-            await checked(sb.from("clientas").update({visitas:1}).eq("id",cliente.id).eq("visitas", cliente.visitas).select('id').single());
-            toast("Cita completada · premio canjeado · tarjeta reiniciada","success","Recompensa");
-        } else {
-            const nuevas = visActual + 1;
-            await checked(sb.from("clientas").update({visitas:nuevas}).eq("id",cliente.id).eq("visitas", cliente.visitas).select('id').single());
-            if (nuevas === 10) toast("¡Tarjeta completa! Diseño de regalo desbloqueado.","success","Recompensa");
-            else if (nuevas === 5) toast("Cita completada · ¡20% descuento desbloqueado!","success","Recompensa");
-            else toast("Cita completada · sello sumado","success");
-        }
+    async function guardarCitaSalon(cita, cambios) {
+        return operacionSalon('guardar_cita', { id: cita?.id || null, antes: cita || null, cita: cambios });
     }
-
-    // Retira un sello si una cita deja de estar completada (mantiene el conteo equilibrado).
-    async function quitarSelloFidelidad(cliente) {
-        if (!cliente) return;
-        const visActual = cliente.visitas||0;
-        if (visActual > 0) {
-            await checked(sb.from("clientas").update({visitas:visActual-1}).eq("id",cliente.id).eq("visitas", cliente.visitas).select('id').single());
-            toast("Sello retirado (cita ya no completada)","info");
-        }
-    }
-
-    async function completarCita(id) {
+    async function cambiarEstadoCita(id, estado) {
         if (_citasGuardando.has(id)) return;
         const cita = citas.find(c => c.id === id);
-        if (!cita || cita.estado === 'completada') return;
+        if (!cita || cita.estado === estado) return;
         _citasGuardando.add(id);
-        let guardada = false;
         try {
-            await checked(sb.from('citas').update({ estado: 'completada' }).eq('id', id)
-                .eq('estado', cita.estado || 'pendiente').select('id').single());
-            guardada = true;
-            await aplicarSelloFidelidad(clientaDeCita(cita));
-        } catch {
-            toast(guardada ? 'La cita se completó, pero no se pudo actualizar el sello. Revisa la tarjeta antes de añadirlo manualmente.'
-                : 'No se pudo completar la cita. Puede haber cambiado en otra sesión.', 'error');
-        } finally {
-            await cargarDatosAdmin();
-            _citasGuardando.delete(id);
-        }
+            const result = await guardarCitaSalon(cita, { estado });
+            resultadoSalon(result, estado === 'completada' ? 'Cita completada y tarjeta actualizada' : 'Cita confirmada');
+        } catch (e) { toast(e.message || 'No se pudo guardar la cita', 'error'); }
+        finally { try { await cargarDatosAdmin(); } finally { _citasGuardando.delete(id); } }
     }
-
+    async function aprobarCita(id) { return cambiarEstadoCita(id, 'confirmada'); }
+    async function completarCita(id) { return cambiarEstadoCita(id, 'completada'); }
     async function eliminarCita(id) {
-        const ok=await askConfirm("Eliminar cita","Esta acción no se puede deshacer.");
-        if (!ok) return;
-        try { await checked(sb.from("citas").delete().eq("id",id).select('id').single()); toast("Cita eliminada","success"); cargarDatosAdmin(); }
-        catch(e) { toast("No se pudo eliminar","error"); }
+        if (_citasGuardando.has(id)) return false;
+        const cita = citas.find(c => c.id === id);
+        if (!cita) return false;
+        _citasGuardando.add(id);
+        try {
+            if (!await askConfirm('Eliminar cita', 'Se eliminará la cita y se revisará su movimiento de sellos.')) return false;
+            const result = await operacionSalon('eliminar_cita', { id, antes: cita });
+            resultadoSalon(result, 'Cita eliminada y tarjeta actualizada');
+            await cargarDatosAdmin();
+            return true;
+        } catch (e) { toast(e.message || 'No se pudo eliminar', 'error'); return false; }
+        finally { _citasGuardando.delete(id); }
     }
-
-    async function rechazarCita(id) {
-        const ok=await askConfirm("Rechazar solicitud","¿Descartar esta solicitud?");
-        if (!ok) return;
-        try { await checked(sb.from("citas").delete().eq("id",id).select('id').single()); toast("Solicitud descartada","success"); cargarDatosAdmin(); }
-        catch(e) { toast("No se pudo descartar","error"); }
-    }
+    async function rechazarCita(id) { return eliminarCita(id); }
 
     // ── Editar cita modal ──────────────────────────────────
     function setEditEstado(estado) {
@@ -2538,18 +2520,22 @@
     document.querySelectorAll("#editEstadoGroup .estado-opt").forEach(b=>b.addEventListener("click",()=>setEditEstado(b.dataset.estado)));
 
     async function confirmarEliminarCita() {
-        const id=parseInt(document.getElementById("editCitaId").value,10);
-        const ok=await askConfirm("Eliminar cita","Esta cita se eliminará definitivamente.");
-        if (!ok) return;
-        try { await checked(sb.from("citas").delete().eq("id",id).select('id').single()); toast("Cita eliminada","success"); closeEditCita(); cargarDatosAdmin(); }
-        catch(e) { toast("No se pudo eliminar","error"); }
+        const id = parseInt(document.getElementById('editCitaId').value, 10);
+        if (await eliminarCita(id)) closeEditCita();
+    }
+    let edGuardando = false;
+    async function guardarEdicionCita() {
+        if (edGuardando) return;
+        edGuardando = true;
+        try { await guardarEdicionCitaImpl(); }
+        finally { edGuardando = false; }
     }
 
-    async function guardarEdicionCita() {
+    async function guardarEdicionCitaImpl() {
         const id=parseInt(document.getElementById("editCitaId").value,10);
         const nuevoEstado=document.getElementById("editCitaEstado").value||"pendiente";
         const previa=citas.find(c=>c.id===id);
-        const estadoAnterior=previa?(previa.estado||"pendiente"):"pendiente";
+        if (!previa) return toast("La cita ya no está disponible. Actualiza la agenda.", "error");
         const payload={
             nombre_cliente:document.getElementById("editCitaNombre").value.trim(),
             telefono:document.getElementById("editCitaTelefono").value.trim(),
@@ -2562,7 +2548,9 @@
         };
         if (!payload.nombre_cliente||!payload.telefono||!payload.fecha||!payload.hora) return toast("Completa todos los campos","error");
 
-        // Validar que la nueva fecha/hora no solape con otra cita ni quede fuera de horario.
+        // No bloquear correcciones de nombre/precio de citas históricas sin cambiar su horario.
+        const cambiaHorario = payload.fecha !== previa.fecha || payload.hora.slice(0,5) !== previa.hora.slice(0,5) || payload.duracion_minutos !== (previa.duracion_minutos || 30);
+        if (nuevoEstado !== "cancelada" && cambiaHorario) {
         if (nuevoEstado !== "cancelada" && (!await cargarDisponibles() || !isDiaDisponible(payload.fecha))) return toast("No se pudo verificar que el día esté disponible.", "error");
         const _durEdit = payload.duracion_minutos;
         const _horaEdit = (payload.hora||"").slice(0,5);
@@ -2578,56 +2566,46 @@
             if (slotBloqueado(_horaEdit, _otras, _durEdit, payload.fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
         } catch(e) { return toast("No se pudo verificar la disponibilidad.","error"); }
 
-        let citaGuardada = false;
+        }
         setBtnLoading("btnGuardarEdicion",true);
         try {
-            const { error }=await sb.from("citas").update(payload).eq("id",id).select("id").single();
-            if (error) { toast("No se pudo actualizar: "+error.message,"error"); return; }
-            citaGuardada = true;
-            const _cl = clientaDeCita({cliente_id: previa?previa.cliente_id:null, telefono: payload.telefono});
-            if (estadoAnterior!=="completada" && nuevoEstado==="completada") {
-                await aplicarSelloFidelidad(_cl);
-            } else if (estadoAnterior==="completada" && nuevoEstado!=="completada") {
-                await quitarSelloFidelidad(_cl);
-            }
-            toast("Cita actualizada","success"); closeEditCita(); cargarDatosAdmin();
+            const result = await guardarCitaSalon(previa, payload);
+            resultadoSalon(result, 'Cita y tarjeta actualizadas');
+            closeEditCita();
+            await cargarDatosAdmin();
         } catch(e) {
-            toast(citaGuardada ? "La cita se guardó, pero sus sellos no se actualizaron. Revisa la tarjeta antes de ajustarla manualmente." : "Error al guardar", "error");
-            if (citaGuardada) { closeEditCita(); await cargarDatosAdmin(); }
+            toast(e.message || 'No se pudo guardar la cita', 'error');
         }
         finally { setBtnLoading("btnGuardarEdicion",false); }
     }
 
     // ── Clientas acciones ──────────────────────────────────
-    async function sumarVisita(id,actual) {
-        if (actual<10) { try { await checked(sb.from("clientas").update({visitas:actual+1}).eq("id",id).select('id').single()); if(actual+1===10) toast("¡Tarjeta completa!","success","Recompensa"); cargarDatosAdmin(); } catch(e){ toast("No se pudo añadir sello","error"); } }
-        else toast("Esta tarjeta ya está completa","info");
-    }
-    async function restarVisita(id,actual) {
-        if (actual>0) { try { await checked(sb.from("clientas").update({visitas:actual-1}).eq("id",id).select('id').single()); toast("Sello retirado","success"); cargarDatosAdmin(); } catch(e){ toast("No se pudo quitar sello","error"); } }
-        else toast("Esta tarjeta ya está a 0","info");
-    }
-    async function reiniciarVisitas(id) {
-        const ok=await askConfirm("Reiniciar tarjeta","Se pondrán los sellos a 0.");
-        if (!ok) return;
-        try { await checked(sb.from("clientas").update({visitas:0}).eq("id",id).select('id').single()); toast("Tarjeta reiniciada","success"); cargarDatosAdmin(); } catch(e){ toast("No se pudo reiniciar","error"); }
-    }
-    async function borrarCliente(id) {
-        const ok=await askConfirm("Eliminar clienta","Esta acción no se puede deshacer.");
-        if (!ok) return;
-        try { await checked(sb.from("clientas").delete().eq("id",id).select('id').single()); toast("Clienta eliminada","success"); cargarDatosAdmin(); } catch(e){ toast("No se pudo eliminar","error"); }
-    }
-    async function registrarNuevoCliente() {
-        const n=(document.getElementById("regNombre")?.value||"").trim();
-        const t=(document.getElementById("regTelef")?.value||"").trim();
-        if (!n||!t) return toast("Introduce nombre y teléfono","error");
-        setBtnLoading("btnRegistrar",true);
+    const tarjetasGuardando = new Set();
+    async function ajustarTarjeta(id, accion) {
+        if (tarjetasGuardando.has(id)) return;
+        const cliente = clientas.find(c => c.id === id);
+        if (!cliente) return;
+        tarjetasGuardando.add(id);
         try {
-            const { error }=await sb.from("clientas").insert([{nombre:n,telefono:t,visitas:0}]);
-            if (!error) { toast("Clienta registrada","success"); document.getElementById("regNombre").value=""; document.getElementById("regTelef").value=""; cargarDatosAdmin(); }
-            else toast("No se pudo registrar: "+error.message,"error");
-        } catch(e){ toast("Error de conexión","error"); }
-        finally{ setBtnLoading("btnRegistrar",false); }
+            if (accion === 'canjear' && !await askConfirm('Canjear regalo', 'Confirma que se ha entregado el diseño de regalo. La nueva tarjeta empezará con cero sellos.')) return;
+            if (accion === 'reiniciar' && !await askConfirm('Reiniciar tarjeta', 'Se pondrán los sellos a cero como ajuste manual. Esta acción no registra un regalo entregado.')) return;
+            const result = await operacionSalon('ajustar_sellos', { cliente_id: id, accion, antes: Number(cliente.visitas) || 0 });
+            resultadoSalon(result, accion === 'canjear' ? 'Regalo canjeado. Nueva tarjeta iniciada.' : 'Tarjeta actualizada');
+            await cargarDatosAdmin();
+        } catch (e) { toast(e.message || 'No se pudo actualizar la tarjeta', 'error'); }
+        finally { tarjetasGuardando.delete(id); }
+    }
+    async function sumarVisita(id) { return ajustarTarjeta(id, 'sumar'); }
+    async function restarVisita(id) { return ajustarTarjeta(id, 'restar'); }
+    async function reiniciarVisitas(id) { return ajustarTarjeta(id, 'reiniciar'); }
+    async function canjearRegalo(id) { return ajustarTarjeta(id, 'canjear'); }
+    async function borrarCliente(id) {
+        if (!await askConfirm('Eliminar clienta', 'Se eliminarán su perfil, citas y movimientos de sellos. Esta acción no se puede deshacer.')) return;
+        try {
+            await operacionSalon('eliminar_clienta', { cliente_id: id });
+            toast('Clienta eliminada', 'success');
+            await cargarDatosAdmin();
+        } catch (e) { toast(e.message || 'No se pudo eliminar la clienta', 'error'); }
     }
 
     // ── Días disponibles ───────────────────────────────────
@@ -3015,8 +2993,8 @@
         });
         // Opción "crear nueva"
         html += `<div class="nc-client-item new-client" data-new="1">
-            <span class="nc-cn"><i class="fa-solid fa-user-plus"></i>Crear nueva clienta "${escapeHTML(term)}"</span>
-            <span class="nc-cm">Registrar una clienta nueva y agendarle la cita</span>
+            <span class="nc-cn"><i class="fa-solid fa-user-plus"></i>Agendar para "${escapeHTML(term)}" sin cuenta</span>
+            <span class="nc-cm">Guardar nombre y teléfono en esta cita; sin tarjeta de sellos</span>
         </div>`;
         box.innerHTML = html;
         box.classList.add("show");
@@ -3069,24 +3047,12 @@
     }
 
     async function ncCrearYUsarCliente() {
-        const n = (document.getElementById("ncNewNombre").value||"").trim();
-        const t = (document.getElementById("ncNewTelef").value||"").trim();
-        if (!n || !t) return toast("Introduce nombre y teléfono","error");
-        setBtnLoading("btnNcCrear", true);
-        try {
-            const { data, error } = await sb.from("clientas")
-                .insert([{ nombre:n, telefono:t, visitas:0 }])
-                .select().single();
-            if (error) { toast("No se pudo crear: "+error.message,"error"); return; }
-            clientas.push(data);
-            toast("Clienta creada","success");
-            ncSetClient(data);
-            ncCancelNewClient();
-        } catch(e) {
-            toast("Error de conexión","error");
-        } finally {
-            setBtnLoading("btnNcCrear", false);
-        }
+        const nombre = document.getElementById('ncNewNombre').value.trim();
+        const telefono = document.getElementById('ncNewTelef').value.trim();
+        if (!nombre || !telefono) return toast('Introduce nombre y teléfono', 'error');
+        ncSetClient({ id: null, nombre, telefono });
+        ncCancelNewClient();
+        toast('Se guardará como cita sin cuenta ni tarjeta de sellos.', 'info');
     }
 
     function ncValidarSlot() {
@@ -3145,7 +3111,14 @@
         document.getElementById("nuevaCitaModal").classList.remove("show");
     }
 
+    let ncGuardando = false;
     async function guardarNuevaCita() {
+        if (ncGuardando) return;
+        ncGuardando = true;
+        try { await guardarNuevaCitaImpl(); }
+        finally { ncGuardando = false; }
+    }
+    async function guardarNuevaCitaImpl() {
         if (!ncSelectedClient) return toast("Selecciona una clienta primero","error");
         if (!ncSelectedServicio) return toast("Selecciona un servicio","error");
         const fecha = document.getElementById("ncFecha").value;
@@ -3168,7 +3141,7 @@
 
         const estado = document.getElementById("ncEstado").value || "confirmada";
 
-        let citaCreada = false;
+
         setBtnLoading("btnGuardarNuevaCita", true);
         try {
             const ncServicioFinal = ncSelectedExtras.length
@@ -3176,7 +3149,7 @@
                 : ncSelectedServicio;
             const ncDuracionFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
             const ncPrecioFinal = ncSelectedPrecio + ncSelectedExtras.reduce((s, e) => s + e.precio, 0);
-            const { data, error } = await sb.from("citas").insert([{
+            const result = await guardarCitaSalon(null, {
                 cliente_id: ncSelectedClient.id,
                 nombre_cliente: ncSelectedClient.nombre,
                 telefono: ncSelectedClient.telefono,
@@ -3186,19 +3159,12 @@
                 fecha,
                 hora: horaStr,
                 estado
-            }]).select().single();
-            if (error) { toast("No se pudo agendar: "+error.message,"error"); return; }
-            citaCreada = true;
-            // Si la cita queda como completada, sumar sello (lógica centralizada)
-            if (estado === "completada") {
-                await aplicarSelloFidelidad(ncSelectedClient);
-            }
-            toast("Cita agendada","success");
+            });
+            resultadoSalon(result, 'Cita agendada y tarjeta actualizada');
             cerrarNuevaCita();
             await cargarDatosAdmin();
         } catch(e) {
-            toast(citaCreada ? "La cita se creó, pero no se pudo añadir el sello. Revisa la tarjeta; no es necesario volver a crear la cita." : "Error: " + (e.message || ""), "error");
-            if (citaCreada) { cerrarNuevaCita(); await cargarDatosAdmin(); }
+            toast(e.message || 'No se pudo agendar la cita', 'error');
         } finally {
             setBtnLoading("btnGuardarNuevaCita", false);
         }

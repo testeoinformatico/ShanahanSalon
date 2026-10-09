@@ -16,7 +16,8 @@ const profile = { id: 'client-test', nombre: 'Clienta', telefono: '000000000', v
 const settle = () => new Promise(resolve => setTimeout(resolve, 25));
 
 async function fixture(options = {}) {
-    const errors = [], writes = [];
+    const errors = [], writes = [], operations = [];
+    const activeProfile = { ...profile, ...options.profile };
     const console = new VirtualConsole();
     console.on('jsdomError', error => errors.push(error.message));
     const dom = new JSDOM(html, { url: 'https://example.test/' + (options.hash || ''), runScripts: 'outside-only', pretendToBeVisual: true, virtualConsole: console });
@@ -52,21 +53,28 @@ async function fixture(options = {}) {
                     if (mutation) writes.push({ table, mutation, payload });
                     const error = table === 'dias_disponibles' && options.failAvailability ? { message: 'offline' }
                         : mutation && options.failWrites ? { message: 'write rejected' } : null;
-                    const data = table === 'servicios' ? services : table === 'clientas' ? (single ? profile : [profile])
-                        : table === 'admins' ? (single ? null : []) : mutation ? { id: 1 } : [];
+                    const data = table === 'servicios' ? services : table === 'clientas' ? (single ? activeProfile : [activeProfile])
+                        : table === 'admins' ? (single ? (options.admin ? {id:profile.id} : null) : [])
+                        : table === 'citas' && !mutation ? (options.appointments || []) : mutation ? { id: 1 } : [];
                     return Promise.resolve({ data, error }).then(resolve, reject);
                 }
             };
             return query;
         },
-        rpc: async () => ({ data: [], error: options.failOccupancy ? { message: 'offline' } : null }),
+        rpc: async (name,args) => {
+            if (name === 'salon_operar') {
+                operations.push(args);
+                return options.operation ? options.operation(args,operations.length) : {data:{id:1,visitas:1},error:null};
+            }
+            return { data: [], error: options.failOccupancy ? { message: 'offline' } : null };
+        },
         storage: { from: () => ({ list: async () => ({ data: [], error: null }) }) }
     };
     w.supabase = { createClient: () => client };
     w.eval(core);
     w.eval(app);
     await settle();
-    return { w, dom, errors, writes, client };
+    return { w, dom, errors, writes, client, operations };
 }
 
 test('app initializes without WebGL, renders catalog, and supports direct URLs', async t => {
@@ -151,4 +159,66 @@ test('failed occupancy lookup leaves all time slots unavailable', async t => {
     f.w.selSrvAcc('Manicura · Color', 75, 25, 'Manicura', f.w.document.querySelector('#servicioGrid .servicio-opcion'));
     assert.equal(f.w.document.querySelectorAll('.time-slot:not([disabled])').length, 0);
     assert.deepEqual(f.writes, []);
+});
+
+const exampleAppointment = {id:42,cliente_id:profile.id,nombre_cliente:'Clienta',telefono:'000000000',
+    fecha:'2030-01-01',hora:'09:00:00',duracion_minutos:75,precio:25,servicio:'Manicura · Color',estado:'confirmada'};
+
+test('admin completion sends one atomic operation for double clicks and never writes stamps directly', async t => {
+    const f=await fixture({admin:true,session:true,appointments:[exampleAppointment]}); t.after(()=>f.dom.window.close());
+    await f.w.cargarDatosAdmin();
+    await Promise.all([f.w.completarCita(42),f.w.completarCita(42)]);
+    assert.equal(f.operations.length,1);
+    assert.equal(f.operations[0].p_tipo,'guardar_cita');
+    assert.equal(f.operations[0].p_datos.antes.id,42);
+    assert.equal(f.operations[0].p_datos.cita.estado,'completada');
+    assert.deepEqual(f.writes,[]);
+});
+
+test('lost network response keeps the same idempotency key on retry', async t => {
+    const f=await fixture({operation:async(args,n)=> n===1 ? {error:{message:'Failed to fetch'}} : {data:{id:42},error:null}});
+    t.after(()=>f.dom.window.close());
+    const request={id:42,cita:{estado:'completada'}};
+    await assert.rejects(f.w.operacionSalon('guardar_cita',request));
+    await f.w.operacionSalon('guardar_cita',request);
+    assert.equal(f.operations.length,2);
+    assert.equal(f.operations[0].p_operacion,f.operations[1].p_operacion);
+    assert.deepEqual(f.writes,[]);
+});
+
+test('ambiguous legacy reversal asks before preserving the card', async t => {
+    const f=await fixture({operation:async(args,n)=>n===1 ? {error:{hint:'CONFIRMAR_SIN_SELLO',message:'Revisar tarjeta antigua'}} : {data:{id:42},error:null}});
+    t.after(()=>f.dom.window.close());
+    const pending=f.w.operacionSalon('eliminar_cita',{id:42});
+    await settle();
+    assert.match(f.w.document.getElementById('confirmMsg').textContent,/tarjeta antigua/);
+    assert.equal(f.operations.length,1);
+    f.w.closeConfirm(true);
+    await pending;
+    assert.equal(f.operations[1].p_datos.conservar_sellos,true);
+    assert.deepEqual(f.writes,[]);
+});
+
+test('full card shows redemption and requires confirmation', async t => {
+    const f=await fixture({admin:true,session:true,profile:{visitas:10}}); t.after(()=>f.dom.window.close());
+    await f.w.cargarDatosAdmin();
+    assert.match(f.w.document.body.textContent,/Canjear regalo/);
+    const pending=f.w.canjearRegalo(profile.id);
+    await settle();
+    assert.equal(f.operations.length,0);
+    f.w.closeConfirm(true);
+    await pending;
+    assert.equal(f.operations[0].p_tipo,'ajustar_sellos');
+    assert.equal(f.operations[0].p_datos.accion,'canjear');
+    assert.equal(f.operations[0].p_datos.antes,10);
+    assert.deepEqual(f.writes,[]);
+});
+
+test('manual guest selection creates no invalid Auth profile',async t=>{
+    const f=await fixture(); t.after(()=>f.dom.window.close());
+    f.w.document.getElementById('ncNewNombre').value='Invitada';
+    f.w.document.getElementById('ncNewTelef').value='000000001';
+    await f.w.ncCrearYUsarCliente();
+    assert.equal(f.w.document.getElementById('ncScName').textContent,'Invitada');
+    assert.deepEqual(f.writes,[]);
 });

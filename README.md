@@ -8,11 +8,12 @@ Web estática del salón, publicada con Vercel y conectada a Supabase.
 - `assets/styles.css`: estilos y adaptación a móvil.
 - `assets/app.js`: navegación, sesión, catálogo, reservas y administración.
 - `assets/core.js`: reglas compartidas de precios, horarios, suplementos y representación segura de reseñas.
-- `tests/`: pruebas de las reglas y los flujos con una base de datos simulada.
+- `tests/`: pruebas de interfaz con Supabase simulado y pruebas SQL en PostgreSQL local (PGlite).
+- `docs/fidelidad-migration.sql`: migración de fidelidad; no se incluye en la web publicada.
 - `scripts/serve.cjs`: servidor local, limitado a localhost.
 - `vercel.json`: publicación de archivos estáticos y ruta de entrada.
 
-La aplicación no necesita compilación. Las dependencias npm son exclusivamente para desarrollo y pruebas; el navegador carga Bootstrap, Supabase y Lottie desde sus CDN.
+`npm run build` copia los archivos públicos a `dist`; Vercel publica esa carpeta. SQL, documentación y pruebas quedan fuera. Las dependencias npm se usan para desarrollo y pruebas; el navegador carga Bootstrap, Supabase y Lottie desde sus CDN.
 
 ## Desarrollo y verificación
 
@@ -35,13 +36,16 @@ Rutas compartibles: `#inicio`, `#precios`, `#resenas`, `#reservar`, `#registro`,
 - El suplemento de retirada usa precio y duración del catálogo `servicios`. No se suma dos veces si ya forma parte de la selección.
 - Solo se muestran horarios tras cargar correctamente bloqueos y ocupación; se vuelven a consultar antes de enviar.
 - La fidelización comunica 20 % de descuento al llegar a cinco sellos y un diseño de regalo al completar diez.
-- Las escrituras comprueban el error de Supabase. Completar una cita protege contra doble clic y compara el estado previo; las actualizaciones de sellos comparan su valor anterior.
+- La tarjeta se mantiene en diez sellos hasta pulsar **Canjear regalo** y confirmar la entrega. El canje queda registrado y la tarjeta empieza en cero.
+- Crear, editar, completar o eliminar citas y ajustar tarjetas usa `salon_operar`: una transacción, registro de movimientos, comparación de datos previos y clave de reintento. No se suman sellos por separado desde el navegador.
+- Una reversión de una cita histórica o anterior a un canje/ajuste requiere confirmar que se conservan los sellos actuales para revisarlos por separado. No se reconstruyen movimientos anteriores a la migración.
+- Las citas manuales sin cuenta conservan nombre y teléfono, pero no crean perfiles inválidos ni asignan sellos por coincidencia de teléfono.
 
 ## Supabase: límite de esta revisión
 
-El repositorio no incluye el esquema, las políticas RLS, los disparadores ni las funciones SQL de producción. No se han cambiado desde esta revisión.
+Se recibió un diagnóstico del esquema y las funciones de producción. La restricción de exclusión de horarios ya se aplicó en Supabase, conservando una excepción exacta para la cita histórica 33. El usuario confirmó la instalación de la migración de fidelidad y `salon_fidelidad_version()` devuelve `1` en el servidor.
 
-La comprobación de horarios del navegador **no garantiza exclusión entre dos reservas simultáneas**. Actualizar una cita y sus sellos continúa requiriendo dos peticiones; debe pasar a una transacción de servidor para garantizar consistencia. Antes de publicar, revisar `docs/supabase-review.md`.
+En una instalación nueva, aplicar la migración de fidelidad antes de desplegar esta versión. Las pestañas antiguas deben recargarse: el servidor impide cambios de sellos y transiciones de cita que eludan la operación atómica. Para el alcance de la revisión y los puntos no auditados, consultar `docs/supabase-review.md`.
 
 Las cuentas y contraseñas del salón se gestionan mediante Supabase Auth. Se ha eliminado el código antiguo sin interfaz que escribía contraseñas en `admins`. La sección antes llamada «Usuarios» realmente contiene el correo de notificaciones y ahora se llama «Notificaciones».
 

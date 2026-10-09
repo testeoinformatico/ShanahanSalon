@@ -1,54 +1,37 @@
-# Comprobaciones de servidor pendientes antes de publicar
+# Estado del servidor y alcance de la revisión
 
-El diagnóstico facilitado el 9 de octubre de 2026 confirma columnas, políticas, restricciones y nombres de funciones/disparadores. No incluye los cuerpos de las funciones. No se ha aplicado una migración en Supabase.
+## Cambios confirmados en Supabase
 
-## Hallazgos confirmados y corrección preparada
+El usuario aplicó las restricciones de duración positiva y exclusión de horarios. Se conserva una excepción exacta para la cita histórica 33, completada el 18 de junio de 2026 a las 18:30 con 160 minutos. Las citas 32 y 33 no se borraron ni se alteraron. Cambiar los campos de la excepción vuelve a incluir la cita en la restricción; el disparador comprueba nuevas reservas contra ambas.
 
-- `Resenas lectura publica` usa `USING (true)`, por lo que también permite leer reseñas ocultas. El filtro de la web no sustituye esta política.
-- `Resenas insert clientas` comprueba que exista el perfil del usuario, pero no vincula el `cliente_id` insertado con su sesión.
-- Se ha preparado la siguiente corrección. Una prueba local con PostgreSQL/PGlite y las políticas exportadas reprodujo ambos fallos y verificó lecturas públicas, inserciones propias, rechazo de identificadores ajenos/nulos y conservación de la moderación administrativa. Repetir la corrección también se verificó. La prueba no ejecuta las funciones de producción ni sustituye una comprobación posterior en Supabase.
+El usuario también ejecutó `docs/fidelidad-migration.sql` y confirmó «Fidelidad atomica instalada». Una consulta a `salon_fidelidad_version()` en el servidor devolvió `1`.
 
-```sql
-BEGIN;
-SET LOCAL lock_timeout = '5s';
-ALTER POLICY "Resenas lectura publica" ON public.resenas
-USING (destacada IS TRUE);
-ALTER POLICY "Resenas insert clientas" ON public.resenas TO authenticated
-WITH CHECK (
-  cliente_id = auth.uid()
-  AND EXISTS (SELECT 1 FROM public.clientas AS c WHERE c.id = auth.uid())
-);
-COMMIT;
-```
+- `salon_operar` autoriza al administrador, serializa operaciones, bloquea filas y registra el resultado por UUID de reintento. Actualizar una cita y su tarjeta forma una sola transacción.
+- Los disparadores impiden cambios de sellos y transiciones de finalización por separado desde pestañas antiguas; deben recargarse tras publicar.
+- Según la preferencia expresa del usuario, los diez sellos se conservan hasta pulsar «Canjear regalo». La tarjeta nueva empieza en cero y el canje queda registrado.
+- Los movimientos vinculan citas por `cliente_id`, sin buscar teléfonos. Las citas manuales sin cuenta no modifican tarjetas.
+- No se infieren sellos de citas históricas. Revertir una cita sin movimiento conocido, o anterior a un ajuste/canje posterior, requiere confirmar que se conserva el saldo para revisión manual. Cancelar la confirmación revierte toda la operación.
+- La migración corrige las políticas de reseñas: la lectura pública requiere `destacada IS TRUE` y la inserción de clientas exige que `cliente_id` coincida con `auth.uid()`.
 
-`admins` solo contiene `id`, asociado a `auth.users`; no hay columnas de contraseñas heredadas. Todas las tablas exportadas tienen RLS activa: los permisos de tabla concedidos a `anon` no implican por sí solos acceso a todas las filas.
+## Esquema comprobado
 
-La segunda exportación confirma que `check_cita_overlap` consulta con `EXISTS` sin una restricción de exclusión: dos transacciones concurrentes pueden pasar la comprobación. Usa horas sin fecha para calcular los intervalos. `citas_guard` solo protege el estado y `clientas_guard` protege las visitas; no validan precios, duraciones de catálogo ni bloqueos de agenda. La política UPDATE de clientas permite modificar los demás campos de una cita propia, aunque la interfaz solicita esos cambios por WhatsApp.
+`admins` solo contiene `id`, asociado a `auth.users`; no hay columnas de contraseñas heredadas. Todas las tablas exportadas tenían RLS activa. Los permisos concedidos a `anon` no implican por sí solos acceso a todas las filas.
 
-Se ha preparado, sin aplicar al servidor, `03-proteger-reservas.sql`: añade una restricción GiST de exclusión sobre intervalos de fecha y hora (canceladas excluidas), valida duraciones positivas, actualiza el aviso del disparador con los mismos intervalos, fija el esquema de `is_admin` y desactiva la política de edición directa de clientas. La política administrativa se conserva. Una duración nula mantiene el valor histórico de 30 minutos. El script falla y revierte si los datos existentes incumplen las restricciones; no elimina reservas. Usa la agenda única que ya asumen el esquema y la web.
+`clientas.usuario` es obligatorio y `clientas.id` referencia Auth. La web ya no intenta crear un perfil únicamente con nombre/teléfono: permite agendar una cita sin cuenta y explica que carece de tarjeta de fidelidad.
 
-Las pruebas locales en PostgreSQL/PGlite comprobaron intervalos contiguos y solapados, cambios de día, cancelaciones, rechazo por la restricción incluso desactivando el disparador, permisos de clienta y administrador, repetición y reversión con datos incompatibles. PGlite no simula transacciones simultáneas entre conexiones; tampoco se probaron los disparadores de correo reales. El frontend reconoce el código `23P01` para mostrar el aviso de horario ocupado.
+`sumar_sello_al_completar` existe pero no aparece conectado a un disparador. No se activa; la migración rechaza su instalación si detecta esa función conectada, para impedir un doble cómputo.
 
-### Conflicto historico detectado al aplicar la restriccion
+## Validación y límites
 
-El usuario intento ejecutar el script y la restriccion no pudo crearse: las citas completadas 32 (2026-06-18, 17:30, 135 minutos) y 33 (2026-06-18, 18:30, 160 minutos) ya se solapan. La consulta de todos los solapamientos devolvio solo ese par. No se ha solicitado cancelar, borrar ni alterar estas citas.
+Las pruebas locales de PostgreSQL/PGlite verifican permisos, intervalos, reintentos, canjes, reversiones, datos antiguos y reversión completa ante un fallo de escritura. Las pruebas de interfaz comprueban el doble clic, la reutilización de la clave tras un fallo de red y las confirmaciones. No se crearon reservas ni cuentas de prueba en producción.
 
-Se preparo `04-proteger-reservas-con-historial.sql` para sustituir el anterior. La restriccion exceptua solo la fila `id=33 AND estado IS NOT DISTINCT FROM 'completada' AND fecha=DATE '2026-06-18' AND hora=TIME '18:30' AND duracion_minutos IS NOT DISTINCT FROM 160`. Un cambio de esos campos vuelve a incluirla automaticamente; las demas citas completadas siguen protegidas. El disparador sigue comprobando nuevas reservas contra todas las citas no canceladas, incluida la 33. Permite actualizar otros campos sin volver a rechazar el solapamiento historico cuando id, fecha, hora, duracion y estado no cambian.
+PGlite no reproduce contención entre varias conexiones ni todos los disparadores de producción. La concurrencia administrativa se serializa con un bloqueo asesor transaccional, y los solapamientos se protegen mediante la restricción de exclusión.
 
-Las pruebas locales reprodujeron exactamente ese par y verificaron que la migracion conserva todas las filas sin cambios, se puede repetir y permite corregir el precio de ambas. Tambien rechazaron nuevas reservas sobre la cita 33, cambios conflictivos de horario/estado/duracion y valores nulos que pudieran ampliar la excepcion. La restriccion se probo por separado del disparador. Su aplicacion en Supabase sigue sin confirmar. Esta excepcion es especifica de los datos diagnosticados en este proyecto y no debe reutilizarse sin revision en otra base.
+Quedan fuera de esta revisión:
 
-`sumar_sello_al_completar` no aparece conectado a un disparador, suma por teléfono y limita a 10, mientras la web suma por separado y reinicia la tarjeta al canjear. No se ha activado: provocaría un doble cómputo o errores con la web actual. La fidelización atómica requiere una migración coordinada con el frontend y un registro de movimientos/reversiones; sigue pendiente.
+- Las funciones de correo y recuperación, incluidos permisos y límites de intentos. Las pruebas no envían correos reales.
+- La validación completa de catálogo, precios y bloqueos de días/meses/horas en las reservas públicas: parte sigue en el navegador. La restricción del servidor protege los solapamientos y las duraciones no positivas.
+- La reconstrucción de sellos anteriores a la migración y la asociación de citas históricas sin `cliente_id`.
+- Una prueba administrativa de extremo a extremo con cuentas de ensayo en producción.
 
-`clientas.usuario` es obligatorio y `clientas.id` referencia Auth. La creación manual de perfiles desde el administrador debe revisarse frente a estas restricciones antes de publicarse.
-
-## Pendiente antes de publicar
-
-1. Aplicar y comprobar los scripts preparados en el servidor. Se recibieron las funciones de reservas, perfiles y fidelización; faltan las definiciones completas de los disparadores (eventos y momento de ejecución). Las funciones de correo y recuperación necesitan una revisión separada que no exponga secretos incrustados.
-2. Comprobar que perfiles y citas de una clienta solo sean accesibles por su `auth.uid()`, que solo el personal pueda administrar tablas y Storage, y que las lecturas públicas se limiten a catálogo, reseñas publicadas y disponibilidad sin datos personales. Verificar las funciones de recuperación y sus permisos/límites de intentos.
-3. Comprobar una restricción o transacción que rechace intervalos de cita solapados, incluidos envíos simultáneos. No basta con ejecutar `horas_ocupadas` y luego insertar desde el navegador. Revisar citas canceladas y bloques de días/meses/horas.
-4. Sustituir completar/editar/crear/eliminar citas y ajustar sellos por operaciones atómicas e idempotentes. Bloquear las filas afectadas; guardar el movimiento de sellos y el canje de premios para poder revertir una cita sin perder el historial. La comparación de valores en el cliente reduce conflictos, pero no reemplaza esta transacción.
-5. Verificar el acceso con una cuenta administrativa de ensayo. La relación de `admins.id` con Auth ya está confirmada por la clave foránea; el frontend ya no usa los campos heredados inexistentes.
-6. Verificar las asociaciones `citas.cliente_id`, incluidas citas antiguas o creadas manualmente. El área de clientas consulta por ese identificador; las filas históricas sin relación deben vincularse de forma controlada, no por un teléfono ambiguo en el navegador.
-7. Realizar pruebas con cuentas de ensayo autorizadas: registro/OTP, recuperación, restauración de sesión, reserva simultánea, completar cita una vez, fallo durante fidelización y cambio/reversión de estado. Las pruebas locales usan datos simulados y no sustituyen esta verificación.
-
-No se debe fusionar la rama como si fuese una auditoría completa de Supabase. Los cambios de frontend no afirman corregir permisos o transacciones del servidor.
+La revisión corrige los problemas descritos y no constituye una auditoría completa de Supabase.
