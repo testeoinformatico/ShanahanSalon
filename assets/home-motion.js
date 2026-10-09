@@ -15,6 +15,8 @@
     const clamp = value => Math.max(0, Math.min(1, value));
     let active = false, frame = 0, position = 0, target = 0, previousTime = 0;
     let sourcesKey = '', generation = 0;
+    let needsMeasure = true, needsSnap = false, geometryDirty = true;
+    let stickyTop = 0, travel = 1;
 
     function stop() {
         cancelAnimationFrame(frame);
@@ -37,6 +39,19 @@
     function tick(now) {
         frame = 0;
         if (!canAnimate()) return;
+        // Todas las lecturas preceden a las escrituras, una vez por fotograma.
+        // Los fotogramas de amortiguación no vuelven a medir el documento.
+        if (needsMeasure) {
+            const rect = track.getBoundingClientRect();
+            if (geometryDirty) {
+                stickyTop = parseFloat(getComputedStyle(stage).top) || 0;
+                travel = Math.max(1, rect.height - stage.clientHeight);
+                geometryDirty = false;
+            }
+            target = clamp((stickyTop - rect.top) / travel);
+            needsMeasure = false;
+        }
+        if (needsSnap) { position = target; needsSnap = false; }
         const dt = Math.min(64, previousTime ? now - previousTime : 16);
         previousTime = now;
         position += (target - position) * (1 - Math.exp(-dt / 110));
@@ -45,12 +60,10 @@
         if (position !== target) frame = requestAnimationFrame(tick);
         else previousTime = 0;
     }
-    function measure(snap = false) {
+    function schedule(snap = false) {
         if (!canAnimate()) { stop(); return; }
-        const rect = track.getBoundingClientRect();
-        const top = parseFloat(getComputedStyle(stage).top) || 0;
-        target = clamp((top - rect.top) / Math.max(1, rect.height - stage.clientHeight));
-        if (snap) { position = target; paint(); }
+        needsMeasure = true;
+        needsSnap = needsSnap || snap;
         if (!frame) frame = requestAnimationFrame(tick);
     }
     function configure() {
@@ -64,7 +77,8 @@
             heading.style.removeProperty('opacity');
             heading.style.removeProperty('transform');
         }
-        measure(true);
+        geometryDirty = true;
+        schedule(true);
     }
 
     // Usa la galería existente; una foto eliminada también desaparece del efecto.
@@ -96,15 +110,15 @@
     if (supportsMotion) {
         new IntersectionObserver(entries => {
             active = entries[0].isIntersecting;
-            if (active) measure(true); else stop();
+            if (active) { geometryDirty = true; schedule(true); } else stop();
         }, { rootMargin: '120px' }).observe(track);
     }
     new MutationObserver(() => {
-        if (document.body.classList.contains('en-inicio')) measure(true); else stop();
+        if (document.body.classList.contains('en-inicio')) { geometryDirty = true; schedule(true); } else stop();
     }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('scroll', () => measure(), { passive: true });
+    window.addEventListener('scroll', () => schedule(), { passive: true });
     window.addEventListener('resize', configure, { passive: true });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else measure(true); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else schedule(true); });
     reduced.addEventListener('change', configure);
     configure();
     syncPhotos();
