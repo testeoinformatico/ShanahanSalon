@@ -29,6 +29,14 @@ Se ha preparado, sin aplicar al servidor, `03-proteger-reservas.sql`: añade una
 
 Las pruebas locales en PostgreSQL/PGlite comprobaron intervalos contiguos y solapados, cambios de día, cancelaciones, rechazo por la restricción incluso desactivando el disparador, permisos de clienta y administrador, repetición y reversión con datos incompatibles. PGlite no simula transacciones simultáneas entre conexiones; tampoco se probaron los disparadores de correo reales. El frontend reconoce el código `23P01` para mostrar el aviso de horario ocupado.
 
+### Conflicto historico detectado al aplicar la restriccion
+
+El usuario intento ejecutar el script y la restriccion no pudo crearse: las citas completadas 32 (2026-06-18, 17:30, 135 minutos) y 33 (2026-06-18, 18:30, 160 minutos) ya se solapan. La consulta de todos los solapamientos devolvio solo ese par. No se ha solicitado cancelar, borrar ni alterar estas citas.
+
+Se preparo `04-proteger-reservas-con-historial.sql` para sustituir el anterior. La restriccion exceptua solo la fila `id=33 AND estado IS NOT DISTINCT FROM 'completada' AND fecha=DATE '2026-06-18' AND hora=TIME '18:30' AND duracion_minutos IS NOT DISTINCT FROM 160`. Un cambio de esos campos vuelve a incluirla automaticamente; las demas citas completadas siguen protegidas. El disparador sigue comprobando nuevas reservas contra todas las citas no canceladas, incluida la 33. Permite actualizar otros campos sin volver a rechazar el solapamiento historico cuando id, fecha, hora, duracion y estado no cambian.
+
+Las pruebas locales reprodujeron exactamente ese par y verificaron que la migracion conserva todas las filas sin cambios, se puede repetir y permite corregir el precio de ambas. Tambien rechazaron nuevas reservas sobre la cita 33, cambios conflictivos de horario/estado/duracion y valores nulos que pudieran ampliar la excepcion. La restriccion se probo por separado del disparador. Su aplicacion en Supabase sigue sin confirmar. Esta excepcion es especifica de los datos diagnosticados en este proyecto y no debe reutilizarse sin revision en otra base.
+
 `sumar_sello_al_completar` no aparece conectado a un disparador, suma por teléfono y limita a 10, mientras la web suma por separado y reinicia la tarjeta al canjear. No se ha activado: provocaría un doble cómputo o errores con la web actual. La fidelización atómica requiere una migración coordinada con el frontend y un registro de movimientos/reversiones; sigue pendiente.
 
 `clientas.usuario` es obligatorio y `clientas.id` referencia Auth. La creación manual de perfiles desde el administrador debe revisarse frente a estas restricciones antes de publicarse.
