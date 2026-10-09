@@ -28,6 +28,7 @@
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
     <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/home.css">
 
 
 </head>
@@ -163,8 +164,6 @@
                         Se desplaza con la página, sin animación de scroll ===== -->
             <div class="col-12 panel-seccion hero-seccion">
                 <img class="hero-video" id="heroImagen" src="hero-imagen.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
-                <!-- Persiana dorada: las barras engordan al bajar hasta tapar el vídeo -->
-                <div class="hero-persiana" id="heroPersiana" aria-hidden="true"></div>
                 <div class="hero-home">
                     <div class="hero-chip"><span class="hero-chip-dot"></span>Estudio Shanahan Nails · Gran Canaria</div>
                     <h1 class="hero-headline">
@@ -250,15 +249,9 @@
             <div class="col-12 panel-seccion panel-nude" id="sobreMi">
               <div class="row justify-content-center">
                 <div class="col-12 col-md-10 col-lg-9">
-                <!-- ===== SCROLL INMERSIVO: la sección se clava mientras los
-                          trabajos desfilan detrás a distintas velocidades ===== -->
+                <!-- Sobre mí: contenido en flujo vertical, sin secciones fijadas. -->
                 <div class="inmersivo" id="inmersivoSobreMi">
                   <div class="inmersivo-pantalla">
-                    <div class="inm-fondo" aria-hidden="true">
-                        <div class="inm-col" data-vel="1"></div>
-                        <div class="inm-col" data-vel="1.6"></div>
-                        <div class="inm-col" data-vel="0.65"></div>
-                    </div>
                     <div class="inmersivo-contenido">
                         <div class="brand-container">
                             <div class="brand-ornament"><span>Sobre mí</span></div>
@@ -281,8 +274,7 @@
                   </div>
                 </div>
 
-                <!-- ===== TRABAJOS INMERSIVOS: las fotos entran una a una
-                          y al final la invitación a visitar el estudio ===== -->
+                <!-- Galería y acceso a reservas. -->
                 <div class="inmersivo inmersivo-trabajos" id="inmersivoTrabajos">
                   <div class="inmersivo-pantalla">
                     <div class="inmersivo-contenido">
@@ -310,7 +302,7 @@
               </div>
             </div>
 
-            <!-- ===== DÓNDE ESTAMOS: al bajar, el contenido viaja de lado ===== -->
+            <!-- Dirección y disponibilidad en el mismo flujo de lectura. -->
             <div class="col-12 panel-seccion panel-lateral" id="dondeEstamos">
               <div class="lateral-pista" id="lateralPista">
                 <div class="lateral-pantalla">
@@ -324,7 +316,6 @@
                                 <span class="lat-h-serif">Dónde</span>
                                 <span class="lat-h-sans">nos encontramos.</span>
                             </p>
-                            <p class="lat-pista-txt"><i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i> Sigue bajando</p>
                         </div>
                     </section>
 
@@ -373,9 +364,6 @@
                         </div>
                     </section>
 
-                  </div>
-                  <div class="lateral-puntos" id="lateralPuntos" aria-hidden="true">
-                      <span></span><span></span><span></span><span></span>
                   </div>
                 </div>
               </div>
