@@ -1,10 +1,10 @@
-/* Fondo decorativo: resolución limitada, 24 fps y pausa durante el scroll. */
+/* Fondo decorativo: hasta 60 fps, resolución adaptativa y pausa durante el scroll. */
 (() => {
     'use strict';
     const canvas = document.getElementById('liquidBackground');
     if (!canvas) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    const MAX_PIXELS = 360000, MAX_RIPPLES = 8, FRAME_MS = 1000 / 24;
+    const MAX_PIXELS = 240000, MIN_PIXELS = 120000, MAX_RIPPLES = 8, FRAME_MS = 1000 / 60;
     const vertexSource = 'attribute vec2 a_pos; void main(){gl_Position=vec4(a_pos,0.0,1.0);}';
     const fragmentSource = `
     precision highp float;
@@ -123,7 +123,8 @@
     }
     `;
     let gl = null, program = null, uniforms = null, failed = false, lost = false;
-    let timer = 0, frame = 0, resumeTimer = 0, scrolling = false, previous = 0, elapsed = 0;
+    let frame = 0, resumeTimer = 0, scrolling = false, previous = null, elapsed = 0;
+    let nextDraw = 0, lastFrame = null, sampleTime = 0, sampleCount = 0, pixelBudget = MAX_PIXELS;
     let width = 1, height = 1, scale = 1, needsResize = true, pendingPointer = null, lastRipple = -Infinity;
     const ripples = [];
     const rippleData = new Float32Array(MAX_RIPPLES * 3);
@@ -135,8 +136,9 @@
             !document.body.classList.contains('menu-open');
     }
     function pause() {
-        clearTimeout(timer); cancelAnimationFrame(frame);
-        timer = frame = 0; previous = 0;
+        cancelAnimationFrame(frame);
+        frame = 0; previous = lastFrame = null; nextDraw = 0;
+        sampleTime = sampleCount = 0;
     }
     function initialize() {
         if (gl && program) return true;
@@ -171,7 +173,7 @@
     }
     function resize() {
         width = Math.max(1, innerWidth); height = Math.max(1, innerHeight);
-        scale = Math.min(.75, Math.sqrt(MAX_PIXELS / (width * height)));
+        scale = Math.min(.75, Math.sqrt(pixelBudget / (width * height)));
         const w = Math.max(1, Math.floor(width * scale)), h = Math.max(1, Math.floor(height * scale));
         if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
         gl.viewport(0, 0, w, h);
@@ -179,16 +181,29 @@
         needsResize = false;
     }
     function queue() {
-        if (!timer && !frame && eligible() && !scrolling) {
-            timer = setTimeout(() => { timer = 0; frame = requestAnimationFrame(draw); }, FRAME_MS);
-        }
+        if (!frame && eligible() && !scrolling) frame = requestAnimationFrame(draw);
     }
     function draw(now) {
         frame = 0;
         if (!eligible() || scrolling) { pause(); return; }
+        // El reloj de pantalla evita sumar un temporizador entre fotogramas.
+        // Si el dispositivo no mantiene el ritmo, reducir píxeles antes que fluidez.
+        if (lastFrame !== null) {
+            sampleTime += Math.min(100, now - lastFrame);
+            if (++sampleCount >= 30) {
+                if (sampleTime / sampleCount > 22 && pixelBudget > MIN_PIXELS) {
+                    pixelBudget = Math.max(MIN_PIXELS, Math.floor(pixelBudget * .8));
+                    needsResize = true;
+                }
+                sampleTime = sampleCount = 0;
+            }
+        }
+        lastFrame = now;
+        if (now + 1 < nextDraw) { queue(); return; }
+        nextDraw = Math.max(nextDraw + FRAME_MS, now);
         if (!initialize()) return;
         if (needsResize) resize();
-        if (previous) elapsed += Math.min(100, now - previous);
+        if (previous !== null) elapsed += Math.min(100, now - previous);
         previous = now;
         if (pendingPointer && now - lastRipple >= 180) {
             ripples.push({ ...pendingPointer, born: elapsed });
@@ -202,7 +217,7 @@
             rippleData[i * 3 + 1] = (1 - r.y) * canvas.height;
             rippleData[i * 3 + 2] = (elapsed - r.born) / 1000;
         });
-        gl.uniform1f(uniforms.time, elapsed / 3500);
+        gl.uniform1f(uniforms.time, elapsed / 2400);
         gl.uniform3fv(uniforms.ripples, rippleData);
         gl.uniform1i(uniforms.rippleCount, ripples.length);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -214,7 +229,7 @@
             pause(); clearTimeout(resumeTimer); resumeTimer = 0; scrolling = false;
             canvas.hidden = true; pendingPointer = null;
             canvas.dataset.state = failed ? 'fallback' : 'paused';
-        } else if (!scrolling && !timer && !frame) frame = requestAnimationFrame(draw);
+        } else if (!scrolling && !frame) queue();
     }
     function pointer(event) {
         if (!eligible() || scrolling || !program) return;
