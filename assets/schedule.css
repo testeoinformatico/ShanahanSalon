@@ -1,0 +1,23 @@
+.schedule-editor { margin-bottom: 24px; }
+.schedule-editor h5 { font: 36px/1.1 'Instrument Serif', serif; }
+.schedule-editor h6 { font: 28px/1.2 'Instrument Serif', serif; margin: 30px 0 12px; }
+.schedule-editor p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.schedule-status { padding: 12px; background: var(--cream); border-radius: 8px; }
+.schedule-day { border-top: 1px solid var(--line); padding: 18px 0; }
+.schedule-day-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.schedule-range { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; align-items: end; gap: 12px; margin-bottom: 10px; }
+.schedule-editor label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; min-width: 0; }
+.schedule-editor input, .schedule-editor select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--line); background: #fff; color: var(--burgundy); padding: 8px; border-radius: 6px; font: 16px 'Barlow',sans-serif; }
+.schedule-editor .btn-ghost { min-height: 44px; margin: 0; padding: 8px 12px; font-size: 11px; }
+.schedule-closed { display: block; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.schedule-step { max-width: 240px; margin-bottom: 22px; }
+.schedule-add-date { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+/* Evitar que nombre, precio y duración se monten en el selector de la captura. */
+@media (max-width: 600px) {
+    .schedule-editor { padding: 20px 16px !important; }
+    .schedule-range { gap: 8px; }
+    .schedule-range .btn-ghost { padding: 8px; letter-spacing: 0; }
+    #ncServicioGrid .nc-servicio-opcion { display: flex; flex-wrap: wrap; gap: 8px; }
+    #ncServicioGrid .nc-servicio-opcion > span:first-child { flex: 1 0 100%; min-width: 0; }
+    #ncServicioGrid .servicio-opcion-precio { margin-left: 0 !important; }
+}

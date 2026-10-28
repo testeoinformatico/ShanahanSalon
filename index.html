@@ -29,6 +29,7 @@
 
     <link rel="stylesheet" href="assets/styles.css">
     <link rel="stylesheet" href="assets/home.css">
+    <link rel="stylesheet" href="assets/schedule.css">
     <link rel="stylesheet" href="assets/halloween.css">
 
 
@@ -773,12 +774,13 @@
             </div>
 
             </div><div class="admin-section" id="asecDisponibilidad" style="display:none;">
+            <div class="col-12"><div class="luxury-card schedule-editor" id="horarioEditor"></div></div>
             <div class="col-12">
                 <div class="luxury-card view-anim" style="padding:30px;">
                     <div class="admin-header" style="margin-bottom:20px;">
                         <h5><i class="fa-solid fa-lock"></i> Bloqueo de Agenda</h5>
                     </div>
-                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">El calendario está <strong>siempre abierto</strong> por defecto. Marca los días, meses u horas en los que <strong>no</strong> vas a poder atender.</p>
+                    <p style="font-size:12px;color:var(--muted);margin:0 0 18px;">Las clientas pueden reservar dentro del <strong>horario configurado</strong>. Marca los días, meses u horas en los que <strong>no</strong> vas a poder atender.</p>
                     <div class="disp-wrap">
                         <div class="disp-tabs" style="grid-template-columns:1fr 1fr 1fr;">
                             <button type="button" class="disp-tab active" data-dtab="dias"><i class="fa-regular fa-calendar-xmark"></i>Días bloqueados</button>
@@ -1129,7 +1131,7 @@
                     <i class="fa-regular fa-calendar field-icon"></i>
                 </div>
                 <div class="field">
-                    <input type="time" id="ncHora" placeholder=" " step="1800">
+                    <input type="time" id="ncHora" placeholder=" " step="60">
                     <label for="ncHora">Hora</label>
                     <i class="fa-regular fa-clock field-icon"></i>
                 </div>
@@ -1288,6 +1290,7 @@
 
     <script src="assets/core.js"></script>
     <script src="assets/app.js" defer></script>
+    <script src="assets/schedule-editor.js" defer></script>
     <script src="assets/home-motion.js" defer></script>
     <script src="assets/halloween.js" defer></script>
     <script src="assets/liquid-background.js" defer></script>
