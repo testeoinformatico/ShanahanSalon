@@ -101,10 +101,10 @@
     const horasDia = fecha => SalonCore.daySlots(fecha, horarioSalon);
     const horasPeriodo = (fecha, periodo) => horasDia(fecha).filter(h => periodo === 'morning' ? toMin(h) < 840 : toMin(h) >= 840);
     async function cargarHorario() {
+        horarioInstalado = false;
         const {data,error} = await sb.rpc('salon_leer_horario');
-        // Compatibilidad durante la instalación; los fallos de red no abren la agenda.
-        if (error?.code === 'PGRST202') { horarioInstalado = false; horarioSalon = SalonCore.defaultSchedule(); return; }
-        if (error) throw error;
+        // La migración ya está instalada: nunca ofrecer horarios supuestos si falla.
+        if (error) { horarioInstalado = false; throw error; }
         if (!SalonCore.validSchedule(data)) throw new Error('No se pudo verificar el horario del salón.');
         horarioSalon = data; horarioInstalado = true;
         document.querySelectorAll('.lat-horario').forEach(el => { el.textContent = 'Horario según el día · Consulta los huecos al reservar'; });
@@ -120,6 +120,22 @@
             return askConfirm('Cita fuera de disponibilidad', 'Este horario está cerrado o bloqueado para clientas. Como administradora puedes guardar esta cita excepcional. Los bloqueos seguirán activos para las demás reservas.');
         }
         return true;
+    }
+
+    async function comprobarCitaAdmin(fecha, hora, duracion, excluirId = null) {
+        if (!await confirmarHorarioAdmin(fecha,hora,duracion)) return false;
+        try {
+            const {data,error} = await sb.from('citas').select('id,hora,duracion_minutos,estado')
+                .eq('fecha',fecha).neq('estado','cancelada');
+            if (error) throw error;
+            const otras = (data || []).filter(c => c.id !== excluirId);
+            if (SalonCore.blocked(hora,otras,duracion,fecha)) {
+                toast('Ese horario coincide con otra cita.','error'); return false;
+            }
+            return true;
+        } catch {
+            toast('No se pudo verificar la disponibilidad. Inténtalo de nuevo.','error'); return false;
+        }
     }
 
     async function checked(query) {
@@ -2132,6 +2148,7 @@
                     return result;
                 }
                 if (error.code === 'PGRST202') throw new Error('Falta activar la actualización del salón. Contacta con la persona que gestiona la web.');
+                if (error.code === '23P01') throw new Error('Ese horario se acaba de ocupar. Actualiza la agenda y elige otra hora.');
                 throw error;
             }
             operacionesPendientes.delete(key);
@@ -2154,6 +2171,8 @@
         if (!cita || cita.estado === estado) return;
         _citasGuardando.add(id);
         try {
+            if (cita.estado === 'cancelada' && estado !== 'cancelada' &&
+                !await comprobarCitaAdmin(cita.fecha,cita.hora.slice(0,5),cita.duracion_minutos || 30,id)) return;
             const result = await guardarCitaSalon(cita, { estado });
             resultadoSalon(result, estado === 'completada' ? 'Cita completada y tarjeta actualizada' : 'Cita confirmada');
         } catch (e) { toast(e.message || 'No se pudo guardar la cita', 'error'); }
@@ -2316,22 +2335,8 @@
 
         // No bloquear correcciones de nombre/precio de citas históricas sin cambiar su horario.
         const cambiaHorario = payload.fecha !== previa.fecha || payload.hora.slice(0,5) !== previa.hora.slice(0,5) || payload.duracion_minutos !== (previa.duracion_minutos || 30);
-        if (nuevoEstado !== "cancelada" && cambiaHorario) {
-        if (!await confirmarHorarioAdmin(payload.fecha,payload.hora.slice(0,5),payload.duracion_minutos)) return;
-        const _durEdit = payload.duracion_minutos;
-        const _horaEdit = (payload.hora||"").slice(0,5);
-
-        try {
-            const { data: _frescas, error: _chk } = await sb.from("citas")
-                .select("id,hora,duracion_minutos,estado")
-                .eq("fecha", payload.fecha)
-                .neq("estado", "cancelada");
-            if (_chk) return toast("No se pudo verificar la disponibilidad. Inténtalo de nuevo.","error");
-            // Excluir la propia cita que se está editando
-            const _otras = (_frescas||[]).filter(c => c.id !== id).map(c => ({...c, fecha: payload.fecha}));
-            if (SalonCore.blocked(_horaEdit, _otras, _durEdit, payload.fecha)) return toast("Ese horario coincide con otra cita.","error");
-        } catch(e) { return toast("No se pudo verificar la disponibilidad.","error"); }
-
+        if (nuevoEstado !== "cancelada" && (cambiaHorario || previa.estado === 'cancelada')) {
+            if (!await comprobarCitaAdmin(payload.fecha,payload.hora.slice(0,5),payload.duracion_minutos,id)) return;
         }
         setBtnLoading("btnGuardarEdicion",true);
         try {
@@ -2534,19 +2539,14 @@
             container.innerHTML = "";
             slots.forEach(t => {
                 const key = `${hCalSelected}T${t}`;
-                const bloqueada = diasDisponibles.some(b=>b.tipo==="hora_bloqueada"&&b.valor===key);
-                // ¿Hay cita en ese slot o está cubierto por duración?
-                const tMin = toMin(t);
-                const conCita = citasEseDia.some(c => {
-                    const ini = toMin((c.hora||"").slice(0,5));
-                    const fin = ini + (parseInt(c.duracion_minutos,10)||30);
-                    return tMin >= ini && tMin < fin;
-                });
-                let cls = "hora-slot-btn";
-                if (bloqueada) cls += " bloqueada";
-                if (conCita)   cls += " con-cita";
-                const title = conCita ? "Hay una cita en este horario" : bloqueada ? "Clic para desbloquear" : "Clic para bloquear";
-                container.innerHTML += `<button type="button" class="${cls}" data-key="${key}" data-t="${t}" ${conCita?"disabled":""} title="${title}">${t}${bloqueada?'<br><span style="font-size:8px;letter-spacing:1px;">BLOQUEADA</span>':""}</button>`;
+                const directa = diasDisponibles.some(b=>b.tipo==='hora_bloqueada'&&b.valor===key);
+                const bloques = diasDisponibles.filter(b=>b.tipo==='hora_bloqueada');
+                const bloqueada = SalonCore.blocked(t,[],30,hCalSelected,bloques);
+                const conCita = SalonCore.blocked(t,citasEseDia,30,hCalSelected);
+                // Desbloquear el origen sigue siendo posible aunque haya una cita excepcional.
+                const deshabilitada = !directa && (conCita || bloqueada);
+                const title = directa ? 'Clic para desbloquear estos 30 minutos' : conCita ? 'Hay una cita dentro de estos 30 minutos' : bloqueada ? 'Coincide con un bloqueo de 30 minutos. Retíralo desde su hora de inicio o desde la lista.' : 'Clic para bloquear 30 minutos';
+                container.innerHTML += `<button type="button" class="hora-slot-btn${bloqueada?' bloqueada':''}${conCita&&!directa?' con-cita':''}" data-key="${key}" data-t="${t}" ${deshabilitada?'disabled':''} title="${title}">${t}${bloqueada?'<br><span style="font-size:8px;letter-spacing:1px;">BLOQUEADA</span>':""}</button>`;
             });
             container.querySelectorAll(".hora-slot-btn:not([disabled])").forEach(btn => {
                 btn.addEventListener("click", () => toggleHoraBloqueada(btn.dataset.key, btn.dataset.t));
@@ -2897,16 +2897,7 @@
 
         const horaStr = hora.slice(0,5);
         const ncTotalDurFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
-        if (!await confirmarHorarioAdmin(fecha,horaStr,ncTotalDurFinal)) return;
-
-        // Revalidar contra la BD (datos frescos) para evitar solapamientos.
-        const { data: ncFrescas, error: ncChkErr } = await sb.from("citas")
-            .select("hora,duracion_minutos,estado")
-            .eq("fecha", fecha)
-            .neq("estado", "cancelada");
-        if (ncChkErr) return toast("No se pudo verificar la disponibilidad. Inténtalo de nuevo.","error");
-        const ncCitasDia = (ncFrescas || []).map(c => ({ ...c, fecha }));
-        if (SalonCore.blocked(horaStr, ncCitasDia, ncTotalDurFinal, fecha)) return toast("Ese horario coincide con otra cita.","error");
+        if (!await comprobarCitaAdmin(fecha,horaStr,ncTotalDurFinal)) return;
 
         const estado = document.getElementById("ncEstado").value || "confirmada";
 

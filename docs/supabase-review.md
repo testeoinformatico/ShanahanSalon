@@ -6,6 +6,8 @@ El usuario aplicó las restricciones de duración positiva y exclusión de horar
 
 El usuario también ejecutó `docs/fidelidad-migration.sql` y confirmó «Fidelidad atomica instalada». Una consulta a `salon_fidelidad_version()` en el servidor devolvió `1`.
 
+El 28 de octubre de 2026 ejecutó el SQL combinado de `docs/configuracion-fix.sql` y `docs/horarios-migration.sql` y confirmó «Horarios personalizados instalados». La RPC pública `salon_leer_horario()` devuelve un horario válido. Los horarios semanales, las fechas especiales y los bloqueos se comprueban también en la base de datos; solo un administrador autenticado puede guardar excepciones. La reparación de avisos está incluida en la transacción, pero no se han enviado correos reales para validarla.
+
 - `salon_operar` autoriza al administrador, serializa operaciones, bloquea filas y registra el resultado por UUID de reintento. Actualizar una cita y su tarjeta forma una sola transacción.
 - Los disparadores impiden cambios de sellos y transiciones de finalización por separado desde pestañas antiguas; deben recargarse tras publicar.
 - Según la preferencia expresa del usuario, los diez sellos se conservan hasta pulsar «Canjear regalo». La tarjeta nueva empieza en cero y el canje queda registrado.
@@ -30,8 +32,14 @@ PGlite no reproduce contención entre varias conexiones ni todos los disparadore
 Quedan fuera de esta revisión:
 
 - Las funciones de correo y recuperación, incluidos permisos y límites de intentos. Las pruebas no envían correos reales.
-- La validación completa de catálogo, precios y bloqueos de días/meses/horas en las reservas públicas: parte sigue en el navegador. La restricción del servidor protege los solapamientos y las duraciones no positivas.
+- La validación completa de catálogo y precios en las reservas públicas: parte sigue en el navegador. Los horarios, bloqueos, solapamientos y duraciones no positivas sí tienen comprobaciones en el servidor.
 - La reconstrucción de sellos anteriores a la migración y la asociación de citas históricas sin `cliente_id`.
 - Una prueba administrativa de extremo a extremo con cuentas de ensayo en producción.
 
 La revisión corrige los problemas descritos y no constituye una auditoría completa de Supabase.
+
+## Revisión de horarios del 28 de octubre de 2026
+
+Se reprodujeron y corrigieron tres fallos de interfaz: el retorno a horas predeterminadas cuando faltaba la RPC, la reactivación de citas canceladas sin volver a comprobar disponibilidad y la representación incompleta de bloqueos de 30 minutos con intervalos de reserva menores. Los bloqueos existentes pueden retirarse incluso si el administrador creó una cita excepcional encima de ellos. Se añadió un mensaje comprensible para conflictos de reservas simultáneas y se ajustaron los campos y servicios en móvil.
+
+Las 58 pruebas locales pasan. Las pruebas adicionales cubren los fallos reproducidos, los conflictos al reactivar, el mensaje de concurrencia y la comprobación de horarios del servidor al reactivar una cita. No equivalen a una prueba de correo real ni a una prueba administrativa autenticada en producción.

@@ -13,7 +13,7 @@ function renderHorarioEditor(reset = true) {
             <div class="schedule-day-title"><strong>${title}</strong>${special ? `<button type="button" class="btn-ghost" onclick="quitarFechaHorario('${key}')">Usar semana habitual</button>` : ''}</div>
             <div class="schedule-ranges">${ranges.length ? ranges.map(([start,end],i) => `<div class="schedule-range">
                 <label>Desde<input type="time" step="60" aria-label="${title}, inicio ${i+1}" value="${SalonCore.timeLabel(start)}" data-start></label>
-                <label>Hasta<input type="text" inputmode="numeric" placeholder="18:00" pattern="[0-9]{2}:[0-9]{2}" aria-label="${title}, fin ${i+1}" value="${SalonCore.timeLabel(end)}" data-end></label>
+                <label>Hasta<input type="text" placeholder="18:00" pattern="[0-9]{2}:[0-9]{2}" aria-label="${title}, fin ${i+1}" value="${SalonCore.timeLabel(end)}" data-end></label>
                 <button type="button" class="btn-ghost" aria-label="Quitar tramo ${i+1} de ${title}" onclick="quitarTramoHorario('${key}',${i})">Quitar</button>
             </div>`).join('') : '<span class="schedule-closed">Cerrado para reservas online</span>'}</div>
             <button type="button" class="btn-ghost" onclick="anadirTramoHorario('${key}')">+ Añadir tramo</button></div>`;
