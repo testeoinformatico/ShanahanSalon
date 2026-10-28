@@ -24,6 +24,7 @@ async function fixture(options = {}) {
     console.on('jsdomError', error => errors.push(error.message));
     const dom = new JSDOM(html, { url: 'https://example.test/' + (options.hash || ''), runScripts: 'outside-only', pretendToBeVisual: true, virtualConsole: console });
     const w = dom.window;
+    w.structuredClone = structuredClone;
     w.scrollTo = () => {};
     w.HTMLElement.prototype.scrollIntoView = () => {};
     w.HTMLCanvasElement.prototype.getContext = () => { throw new Error('Unexpected canvas/GPU initialization'); };
@@ -57,6 +58,7 @@ async function fixture(options = {}) {
                         : mutation && options.failWrites ? { message: 'write rejected' } : null;
                     const data = table === 'servicios' ? services : table === 'clientas' ? (single ? activeProfile : [activeProfile])
                         : table === 'admins' ? (single ? (options.admin ? {id:profile.id} : null) : [])
+                        : table === 'dias_disponibles' ? (options.blocks || [])
                         : table === 'citas' && !mutation ? (options.appointments || []) : mutation ? { id: 1 } : [];
                     return Promise.resolve({ data, error }).then(resolve, reject);
                 }
@@ -64,6 +66,7 @@ async function fixture(options = {}) {
             return query;
         },
         rpc: async (name,args) => {
+            if (name === 'salon_leer_horario') return options.failSchedule ? {error:{message:'offline'}} : {data:options.schedule || require('../assets/core.js').defaultSchedule(),error:null};
             if (name === 'salon_operar') {
                 operations.push(args);
                 return options.operation ? options.operation(args,operations.length) : {data:{id:1,visitas:1},error:null};
@@ -74,7 +77,7 @@ async function fixture(options = {}) {
     };
     w.supabase = { createClient: () => client };
     w.eval(core);
-    w.eval(app);
+    w.eval(app + '\n' + fs.readFileSync(path.join(root,'assets/schedule-editor.js'),'utf8'));
     w.eval(homeMotion);
     w.eval(liquid);
     await settle();
@@ -227,4 +230,42 @@ test('manual guest selection creates no invalid Auth profile',async t=>{
     await f.w.ncCrearYUsarCliente();
     assert.equal(f.w.document.getElementById('ncScName').textContent,'Invitada');
     assert.deepEqual(f.writes,[]);
+});
+
+test('admin confirms blocked off-hours booking; cancellation sends nothing; exact manual time is retained',async t=>{
+    const f=await fixture({admin:true,session:true,blocks:[{tipo:'dia_bloqueado',valor:'2030-01-06'}]});
+    t.after(()=>f.dom.window.close());
+    await f.w.cargarDatosAdmin();
+    f.w.abrirNuevaCita('2030-01-06','07:10');
+    f.w.ncSetClient(profile);
+    f.w.document.querySelector('#ncServicioGrid .nc-servicio-opcion:not(.nc-extra-addon)').click();
+    let pending=f.w.guardarNuevaCita(); await settle();
+    assert.match(f.w.document.getElementById('confirmMsg').textContent,/excepcional/);
+    f.w.closeConfirm(false); await pending;
+    assert.equal(f.operations.length,0);
+    pending=f.w.guardarNuevaCita(); await settle(); f.w.closeConfirm(true); await pending;
+    assert.equal(f.operations.length,1);
+    assert.equal(f.operations[0].p_datos.cita.hora,'07:10');
+    assert.equal(f.operations[0].p_datos.cita.fecha,'2030-01-06');
+});
+
+test('non-admin cannot use manual booking; failed schedule load closes public calendar',async t=>{
+    const f=await fixture({session:true,failSchedule:true});t.after(()=>f.dom.window.close());
+    f.w.abrirNuevaCita(); await f.w.guardarNuevaCita();
+    assert.equal(f.operations.length,0);
+    assert.equal(f.w.isDiaDisponible('2030-01-01'),false);
+});
+
+test('public slots follow custom hours and editor validates without writing invalid ranges',async t=>{
+    const schedule=require('../assets/core.js').defaultSchedule();schedule.semana[2]=[[480,600]];schedule.paso=15;
+    const f=await fixture({admin:true,session:true,schedule});t.after(()=>f.dom.window.close());
+    f.w.reservarHueco('2030-01-01','08:00'); await settle();
+    f.w.selSrvAcc('Manicura · Color',75,25,'Manicura',f.w.document.querySelector('#servicioGrid .servicio-opcion'));
+    f.w.renderTimeSlots();
+    assert.deepEqual([...f.w.document.querySelectorAll('#timeSlots .time-slot')].map(el=>el.dataset.time),['08:00','08:15','08:30','08:45','09:00','09:15','09:30','09:45']);
+    f.w.renderHorarioEditor();
+    assert.equal(f.w.document.querySelectorAll('[data-schedule-key]').length,7);
+    f.w.document.querySelector('[data-end]').value='07:00';
+    await f.w.guardarHorarioSalon();
+    assert.equal(f.operations.length,0);
 });

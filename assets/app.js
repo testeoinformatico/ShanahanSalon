@@ -94,7 +94,33 @@
     function slotBloqueado(t, citasDelDia, durNueva, fechaISO) {
         return SalonCore.blocked(t, citasDelDia, durNueva, fechaISO, diasDisponibles);
     }
-    const slotFueraDeHorario = SalonCore.outsideHours;
+    let horarioSalon = SalonCore.defaultSchedule();
+    let horarioInstalado = false;
+    const slotFueraDeHorario = (hora, duracion, fecha = selectedDate ? fmtISO(selectedDate) : fmtISO(today)) =>
+        SalonCore.outsideHours(hora, duracion, fecha, horarioSalon);
+    const horasDia = fecha => SalonCore.daySlots(fecha, horarioSalon);
+    const horasPeriodo = (fecha, periodo) => horasDia(fecha).filter(h => periodo === 'morning' ? toMin(h) < 840 : toMin(h) >= 840);
+    async function cargarHorario() {
+        const {data,error} = await sb.rpc('salon_leer_horario');
+        // Compatibilidad durante la instalación; los fallos de red no abren la agenda.
+        if (error?.code === 'PGRST202') { horarioInstalado = false; horarioSalon = SalonCore.defaultSchedule(); return; }
+        if (error) throw error;
+        if (!SalonCore.validSchedule(data)) throw new Error('No se pudo verificar el horario del salón.');
+        horarioSalon = data; horarioInstalado = true;
+        document.querySelectorAll('.lat-horario').forEach(el => { el.textContent = 'Horario según el día · Consulta los huecos al reservar'; });
+    }
+    async function confirmarHorarioAdmin(fecha, hora, duracion) {
+        if (!_adminAutenticada) { toast('Solo el salón puede crear excepciones.', 'error'); return false; }
+        if (!await cargarDisponibles()) { toast('No se pudo comprobar el horario. Inténtalo de nuevo.', 'error'); return false; }
+        const inicio = SalonCore.minutes(hora);
+        if (!Number.isFinite(inicio) || !Number.isInteger(duracion) || duracion <= 0 || inicio + duracion > 1440) {
+            toast('Introduce una hora y duración válidas, sin pasar de medianoche.', 'error'); return false;
+        }
+        if (!isDiaDisponible(fecha) || slotFueraDeHorario(hora,duracion,fecha) || SalonCore.blocked(hora,[],duracion,fecha,diasDisponibles)) {
+            return askConfirm('Cita fuera de disponibilidad', 'Este horario está cerrado o bloqueado para clientas. Como administradora puedes guardar esta cita excepcional. Los bloqueos seguirán activos para las demás reservas.');
+        }
+        return true;
+    }
 
     async function checked(query) {
         const result = await query;
@@ -253,8 +279,8 @@
                 if (error) throw error;
                 const ocupadas = (data || []).map(c => ({ ...c, fecha }));
 
-                const todos = SLOTS.filter(t =>
-                    !slotFueraDeHorario(t, DURACION_MIN) && !slotBloqueado(t, ocupadas, DURACION_MIN, fecha)
+                const todos = horasDia(fecha).filter(t =>
+                    !slotFueraDeHorario(t, DURACION_MIN, fecha) && !slotBloqueado(t, ocupadas, DURACION_MIN, fecha)
                 );
                 // repartidas a lo largo del día, no las tres primeras seguidas:
                 // así se ve que hay hueco de mañana y de tarde
@@ -494,6 +520,7 @@
         document.querySelectorAll(".admin-menu-item[data-section]").forEach(b => {
             b.classList.toggle("active", b.dataset.section===name);
         });
+        if (name === "disponibilidad") renderHorarioEditor();
         if (name === "usuarios") {
             cargarEmailNotificacion();
         }
@@ -528,12 +555,13 @@
             (b.tipo === "dia_bloqueado" && b.valor === iso) ||
             (b.tipo === "mes_bloqueado" && b.valor === mes)
         );
-        return !bloqueado;
+        return !bloqueado && SalonCore.dayRanges(iso, horarioSalon).length > 0;
     }
 
     async function cargarDisponibles() {
         disponibilidadCargada = false;
         try {
+            await cargarHorario();
             const { data, error } = await sb.from("dias_disponibles").select("*");
             if (error) {
                 console.error("Error cargando disponibilidad:", error.message);
@@ -664,7 +692,9 @@
             document.getElementById('pickedTimeLabel').textContent = 'Sin elegir';
             document.getElementById('pickedTimeLabel').classList.add('empty');
         }
-        SLOTS[activePeriod].forEach(t => {
+        const disponiblesPeriodo = horasPeriodo(iso, activePeriod);
+        if (!disponiblesPeriodo.length) wrap.innerHTML = `<div class="time-empty">No hay horas de apertura en esta franja.</div>`;
+        disponiblesPeriodo.forEach(t => {
             const tMin    = toMin(t);
             const pasado  = esHoy && tMin <= now.getHours()*60+now.getMinutes();
             const totalDur = getTotalDuracion();
@@ -1870,10 +1900,9 @@
         const grid = document.getElementById("timelineGrid");
         if (!grid) return;
 
-        const slots = {
-            morning:   ["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"],
-            afternoon: ["16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"]
-        }[tlPeriod];
+        // Incluir horas manuales exactas (p. ej. 07:10), aunque estén fuera del horario.
+        const slots = [...new Set([...horasPeriodo(iso, tlPeriod), ...todasCitas.map(c => (c.hora||'').slice(0,5))
+            .filter(h => tlPeriod === 'morning' ? toMin(h) < 840 : toMin(h) >= 840)])].sort();
 
         // Precalcular qué slots están bloqueados por citas existentes (todas, no filtradas)
         const toCitas = todasCitas.filter(c => (c.estado||"pendiente") !== "cancelada");
@@ -2268,6 +2297,7 @@
     }
 
     async function guardarEdicionCitaImpl() {
+        if (!_adminAutenticada) return toast("Solo el salón puede editar citas.", "error");
         const id=parseInt(document.getElementById("editCitaId").value,10);
         const nuevoEstado=document.getElementById("editCitaEstado").value||"pendiente";
         const previa=citas.find(c=>c.id===id);
@@ -2287,10 +2317,10 @@
         // No bloquear correcciones de nombre/precio de citas históricas sin cambiar su horario.
         const cambiaHorario = payload.fecha !== previa.fecha || payload.hora.slice(0,5) !== previa.hora.slice(0,5) || payload.duracion_minutos !== (previa.duracion_minutos || 30);
         if (nuevoEstado !== "cancelada" && cambiaHorario) {
-        if (nuevoEstado !== "cancelada" && (!await cargarDisponibles() || !isDiaDisponible(payload.fecha))) return toast("No se pudo verificar que el día esté disponible.", "error");
+        if (!await confirmarHorarioAdmin(payload.fecha,payload.hora.slice(0,5),payload.duracion_minutos)) return;
         const _durEdit = payload.duracion_minutos;
         const _horaEdit = (payload.hora||"").slice(0,5);
-        if (slotFueraDeHorario(_horaEdit, _durEdit)) return toast("El servicio no cabe en ese horario","error");
+
         try {
             const { data: _frescas, error: _chk } = await sb.from("citas")
                 .select("id,hora,duracion_minutos,estado")
@@ -2299,7 +2329,7 @@
             if (_chk) return toast("No se pudo verificar la disponibilidad. Inténtalo de nuevo.","error");
             // Excluir la propia cita que se está editando
             const _otras = (_frescas||[]).filter(c => c.id !== id).map(c => ({...c, fecha: payload.fecha}));
-            if (slotBloqueado(_horaEdit, _otras, _durEdit, payload.fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
+            if (SalonCore.blocked(_horaEdit, _otras, _durEdit, payload.fecha)) return toast("Ese horario coincide con otra cita.","error");
         } catch(e) { return toast("No se pudo verificar la disponibilidad.","error"); }
 
         }
@@ -2523,8 +2553,8 @@
             });
         }
 
-        renderSlots(["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"], mGrid);
-        renderSlots(["16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"], tGrid);
+        renderSlots(horasPeriodo(hCalSelected, "morning"), mGrid);
+        renderSlots(horasPeriodo(hCalSelected, "afternoon"), tGrid);
     }
 
     async function toggleHoraBloqueada(key, t) {
@@ -2803,23 +2833,25 @@
         const horaStr = hora.slice(0,5);
         const citasDelDia = citas.filter(c => c.fecha === fecha);
         const ncTotalDur = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
-        const fuera = slotFueraDeHorario(horaStr, ncTotalDur);
-        const bloq  = slotBloqueado(horaStr, citasDelDia, ncTotalDur, fecha);
+        const fuera = slotFueraDeHorario(horaStr, ncTotalDur, fecha) || !isDiaDisponible(fecha);
+        const ocupada = SalonCore.blocked(horaStr, citasDelDia, ncTotalDur, fecha);
+        const bloq = SalonCore.blocked(horaStr, [], ncTotalDur, fecha, diasDisponibles);
 
         info.classList.add("show");
-        if (fuera) {
+        if (ocupada) {
             info.className = "nc-slot-info show error";
-            info.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> El servicio (${durStr(ncSelectedDuracion)}) no cabe en este horario.`;
-        } else if (bloq) {
-            info.className = "nc-slot-info show error";
-            info.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Este horario ya está ocupado o bloqueado.`;
+            info.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Coincide con otra cita. Elige otra hora.`;
+        } else if (fuera || bloq) {
+            info.className = "nc-slot-info show";
+            info.textContent = `Cerrado o bloqueado para clientas · Solo el salón puede guardar una excepción (${durStr(ncTotalDur)}).`;
         } else {
             info.className = "nc-slot-info show ok";
-            info.innerHTML = `<i class="fa-solid fa-circle-check"></i> Horario disponible · ${durStr(ncSelectedDuracion)}`;
+            info.innerHTML = `<i class="fa-solid fa-circle-check"></i> Horario disponible · ${durStr(ncTotalDur)}`;
         }
     }
 
     function abrirNuevaCita(prefillFecha, prefillHora) {
+        if (!_adminAutenticada) return toast("Solo el salón puede agendar citas manuales.", "error");
         document.body.style.overflow = "hidden";
         // Reset
         ncSelectedClient = null;
@@ -2855,16 +2887,17 @@
         finally { ncGuardando = false; }
     }
     async function guardarNuevaCitaImpl() {
+        if (!_adminAutenticada) return toast("Solo el salón puede agendar citas manuales.", "error");
         if (!ncSelectedClient) return toast("Selecciona una clienta primero","error");
         if (!ncSelectedServicio) return toast("Selecciona un servicio","error");
         const fecha = document.getElementById("ncFecha").value;
         const hora  = document.getElementById("ncHora").value;
         if (!fecha || !hora) return toast("Introduce fecha y hora","error");
-        if (!await cargarDisponibles() || !isDiaDisponible(fecha)) return toast("No se pudo verificar que el día esté disponible.", "error");
+
 
         const horaStr = hora.slice(0,5);
         const ncTotalDurFinal = ncSelectedDuracion + ncSelectedExtras.reduce((s, e) => s + e.dur, 0);
-        if (slotFueraDeHorario(horaStr, ncTotalDurFinal)) return toast("El servicio no cabe en ese horario","error");
+        if (!await confirmarHorarioAdmin(fecha,horaStr,ncTotalDurFinal)) return;
 
         // Revalidar contra la BD (datos frescos) para evitar solapamientos.
         const { data: ncFrescas, error: ncChkErr } = await sb.from("citas")
@@ -2873,7 +2906,7 @@
             .neq("estado", "cancelada");
         if (ncChkErr) return toast("No se pudo verificar la disponibilidad. Inténtalo de nuevo.","error");
         const ncCitasDia = (ncFrescas || []).map(c => ({ ...c, fecha }));
-        if (slotBloqueado(horaStr, ncCitasDia, ncTotalDurFinal, fecha)) return toast("Ese horario ya está ocupado o bloqueado","error");
+        if (SalonCore.blocked(horaStr, ncCitasDia, ncTotalDurFinal, fecha)) return toast("Ese horario coincide con otra cita.","error");
 
         const estado = document.getElementById("ncEstado").value || "confirmada";
 

@@ -28,10 +28,42 @@
     };
     const overlaps = (start, end, otherStart, otherEnd) => start < otherEnd && end > otherStart;
 
-    function outsideHours(time, duration) {
+    function defaultSchedule() {
+        return { semana: Array.from({length:7}, () => [[540,840],[960,1260]]), excepciones: {}, paso:30 };
+    }
+    function validRanges(ranges) {
+        let last = -1;
+        return Array.isArray(ranges) && ranges.length <= 12 && ranges.every(range => {
+            if (!Array.isArray(range) || range.length !== 2) return false;
+            const [start,end] = range;
+            if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > 1440 || start >= end || start < last) return false;
+            last = end; return true;
+        });
+    }
+    function validSchedule(schedule) {
+        return !!schedule && [5,10,15,20,30,60].includes(schedule.paso) &&
+            Array.isArray(schedule.semana) && schedule.semana.length === 7 && schedule.semana.every(validRanges) &&
+            !!schedule.excepciones && !Array.isArray(schedule.excepciones) && typeof schedule.excepciones === 'object' &&
+            Object.entries(schedule.excepciones).length <= 366 && Object.entries(schedule.excepciones).every(([date,ranges]) =>
+                /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(date)) && new Date(date).toISOString().slice(0,10) === date && validRanges(ranges));
+    }
+    function dayRanges(date, schedule) {
+        if (!schedule) return [[540,840],[960,1260]];
+        if (!validSchedule(schedule) || !/^\d{4}-\d{2}-\d{2}$/.test(date || '')) return [];
+        return schedule.excepciones[date] ?? schedule.semana[new Date(date + 'T12:00:00').getDay()] ?? [];
+    }
+    const timeLabel = value => `${String(Math.floor(value/60)).padStart(2,'0')}:${String(value%60).padStart(2,'0')}`;
+    function daySlots(date, schedule) {
+        return dayRanges(date, schedule).flatMap(([start,end]) => {
+            const slots = [];
+            for (let minute=start; minute<end; minute+=schedule?.paso || 30) slots.push(timeLabel(minute));
+            return slots;
+        });
+    }
+    function outsideHours(time, duration, date, schedule) {
         const start = minutes(time), length = Number(duration), end = start + length;
         return !Number.isFinite(start) || !Number.isFinite(length) || length <= 0 ||
-            !((start >= 540 && end <= 840) || (start >= 960 && end <= 1260));
+            !dayRanges(date, schedule).some(([open,close]) => start >= open && end <= close);
     }
 
     function blocked(time, appointments, duration, date, blocks = []) {
@@ -84,5 +116,6 @@
         </article>`;
     }
 
-    return { escapeHTML, parsePrecio, outsideHours, blocked, removalService, bookingTotals, reviewCard };
+    return { escapeHTML, parsePrecio, outsideHours, blocked, removalService, bookingTotals, reviewCard,
+        defaultSchedule, validSchedule, dayRanges, daySlots, timeLabel, minutes };
 });
