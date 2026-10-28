@@ -94,4 +94,9 @@ test('database schedule, admin exceptions and notification search path repair',a
         await session(admin,()=>db.query("UPDATE public.citas SET nombre_cliente='Correccion' WHERE fecha='2030-01-01'"));
         assert.equal((await db.query("SELECT count(*)::int AS n FROM public.citas WHERE fecha='2030-01-01'")).rows[0].n,1);
     });
+    await t.test('reactivating cancelled appointments rechecks closed hours for clients',async()=>{
+        await session(admin,()=>db.query("UPDATE public.citas SET estado='cancelada' WHERE fecha='2030-01-01'"));
+        await assert.rejects(session(client,()=>db.query("UPDATE public.citas SET estado='confirmada' WHERE fecha='2030-01-01'")),/fuera del horario/);
+        await session(admin,()=>db.query("UPDATE public.citas SET estado='confirmada' WHERE fecha='2030-01-01'"));
+    });
 });

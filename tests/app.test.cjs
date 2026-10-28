@@ -66,7 +66,7 @@ async function fixture(options = {}) {
             return query;
         },
         rpc: async (name,args) => {
-            if (name === 'salon_leer_horario') return options.failSchedule ? {error:{message:'offline'}} : {data:options.schedule || require('../assets/core.js').defaultSchedule(),error:null};
+            if (name === 'salon_leer_horario') return options.failSchedule ? {error:{message:'offline',code:options.scheduleErrorCode}} : {data:options.schedule || require('../assets/core.js').defaultSchedule(),error:null};
             if (name === 'salon_operar') {
                 operations.push(args);
                 return options.operation ? options.operation(args,operations.length) : {data:{id:1,visitas:1},error:null};
@@ -268,4 +268,52 @@ test('public slots follow custom hours and editor validates without writing inva
     f.w.document.querySelector('[data-end]').value='07:00';
     await f.w.guardarHorarioSalon();
     assert.equal(f.operations.length,0);
+});
+
+test('missing schedule RPC keeps reservations closed instead of inventing default hours',async t=>{
+    const f=await fixture({failSchedule:true,scheduleErrorCode:'PGRST202'});t.after(()=>f.dom.window.close());
+    assert.equal(f.w.isDiaDisponible('2030-01-01'),false);
+});
+
+test('reactivating a cancelled appointment in closed hours requires confirmation',async t=>{
+    const cita={id:71,cliente_id:profile.id,nombre_cliente:profile.nombre,telefono:profile.telefono,
+        fecha:'2030-01-06',hora:'07:10:00',duracion_minutos:30,servicio:'Color',precio:25,estado:'cancelada'};
+    const f=await fixture({session:true,admin:true,appointments:[cita]});t.after(()=>f.dom.window.close());
+    await f.w.cargarDatosAdmin();
+    f.w.abrirEditarCita(71);f.w.setEditEstado('confirmada');
+    const saving=f.w.guardarEdicionCita();await settle();
+    const writesBeforeConfirmation=f.operations.length;
+    f.w.closeConfirm(false);await saving;
+    assert.equal(writesBeforeConfirmation,0);
+    assert.equal(f.operations.length,0);
+});
+
+test('hour blocks show their full 30-minute coverage and detect partial appointment overlaps',async t=>{
+    const date=new Date(),iso=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    const schedule=require('../assets/core.js').defaultSchedule();schedule.paso=15;
+    const f=await fixture({session:true,admin:true,schedule,blocks:[{id:1,tipo:'hora_bloqueada',valor:iso+'T09:00'}],
+        appointments:[{id:72,fecha:iso,hora:'10:10:00',duracion_minutos:30,estado:'confirmada'}]});
+    t.after(()=>f.dom.window.close());await f.w.cargarDatosAdmin();
+    f.w.document.querySelector(`#hCalGrid [data-iso="${iso}"]`).click();
+    const button=time=>f.w.document.querySelector(`#horasSlotsManana [data-t="${time}"]`);
+    assert.equal(button('09:00').disabled,false);
+    assert.equal(button('09:15').disabled,true);
+    assert.match(button('09:15').textContent,/BLOQUEADA/);
+    assert.equal(button('09:30').disabled,false);
+    assert.equal(button('10:00').disabled,true);
+});
+
+test('reactivation checks fresh occupancy and never writes over another appointment',async t=>{
+    const cancelled={id:71,fecha:'2030-01-01',hora:'09:00:00',duracion_minutos:30,estado:'cancelada'};
+    const occupied={id:72,fecha:'2030-01-01',hora:'09:15:00',duracion_minutos:30,estado:'confirmada'};
+    const f=await fixture({session:true,admin:true,appointments:[cancelled,occupied]});t.after(()=>f.dom.window.close());
+    await f.w.cargarDatosAdmin();await f.w.cambiarEstadoCita(71,'confirmada');
+    assert.equal(f.operations.length,0);
+    assert.match(f.w.document.body.textContent,/coincide con otra cita/);
+});
+
+test('concurrent appointment conflict gives a usable message without leaking SQL details',async t=>{
+    const f=await fixture({session:true,admin:true,operation:()=>({error:{code:'23P01',message:'exclusion constraint citas_sin_solapamientos'}})});
+    t.after(()=>f.dom.window.close());
+    await assert.rejects(f.w.guardarCitaSalon(null,{fecha:'2030-01-01',hora:'09:00'}),/se acaba de ocupar/);
 });

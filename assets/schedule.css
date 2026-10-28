@@ -17,7 +17,7 @@
     .schedule-editor { padding: 20px 16px !important; }
     .schedule-range { gap: 8px; }
     .schedule-range .btn-ghost { padding: 8px; letter-spacing: 0; }
-    #ncServicioGrid .nc-servicio-opcion { display: flex; flex-wrap: wrap; gap: 8px; }
-    #ncServicioGrid .nc-servicio-opcion > span:first-child { flex: 1 0 100%; min-width: 0; }
-    #ncServicioGrid .servicio-opcion-precio { margin-left: 0 !important; }
+    :is(#ncServicioGrid, #editServicioGrid) .nc-servicio-opcion { display: flex; flex-wrap: wrap; gap: 8px; }
+    :is(#ncServicioGrid, #editServicioGrid) .nc-servicio-opcion > span:first-child { flex: 1 0 100%; min-width: 0; }
+    :is(#ncServicioGrid, #editServicioGrid) .servicio-opcion-precio { margin-left: 0 !important; }
 }
