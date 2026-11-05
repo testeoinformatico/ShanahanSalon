@@ -111,11 +111,34 @@ test('stored admin UI flag grants no admin view', async t => {
     assert.equal(f.w.document.getElementById('vistaAccesoAdmin').style.display, 'flex');
 });
 
-test('authenticated profile is restored after page load', async t => {
+test('root opens the homepage while keeping the authenticated customer session', async t => {
     const f = await fixture({ session: true }); t.after(() => f.dom.window.close());
-    assert.equal(f.w.document.getElementById('vistaCliente').style.display, 'flex');
+    assert.equal(f.w.document.getElementById('login').style.display, 'flex');
+    assert.equal(f.w.document.getElementById('vistaCliente').style.display, 'none');
+    assert.equal(f.w.location.hash, '');
     assert.equal(f.w.document.getElementById('clienteNombre').textContent, 'Clienta');
+    f.w.mostrarVista('vistaCliente');
+    await settle();
+    assert.equal(f.w.document.getElementById('vistaCliente').style.display, 'flex');
     assert.deepEqual(f.errors, []);
+});
+
+test('root opens the homepage for a saved admin session too', async t => {
+    const f=await fixture({session:true,admin:true});t.after(()=>f.dom.window.close());
+    assert.equal(f.w.document.getElementById('login').style.display,'flex');
+    assert.equal(f.w.document.getElementById('vistaAdmin').style.display,'none');
+    assert.equal(f.w.location.hash,'');
+    f.w.mostrarVista('vistaAdmin');
+    await settle();
+    assert.equal(f.w.document.getElementById('vistaAdmin').style.display,'block');
+});
+
+test('explicit account and admin links still open their requested destination', async t => {
+    for (const [hash,admin,id] of [['#mi-cuenta',false,'vistaCliente'],['#salon',true,'vistaAdmin']]) {
+        const f=await fixture({session:true,admin,hash});t.after(()=>f.dom.window.close());
+        assert.equal(f.w.document.getElementById(id).style.display,admin?'block':'flex');
+        assert.equal(f.w.location.hash,hash);
+    }
 });
 
 test('guest keeps selected service, day and hour when signing in', async t => {

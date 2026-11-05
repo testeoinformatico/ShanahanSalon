@@ -3126,7 +3126,8 @@
         renderPublicServicios();
         if(typeof renderAcordeon === 'function') renderAcordeon();
         if(typeof ncRenderServicios === 'function') ncRenderServicios();
-        const view = vistaDesdeURL() || (_adminAutenticada ? 'vistaAdmin' : _clienteLogueado ? 'vistaCliente' : 'login');
+        // La raíz abre la portada; restaurar la sesión no implica abrir la cuenta.
+        const view = vistaDesdeURL() || 'login';
         mostrarVista(view, { history: false });
     });
 
