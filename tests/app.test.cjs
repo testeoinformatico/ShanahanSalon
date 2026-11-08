@@ -35,13 +35,15 @@ async function fixture(options = {}) {
     w.confirm = () => true;
     w.customElements.define('lottie-player', class extends w.HTMLElement { seek() {} play() {} });
     if (options.fakeAdmin) w.sessionStorage.setItem('adminAuth', 'true');
-    let session = options.session ? { user: { id: profile.id } } : null;
+    const user = { id:profile.id, email:'clienta@example.test',user_metadata:{nombre:'Clienta',telefono:'000000000'} };
+    let session = options.session ? { user } : null;
     let callback;
     const client = {
         auth: {
             getSession: async () => ({ data: { session }, error: null }),
             onAuthStateChange: cb => { callback = cb; return { data: { subscription: { unsubscribe() {} } } }; },
-            signInWithPassword: async () => { session = { user: { id: profile.id } }; return { data: session, error: null }; },
+            signInWithPassword: async () => { session = { user }; return { data: session, error: null }; },
+            getUser: async () => ({data:{user:options.currentUser || session?.user},error:null}),
             signOut: async () => { session = null; callback?.('SIGNED_OUT'); return { error: null }; }
         },
         from(table) {
@@ -54,6 +56,7 @@ async function fixture(options = {}) {
                 delete() { mutation = 'delete'; return query; },
                 then(resolve, reject) {
                     if (mutation) writes.push({ table, mutation, payload });
+                    if (table === 'clientas' && single && !mutation && options.profileRead) return Promise.resolve(options.profileRead()).then(resolve,reject);
                     const error = table === 'dias_disponibles' && options.failAvailability ? { message: 'offline' }
                         : mutation && options.failWrites ? { message: 'write rejected' } : null;
                     const data = table === 'servicios' ? services : table === 'clientas' ? (single ? activeProfile : [activeProfile])
@@ -141,6 +144,49 @@ test('explicit account and admin links still open their requested destination', 
     }
 });
 
+async function loginFixture(w) {
+    w.document.getElementById('loginUsuario').value='clienta@example.test';
+    w.document.getElementById('loginPass').value='test-only';
+    await w.iniciarSesionCliente();
+    await settle();
+}
+test('missing profile is completed explicitly using the authenticated identity, without loyalty writes',async t=>{
+    let row=null;
+    const f=await fixture({profileRead:()=>({data:row,error:null})}); t.after(()=>f.dom.window.close());
+    await loginFixture(f.w);
+    assert.equal(f.w.document.getElementById('completarFicha').hidden,false);
+    assert.deepEqual(f.writes,[]);
+    let reads=0;
+    const from=f.client.from.bind(f.client);
+    f.client.from=table=>{
+        const q=from(table);
+        if(table==='clientas'){ const insert=q.insert; q.insert=p=>{row={...p,visitas:0};reads++;return insert(p);}; }
+        return q;
+    };
+    await Promise.all([f.w.guardarFichaPropia(),f.w.guardarFichaPropia()]);await settle();
+    assert.equal(reads,1);
+    assert.deepEqual(JSON.parse(JSON.stringify(f.writes[0].payload)),{id:profile.id,usuario:'clienta@example.test',nombre:'Clienta',telefono:'000000000'});
+    assert.equal(f.w.document.getElementById('vistaCliente').style.display,'flex');
+});
+test('profile read failure is retried without treating a database error as a missing record',async t=>{
+    let calls=0;
+    const f=await fixture({profileRead:()=>{calls++;return {status:503,error:{message:'unavailable'}};}});t.after(()=>f.dom.window.close());
+    await loginFixture(f.w);
+    assert.equal(calls,2);assert.equal(f.w.document.getElementById('completarFicha').hidden,true);
+    assert.match(f.w.document.body.textContent,/no se pudo consultar tu ficha/i);assert.deepEqual(f.writes,[]);
+});
+test('profile appearing in another tab keeps its stamps and is never overwritten',async t=>{
+    let row=null;
+    const f=await fixture({profileRead:()=>({data:row,error:null})});t.after(()=>f.dom.window.close());
+    await loginFixture(f.w);row={...profile,visitas:8};
+    await f.w.guardarFichaPropia();await settle();
+    assert.deepEqual(f.writes,[]);assert.equal(f.w.document.getElementById('stampCountText').textContent,'8');
+});
+test('changed identity cannot create a profile under the previous login',async t=>{
+    const f=await fixture({profileRead:()=>({data:null,error:null}),currentUser:{id:'different',email:'other@example.test'}});t.after(()=>f.dom.window.close());
+    await loginFixture(f.w);await f.w.guardarFichaPropia();
+    assert.deepEqual(f.writes,[]);assert.equal(f.w.document.getElementById('completarFicha').hidden,true);
+});
 test('guest keeps selected service, day and hour when signing in', async t => {
     const f = await fixture(); t.after(() => f.dom.window.close());
     const date = new Date(); date.setDate(date.getDate() + 2);

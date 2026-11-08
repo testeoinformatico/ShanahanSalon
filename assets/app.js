@@ -490,6 +490,7 @@
     }
 
     function limpiarSesionLocal() {
+        ocultarFichaPendiente();
         _clienteLogueado = null;
         _adminAutenticada = false;
         _reservaPendiente = false;
@@ -510,8 +511,9 @@
         if (!session) { limpiarSesionLocal(); return; }
         const { data: admin } = await checked(sb.from('admins').select('id').eq('id', session.user.id).maybeSingle());
         _adminAutenticada = !!admin;
-        const { data: profile } = await checked(sb.from('clientas').select('*').eq('id', session.user.id).maybeSingle());
-        if (profile) await mostrarPerfilCliente(profile, true);
+        const profile = await leerFichaPropia(session.user.id);
+        if (profile) { ocultarFichaPendiente(); await mostrarPerfilCliente(profile, true); }
+        else if (!admin) prepararFichaPropia(session.user);
     }
     sb.auth.onAuthStateChange((event) => {
         // Keep Supabase queries outside its auth callback/lock.
@@ -1082,12 +1084,69 @@
         }
     };
 
+    let fichaPendienteId = null, guardandoFicha = false;
+    function ocultarFichaPendiente() {
+        fichaPendienteId = null;
+        const form = document.getElementById('completarFicha');
+        form.hidden = true; form.reset();
+        document.getElementById('loginStepCredenciales').style.display = '';
+    }
+    function prepararFichaPropia(user) {
+        fichaPendienteId = user.id;
+        document.getElementById('fichaNombre').value = user.user_metadata?.nombre || '';
+        document.getElementById('fichaTelefono').value = user.user_metadata?.telefono || '';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('completarFicha').hidden = false;
+        document.getElementById('loginStepCredenciales').style.display = 'none';
+    }
+    async function leerFichaPropia(id) {
+        const leer = () => sb.from('clientas').select('*').eq('id',id).maybeSingle();
+        let result;
+        try { result = await leer(); } catch { result = {status:0,error:{}}; }
+        if (result.error && (result.status === 0 || result.status >= 500)) {
+            result = await leer();
+        }
+        if (result.error) throw new Error('No se pudo consultar tu ficha. Vuelve a intentarlo; si se repite, contacta con el salón. No necesitas crear otra cuenta.');
+        return result.data;
+    }
+    async function entrarConFicha(profile) {
+        ocultarFichaPendiente();
+        await mostrarPerfilCliente(profile,true);
+        const destino = _reservaPendiente ? 'vistaReservar' : 'vistaCliente';
+        _reservaPendiente = false; mostrarVista(destino);
+    }
+    async function guardarFichaPropia() {
+        if (!fichaPendienteId || guardandoFicha) return;
+        const id = fichaPendienteId;
+        const nombre = document.getElementById('fichaNombre').value.trim();
+        const telefono = document.getElementById('fichaTelefono').value.trim();
+        if (!nombre || !telefono) return toast('Introduce tu nombre y teléfono.','error');
+        guardandoFicha = true; setBtnLoading('btnGuardarFicha',true);
+        try {
+            const {data,error} = await sb.auth.getUser();
+            const user = data?.user;
+            if (error || !user?.email || user.id !== id || fichaPendienteId !== id) {
+                ocultarFichaPendiente(); return toast('Vuelve a iniciar sesión para completar tu ficha.','error');
+            }
+            let profile = await leerFichaPropia(id);
+            if (!profile) {
+                // Solo insertar la ficha de la sesión actual. Nunca actualizar otra por correo o teléfono.
+                const {error:writeError} = await sb.from('clientas').insert({id,usuario:user.email.trim().toLowerCase(),nombre,telefono});
+                if (writeError && writeError.code !== '23505') throw writeError;
+                profile = await leerFichaPropia(id);
+            }
+            if (!profile) throw new Error('Ficha no disponible');
+            if (fichaPendienteId === id) await entrarConFicha(profile);
+        } catch { toast('No pudimos abrir tu ficha. Vuelve a intentarlo o contacta con el salón para revisar tu cuenta.','error'); }
+        finally { guardandoFicha = false; setBtnLoading('btnGuardarFicha',false); }
+    }
     async function iniciarSesionCliente() {
         const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
         const clave   = document.getElementById("loginPass")?.value||"";
         if (!usuario||!clave) return toast("Introduce correo y contraseña","error");
 
         setBtnLoading("btnLoginCliente",true);
+        ocultarFichaPendiente();
         try {
             const { data: authData, error: authErr } = await sb.auth.signInWithPassword({
                 email: usuario,
@@ -1099,15 +1158,24 @@
             }
 
             const userId = authData.user.id;
-            const { data: profile, error: profErr } = await sb.from("clientas").select("*").eq("id", userId).maybeSingle();
-
-            if (profErr || !profile) { toast("Error cargando perfil","error"); return; }
+            // No conservar el perfil ni permisos locales de una sesión anterior.
+            const reservaPendiente = _reservaPendiente;
+            limpiarSesionLocal();
+            _reservaPendiente = reservaPendiente;
+            let profile;
+            try { profile = await leerFichaPropia(userId); }
+            catch { return toast('Tu contraseña es correcta, pero no se pudo consultar tu ficha. Vuelve a intentarlo; si se repite, contacta con el salón.','error'); }
+            if (!profile) {
+                const {data:admin,error} = await sb.from('admins').select('id').eq('id',userId).maybeSingle();
+                if (error) return toast('No se pudo comprobar tu cuenta. Vuelve a intentarlo.','error');
+                if (admin) { _adminAutenticada = true; mostrarVista('vistaAdmin'); return; }
+                prepararFichaPropia(authData.user);
+                document.getElementById('fichaNombre').focus();
+                return;
+            }
 
             toast("Bienvenida de nuevo","success");
-            await mostrarPerfilCliente(profile, true);
-            const destination = _reservaPendiente ? 'vistaReservar' : 'vistaCliente';
-            _reservaPendiente = false;
-            mostrarVista(destination);
+            await entrarConFicha(profile);
         } catch(e) {
             toast("Error de conexión","error");
         } finally {
