@@ -4,6 +4,7 @@
 !docs/fidelidad-migration.sql
 !docs/horarios-migration.sql
 !docs/configuracion-fix.sql
+!docs/acceso-migration.sql
 dist/
 node_modules/
 test-results/

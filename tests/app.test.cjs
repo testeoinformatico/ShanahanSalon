@@ -84,7 +84,10 @@ async function fixture(options = {}) {
     w.eval(homeMotion);
     w.eval(liquid);
     await settle();
-    return { w, dom, errors, writes, client, operations };
+    return { w, dom, errors, writes, client, operations, emitAuth(event,next) {
+        if (next !== undefined) session = next;
+        callback?.(event,session);
+    } };
 }
 
 test('app renders catalog and navigates without a GPU context when reduced motion is enabled', async t => {
@@ -385,4 +388,157 @@ test('concurrent appointment conflict gives a usable message without leaking SQL
     const f=await fixture({session:true,admin:true,operation:()=>({error:{code:'23P01',message:'exclusion constraint citas_sin_solapamientos'}})});
     t.after(()=>f.dom.window.close());
     await assert.rejects(f.w.guardarCitaSalon(null,{fecha:'2030-01-01',hora:'09:00'}),/se acaba de ocupar/);
+});
+
+test('recovery uses Supabase Auth and failed delivery never shows the success step',async t=>{
+    const f=await fixture();t.after(()=>f.dom.window.close());
+    let calls=0;let finish;
+    f.client.auth.resetPasswordForEmail=email=>{calls++;assert.equal(email,'clienta@example.test');return new Promise(resolve=>finish=resolve);};
+    f.w.document.getElementById('loginUsuario').value=' Clienta@Example.test ';
+    f.w.solicitarRecuperacion();
+    const pending=f.w.enviarRecuperacion();await f.w.enviarRecuperacion();
+    assert.equal(calls,1);finish({error:{status:429,code:'over_email_send_rate_limit'}});await pending;
+    assert.equal(f.w.document.getElementById('recoveryStep2').style.display,'none');
+    assert.match(f.w.document.body.textContent,/Espera un minuto/);
+    f.client.auth.resetPasswordForEmail=async()=>({error:null});
+    await f.w.enviarRecuperacion();
+    assert.equal(f.w.document.getElementById('recoveryStep2').style.display,'block');
+    assert.equal(f.w.verificarCodigoRecuperacion,undefined);
+    assert.deepEqual(f.writes,[]);
+});
+
+test('ordinary account password changes preserve spaces, survive notification failure and keep the session',async t=>{
+    const f=await fixture({session:true,hash:'#mi-cuenta'});t.after(()=>f.dom.window.close());
+    let updates=0,signouts=0;
+    f.client.auth.updateUser=async args=>{updates++;assert.equal(args.password,'  valid-password  ');return {data:{user:{email:'clienta@example.test'}},error:null};};
+    f.client.auth.signOut=async()=>{signouts++;return {error:null};};
+    f.client.rpc=async()=>{throw Error('notification service unavailable');};
+    f.w.document.getElementById('inputNuevaClave').value='  valid-password  ';
+    f.w.document.getElementById('inputNuevaClaveConfirm').value='different';
+    await f.w.procesarCambioClave();assert.equal(updates,0);
+    f.w.document.getElementById('inputNuevaClaveConfirm').value='  valid-password  ';
+    await Promise.all([f.w.procesarCambioClave(),f.w.procesarCambioClave()]);
+    assert.equal(updates,1);assert.equal(signouts,0);
+    assert.equal(f.w.document.getElementById('inputNuevaClave').value,'');
+    assert.equal(f.w.document.getElementById('modalClaveOk').classList.contains('show'),true);
+});
+
+test('recovery event works without a URL hash and closes only the recovery session after saving',async t=>{
+    const f=await fixture({session:true});t.after(()=>f.dom.window.close());
+    f.emitAuth('PASSWORD_RECOVERY');await settle();
+    assert.equal(f.w.document.getElementById('modalCambiarClave').classList.contains('show'),true);
+    let signout;
+    f.client.auth.updateUser=async()=>({data:{user:{email:'clienta@example.test'}},error:null});
+    f.client.auth.signOut=async args=>{signout=args;f.emitAuth('SIGNED_OUT',null);return {error:null};};
+    f.w.document.getElementById('inputNuevaClave').value='new-password';
+    f.w.document.getElementById('inputNuevaClaveConfirm').value='new-password';
+    await f.w.procesarCambioClave();await settle();
+    assert.equal(signout.scope,'local');
+    assert.equal(f.w.document.getElementById('loginUsuario').value,'clienta@example.test');
+    assert.equal(f.w.document.getElementById('modalClaveOk').classList.contains('show'),true);
+});
+
+test('login failures distinguish invalid credentials and unconfirmed email; resending opens verification',async t=>{
+    const f=await fixture();t.after(()=>f.dom.window.close());
+    f.client.auth.signInWithPassword=async()=>({error:{code:'invalid_credentials'}});
+    await loginFixture(f.w);
+    assert.match(f.w.document.body.textContent,/Correo o contraseña incorrectos/);
+    assert.equal(f.w.document.getElementById('confirmacionPendiente').hidden,true);
+    f.client.auth.signInWithPassword=async()=>({error:{code:'email_not_confirmed'}});
+    await loginFixture(f.w);
+    assert.equal(f.w.document.getElementById('confirmacionPendiente').hidden,false);
+    let resend;
+    f.client.auth.resend=async args=>{resend=args;return {error:null};};
+    await f.w.reenviarConfirmacion(true);
+    assert.equal(resend.type,'signup');assert.equal(resend.email,'clienta@example.test');
+    assert.equal(f.w.document.getElementById('regStepOTP').style.display,'block');
+});
+
+test('admin login passes the exact password and prevents simultaneous submissions',async t=>{
+    const f=await fixture({admin:true});t.after(()=>f.dom.window.close());
+    let calls=0,finish;
+    f.client.auth.signInWithPassword=args=>{calls++;assert.equal(args.email,'salon@example.test');assert.equal(args.password,' space-password ');return new Promise(resolve=>finish=resolve);};
+    f.w.document.getElementById('adminUser').value=' Salon@Example.test ';
+    f.w.document.getElementById('adminPass').value=' space-password ';
+    const pending=f.w.loginAdmin();await f.w.loginAdmin();
+    assert.equal(calls,1);finish({data:{user:{id:profile.id}},error:null});await pending;await settle();
+    assert.equal(f.w.document.getElementById('vistaAdmin').style.display,'block');
+});
+
+function fillRegistration(w) {
+    for(const [id,value] of Object.entries({citaNombre:'Clienta',citaTelefono:'000000000',citaEmail:'clienta@example.test',citaClave:'test-password',citaClaveConfirm:'test-password'}))w.document.getElementById(id).value=value;
+    w.document.getElementById('aceptoPrivacidad').checked=true;
+}
+
+test('duplicate signup response never claims an email was sent',async t=>{
+    const f=await fixture();t.after(()=>f.dom.window.close());fillRegistration(f.w);
+    f.client.auth.signUp=async()=>({data:{user:{identities:[]},session:null},error:null});
+    await f.w.crearCuenta();
+    assert.equal(f.w.document.getElementById('regStepOTP').style.display,'none');
+    assert.match(f.w.document.getElementById('regErrorMsg').textContent,/No necesitas crear otra/);
+});
+
+test('six-digit registration code and repeat clicks verify once using the original email',async t=>{
+    const f=await fixture({session:true});t.after(()=>f.dom.window.close());fillRegistration(f.w);
+    f.client.auth.signUp=async()=>({data:{user:{id:profile.id,identities:[{}]},session:null},error:null});
+    await f.w.crearCuenta();
+    f.w.document.getElementById('citaEmail').value='different@example.test';
+    const inputs=[...f.w.document.querySelectorAll('#regOtpContainer .otp-digit')];
+    inputs.forEach((input,i)=>input.value=i<6?String(i):'');
+    let calls=0,finish;
+    f.client.auth.verifyOtp=args=>{calls++;assert.equal(args.email,'clienta@example.test');assert.equal(args.token,'012345');return new Promise(resolve=>finish=resolve);};
+    const pending=f.w.verificarRegistroOTP();await f.w.verificarRegistroOTP();
+    assert.equal(calls,1);finish({data:{},error:null});await pending;
+    assert.equal(f.w.document.getElementById('vistaCliente').style.display,'flex');
+    assert.equal(f.w.document.getElementById('modalRegistroOk').classList.contains('show'),true);
+});
+
+test('signup with an immediate session does not ask for an impossible confirmation code',async t=>{
+    const f=await fixture({session:true});t.after(()=>f.dom.window.close());fillRegistration(f.w);
+    f.client.auth.signUp=async()=>({data:{user:{id:profile.id,identities:[{}]},session:{user:{id:profile.id}}},error:null});
+    await f.w.crearCuenta();
+    assert.equal(f.w.document.getElementById('regStepOTP').style.display,'none');
+    assert.equal(f.w.document.getElementById('vistaCliente').style.display,'flex');
+});
+
+test('signing out while the profile loads cannot restore the previous account',async t=>{
+    let finish;
+    const f=await fixture({profileRead:()=>new Promise(resolve=>finish=resolve)});t.after(()=>f.dom.window.close());
+    const pending=loginFixture(f.w);await settle();
+    f.emitAuth('SIGNED_OUT',null);
+    finish({data:profile,error:null});await pending;await settle();
+    assert.equal(f.w.document.getElementById('vistaCliente').style.display,'none');
+    assert.equal(f.w.document.getElementById('clienteNombre').textContent,'');
+});
+
+test('expired recovery links produce a useful message and are removed from the URL',async t=>{
+    const f=await fixture({hash:'#error=access_denied&error_code=otp_expired'});t.after(()=>f.dom.window.close());
+    assert.match(f.w.document.body.textContent,/Solicita uno nuevo/);
+    assert.equal(f.w.location.hash,'');
+});
+
+test('a failed password update keeps the form open without success or signout',async t=>{
+    const f=await fixture({session:true});t.after(()=>f.dom.window.close());
+    f.emitAuth('PASSWORD_RECOVERY');await settle();
+    let signouts=0;
+    f.client.auth.updateUser=async()=>({error:{code:'weak_password'}});
+    f.client.auth.signOut=async()=>{signouts++;return {error:null};};
+    f.w.document.getElementById('inputNuevaClave').value='test-password';
+    f.w.document.getElementById('inputNuevaClaveConfirm').value='test-password';
+    await f.w.procesarCambioClave();
+    assert.equal(signouts,0);
+    assert.equal(f.w.document.getElementById('modalCambiarClave').classList.contains('show'),true);
+    assert.equal(f.w.document.getElementById('modalClaveOk').classList.contains('show'),false);
+});
+
+test('a sign-in from another tab clears the previous profile and loads the new identity',async t=>{
+    let row={...profile,visitas:8};
+    const f=await fixture({session:true,hash:'#mi-cuenta',profileRead:()=>({data:row,error:null})});t.after(()=>f.dom.window.close());
+    row={id:'another-client',nombre:'Nueva clienta',telefono:'111111111',visitas:2};
+    f.emitAuth('SIGNED_IN',{user:{id:row.id,email:'other@example.test'}});
+    assert.equal(f.w.document.getElementById('clienteNombre').textContent,'');
+    await settle();
+    assert.equal(f.w.document.getElementById('clienteNombre').textContent,'Nueva clienta');
+    assert.equal(f.w.document.getElementById('stampCountText').textContent,'2');
+    assert.deepEqual(f.errors,[]);
 });

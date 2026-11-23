@@ -10,6 +10,7 @@
 
     const SUPABASE_URL     = "https://lofgjkrcgkqufqpybddn.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvZmdqa3JjZ2txdWZxcHliZGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTc0MjQsImV4cCI6MjA5MzQ3MzQyNH0.8QC7Jq6_lwdGG-iWT0AGiFGl-izWAfIk2tfLC01vJoE";
+    const _errorEnlaceAcceso = new URLSearchParams(window.location.hash.slice(1)).get('error_code');
     const sb               = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const SALON_WHATSAPP   = "34644911596";
 
@@ -30,6 +31,27 @@
     let _clienteLogueado = null;  // datos del cliente logueado
     let _loginParaReservar = false;  // marca si llegamos al login desde "Reservar cita"
     let _irAlAcceso = false;         // pide desplazar hasta la tarjeta de acceso
+    let _recuperandoClave = false;
+    let _accesoClienteEnCurso = false, _accesoAdminEnCurso = false;
+    let _creandoCuenta = false, _verificandoRegistro = false, _reenviandoRegistro = false;
+    let _enviandoRecuperacion = false, _cambiandoClave = false;
+    let _registroEmail = '', _correoPorConfirmar = '';
+    let _versionSesion = 0, _idSesionActual = null;
+    const correoValido = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    function mensajeAcceso(error) {
+        const code = error?.code;
+        if (code === 'invalid_credentials' || error?.message === 'Invalid login credentials')
+            return 'Correo o contraseña incorrectos. Si no recuerdas la contraseña actual, pulsa «¿Olvidaste tu contraseña?».';
+        if (code === 'email_not_confirmed') return 'Falta confirmar tu correo. Puedes pedir otro código desde aquí.';
+        if (code === 'otp_expired') return 'El código o enlace ha caducado o ya se ha utilizado. Solicita uno nuevo.';
+        if (code === 'same_password') return 'Elige una contraseña diferente de la actual.';
+        if (code === 'weak_password') return 'La contraseña no cumple los requisitos. Usa una más larga y combina letras y números.';
+        if (code === 'session_not_found' || code === 'refresh_token_not_found' || error?.name === 'AuthSessionMissingError')
+            return 'La sesión ha caducado. Vuelve a entrar o solicita otro enlace de recuperación.';
+        if (error?.status === 429 || /^over_.*rate_limit$/.test(code || ''))
+            return 'Has hecho varios intentos seguidos. Espera un minuto antes de volver a intentarlo.';
+        return 'No se pudo completar la operación. Comprueba tu conexión y vuelve a intentarlo. Si se repite, contacta con el salón.';
+    }
 
     // Picker estado
     let calCursor    = null;   // se inicializa en initPicker
@@ -490,12 +512,16 @@
     }
 
     function limpiarSesionLocal() {
+        _versionSesion++;
         ocultarFichaPendiente();
         _clienteLogueado = null;
         _adminAutenticada = false;
         _reservaPendiente = false;
         clientas = []; citas = []; ocupacionCargada.clear();
         sessionStorage.removeItem('adminAuth');
+        ['clienteNombre','misCitasList','misCitasHistorial','stampsGrid'].forEach(id => {
+            const element = document.getElementById(id); if (element) element.textContent = '';
+        });
     }
     async function cerrarSesionComun() {
         try {
@@ -507,22 +533,46 @@
     window.cerrarSesionAdmin = cerrarSesionComun;
 
     async function restaurarSesion() {
+        const reservaPendiente = _reservaPendiente;
+        limpiarSesionLocal(); _reservaPendiente = reservaPendiente;
+        const version = _versionSesion;
         const { data: { session } } = await checked(sb.auth.getSession());
+        if (version !== _versionSesion) return;
         if (!session) { limpiarSesionLocal(); return; }
+        _idSesionActual = session.user.id;
         const { data: admin } = await checked(sb.from('admins').select('id').eq('id', session.user.id).maybeSingle());
-        _adminAutenticada = !!admin;
         const profile = await leerFichaPropia(session.user.id);
+        if (version !== _versionSesion) return;
+        _adminAutenticada = !!admin;
         if (profile) { ocultarFichaPendiente(); await mostrarPerfilCliente(profile, true); }
         else if (!admin) prepararFichaPropia(session.user);
     }
-    sb.auth.onAuthStateChange((event) => {
+    sb.auth.onAuthStateChange((event, session) => {
         // Keep Supabase queries outside its auth callback/lock.
         if (event === 'SIGNED_OUT') {
+            _idSesionActual = null;
+            _recuperandoClave = false;
             limpiarSesionLocal();
-            setTimeout(() => mostrarVista('login'), 0);
+            const version = _versionSesion;
+            setTimeout(() => { if (version === _versionSesion) mostrarVista('login'); }, 0);
+        }
+        if (event === 'SIGNED_IN' && session?.user?.id !== _idSesionActual) {
+            _idSesionActual = session?.user?.id || null;
+            const pendiente = _reservaPendiente;
+            limpiarSesionLocal(); _reservaPendiente = pendiente;
+            if (!_accesoClienteEnCurso && !_accesoAdminEnCurso && !_creandoCuenta && !_verificandoRegistro) {
+                setTimeout(() => restaurarSesion().then(() => mostrarVista(vistaDesdeURL() || 'login', {history:false})).catch(() => {
+                    limpiarSesionLocal(); toast('Vuelve a iniciar sesión para consultar tu cuenta.', 'error');
+                }), 0);
+            }
         }
         if (event === 'PASSWORD_RECOVERY') {
-            setTimeout(() => document.getElementById('modalCambiarClave').classList.add('show'), 0);
+            _recuperandoClave = true;
+            setTimeout(() => {
+                document.getElementById('inputNuevaClave').value = '';
+                document.getElementById('inputNuevaClaveConfirm').value = '';
+                document.getElementById('modalCambiarClave').classList.add('show');
+            }, 0);
         }
     });
     window.addEventListener('popstate', () => mostrarVista(vistaDesdeURL() || 'login', { history: false }));
@@ -952,6 +1002,7 @@
             inp.addEventListener("paste", e => {
                 e.preventDefault();
                 const pasted = (e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,8);
+                inputs.forEach(input => { input.value = ''; input.classList.remove('filled'); });
                 pasted.split("").forEach((ch,j) => {
                     if (inputs[j]) { inputs[j].value=ch; inputs[j].classList.add("filled"); }
                 });
@@ -988,100 +1039,62 @@
 
 
     window.solicitarRecuperacion = function() {
-        document.getElementById('inputRecuperarEmail').value = '';
-        document.getElementById('inputRecoveryCode').value = '';
-        document.getElementById('inputRecoveryNewPass').value = '';
+        document.getElementById('inputRecuperarEmail').value =
+            (document.getElementById('loginUsuario').value || document.getElementById('adminUser').value || '').trim();
         document.getElementById('recoveryStep1').style.display = 'block';
         document.getElementById('recoveryStep2').style.display = 'none';
         document.getElementById('modalRecuperar').classList.add('show');
-    }
-
-    let _recoveryEmail = '';
+    };
 
     window.enviarRecuperacion = async function() {
+        if (_enviandoRecuperacion) return;
         const email = document.getElementById('inputRecuperarEmail').value.trim().toLowerCase();
-        if (!email) return toast("Introduce un correo válido", "error");
-
-        setBtnLoading("btnRecuperar", true);
+        if (!correoValido(email)) return toast('Introduce un correo válido.', 'error');
+        _enviandoRecuperacion = true;
+        setBtnLoading('btnRecuperar', true);
         try {
-            const { data, error } = await sb.rpc('send_recovery_code', { p_email: email });
-            if (error) {
-                toast("Error: " + error.message, "error");
-            } else {
-                _recoveryEmail = email;
-                toast("Código enviado a tu correo", "success");
-                document.getElementById('recoveryStep1').style.display = 'none';
-                document.getElementById('recoveryStep2').style.display = 'block';
-            }
-        } catch(e) {
-            toast("Error de conexión", "error");
-        } finally {
-            setBtnLoading("btnRecuperar", false);
-        }
-    }
+            // El destino es Site URL en Supabase: https://shanahan-nails.es.
+            // Auth gestiona el enlace de un solo uso, caducidad y límites de envío.
+            const { error } = await sb.auth.resetPasswordForEmail(email);
+            if (error) { toast(mensajeAcceso(error), 'error'); return; }
+            document.getElementById('recoveryStep1').style.display = 'none';
+            document.getElementById('recoveryStep2').style.display = 'block';
+        } catch (error) { toast(mensajeAcceso(error), 'error'); }
+        finally { _enviandoRecuperacion = false; setBtnLoading('btnRecuperar', false); }
+    };
 
-    window.verificarCodigoRecuperacion = async function() {
-        const code = document.getElementById('inputRecoveryCode').value.trim();
-        const newPass = document.getElementById('inputRecoveryNewPass').value;
-
-        if (!code || code.length !== 6) return toast("Introduce el código de 6 dígitos", "error");
-        if (!newPass || newPass.length < 6) return toast("La contraseña debe tener mínimo 6 caracteres", "error");
-
-        setBtnLoading("btnVerifyRecovery", true);
-        try {
-            const { data, error } = await sb.rpc('verify_recovery_code', {
-                p_email: _recoveryEmail,
-                p_code: code,
-                p_new_password: newPass
-            });
-            if (error) {
-                toast("Error: " + error.message, "error");
-            } else if (data && data.ok) {
-                toast("¡Contraseña actualizada con éxito!", "success");
-                document.getElementById('modalRecuperar').classList.remove('show');
-                document.getElementById('modalClaveOk').classList.add('show');
-            } else {
-                toast(data?.error || "Código incorrecto o caducado", "error");
-            }
-        } catch(e) {
-            toast("Error de conexión", "error");
-        } finally {
-            setBtnLoading("btnVerifyRecovery", false);
-        }
-    }
-
-    // Cambiar clave desde perfil (admin o cliente logueado)
+    // Solo Supabase Auth cambia credenciales; nunca una RPC SQL del navegador.
     window.procesarCambioClave = async function() {
+        if (_cambiandoClave) return;
         const nuevaClave = document.getElementById('inputNuevaClave').value;
-        if (!nuevaClave || nuevaClave.length < 6) return toast("Mínimo 6 caracteres", "error");
-
-        setBtnLoading("btnCambiarClave", true);
+        const confirmacion = document.getElementById('inputNuevaClaveConfirm').value;
+        if (nuevaClave.length < 6) return toast('Mínimo 6 caracteres.', 'error');
+        if (nuevaClave !== confirmacion) return toast('Las contraseñas no coinciden.', 'error');
+        _cambiandoClave = true; setBtnLoading('btnCambiarClave', true);
+        const esRecuperacion = _recuperandoClave;
         try {
-            const { error } = await sb.auth.updateUser({ password: nuevaClave });
-            if (error) {
-                toast("Error al actualizar: " + error.message, "error");
-                setBtnLoading("btnCambiarClave", false);
-                return;
+            const { data, error } = await sb.auth.updateUser({ password: nuevaClave });
+            if (error) { toast(mensajeAcceso(error), 'error'); return; }
+            document.getElementById('inputNuevaClave').value = '';
+            document.getElementById('inputNuevaClaveConfirm').value = '';
+            document.getElementById('loginPass').value = '';
+            // Un fallo del aviso no deshace un cambio de contraseña ya confirmado.
+            try { await sb.rpc('send_password_changed_email'); } catch {}
+            document.getElementById('modalCambiarClave').classList.remove('show');
+            document.getElementById('modalClaveOk').classList.add('show');
+            _recuperandoClave = false;
+            if (esRecuperacion) {
+                // Sin temporizador: nunca cerrar una sesión nueva unos segundos después.
+                let salidaError;
+                try { ({ error: salidaError } = await sb.auth.signOut({ scope: 'local' })); }
+                catch { salidaError = true; }
+                if (!salidaError) {
+                    limpiarSesionLocal(); _irAlAcceso = true; mostrarVista('login');
+                    document.getElementById('loginUsuario').value = data?.user?.email || '';
+                }
             }
-
-            // Enviar correo de confirmación
-            const { error: rpcErr } = await sb.rpc('send_password_changed_email');
-            if (rpcErr) console.log("RPC error:", rpcErr.message);
-
-        } catch(e) {
-            setBtnLoading("btnCambiarClave", false);
-            toast("No se pudo cambiar la contraseña. Inténtalo de nuevo.", "error");
-            return;
-        }
-
-        setBtnLoading("btnCambiarClave", false);
-        document.getElementById('modalCambiarClave').classList.remove('show');
-        document.getElementById('modalClaveOk').classList.add('show');
-
-        // Si viene de un link de recuperación, cerrar sesión después
-        if (window.location.hash) {
-            setTimeout(() => { try { sb.auth.signOut(); } catch(e) {} }, 3000);
-        }
+        } catch (error) { toast(mensajeAcceso(error), 'error'); }
+        finally { _cambiandoClave = false; setBtnLoading('btnCambiarClave', false); }
     };
 
     let fichaPendienteId = null, guardandoFicha = false;
@@ -1141,10 +1154,13 @@
         finally { guardandoFicha = false; setBtnLoading('btnGuardarFicha',false); }
     }
     async function iniciarSesionCliente() {
+        if (_accesoClienteEnCurso) return;
         const usuario = (document.getElementById("loginUsuario")?.value||"").trim().toLowerCase();
         const clave   = document.getElementById("loginPass")?.value||"";
         if (!usuario||!clave) return toast("Introduce correo y contraseña","error");
 
+        _accesoClienteEnCurso = true;
+        document.getElementById('confirmacionPendiente').hidden = true;
         setBtnLoading("btnLoginCliente",true);
         ocultarFichaPendiente();
         try {
@@ -1153,20 +1169,28 @@
                 password: clave
             });
             if (authErr) {
-                toast("Error: " + (authErr.message === 'Invalid login credentials' ? 'Correo o contraseña incorrectos' : authErr.message), "error");
+                if (authErr.code === 'email_not_confirmed') {
+                    _correoPorConfirmar = usuario;
+                    document.getElementById('confirmacionPendiente').hidden = false;
+                }
+                toast(mensajeAcceso(authErr), 'error');
                 return;
             }
 
             const userId = authData.user.id;
+            _idSesionActual = userId;
             // No conservar el perfil ni permisos locales de una sesión anterior.
             const reservaPendiente = _reservaPendiente;
             limpiarSesionLocal();
             _reservaPendiente = reservaPendiente;
+            const version = _versionSesion;
             let profile;
             try { profile = await leerFichaPropia(userId); }
             catch { return toast('Tu contraseña es correcta, pero no se pudo consultar tu ficha. Vuelve a intentarlo; si se repite, contacta con el salón.','error'); }
+            if (version !== _versionSesion) return;
             if (!profile) {
                 const {data:admin,error} = await sb.from('admins').select('id').eq('id',userId).maybeSingle();
+                if (version !== _versionSesion) return;
                 if (error) return toast('No se pudo comprobar tu cuenta. Vuelve a intentarlo.','error');
                 if (admin) { _adminAutenticada = true; mostrarVista('vistaAdmin'); return; }
                 prepararFichaPropia(authData.user);
@@ -1179,6 +1203,7 @@
         } catch(e) {
             toast("Error de conexión","error");
         } finally {
+            _accesoClienteEnCurso = false;
             setBtnLoading("btnLoginCliente",false);
         }
     }
@@ -1265,6 +1290,7 @@
     //  CREAR CUENTA (solo registro, sin cita)
     // ══════════════════════════════════════════════════════
     async function crearCuenta() {
+        if (_creandoCuenta) return;
         const nombre   = (document.getElementById("citaNombre")?.value||"").trim();
         const telefono = (document.getElementById("citaTelefono")?.value||"").trim();
 
@@ -1290,6 +1316,7 @@
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr("Introduce un correo válido");
         if (!document.getElementById("aceptoPrivacidad")?.checked) return showErr("Debes aceptar la Política de Privacidad");
 
+        _creandoCuenta = true;
         setBtnLoading("btnCrearCuenta",true);
         try {
             let aliasFinal = email; // Usamos el email como identificador único
@@ -1306,8 +1333,16 @@
                     }
                 }
             });
-            if (authErr) { showErr("No se pudo crear la cuenta: "+authErr.message); return; }
+            if (authErr) { showErr(authErr.code === 'user_already_exists' ? 'Si ya tienes una cuenta, entra o recupera tu contraseña.' : mensajeAcceso(authErr)); return; }
             if (!authData.user) { showErr("Error desconocido al registrar usuario."); return; }
+            if (authData.user.identities?.length === 0) {
+                showErr('Si ya tienes una cuenta con ese correo, entra o recupera tu contraseña. No necesitas crear otra.');
+                return;
+            }
+            _registroEmail = email;
+            document.getElementById('citaClave').value = '';
+            document.getElementById('citaClaveConfirm').value = '';
+            if (authData.session) { await finalizarRegistro(email); return; }
 
             // 2. La base de datos creará automáticamente el perfil en la tabla 'clientas'
             // mediante un Trigger (ya no hacemos el insert desde aquí para evitar bloqueos de seguridad).
@@ -1322,15 +1357,57 @@
         } catch(e) {
             showErr("Error inesperado: "+(e.message||String(e)));
         } finally {
+            _creandoCuenta = false;
             setBtnLoading("btnCrearCuenta",false);
         }
     }
 
-    window.verificarRegistroOTP = async function() {
-        const otp = getOTPCode("regOtpContainer");
-        if (otp.length < 8) return;
-        const email = (document.getElementById("citaEmail")?.value||"").trim().toLowerCase();
+    async function finalizarRegistro(email) {
+        ['citaNombre','citaTelefono','citaClave','citaClaveConfirm','citaEmail'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('regStepOTP').style.display = 'none';
+        document.getElementById('regStepDatos').style.display = 'block';
+        document.getElementById('confirmacionPendiente').hidden = true;
+        _correoPorConfirmar = ''; _registroEmail = '';
+        try {
+            await restaurarSesion();
+            if (_clienteLogueado) {
+                const destino = _reservaPendiente ? 'vistaReservar' : 'vistaCliente';
+                _reservaPendiente = false; mostrarVista(destino);
+            } else { _irAlAcceso = true; mostrarVista('login'); }
+        } catch { _irAlAcceso = true; mostrarVista('login'); document.getElementById('loginUsuario').value = email; }
+        document.getElementById('modalRegistroOk').classList.add('show');
+    }
 
+    window.reenviarConfirmacion = async function(desdeAcceso = false) {
+        if (_reenviandoRegistro) return;
+        const email = desdeAcceso ? _correoPorConfirmar : _registroEmail;
+        if (!correoValido(email)) return toast('Vuelve a introducir tu correo para confirmar la cuenta.', 'error');
+        _reenviandoRegistro = true;
+        const button = document.getElementById(desdeAcceso ? 'btnConfirmarCorreo' : 'btnReenviarRegistro');
+        button.disabled = true;
+        try {
+            const { error } = await sb.auth.resend({ type: 'signup', email });
+            if (error) { toast(mensajeAcceso(error), 'error'); return; }
+            _registroEmail = email;
+            document.getElementById('regDisplayEmail').textContent = email;
+            document.getElementById('regOtpErrorMsg').style.display = 'none';
+            initOTPInputs('regOtpContainer', verificarRegistroOTP);
+            document.getElementById('regStepDatos').style.display = 'none';
+            document.getElementById('regStepOTP').style.display = 'block';
+            mostrarVista('vistaPedirCita');
+            toast('Revisa tu correo y utiliza el código más reciente.', 'info');
+        } catch (error) { toast(mensajeAcceso(error), 'error'); }
+        finally { _reenviandoRegistro = false; button.disabled = false; }
+    };
+
+    window.verificarRegistroOTP = async function() {
+        if (_verificandoRegistro) return;
+        const otp = getOTPCode("regOtpContainer");
+        if (!/^(?:\d{6}|\d{8})$/.test(otp)) return toast('Introduce el código completo recibido por correo.', 'error');
+        const email = _registroEmail;
+        if (!correoValido(email)) return toast('Vuelve a solicitar el código de confirmación.', 'error');
+
+        _verificandoRegistro = true;
         setBtnLoading("btnVerificarRegOTP", true);
 
         const errorMsg = document.getElementById("regOtpErrorMsg");
@@ -1339,31 +1416,17 @@
         try {
             const { data, error } = await sb.auth.verifyOtp({ email, token: otp, type: 'signup' });
             if (error) {
-                errorMsg.textContent = "Código incorrecto o caducado";
+                errorMsg.textContent = error.code === 'otp_expired' ? 'Código incorrecto o caducado. Puedes solicitar otro.' : mensajeAcceso(error);
                 errorMsg.style.display = "block";
                 clearOTPInputs("regOtpContainer");
             } else {
-                ["citaNombre","citaTelefono","citaClave","citaClaveConfirm","citaEmail"]
-                    .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
-                document.getElementById("regStepOTP").style.display = 'none';
-                document.getElementById("regStepDatos").style.display = 'block';
-
-                // Mostrar popup de éxito
-                document.getElementById("modalRegistroOk").classList.add("show");
-
-                const lu=document.getElementById("loginUsuario"); if(lu) lu.value=email;
-                setTimeout(()=>{
-                    restaurarSesion().then(() => {
-                        const destination = _reservaPendiente && _clienteLogueado ? 'vistaReservar' : 'login';
-                        if (destination === 'vistaReservar') _reservaPendiente = false;
-                        mostrarVista(destination);
-                    }).catch(() => mostrarVista('login'));
-                }, 800);
+                await finalizarRegistro(email);
             }
         } catch(e) {
             errorMsg.textContent = "Error de conexión";
             errorMsg.style.display = "block";
         } finally {
+            _verificandoRegistro = false;
             setBtnLoading("btnVerificarRegOTP", false);
         }
     }
@@ -1522,6 +1585,7 @@
             const { data, error } = await sb.from("citas")
                 .select("*").eq("cliente_id", cliente.id)
                 .order("fecha",{ascending:false}).order("hora",{ascending:false});
+            if (_clienteLogueado?.id !== cliente.id) return;
             if (error) throw error;
             const allCitas = data || [];
             const todayISO = fmtISO(today);
@@ -1592,22 +1656,28 @@
     //  ADMIN
     // ══════════════════════════════════════════════════════
     async function loginAdmin() {
-        const user = (document.getElementById("adminUser")?.value||"").trim();
-        const pass = (document.getElementById("adminPass")?.value||"").trim();
+        if (_accesoAdminEnCurso) return;
+        const user = (document.getElementById("adminUser")?.value||"").trim().toLowerCase();
+        const pass = document.getElementById("adminPass")?.value||"";
         if (!user||!pass) return toast("Completa correo y contraseña","error");
-        setBtnLoading("btnLoginAdmin",true);
+        _accesoAdminEnCurso = true; setBtnLoading("btnLoginAdmin",true);
         try {
             const { data: authData, error: authErr } = await sb.auth.signInWithPassword({
                 email: user,
                 password: pass
             });
             if (authErr) {
-                toast("Error: " + (authErr.message === 'Invalid login credentials' ? 'Correo o contraseña incorrectos' : authErr.message), "error");
+                toast(mensajeAcceso(authErr), 'error');
                 return;
             }
 
             const userId = authData.user.id;
-            const { data: adminData } = await sb.from("admins").select("id").eq("id", userId).maybeSingle();
+            _idSesionActual = userId;
+            limpiarSesionLocal();
+            const version = _versionSesion;
+            const { data: adminData, error: roleError } = await sb.from("admins").select("id").eq("id", userId).maybeSingle();
+            if (version !== _versionSesion) return;
+            if (roleError) { toast('Tu contraseña es correcta, pero no se pudo comprobar el acceso al salón. Vuelve a intentarlo.', 'error'); return; }
             if (adminData) {
                 _adminAutenticada = true;
                 toast("Bienvenida al panel","success");
@@ -1618,7 +1688,7 @@
                 toast("No tienes permisos de administradora","error");
             }
         } catch(e) { toast("Error al iniciar sesión","error"); }
-        finally { setBtnLoading("btnLoginAdmin",false); }
+        finally { _accesoAdminEnCurso = false; setBtnLoading("btnLoginAdmin",false); }
     }
 
     async function cargarDatosAdmin() {
@@ -3197,6 +3267,10 @@
         // La raíz abre la portada; restaurar la sesión no implica abrir la cuenta.
         const view = vistaDesdeURL() || 'login';
         mostrarVista(view, { history: false });
+        if (_errorEnlaceAcceso) {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+            toast(mensajeAcceso({code: _errorEnlaceAcceso}), 'error');
+        }
     });
 
     async function cargarCatServicios() {
