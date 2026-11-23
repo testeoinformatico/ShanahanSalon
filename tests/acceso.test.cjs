@@ -13,8 +13,8 @@ test('access migration restricts legacy resets and creates profiles from the ver
       CREATE TABLE public.clientas(id uuid PRIMARY KEY REFERENCES auth.users(id),usuario text UNIQUE NOT NULL,nombre text NOT NULL,telefono text,visitas integer DEFAULT 0);
       CREATE FUNCTION public.handle_new_user() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NEW; END $$;
       CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-      CREATE FUNCTION public.send_recovery_code(text) RETURNS json LANGUAGE sql AS $$ SELECT '{"ok":true}'::json $$;
-      CREATE FUNCTION public.verify_recovery_code(text,text,text) RETURNS json LANGUAGE sql AS $$ SELECT '{"ok":true}'::json $$;
+      CREATE FUNCTION public.send_recovery_code(p_email text) RETURNS json LANGUAGE sql AS $$ SELECT '{"ok":true}'::json $$;
+      CREATE FUNCTION public.verify_recovery_code(p_email text,p_code text,p_new_password text) RETURNS json LANGUAGE sql AS $$ SELECT '{"ok":true}'::json $$;
       CREATE FUNCTION public.send_welcome_email(text) RETURNS void LANGUAGE sql AS $$ SELECT $$;
       CREATE FUNCTION public.enviar_recordatorios_diarios() RETURNS void LANGUAGE sql AS $$ SELECT $$;
       CREATE FUNCTION public.send_password_changed_email() RETURNS void LANGUAGE sql AS $$ SELECT $$;
@@ -23,7 +23,9 @@ test('access migration restricts legacy resets and creates profiles from the ver
     await db.exec(migration);await db.exec(migration);
     for(const role of ['anon','authenticated']){
         await db.exec('SET ROLE '+role);
-        for(const fn of ["verify_recovery_code('x','123456','new')","send_recovery_code('x')","send_welcome_email('x')","enviar_recordatorios_diarios()"])
+        for(const fn of ["verify_recovery_code('x','123456','new')","send_recovery_code('x')"])
+            await assert.rejects(db.query('SELECT public.'+fn),e=>e.code==='P0001'&&/Recarga la página/.test(e.message));
+        for(const fn of ["send_welcome_email('x')","enviar_recordatorios_diarios()"])
             await assert.rejects(db.query('SELECT public.'+fn),e=>e.code==='42501');
         await db.exec('RESET ROLE');
     }
