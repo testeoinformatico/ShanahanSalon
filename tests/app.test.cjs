@@ -59,7 +59,7 @@ async function fixture(options = {}) {
                     if (table === 'clientas' && single && !mutation && options.profileRead) return Promise.resolve(options.profileRead()).then(resolve,reject);
                     const error = table === 'dias_disponibles' && options.failAvailability ? { message: 'offline' }
                         : mutation && options.failWrites ? { message: 'write rejected' } : null;
-                    const data = table === 'servicios' ? services : table === 'clientas' ? (single ? activeProfile : [activeProfile])
+                    const data = table === 'servicios' ? (options.services || services) : table === 'clientas' ? (single ? activeProfile : [activeProfile])
                         : table === 'admins' ? (single ? (options.admin ? {id:profile.id} : null) : [])
                         : table === 'dias_disponibles' ? (options.blocks || [])
                         : table === 'citas' && !mutation ? (options.appointments || []) : mutation ? { id: 1 } : [];
@@ -541,4 +541,19 @@ test('a sign-in from another tab clears the previous profile and loads the new i
     assert.equal(f.w.document.getElementById('clienteNombre').textContent,'Nueva clienta');
     assert.equal(f.w.document.getElementById('stampCountText').textContent,'2');
     assert.deepEqual(f.errors,[]);
+});
+
+test('appointment service editor treats catalog group names as text', async t => {
+    const group = '<img src=x onerror="window.catalogInjected=true">';
+    const f = await fixture({ session: true, admin: true, services: [{ ...services[0], grupo: group }], appointments: [
+        { id: 81, cliente_id: profile.id, fecha: '2030-01-01', hora: '10:00:00', estado: 'pendiente', servicio: 'Color', duracion_minutos: 75 }
+    ] });
+    t.after(() => f.dom.window.close());
+    await f.w.cargarDatosAdmin();
+    f.w.abrirEditarCita(81);
+    f.w.edToggleServicios();
+    const grid = f.w.document.getElementById('editServicioGrid');
+    assert.equal(grid.querySelector('img'), null);
+    assert.ok(grid.textContent.includes(group));
+    assert.equal(grid.querySelectorAll('.nc-servicio-opcion').length, 1);
 });

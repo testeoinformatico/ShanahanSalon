@@ -2393,7 +2393,7 @@
         grid.innerHTML = "";
         NC_SERVICIOS.forEach(g => {
             const titulo = g.isExtras ? g.grupo + " (se suman al servicio)" : g.grupo;
-            grid.innerHTML += `<div class="nc-servicio-grupo-titulo">${titulo}</div>`;
+            grid.innerHTML += `<div class="nc-servicio-grupo-titulo">${escapeHTML(titulo)}</div>`;
             g.items.forEach(it => {
                 const sel = g.isExtras ? edSelExtras.some(e => e.name === it.val) : edSelServicio === it.val;
                 const caja = g.isExtras ? `<i class="${sel?'fa-solid fa-square-check':'fa-regular fa-square'}" style="margin-right:6px;"></i>` : "";
