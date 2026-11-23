@@ -50,3 +50,7 @@ En una instalación nueva, aplicar la migración de fidelidad antes de desplegar
 Las cuentas y contraseñas del salón se gestionan mediante Supabase Auth. Se ha eliminado el código antiguo sin interfaz que escribía contraseñas en `admins`. La sección antes llamada «Usuarios» realmente contiene el correo de notificaciones y ahora se llama «Notificaciones».
 
 La clave `anon` del navegador no otorga permisos administrativos por sí misma. La protección efectiva depende de RLS; nunca colocar una clave `service_role` en archivos públicos.
+
+## Acceso y recuperación
+
+La recuperación usa el enlace oficial de Supabase Auth y requiere que Site URL sea `https://shanahan-nails.es`. Tras publicar esta versión, aplicar `docs/acceso-migration.sql` para retirar las RPC antiguas de recuperación del navegador. No cambia contraseñas ni saldos. Ver `docs/acceso-review.md` para evidencia, orden de despliegue y límites de la comprobación.

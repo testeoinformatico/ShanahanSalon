@@ -220,6 +220,10 @@
                             </button>
                         </form>
                     </div>
+                    <div id="confirmacionPendiente" hidden role="status">
+                        <p>Tu correo está pendiente de confirmar.</p>
+                        <button type="button" class="btn-ghost" id="btnConfirmarCorreo" onclick="reenviarConfirmacion(true)">Enviar código de confirmación</button>
+                    </div>
                     <form id="completarFicha" hidden onsubmit="event.preventDefault(); guardarFichaPropia();">
                             <h5 class="card-title">Completa tu ficha</h5>
                             <p class="card-subtitle">Has iniciado sesión, pero no encontramos tu ficha. Confirma tu nombre y teléfono para reservar con esta cuenta. Si ya tenías citas o sellos, <a href="https://wa.me/34644911596" target="_blank" rel="noopener">contacta con el salón</a> antes de continuar.</p>
@@ -537,7 +541,7 @@
                             <i class="fa-regular fa-envelope"></i>
                             <span id="regDisplayEmail"></span>
                         </div>
-                        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;text-align:center;">Hemos enviado un código de 8 dígitos a tu correo. Introdúcelo para verificar tu cuenta.</p>
+                        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;text-align:center;">Introduce el código recibido por correo para verificar tu cuenta.</p>
 
                         <div class="otp-inputs" id="regOtpContainer">
                             <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
@@ -557,6 +561,7 @@
                             <span class="spinner"></span>
                         </button>
 
+                        <button type="button" class="link-soft" id="btnReenviarRegistro" onclick="reenviarConfirmacion()">Reenviar código</button>
                         <button type="button" class="link-soft" onclick="document.getElementById('regStepOTP').style.display='none'; document.getElementById('regStepDatos').style.display='block';" style="margin-top:12px;">
                             <i class="fa-solid fa-arrow-left-long" style="margin-right:6px;"></i> Cambiar correo
                         </button>
@@ -1313,6 +1318,11 @@
             <label for="inputNuevaClave">Nueva contraseña</label>
             <button type="button" class="toggle-pass" onclick="togglePassVis('inputNuevaClave',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
         </div>
+        <div class="field field-pass-wrap">
+            <input type="password" id="inputNuevaClaveConfirm" placeholder=" " autocomplete="new-password">
+            <label for="inputNuevaClaveConfirm">Repite la nueva contraseña</label>
+            <button type="button" class="toggle-pass" onclick="togglePassVis('inputNuevaClaveConfirm',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+        </div>
         <button class="btn-luxury" id="btnCambiarClave" onclick="procesarCambioClave()" style="margin-top:18px;"><span>Guardar contraseña</span><span class="spinner"></span></button>
         <button class="link-soft" onclick="document.getElementById('modalCambiarClave').classList.remove('show')">Cancelar</button>
     </div>
@@ -1334,31 +1344,21 @@
         <!-- Paso 1: Email -->
         <div id="recoveryStep1">
             <h4 style="margin:0 0 16px;color:var(--burgundy);font-family:'Instrument Serif',serif;font-size:18px;"><i class="fa-solid fa-key" style="margin-right:8px;"></i>Recuperar Contraseña</h4>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Introduce el correo con el que te registraste. Te enviaremos un código de verificación.</p>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Introduce el correo con el que te registraste. Te enviaremos un enlace para elegir una contraseña nueva.</p>
             <div class="field">
                 <input type="email" id="inputRecuperarEmail" placeholder=" " autocomplete="email">
                 <label for="inputRecuperarEmail">Correo electrónico</label>
                 <i class="fa-regular fa-envelope field-icon"></i>
             </div>
-            <button class="btn-luxury" id="btnRecuperar" onclick="enviarRecuperacion()" style="margin-top:18px;"><span>Enviar código</span><span class="spinner"></span></button>
+            <button class="btn-luxury" id="btnRecuperar" onclick="enviarRecuperacion()" style="margin-top:18px;"><span>Enviar enlace</span><span class="spinner"></span></button>
             <button class="link-soft" onclick="document.getElementById('modalRecuperar').classList.remove('show')">Cancelar</button>
         </div>
-        <!-- Paso 2: Código + nueva contraseña -->
-        <div id="recoveryStep2" style="display:none;">
-            <h4 style="margin:0 0 16px;color:var(--burgundy);font-family:'Instrument Serif',serif;font-size:18px;"><i class="fa-solid fa-shield-halved" style="margin-right:8px;"></i>Introduce el Código</h4>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Hemos enviado un código de 6 dígitos a tu correo. Introdúcelo junto con tu nueva contraseña.</p>
-            <div class="field">
-                <input type="text" id="inputRecoveryCode" placeholder=" " maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="letter-spacing:8px; text-align:center; font-size:22px; font-weight:700;">
-                <label for="inputRecoveryCode">Código de 6 dígitos</label>
-                <i class="fa-solid fa-hashtag field-icon"></i>
-            </div>
-            <div class="field field-pass-wrap">
-                <input type="password" id="inputRecoveryNewPass" placeholder=" " autocomplete="new-password">
-                <label for="inputRecoveryNewPass">Nueva contraseña</label>
-                <button type="button" class="toggle-pass" onclick="togglePassVis('inputRecoveryNewPass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
-            </div>
-            <button class="btn-luxury" id="btnVerifyRecovery" onclick="verificarCodigoRecuperacion()" style="margin-top:18px;"><span>Cambiar contraseña</span><span class="spinner"></span></button>
-            <button class="link-soft" onclick="document.getElementById('recoveryStep2').style.display='none'; document.getElementById('recoveryStep1').style.display='block';">Volver</button>
+        <div id="recoveryStep2" style="display:none;" role="status">
+            <h4>Revisa tu correo</h4>
+            <p>Si existe una cuenta con ese correo, recibirás un enlace para cambiar la contraseña. Revisa también la carpeta de spam.</p>
+            <p>Abre el correo más reciente y pulsa «Cambiar Contraseña». Los códigos antiguos de seis dígitos ya no se utilizan.</p>
+            <button type="button" class="btn-luxury" onclick="document.getElementById('modalRecuperar').classList.remove('show')"><span>Entendido</span></button>
+            <button type="button" class="link-soft" onclick="document.getElementById('recoveryStep2').style.display='none'; document.getElementById('recoveryStep1').style.display='block';">Revisar correo o volver a solicitar</button>
         </div>
     </div>
 </div>
